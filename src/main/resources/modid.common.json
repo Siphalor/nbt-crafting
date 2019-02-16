@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "de.siphalor.nbtcrafting.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "IngredientMixin",
+    "StackEntryMixin",
+    "RecipeFinderMixin",
+    "InputSlotFillerMixin",
+    "ShapedRecipeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

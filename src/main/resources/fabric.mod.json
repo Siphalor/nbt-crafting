@@ -1,0 +1,15 @@
+{
+  "id": "nbtcrafting",
+  "name": "NBT Crafting",
+  "description": "Enables nbt crafting in JSON recipes via the item data property.",
+  "version": "0.0.0",
+  "side": "universal",
+  "initializers": [
+  ],
+  "requires": {
+  },
+  "mixins": {
+    "client": "modid.client.json",
+    "common": "modid.common.json"
+  }
+}
