@@ -1,5 +1,7 @@
 # Nbt Crafting
 
+![logo](images/logo.png?raw=true)
+
 ## About
 A fabric mod which allows you to add/change JSON crafting/cooking/etc. recipes to use nbt input and output.
 
@@ -26,7 +28,7 @@ A simple recipe allowing to craft woode swords with 20 damage from diamond sword
 }
 ```
 
-![Demo](screenshots/demo.png?raw=true)
+![Demo](images/demo.png?raw=true)
 
 ## Extra
 Due to some additions made with this mod the recipe book displays also the output amount of all recipes - yay!
