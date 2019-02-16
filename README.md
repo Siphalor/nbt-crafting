@@ -26,6 +26,8 @@ A simple recipe allowing to craft woode swords with 20 damage from diamond sword
 }
 ```
 
+![Demo](https://github.com/Siphalor/nbt-crafting/screenshots/demo.png)
+
 ## Extra
 Due to some additions made with this mod the recipe book displays also the output amount of all recipes - yay!
 
