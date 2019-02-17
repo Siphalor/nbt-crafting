@@ -3,10 +3,11 @@ package de.siphalor.nbtcrafting;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.fabricmc.api.ModInitializer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sortme.JsonLikeTagParser;
 
-public class Core {
+public class Core implements ModInitializer {
 	
 	public static final String JSON_NBT_KEY = "data";
 	
@@ -39,6 +40,10 @@ public class Core {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public void onInitialize() {
 	}
 
 }

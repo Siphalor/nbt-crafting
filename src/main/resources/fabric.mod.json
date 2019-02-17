@@ -5,6 +5,7 @@
   "version": "0.0.0",
   "side": "universal",
   "initializers": [
+  	"de.siphalor.nbtcrafting.Core"
   ],
   "requires": {
   },
