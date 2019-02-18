@@ -12,10 +12,12 @@ import net.minecraft.util.registry.Registry;
 
 public class IngredientStackEntry extends IngredientEntry {
 	
-	int id;
+	private IngredientEntryCondition condition;
+	private int id;
 	
 	public IngredientStackEntry(int id, IngredientEntryCondition condition) {
 		this.id = id;
+		this.condition = condition;
 	}
 	
 	public IngredientStackEntry(ItemStack stack) {
@@ -24,19 +26,22 @@ public class IngredientStackEntry extends IngredientEntry {
 
 	@Override
 	public boolean matches(ItemStack stack) {
-		return Registry.ITEM.getRawId(stack.getItem()) == this.id;
+		return Registry.ITEM.getRawId(stack.getItem()) == this.id && condition.matches(stack);
 	}
 
 	@Override
 	public JsonElement toJson() {
 		JsonObject json = new JsonObject();
 		json.addProperty("item", Registry.ITEM.getId(Registry.ITEM.getInt(id)).toString());
+		condition.addToJson(json);
 		return json;
 	}
 
 	@Override
 	public Collection<ItemStack> getPreviewStacks() {
-		return Collections.singleton(new ItemStack(Registry.ITEM.getInt(id)));
+		ItemStack stack = new ItemStack(Registry.ITEM.getInt(id));
+		stack.setTag(condition.getPreviewTag());
+		return Collections.singleton(stack);
 	}
 
 	@Override

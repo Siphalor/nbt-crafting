@@ -3,16 +3,18 @@ package de.siphalor.nbtcrafting;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.fabricmc.api.ModInitializer;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.sortme.JsonLikeTagParser;
 
-public class Core implements ModInitializer {
+public class Core {
 	
 	public static final String JSON_NBT_KEY = "data";
 	
 	private static boolean lastReadNbtPresent = false;
 	private static CompoundTag lastReadNbt;
+	
+	public static RecipeFinder lastRecipeFinder;
 	
 	public static boolean hasLastReadNbt() {
 		return lastReadNbtPresent;
@@ -40,10 +42,6 @@ public class Core implements ModInitializer {
 			e.printStackTrace();
 			return null;
 		}
-	}
-
-	@Override
-	public void onInitialize() {
 	}
 
 }

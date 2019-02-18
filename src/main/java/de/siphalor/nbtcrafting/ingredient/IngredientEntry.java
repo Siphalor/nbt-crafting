@@ -3,8 +3,6 @@ package de.siphalor.nbtcrafting.ingredient;
 import java.util.Collection;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.PacketByteBuf;
 

@@ -17,7 +17,7 @@ dependencies {
 	modCompile "net.fabricmc:fabric-loader:0.3.6.107"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modCompile "net.fabricmc:fabric:0.2.1.95"
+	//modCompile "net.fabricmc:fabric:0.2.1.95"
 }
 
 // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task

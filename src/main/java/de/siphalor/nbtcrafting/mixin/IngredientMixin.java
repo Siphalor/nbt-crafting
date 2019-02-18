@@ -1,6 +1,5 @@
 package de.siphalor.nbtcrafting.mixin;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -11,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import com.google.common.base.Predicates;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -18,8 +18,11 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
 import de.siphalor.nbtcrafting.ingredient.IngredientEntry;
+import de.siphalor.nbtcrafting.ingredient.IngredientEntryCondition;
 import de.siphalor.nbtcrafting.ingredient.IngredientMultiStackEntry;
 import de.siphalor.nbtcrafting.ingredient.IngredientStackEntry;
+import de.siphalor.nbtcrafting.util.ICloneable;
+import de.siphalor.nbtcrafting.util.IIngredient;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.Item;
@@ -35,7 +38,7 @@ import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
 
 @Mixin(Ingredient.class)
-public abstract class IngredientMixin {
+public abstract class IngredientMixin implements IIngredient, ICloneable {
 	
 	private IngredientEntry[] realEntries;
 	
@@ -44,8 +47,9 @@ public abstract class IngredientMixin {
 	@Shadow
 	private IntList ids;
 	
-	public IngredientMixin(Stream<? extends IngredientEntry> entries) {
-		this.realEntries = entries.toArray(IngredientEntry[]::new);
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 	
 	@Overwrite
@@ -57,6 +61,9 @@ public abstract class IngredientMixin {
 	
 	@Overwrite
 	public boolean matches(ItemStack stack) {
+		if(realEntries == null) {
+			return stack == ItemStack.EMPTY;
+		}
 		for (int i = 0; i < realEntries.length; i++) {
 			if(realEntries[i].matches(stack))
 				return true;
@@ -100,29 +107,33 @@ public abstract class IngredientMixin {
 		return realEntries.length == 0;
 	}
 	
-	private static Ingredient ofEntries(Stream<? extends IngredientEntry> entries) {
+	private static Ingredient ofRealEntries(Stream<? extends IngredientEntry> entries) {
+		if(entries == null)
+			System.out.println("ERROR");
 		try {
-			Constructor<Ingredient> constructor = Ingredient.class.getConstructor(Stream.class);
-			return constructor.newInstance(entries);
-		} catch(Exception e) {
+			Ingredient ingredient;
+			ingredient = (Ingredient)((ICloneable)(Object)Ingredient.EMPTY).clone();
+			IIngredient.class.cast(ingredient).setRealEntries(entries);
+			return ingredient;
+		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
-			return null;
 		}
+		return Ingredient.EMPTY;
 	}
 	
 	@Overwrite
 	public static Ingredient ofItems(ItemProvider... arr) {
-		return ofEntries(Stream.of(new IngredientMultiStackEntry(Arrays.stream(arr).map(item -> Registry.ITEM.getRawId(item.getItem())).collect(Collectors.toList()), null)));
+		return ofRealEntries(Stream.of(new IngredientMultiStackEntry(Arrays.stream(arr).map(item -> Registry.ITEM.getRawId(item.getItem())).collect(Collectors.toList()), null)));
 	}
 	
 	@Overwrite
 	public static Ingredient ofStacks(ItemStack... arr) {
-		return ofEntries(Arrays.stream(arr).map(stack -> new IngredientStackEntry(stack)));
+		return ofRealEntries(Arrays.stream(arr).map(stack -> new IngredientStackEntry(stack)));
 	}
 	
 	@Overwrite
 	public static Ingredient fromTag(Tag<Item> tag) {
-		return ofEntries(Stream.of(new IngredientMultiStackEntry(tag.values().stream().map(item -> Registry.ITEM.getRawId(item)).collect(Collectors.toList()), null)));
+		return ofRealEntries(Stream.of(new IngredientMultiStackEntry(tag.values().stream().map(item -> Registry.ITEM.getRawId(item)).collect(Collectors.toList()), null)));
 	}
 	
 	@Overwrite
@@ -135,7 +146,7 @@ public abstract class IngredientMixin {
 			else
 				entries.add(IngredientStackEntry.read(buf));
 		}
-		return ofEntries(entries.stream());
+		return ofRealEntries(entries.stream());
 	}
 	
 	// Imported from Mojang
@@ -145,16 +156,16 @@ public abstract class IngredientMixin {
             throw new JsonSyntaxException("Item cannot be null");
         }
         if (element.isJsonObject()) {
-            return ofEntries(Stream.of(realEntryFromJson(element.getAsJsonObject())));
+            return ofRealEntries(Stream.of(realEntryFromJson(element.getAsJsonObject())));
         }
         if (!element.isJsonArray()) {
             throw new JsonSyntaxException("Expected item to be object or array of objects");
         }
-        final JsonArray jsonArray2 = element.getAsJsonArray();
-        if (jsonArray2.size() == 0) {
+        final JsonArray jsonArray = element.getAsJsonArray();
+        if (jsonArray.size() == 0) {
             throw new JsonSyntaxException("Item array cannot be empty, at least one item must be defined");
         }
-        return ofEntries(StreamSupport.<JsonElement>stream(jsonArray2.spliterator(), false).map(e-> realEntryFromJson(JsonHelper.asObject(e, "item"))));
+        return ofRealEntries(StreamSupport.<JsonElement>stream(jsonArray.spliterator(), false).map(e->realEntryFromJson(JsonHelper.asObject(e, "item"))));
     }
 	
 	// Imported from Mojang
@@ -168,7 +179,7 @@ public abstract class IngredientMixin {
 				final Item item = Registry.ITEM.getOptional(identifier).orElseThrow(() -> {
 					throw new JsonSyntaxException("Unknown item '" + identifier.toString() + "'");
 				});
-				return new IngredientStackEntry(Registry.ITEM.getRawId(item), null);
+				return new IngredientStackEntry(Registry.ITEM.getRawId(item), loadIngredientEntryCondition(jsonObject));
             } catch (Throwable e) {
             	e.printStackTrace();
             	return null;
@@ -182,9 +193,26 @@ public abstract class IngredientMixin {
         if (tag == null) {
             throw new JsonSyntaxException("Unknown item tag '" + identifier2 + "'");
         }
-        IngredientMultiStackEntry entry = new IngredientMultiStackEntry(tag.values().stream().map(item -> Registry.ITEM.getRawId(item)).collect(Collectors.toList()), null);
+        IngredientMultiStackEntry entry = new IngredientMultiStackEntry(tag.values().stream().map(item -> Registry.ITEM.getRawId(item)).collect(Collectors.toList()), loadIngredientEntryCondition(jsonObject));
         entry.setTag(tag.toString());
         return entry;
+	}
+	
+	private static IngredientEntryCondition loadIngredientEntryCondition(JsonObject jsonObject) {
+		if(jsonObject.has("data")) {
+			if(JsonHelper.isString(jsonObject.get("data"))) {
+				throw new JsonParseException("The data tag on recipes cannot be a string anymore; See the wiki for more information ;)");
+			}
+			if(jsonObject.get("data").isJsonObject()) {
+				return IngredientEntryCondition.fromJson(jsonObject.get("data").getAsJsonObject());
+			}
+		}
+		return new IngredientEntryCondition();
+	}
+	
+	@Override
+	public void setRealEntries(Stream<? extends IngredientEntry> entries) {
+		realEntries = entries.toArray(IngredientEntry[]::new);
 	}
 	
 	/*@Inject(method = "entryFromJson", at = @At("HEAD"))

@@ -6,13 +6,17 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.HashBiMap;
 import com.mojang.datafixers.util.Pair;
 
+import de.siphalor.nbtcrafting.Core;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.util.registry.Registry;
 
@@ -24,17 +28,26 @@ public abstract class RecipeFinderMixin {
 	private static Pair<Integer, CompoundTag> getStackPair(ItemStack stack) {
 		return new Pair<Integer, CompoundTag>(Registry.ITEM.getRawId(stack.getItem()), stack.getOrCreateTag());
 	}
+
+	@Inject(method = "findRecipe(Lnet/minecraft/recipe/Recipe;Lit/unimi/dsi/fastutil/ints/IntList;I)Z", at = @At("HEAD"))
+	public void onFindRecipe(@SuppressWarnings("rawtypes") Recipe recipe, IntList ints, int int_1, CallbackInfoReturnable<Boolean> ci) {
+		Core.lastRecipeFinder = (RecipeFinder)(Object)this;
+	}	
+	@Inject(method = "countRecipeCrafts(Lnet/minecraft/recipe/Recipe;ILit/unimi/dsi/fastutil/ints/IntList;)I", at = @At("HEAD"))
+	public void onCountCrafts(@SuppressWarnings("rawtypes") Recipe recipe, int int_1, IntList ints, CallbackInfoReturnable<Integer> ci) {
+		Core.lastRecipeFinder = (RecipeFinder)(Object)this;
+	}
 	
 	@Shadow
 	public abstract void addItem(final ItemStack stack);
 	
 	@Inject(method = "addItem(Lnet/minecraft/item/ItemStack;)V", at = @At("TAIL"))
 	private void onItemAdded(ItemStack stack, CallbackInfo ci) {
-		if(!stack.isEmpty() && stack.hasTag()) {
+		/*if(!stack.isEmpty() && stack.hasTag()) {
 			ItemStack taglessStack = stack.copy();
 			taglessStack.setTag(null);
 			addItem(taglessStack);
-		}
+		}*/
 	}
 	
 	@Overwrite
@@ -44,12 +57,12 @@ public abstract class RecipeFinderMixin {
 
 	@Overwrite
 	public static int getItemId(ItemStack stack) {
-		Pair<Integer, CompoundTag> hashKey = getStackPair(stack);
-		if(itemStackMap.containsKey(hashKey)) {
-			return itemStackMap.get(hashKey);
+		Pair<Integer, CompoundTag> stackPair = getStackPair(stack);
+		if(itemStackMap.containsKey(stackPair)) {
+			return itemStackMap.get(stackPair);
 		}
-		itemStackMap.put(hashKey, itemStackMap.size());
-		return itemStackMap.getOrDefault(hashKey, 0);
+		itemStackMap.put(stackPair, itemStackMap.size());
+		return itemStackMap.getOrDefault(stackPair, 0);
 	}
 	
 	@Overwrite
@@ -57,6 +70,7 @@ public abstract class RecipeFinderMixin {
 		if(itemStackMap.containsValue(id)) {
 			ItemStack result = new ItemStack(Item.byRawId(itemStackMap.inverse().get(id).getFirst()));
 			result.setTag(itemStackMap.inverse().get(id).getSecond());
+			//System.out.println(result);
 			return result;
 		}
 		return ItemStack.EMPTY;
