@@ -11,6 +11,7 @@ import net.minecraft.nbt.Tag;
 import java.util.Iterator;
 import java.util.Objects;
 
+@SuppressWarnings("ALL")
 public class NbtHelper {
 	
 	public static boolean tagsMatch(Tag main, Tag reference) {

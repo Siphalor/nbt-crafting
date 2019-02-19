@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+@SuppressWarnings("ALL")
 @Mixin(Ingredient.class)
 public abstract class IngredientMixin implements IIngredient, ICloneable {
 	

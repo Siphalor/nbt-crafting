@@ -1,9 +1,11 @@
 package de.siphalor.nbtcrafting.mixin;
 
-import java.util.BitSet;
-import java.util.Iterator;
-import java.util.List;
-
+import de.siphalor.nbtcrafting.Core;
+import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
+import it.unimi.dsi.fastutil.ints.IntCollection;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeFinder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -11,19 +13,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import de.siphalor.nbtcrafting.Core;
-import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
-import it.unimi.dsi.fastutil.ints.IntCollection;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeFinder;
+import java.util.BitSet;
+import java.util.Iterator;
+import java.util.List;
 
 @Mixin(targets = "net/minecraft/recipe/RecipeFinder$MatchableRecipe")
 public abstract class MatchableRecipeMixin {
 	
 	private RecipeFinder owner;
 
-	@Shadow(aliases = "field_7552")
+	@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    @Shadow(aliases = "field_7552")
 	private List<Ingredient> ingredients;
 	
 	@Shadow(aliases = "field_7551")
