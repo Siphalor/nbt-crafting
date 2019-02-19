@@ -1,19 +1,18 @@
 package de.siphalor.nbtcrafting.ingredient;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.stream.Collectors;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.stream.Collectors;
 
 public class IngredientMultiStackEntry extends IngredientEntry {
 	
@@ -57,15 +56,16 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 		for(int i = 0; i < itemIds.size(); i++) {
 			buf.writeVarInt(itemIds.getInt(i));
 		}
+		this.condition.write(buf);
 	}
 	
 	public static IngredientMultiStackEntry read(PacketByteBuf buf) {
 		int length = buf.readVarInt();
-		ArrayList<Integer> ids = new ArrayList<Integer>();
+		ArrayList<Integer> ids = new ArrayList<>();
 		for(int i = 0; i < length; i++) {
 			ids.add(buf.readVarInt());
 		}
-		return new IngredientMultiStackEntry(ids, null);
+		return new IngredientMultiStackEntry(ids, IngredientEntryCondition.read(buf));
 	}
 
 	public void setTag(String tag) {

@@ -1,14 +1,14 @@
 package de.siphalor.nbtcrafting.ingredient;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public class IngredientStackEntry extends IngredientEntry {
 	
@@ -22,6 +22,10 @@ public class IngredientStackEntry extends IngredientEntry {
 	
 	public IngredientStackEntry(ItemStack stack) {
 		this.id = Registry.ITEM.getRawId(stack.getItem());
+		if(stack.hasTag())
+			this.condition = new IngredientEntryCondition(stack.getTag(), new CompoundTag());
+		else
+			this.condition = new IngredientEntryCondition();
 	}
 
 	@Override
@@ -40,6 +44,8 @@ public class IngredientStackEntry extends IngredientEntry {
 	@Override
 	public Collection<ItemStack> getPreviewStacks() {
 		ItemStack stack = new ItemStack(Registry.ITEM.getInt(id));
+		if(condition == null)
+			System.out.println("abc");
 		stack.setTag(condition.getPreviewTag());
 		return Collections.singleton(stack);
 	}
@@ -47,10 +53,11 @@ public class IngredientStackEntry extends IngredientEntry {
 	@Override
 	public void write(PacketByteBuf buf) {
 		buf.writeVarInt(id);
+		this.condition.write(buf);
 	}
 	
 	public static IngredientStackEntry read(PacketByteBuf buf) {
-		return new IngredientStackEntry(buf.readVarInt(), null);
+		return new IngredientStackEntry(buf.readVarInt(), IngredientEntryCondition.read(buf));
 	}
 
 }

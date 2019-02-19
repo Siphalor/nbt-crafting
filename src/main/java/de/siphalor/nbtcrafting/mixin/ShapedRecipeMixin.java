@@ -1,18 +1,20 @@
 package de.siphalor.nbtcrafting.mixin;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.mojang.datafixers.Dynamic;
+import com.mojang.datafixers.types.JsonOps;
+import de.siphalor.nbtcrafting.Core;
+import net.minecraft.datafixers.NbtOps;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.recipe.crafting.ShapedRecipe;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-
-import com.google.gson.JsonObject;
-
-import de.siphalor.nbtcrafting.Core;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.crafting.ShapedRecipe;
-import net.minecraft.util.JsonHelper;
 
 @Mixin(ShapedRecipe.class)
 public abstract class ShapedRecipeMixin {
@@ -24,7 +26,9 @@ public abstract class ShapedRecipeMixin {
 	private static void deserializeItemStack(JsonObject json, CallbackInfoReturnable<ItemStack> ci) {
 		Core.setLastReadNbt(null);
 		if(json.has("data")) {
-			Core.setLastReadNbt(Core.parseNbtString(JsonHelper.getString(json, Core.JSON_NBT_KEY)));
+			if(!json.get("data").isJsonObject())
+				throw new JsonParseException("The recipe's output data tag must be a JSON object.");
+			Core.setLastReadNbt((CompoundTag) Dynamic.convert(JsonOps.INSTANCE, NbtOps.INSTANCE, json.getAsJsonObject("data")));
 			json.remove("data");
 		}
 	}

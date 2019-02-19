@@ -1,22 +1,7 @@
 package de.siphalor.nbtcrafting.mixin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-
 import com.google.common.base.Predicates;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
-
+import com.google.gson.*;
 import de.siphalor.nbtcrafting.ingredient.IngredientEntry;
 import de.siphalor.nbtcrafting.ingredient.IngredientEntryCondition;
 import de.siphalor.nbtcrafting.ingredient.IngredientMultiStackEntry;
@@ -36,6 +21,18 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @Mixin(Ingredient.class)
 public abstract class IngredientMixin implements IIngredient, ICloneable {
@@ -52,6 +49,11 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 		return super.clone();
 	}
 	
+	@Inject(method = "<init>", at = @At("RETURN"))
+	private void onConstruct(@SuppressWarnings("rawtypes") Stream stream, CallbackInfo ci) {
+		realEntries = new IngredientEntry[0];
+	}
+	
 	@Overwrite
 	private void createStackArray() {
 		if(stackArray != null)
@@ -61,8 +63,8 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 	
 	@Overwrite
 	public boolean matches(ItemStack stack) {
-		if(realEntries == null) {
-			return stack == ItemStack.EMPTY;
+		if(realEntries.length == 0) {
+			return stack.isEmpty();
 		}
 		for (int i = 0; i < realEntries.length; i++) {
 			if(realEntries[i].matches(stack))
@@ -123,7 +125,7 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 	
 	@Overwrite
 	public static Ingredient ofItems(ItemProvider... arr) {
-		return ofRealEntries(Stream.of(new IngredientMultiStackEntry(Arrays.stream(arr).map(item -> Registry.ITEM.getRawId(item.getItem())).collect(Collectors.toList()), null)));
+		return ofRealEntries(Stream.of(new IngredientMultiStackEntry(Arrays.stream(arr).map(item -> Registry.ITEM.getRawId(item.getItem())).collect(Collectors.toList()), new IngredientEntryCondition())));
 	}
 	
 	@Overwrite
@@ -133,7 +135,7 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 	
 	@Overwrite
 	public static Ingredient fromTag(Tag<Item> tag) {
-		return ofRealEntries(Stream.of(new IngredientMultiStackEntry(tag.values().stream().map(item -> Registry.ITEM.getRawId(item)).collect(Collectors.toList()), null)));
+		return ofRealEntries(Stream.of(new IngredientMultiStackEntry(tag.values().stream().map(item -> Registry.ITEM.getRawId(item)).collect(Collectors.toList()), new IngredientEntryCondition())));
 	}
 	
 	@Overwrite
@@ -212,7 +214,7 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 	
 	@Override
 	public void setRealEntries(Stream<? extends IngredientEntry> entries) {
-		realEntries = entries.toArray(IngredientEntry[]::new);
+		realEntries = entries.filter(Predicates.notNull()).toArray(IngredientEntry[]::new);
 	}
 	
 	/*@Inject(method = "entryFromJson", at = @At("HEAD"))

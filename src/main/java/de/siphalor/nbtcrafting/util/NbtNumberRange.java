@@ -57,6 +57,6 @@ public class NbtNumberRange {
 				e.printStackTrace();
 			}
 		}
-		return null;
+		return NbtNumberRange.between(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 	}
 }
