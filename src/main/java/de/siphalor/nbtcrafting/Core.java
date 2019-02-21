@@ -2,7 +2,6 @@ package de.siphalor.nbtcrafting;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.sortme.JsonLikeTagParser;
@@ -28,7 +27,7 @@ public class Core {
 	public static CompoundTag useLastReadNbt() {
 		CompoundTag result = null;
 		if(lastReadNbt != null) {
-			result = lastReadNbt.copy();
+			result = (CompoundTag) lastReadNbt.copy();
 			lastReadNbt = null;
 		}
 		lastReadNbtPresent = false;

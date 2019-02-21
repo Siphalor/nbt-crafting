@@ -42,7 +42,7 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 	@Override
 	public Collection<ItemStack> getPreviewStacks() {
 		CompoundTag tag = condition.getPreviewTag();
-		Collection<ItemStack> stacks = itemIds.stream().map(id -> new ItemStack(Registry.ITEM.getInt(id))).collect(Collectors.toList());
+		Collection<ItemStack> stacks = itemIds.stream().map(id -> new ItemStack(Registry.ITEM.get(id))).collect(Collectors.toList());
 		for (Iterator<ItemStack> iterator = stacks.iterator(); iterator.hasNext();) {
 			ItemStack itemStack = iterator.next();
 			itemStack.setTag(tag);

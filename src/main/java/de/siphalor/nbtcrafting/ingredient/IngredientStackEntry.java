@@ -36,14 +36,14 @@ public class IngredientStackEntry extends IngredientEntry {
 	@Override
 	public JsonElement toJson() {
 		JsonObject json = new JsonObject();
-		json.addProperty("item", Registry.ITEM.getId(Registry.ITEM.getInt(id)).toString());
+		json.addProperty("item", Registry.ITEM.getId(Registry.ITEM.get(id)).toString());
 		condition.addToJson(json);
 		return json;
 	}
 
 	@Override
 	public Collection<ItemStack> getPreviewStacks() {
-		ItemStack stack = new ItemStack(Registry.ITEM.getInt(id));
+		ItemStack stack = new ItemStack(Registry.ITEM.get(id));
 		if(condition == null)
 			System.out.println("abc");
 		stack.setTag(condition.getPreviewTag());

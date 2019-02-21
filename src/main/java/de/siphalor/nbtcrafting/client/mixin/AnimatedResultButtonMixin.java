@@ -16,8 +16,8 @@ import java.util.List;
 @Mixin(AnimatedResultButton.class)
 public abstract class AnimatedResultButtonMixin extends ButtonWidget {
 
-	public AnimatedResultButtonMixin(int int_1, int int_2, int int_3, int int_4, int int_5, String string_1) {
-		super(int_1, int_2, int_3, int_4, int_5, string_1);
+	public AnimatedResultButtonMixin(int int_1, int int_2, String string_1) {
+		super(int_1, int_2, string_1);
 	}
 
 	@Inject(

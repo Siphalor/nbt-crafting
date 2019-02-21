@@ -179,7 +179,7 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
         if (jsonObject.has("item")) {
             final Identifier identifier = new Identifier(JsonHelper.getString(jsonObject, "item"));
             try {
-				final Item item = Registry.ITEM.getOptional(identifier).orElseThrow(() -> {
+				final Item item = Registry.ITEM.getOrEmpty(identifier).orElseThrow(() -> {
 					throw new JsonSyntaxException("Unknown item '" + identifier.toString() + "'");
 				});
 				return new IngredientStackEntry(Registry.ITEM.getRawId(item), loadIngredientEntryCondition(jsonObject));
