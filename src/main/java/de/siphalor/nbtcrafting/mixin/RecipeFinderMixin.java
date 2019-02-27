@@ -69,7 +69,7 @@ public abstract class RecipeFinderMixin {
 		if(itemStackMap.containsValue(id)) {
 			ItemStack result = new ItemStack(Item.byRawId(itemStackMap.inverse().get(id).getFirst()));
 			result.setTag(itemStackMap.inverse().get(id).getSecond());
-			//System.out.println(result);
+			//System.out.println(dollars);
 			return result;
 		}
 		return ItemStack.EMPTY;

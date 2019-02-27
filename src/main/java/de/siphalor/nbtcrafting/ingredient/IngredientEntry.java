@@ -16,5 +16,5 @@ public abstract class IngredientEntry {
 	
 	public abstract void write(PacketByteBuf buf);
 
-	public abstract ItemStack getRecipeRemainder();
+	public abstract ItemStack getRecipeRemainder(ItemStack stack);
 }

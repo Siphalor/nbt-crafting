@@ -69,7 +69,7 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 	}
 
 	@Override
-	public ItemStack getRecipeRemainder() {
+	public ItemStack getRecipeRemainder(ItemStack stack) {
 		return remainder;
 	}
 
