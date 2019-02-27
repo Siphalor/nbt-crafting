@@ -2,12 +2,8 @@ package de.siphalor.nbtcrafting.mixin;
 
 import com.google.common.base.Predicates;
 import com.google.gson.*;
-import de.siphalor.nbtcrafting.ingredient.IngredientEntry;
-import de.siphalor.nbtcrafting.ingredient.IngredientEntryCondition;
-import de.siphalor.nbtcrafting.ingredient.IngredientMultiStackEntry;
-import de.siphalor.nbtcrafting.ingredient.IngredientStackEntry;
+import de.siphalor.nbtcrafting.ingredient.*;
 import de.siphalor.nbtcrafting.util.ICloneable;
-import de.siphalor.nbtcrafting.util.IIngredient;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.Item;
@@ -15,6 +11,7 @@ import net.minecraft.item.ItemProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeFinder;
+import net.minecraft.recipe.crafting.ShapedRecipe;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
@@ -116,7 +113,7 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 		try {
 			Ingredient ingredient;
 			ingredient = (Ingredient)((ICloneable)(Object)Ingredient.EMPTY).clone();
-			IIngredient.class.cast(ingredient).setRealEntries(entries);
+			((IIngredient)(Object)ingredient).setRealEntries(entries);
 			return ingredient;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
@@ -182,7 +179,11 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 				final Item item = Registry.ITEM.getOrEmpty(identifier).orElseThrow(() -> {
 					throw new JsonSyntaxException("Unknown item '" + identifier.toString() + "'");
 				});
-				return new IngredientStackEntry(Registry.ITEM.getRawId(item), loadIngredientEntryCondition(jsonObject));
+				IngredientStackEntry entry = new IngredientStackEntry(Registry.ITEM.getRawId(item), loadIngredientEntryCondition(jsonObject));
+				if(jsonObject.has("remainder")) {
+					entry.setRecipeRemainder(ShapedRecipe.deserializeItemStack(JsonHelper.getObject(jsonObject, "remainder")));
+				}
+				return entry;
             } catch (Throwable e) {
             	e.printStackTrace();
             	return null;
@@ -198,6 +199,9 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
         }
         IngredientMultiStackEntry entry = new IngredientMultiStackEntry(tag.values().stream().map(item -> Registry.ITEM.getRawId(item)).collect(Collectors.toList()), loadIngredientEntryCondition(jsonObject));
         entry.setTag(tag.toString());
+        if(jsonObject.has("remainder")) {
+        	entry.setRecipeRemainder(ShapedRecipe.deserializeItemStack(JsonHelper.getObject(jsonObject, "remainder")));
+        }
         return entry;
 	}
 	
@@ -217,24 +221,17 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 	public void setRealEntries(Stream<? extends IngredientEntry> entries) {
 		realEntries = entries.filter(Predicates.notNull()).toArray(IngredientEntry[]::new);
 	}
-	
-	/*@Inject(method = "entryFromJson", at = @At("HEAD"))
-	private static void stackFromJsonMixin(JsonObject json, CallbackInfoReturnable<Object> ci) {
-		Core.setLastReadNbt(null);
-		if(JsonHelper.hasString(json, Core.JSON_NBT_KEY)) {
-			Core.setLastReadNbt(Core.parseNbtString(JsonHelper.getString(json, Core.JSON_NBT_KEY)));
-		}
-	}
-	
-	@Inject(method = "matches", at = @At(value = "RETURN", ordinal = 2), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
-	public void matches(ItemStack stackReference, CallbackInfoReturnable<Boolean> ci, ItemStack stackArray[], int int_1, int int_2, ItemStack currentStack) {
-		if(currentStack.hasTag() && stackReference.hasTag()) {
-			for(String key : currentStack.getTag().getKeys()) {
-				if(!stackReference.getTag().containsKey(key))
-					ci.setReturnValue(false);
-				if(!currentStack.getTag().getTag(key).equals(stackReference.getTag().getTag(key)))
-					ci.setReturnValue(false);
+
+	@Override
+	public ItemStack getRecipeRemainder(ItemStack stack) {
+		for(IngredientEntry entry : realEntries) {
+			if(entry.matches(stack)) {
+				ItemStack remainder = entry.getRecipeRemainder();
+				if (remainder != null) {
+					return remainder;
+				}
 			}
 		}
-	}*/
+		return null;
+	}
 }

@@ -1,15 +1,16 @@
 {
-  "required": true,
-  "package": "de.siphalor.nbtcrafting.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "mixins": [
-    "IngredientMixin",
-    "RecipeFinderMixin",
-    "MatchableRecipeMixin",
-    "InputSlotFillerMixin",
-    "ShapedRecipeMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+	"required": true,
+	"package": "de.siphalor.nbtcrafting.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"IngredientMixin",
+		"RecipeFinderMixin",
+		"MatchableRecipeMixin",
+		"InputSlotFillerMixin",
+		"ShapedRecipeMixin",
+		"RecipeMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
 }

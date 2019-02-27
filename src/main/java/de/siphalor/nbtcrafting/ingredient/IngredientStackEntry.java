@@ -14,10 +14,12 @@ public class IngredientStackEntry extends IngredientEntry {
 	
 	private IngredientEntryCondition condition;
 	private int id;
+	private ItemStack remainder;
 	
 	public IngredientStackEntry(int id, IngredientEntryCondition condition) {
 		this.id = id;
 		this.condition = condition;
+		this.remainder = null;
 	}
 	
 	public IngredientStackEntry(ItemStack stack) {
@@ -44,8 +46,6 @@ public class IngredientStackEntry extends IngredientEntry {
 	@Override
 	public Collection<ItemStack> getPreviewStacks() {
 		ItemStack stack = new ItemStack(Registry.ITEM.get(id));
-		if(condition == null)
-			System.out.println("abc");
 		stack.setTag(condition.getPreviewTag());
 		return Collections.singleton(stack);
 	}
@@ -54,10 +54,25 @@ public class IngredientStackEntry extends IngredientEntry {
 	public void write(PacketByteBuf buf) {
 		buf.writeVarInt(id);
 		this.condition.write(buf);
+		buf.writeBoolean(remainder != null);
+		if(remainder != null)
+			buf.writeItemStack(remainder);
 	}
-	
+
+	public void setRecipeRemainder(ItemStack stack) {
+		remainder = stack;
+	}
+
+	@Override
+	public ItemStack getRecipeRemainder() {
+		return remainder;
+	}
+
 	public static IngredientStackEntry read(PacketByteBuf buf) {
-		return new IngredientStackEntry(buf.readVarInt(), IngredientEntryCondition.read(buf));
+		IngredientStackEntry entry = new IngredientStackEntry(buf.readVarInt(), IngredientEntryCondition.read(buf));
+		if(buf.readBoolean())
+            entry.setRecipeRemainder(buf.readItemStack());
+		return entry;
 	}
 
 }

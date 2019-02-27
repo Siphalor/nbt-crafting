@@ -1,10 +1,10 @@
 package de.siphalor.nbtcrafting.ingredient;
 
-import java.util.Collection;
-
 import com.google.gson.JsonElement;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.PacketByteBuf;
+
+import java.util.Collection;
 
 public abstract class IngredientEntry {
 	
@@ -15,4 +15,6 @@ public abstract class IngredientEntry {
 	public abstract Collection<ItemStack> getPreviewStacks();
 	
 	public abstract void write(PacketByteBuf buf);
+
+	public abstract ItemStack getRecipeRemainder();
 }
