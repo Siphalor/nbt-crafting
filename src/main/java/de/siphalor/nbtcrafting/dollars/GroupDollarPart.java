@@ -5,9 +5,14 @@ import net.minecraft.nbt.CompoundTag;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DollarGroupPart implements DollarPart {
+public class GroupDollarPart implements DollarPart {
 	public ArrayList<DollarPart> parts;
 	public ArrayList<DollarOperator> operators;
+
+	public GroupDollarPart() {
+		parts = new ArrayList<>();
+		operators = new ArrayList<>();
+	}
 
 	public ValueDollarPart apply(HashMap<String, CompoundTag> references) throws DollarException {
 		if(parts.size() <= 0)
@@ -17,7 +22,12 @@ public class DollarGroupPart implements DollarPart {
 			Object other = parts.get(i + 1).apply(references).value;
             switch(operators.get(i)) {
 	            case ADD:
-	            	if(value instanceof Double) {
+	            	if(value == null) {
+	            		if(other instanceof Double)
+	            			value = (Double) other;
+	            		else if(other instanceof String)
+	            			value = (String) other;
+		            } else if(value instanceof Double) {
 	            		if(other instanceof Double) {
 	            			value = (Double) value + (Double) other;
 			            } else
@@ -46,8 +56,6 @@ public class DollarGroupPart implements DollarPart {
 		            break;
             }
 		}
-		ValueDollarPart result = new ValueDollarPart();
-		result.value = value;
-		return result;
+		return new ValueDollarPart(value);
 	}
 }

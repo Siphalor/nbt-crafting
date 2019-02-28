@@ -8,25 +8,34 @@ import net.minecraft.nbt.Tag;
 import java.util.HashMap;
 
 public class ReferenceDollarPart implements DollarPart {
-	public String path;
 	public String ingredientId;
+	public String path;
+	public String key;
 
 	public ReferenceDollarPart(String path) {
 		int index = path.indexOf('.');
-		this.ingredientId = path.substring(0, index);
+		ingredientId = path.substring(0, index);
 		this.path = path.substring(index + 1);
+		index = this.path.lastIndexOf('.');
+		if(index == -1) {
+			key = this.path;
+			this.path = "";
+		} else {
+			key = this.path.substring(index);
+			this.path = this.path.substring(index);
+		}
 	}
 
 	public ValueDollarPart apply(HashMap<String, CompoundTag> references) throws DollarException {
-		CompoundTag parent = Dollar.getParentTagOrCreate(references.get(ingredientId), path);
-		Tag tag = parent.getTag(path.substring(path.lastIndexOf('.') + 1));
-		ValueDollarPart part = new ValueDollarPart();
+		CompoundTag parent = NbtHelper.getParentTagOrCreate(references.get(ingredientId), path);
+		if(!parent.containsKey(key))
+			return new ValueDollarPart();
+		Tag tag = parent.getTag(this.key);
 		if(NbtHelper.isString(tag))
-			part.value = tag.asString();
+			return new ValueDollarPart(tag.asString());
 		else if(NbtHelper.isNumeric(tag))
-			part.value = ((AbstractNumberTag) tag).getDouble();
+			return new ValueDollarPart(((AbstractNumberTag) tag).getDouble());
 		else
-			part.value = tag;
-		return part;
+            return new ValueDollarPart(tag);
 	}
 }

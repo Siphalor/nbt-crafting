@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.recipe.crafting.ShapedRecipe;
@@ -27,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -223,10 +225,10 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 	}
 
 	@Override
-	public ItemStack getRecipeRemainder(ItemStack stack) {
+	public ItemStack getRecipeRemainder(ItemStack stack, HashMap<String, CompoundTag> reference) {
 		for(IngredientEntry entry : realEntries) {
 			if(entry.matches(stack)) {
-				ItemStack remainder = entry.getRecipeRemainder();
+				ItemStack remainder = entry.getRecipeRemainder(stack, reference);
 				if (remainder != null) {
 					return remainder;
 				}

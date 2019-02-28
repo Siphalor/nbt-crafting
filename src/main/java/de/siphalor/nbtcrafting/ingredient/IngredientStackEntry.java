@@ -14,12 +14,11 @@ public class IngredientStackEntry extends IngredientEntry {
 	
 	private IngredientEntryCondition condition;
 	private int id;
-	private ItemStack remainder;
-	
+
 	public IngredientStackEntry(int id, IngredientEntryCondition condition) {
+		super();
 		this.id = id;
 		this.condition = condition;
-		this.remainder = null;
 	}
 	
 	public IngredientStackEntry(ItemStack stack) {
@@ -57,15 +56,6 @@ public class IngredientStackEntry extends IngredientEntry {
 		buf.writeBoolean(remainder != null);
 		if(remainder != null)
 			buf.writeItemStack(remainder);
-	}
-
-	public void setRecipeRemainder(ItemStack stack) {
-		remainder = stack;
-	}
-
-	@Override
-	public ItemStack getRecipeRemainder(ItemStack stack) {
-		return remainder;
 	}
 
 	public static IngredientStackEntry read(PacketByteBuf buf) {

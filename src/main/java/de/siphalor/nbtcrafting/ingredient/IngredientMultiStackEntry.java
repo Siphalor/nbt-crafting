@@ -19,13 +19,12 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 	private IngredientEntryCondition condition;
 	private IntList itemIds;
 	private String tag;
-	private ItemStack remainder;
 
 	public IngredientMultiStackEntry(Collection<Integer> items, IngredientEntryCondition condition) {
+		super();
 		this.condition = condition;
 		this.itemIds = new IntArrayList(items);
 		this.tag = "";
-		this.remainder = null;
 	}
 	
 	@Override
@@ -62,15 +61,6 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 		buf.writeBoolean(remainder != null);
 		if(remainder != null)
 			buf.writeItemStack(remainder);
-	}
-
-	public void setRecipeRemainder(ItemStack stack) {
-		remainder = stack;
-	}
-
-	@Override
-	public ItemStack getRecipeRemainder(ItemStack stack) {
-		return remainder;
 	}
 
 	public static IngredientMultiStackEntry read(PacketByteBuf buf) {

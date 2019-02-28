@@ -2,6 +2,7 @@ package de.siphalor.nbtcrafting.util;
 
 import com.mojang.datafixers.DSL;
 import com.mojang.datafixers.types.Type;
+import de.siphalor.nbtcrafting.dollars.DollarException;
 import net.minecraft.datafixers.NbtOps;
 import net.minecraft.nbt.AbstractNumberTag;
 import net.minecraft.nbt.CompoundTag;
@@ -10,6 +11,7 @@ import net.minecraft.nbt.Tag;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.BiFunction;
 
 @SuppressWarnings("ALL")
 public class NbtHelper {
@@ -133,5 +135,40 @@ public class NbtHelper {
 		       Objects.equals(type, DSL.longType()) ||
 		       Objects.equals(type, DSL.floatType()) ||
 		       Objects.equals(type, DSL.doubleType());
+	}
+
+	public static CompoundTag getParentTagOrCreate(CompoundTag main, String path) throws DollarException {
+		CompoundTag currentCompound = main;
+		String[] pathParts = path.split(".");
+		for (int i = 0; i < pathParts.length - 1; i++) {
+			if(!currentCompound.containsKey(pathParts[i])) {
+				currentCompound.put(pathParts[i], new CompoundTag());
+				currentCompound = currentCompound.getCompound(pathParts[i]);
+			} else if(isCompound(currentCompound.getTag(pathParts[i]))) {
+				currentCompound = currentCompound.getCompound(pathParts[i]);
+			} else {
+				throw new DollarException(path + " is not a valid path in " + main.asString());
+			}
+		}
+		return currentCompound;
+	}
+
+	public static void iterateCompounds(CompoundTag tag, BiFunction<String, Tag, Boolean> biFunction) {
+		iterateCompounds(tag, biFunction, "");
+	}
+
+	private static void iterateCompounds(CompoundTag tag, BiFunction<String, Tag, Boolean> biFunction, String path) {
+		if(path != "")
+			path += ".";
+		for(String key : tag.getKeys()) {
+			if(isCompound(tag.getTag(key)))
+				iterateCompounds(tag.getCompound(key), biFunction, path + key);
+			else if(isList(tag.getTag(key)))
+				continue;
+			else {
+				if(biFunction.apply(path + key, tag.getTag(key)))
+					tag.remove(key);
+			}
+		}
 	}
 }
