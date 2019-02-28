@@ -4,14 +4,11 @@ import com.google.common.base.Predicates;
 import com.google.gson.*;
 import de.siphalor.nbtcrafting.ingredient.*;
 import de.siphalor.nbtcrafting.util.ICloneable;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.recipe.crafting.ShapedRecipe;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
@@ -20,11 +17,11 @@ import net.minecraft.util.JsonHelper;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +34,7 @@ import java.util.stream.StreamSupport;
 @Mixin(Ingredient.class)
 public abstract class IngredientMixin implements IIngredient, ICloneable {
 	
-	private IngredientEntry[] realEntries;
+	private IngredientEntry[] advancedEntries;
 	
 	@Shadow
 	private ItemStack[] stackArray;
@@ -51,71 +48,81 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 	
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onConstruct(@SuppressWarnings("rawtypes") Stream stream, CallbackInfo ci) {
-		realEntries = new IngredientEntry[0];
+		advancedEntries = null;
 	}
 	
-	@Overwrite
-	private void createStackArray() {
-		if(stackArray != null)
+	@Inject(method = "createStackArray", at = @At("HEAD"), cancellable = true)
+	private void createStackArray(CallbackInfo callbackInfo) {
+		if(advancedEntries != null) {
+			callbackInfo.cancel();
+			if (stackArray != null)
+				return;
+			stackArray = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks().stream()).distinct().toArray(ItemStack[]::new);
 			return;
-		stackArray = Arrays.stream(realEntries).flatMap(entry -> entry.getPreviewStacks().stream()).distinct().toArray(ItemStack[]::new);
-	}
-	
-	@Overwrite
-	public boolean matches(ItemStack stack) {
-		if(realEntries.length == 0) {
-			return stack.isEmpty();
 		}
-		for (int i = 0; i < realEntries.length; i++) {
-			if(realEntries[i].matches(stack))
-				return true;
-		}
-		return false;
 	}
-	
-	@Overwrite
-	public IntList getIds() {
-		if(ids == null) {
-			createStackArray();
-			ids = new IntArrayList(Arrays.stream(stackArray).map(stack -> RecipeFinder.getItemId(stack)).iterator());
-		}
-		return ids;
-	}
-	
-	@Overwrite
-	public void write(PacketByteBuf buf) {
-		buf.writeVarInt(realEntries.length);
-		for (int i = 0; i < realEntries.length; i++) {
-			IngredientEntry entry = realEntries[i];
-			buf.writeBoolean(entry instanceof IngredientMultiStackEntry);
-			entry.write(buf);
+
+    @Inject(method = "method_8093", at = @At("HEAD"), cancellable = true)
+	public void matches(ItemStack stack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+		if(advancedEntries != null) {
+			if (advancedEntries.length == 0) {
+                callbackInfoReturnable.setReturnValue(stack.isEmpty());
+                return;
+			}
+			for (int i = 0; i < advancedEntries.length; i++) {
+				System.out.println("try entry");
+				if (advancedEntries[i].matches(stack)) {
+					callbackInfoReturnable.setReturnValue(true);
+                    return;
+				}
+			}
+            callbackInfoReturnable.setReturnValue(false);
 		}
 	}
 	
-	@Overwrite
-	public JsonElement toJson() {
-		if(realEntries.length == 1) {
-			return realEntries[0].toJson();
+	@Inject(method = "write", at = @At("HEAD"), cancellable = true)
+	public void write(PacketByteBuf buf, CallbackInfo callbackInfo) {
+		buf.writeBoolean(advancedEntries != null);
+		if(advancedEntries != null) {
+			buf.writeVarInt(advancedEntries.length);
+			for (int i = 0; i < advancedEntries.length; i++) {
+				IngredientEntry entry = advancedEntries[i];
+				buf.writeBoolean(entry instanceof IngredientMultiStackEntry);
+				entry.write(buf);
+			}
+			callbackInfo.cancel();
 		}
-		JsonArray array = new JsonArray();
-		for (int i = 0; i < realEntries.length; i++) {
-			array.add(realEntries[i].toJson());
-		}
-		return array;
 	}
 	
-	@Overwrite
-	public boolean isEmpty() {
-		return realEntries.length == 0;
+	@Inject(method = "toJson", at = @At("HEAD"), cancellable = true)
+	public void toJson(CallbackInfoReturnable<JsonElement> callbackInfoReturnable) {
+		if(advancedEntries != null) {
+			if (advancedEntries.length == 1) {
+				callbackInfoReturnable.setReturnValue(advancedEntries[0].toJson());
+				return;
+			}
+			JsonArray array = new JsonArray();
+			for (int i = 0; i < advancedEntries.length; i++) {
+				array.add(advancedEntries[i].toJson());
+			}
+            callbackInfoReturnable.setReturnValue(array);
+		}
 	}
 	
-	private static Ingredient ofRealEntries(Stream<? extends IngredientEntry> entries) {
+	@Inject(method = "isEmpty", at = @At("HEAD"), cancellable = true)
+	public void isEmpty(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+		if(advancedEntries != null) {
+			callbackInfoReturnable.setReturnValue(advancedEntries.length == 0);
+		}
+	}
+	
+	private static Ingredient ofAdvancedEntries(Stream<? extends IngredientEntry> entries) {
 		if(entries == null)
 			System.out.println("ERROR");
 		try {
 			Ingredient ingredient;
 			ingredient = (Ingredient)((ICloneable)(Object)Ingredient.EMPTY).clone();
-			((IIngredient)(Object)ingredient).setRealEntries(entries);
+			((IIngredient)(Object)ingredient).setAdvancedEntries(entries);
 			return ingredient;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
@@ -123,55 +130,44 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 		return Ingredient.EMPTY;
 	}
 	
-	@Overwrite
-	public static Ingredient ofItems(ItemProvider... arr) {
-		return ofRealEntries(Stream.of(new IngredientMultiStackEntry(Arrays.stream(arr).map(item -> Registry.ITEM.getRawId(item.getItem())).collect(Collectors.toList()), new IngredientEntryCondition())));
-	}
-	
-	@Overwrite
+	/*@Overwrite
 	public static Ingredient ofStacks(ItemStack... arr) {
-		return ofRealEntries(Arrays.stream(arr).map(stack -> new IngredientStackEntry(stack)));
-	}
-	
-	@Overwrite
-	public static Ingredient fromTag(Tag<Item> tag) {
-		return ofRealEntries(Stream.of(new IngredientMultiStackEntry(tag.values().stream().map(item -> Registry.ITEM.getRawId(item)).collect(Collectors.toList()), new IngredientEntryCondition())));
-	}
-	
-	@Overwrite
-	public static Ingredient fromPacket(PacketByteBuf buf) {
-		ArrayList<IngredientEntry> entries = new ArrayList<IngredientEntry>();
-		int length = buf.readVarInt();
-		for(int i = 0; i < length; i++) {
-			if(buf.readBoolean())
-				entries.add(IngredientMultiStackEntry.read(buf));
-			else
-				entries.add(IngredientStackEntry.read(buf));
+		return ofAdvancedEntries(Arrays.stream(arr).map(stack -> new IngredientStackEntry(stack)));
+	}*/
+
+	@Inject(method = "fromPacket", at = @At("HEAD"), cancellable = true)
+	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> callbackInfoReturnable) {
+		if(buf.readBoolean()) {
+			ArrayList<IngredientEntry> entries = new ArrayList<IngredientEntry>();
+			int length = buf.readVarInt();
+			for (int i = 0; i < length; i++) {
+				if (buf.readBoolean())
+					entries.add(IngredientMultiStackEntry.read(buf));
+				else
+					entries.add(IngredientStackEntry.read(buf));
+			}
+			callbackInfoReturnable.setReturnValue(ofAdvancedEntries(entries.stream()));
 		}
-		return ofRealEntries(entries.stream());
 	}
-	
-	// Imported from Mojang
-	@Overwrite
-	public static Ingredient fromJson(JsonElement element) {
-        if (element == null || element.isJsonNull()) {
+
+	@Inject(method = "fromJson", at = @At("HEAD"), cancellable = true)
+	private static void fromJson(JsonElement element, CallbackInfoReturnable<Ingredient> callbackInfoReturnable) {
+        if(element == null || element.isJsonNull()) {
             throw new JsonSyntaxException("Item cannot be null");
         }
-        if (element.isJsonObject()) {
-            return ofRealEntries(Stream.of(realEntryFromJson(element.getAsJsonObject())));
+        if(element.isJsonObject()) {
+        	if(element.getAsJsonObject().has("data") || element.getAsJsonObject().has("remainder"))
+				callbackInfoReturnable.setReturnValue(ofAdvancedEntries(Stream.of(advancedEntryFromJson(element.getAsJsonObject()))));
+        } else if(element.isJsonArray()) {
+	        final JsonArray jsonArray = element.getAsJsonArray();
+	        if (jsonArray.size() == 0) {
+		        throw new JsonSyntaxException("Item array cannot be empty, at least one item must be defined");
+	        }
+	        callbackInfoReturnable.setReturnValue(ofAdvancedEntries(StreamSupport.<JsonElement>stream(jsonArray.spliterator(), false).map(e-> advancedEntryFromJson(JsonHelper.asObject(e, "item")))));
         }
-        if (!element.isJsonArray()) {
-            throw new JsonSyntaxException("Expected item to be object or array of objects");
-        }
-        final JsonArray jsonArray = element.getAsJsonArray();
-        if (jsonArray.size() == 0) {
-            throw new JsonSyntaxException("Item array cannot be empty, at least one item must be defined");
-        }
-        return ofRealEntries(StreamSupport.<JsonElement>stream(jsonArray.spliterator(), false).map(e->realEntryFromJson(JsonHelper.asObject(e, "item"))));
     }
-	
-	// Imported from Mojang
-	private static IngredientEntry realEntryFromJson(JsonObject jsonObject) {
+
+	private static IngredientEntry advancedEntryFromJson(JsonObject jsonObject) {
 		if (jsonObject.has("item") && jsonObject.has("tag")) {
             throw new JsonParseException("An ingredient entry is either a tag or an item, not both");
         }
@@ -206,7 +202,7 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
         }
         return entry;
 	}
-	
+
 	private static IngredientEntryCondition loadIngredientEntryCondition(JsonObject jsonObject) {
 		if(jsonObject.has("data")) {
 			if(JsonHelper.isString(jsonObject.get("data"))) {
@@ -218,19 +214,21 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 		}
 		return new IngredientEntryCondition();
 	}
-	
+
 	@Override
-	public void setRealEntries(Stream<? extends IngredientEntry> entries) {
-		realEntries = entries.filter(Predicates.notNull()).toArray(IngredientEntry[]::new);
+	public void setAdvancedEntries(Stream<? extends IngredientEntry> entries) {
+		advancedEntries = entries.filter(Predicates.notNull()).toArray(IngredientEntry[]::new);
 	}
 
 	@Override
 	public ItemStack getRecipeRemainder(ItemStack stack, HashMap<String, CompoundTag> reference) {
-		for(IngredientEntry entry : realEntries) {
-			if(entry.matches(stack)) {
-				ItemStack remainder = entry.getRecipeRemainder(stack, reference);
-				if (remainder != null) {
-					return remainder;
+		if(advancedEntries != null) {
+			for(IngredientEntry entry : advancedEntries) {
+				if(entry.matches(stack)) {
+					ItemStack remainder = entry.getRecipeRemainder(stack, reference);
+					if(remainder != null) {
+						return remainder;
+					}
 				}
 			}
 		}

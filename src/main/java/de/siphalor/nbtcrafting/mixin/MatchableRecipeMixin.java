@@ -46,7 +46,7 @@ public abstract class MatchableRecipeMixin {
 		for(int j = 0; j < ingredients.size(); j++) {
 			Ingredient ingredient = (Ingredient) ingredients.get(j);
 			for (int i = 0; i < inputs.length; i++) {
-				if(ingredient.matches(RecipeFinder.getStackFromId(inputs[i])))
+				if(ingredient.method_8093(RecipeFinder.getStackFromId(inputs[i])))
 					this.bitSet.set(method_7420(true, i, j));
 			}
 		}
@@ -60,7 +60,7 @@ public abstract class MatchableRecipeMixin {
 		for(int id : owner.idToAmountMap.keySet()) {
 			for (Iterator<Ingredient> iterator = ingredients.iterator(); iterator.hasNext();) {
 				Ingredient ingredient = (Ingredient) iterator.next();
-				if(ingredient.matches(RecipeFinder.getStackFromId(id)))
+				if(ingredient.method_8093(RecipeFinder.getStackFromId(id)))
 					ints.add(id);
 			}
 		}

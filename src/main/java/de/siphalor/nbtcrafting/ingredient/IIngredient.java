@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 public interface IIngredient {
 	
-	void setRealEntries(Stream<? extends IngredientEntry> entries);
+	void setAdvancedEntries(Stream<? extends IngredientEntry> entries);
 
 
 	ItemStack getRecipeRemainder(ItemStack stack, HashMap<String, CompoundTag> reference);

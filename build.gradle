@@ -6,14 +6,14 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 archivesBaseName = "nbtcrafting"
-version = "1.0.0"
+version = "1.1.0-beta.1"
 
 minecraft {
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:19w08b"
-	mappings "net.fabricmc:yarn:19w08b.9"
+	minecraft "com.mojang:minecraft:19w09a"
+	mappings "net.fabricmc:yarn:19w09a.1"
 	modCompile "net.fabricmc:fabric-loader:0.3.7.109"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.

@@ -25,7 +25,7 @@ public interface RecipeMixin {
         DefaultedList<Ingredient> ingredients = getPreviewInputs();
 		for (int j = 0; j < ingredients.size(); j++) {
 			for (int i = 0; i < stackList.size(); i++) {
-				if(ingredients.get(j).matches(inventory.getInvStack(i)))
+				if(ingredients.get(j).method_8093(inventory.getInvStack(i)))
 					reference.putIfAbsent("i"+j, inventory.getInvStack(i).getOrCreateTag());
 			}
 		}
@@ -33,7 +33,7 @@ public interface RecipeMixin {
 		for(int i = 0; i < stackList.size(); ++i) {
 			ItemStack itemStack = inventory.getInvStack(i);
 			for(Ingredient ingredient : ingredients) {
-				if(ingredient.matches(itemStack)) {
+				if(ingredient.method_8093(itemStack)) {
 					ItemStack remainder = ((IIngredient)(Object) ingredient).getRecipeRemainder(itemStack, reference);
 					if(remainder != null) {
 						stackList.set(i, remainder);

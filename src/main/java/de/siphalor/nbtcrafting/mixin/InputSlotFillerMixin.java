@@ -1,13 +1,12 @@
 package de.siphalor.nbtcrafting.mixin;
 
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.InputSlotFiller;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.InputSlotFiller;
 
 @Mixin(InputSlotFiller.class)
 public abstract class InputSlotFillerMixin {

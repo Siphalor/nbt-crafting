@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @SuppressWarnings("ALL")
@@ -40,15 +39,6 @@ public abstract class RecipeFinderMixin {
 	@Shadow
 	public abstract void addItem(final ItemStack stack);
 	
-	@Inject(method = "addItem(Lnet/minecraft/item/ItemStack;)V", at = @At("TAIL"))
-	private void onItemAdded(ItemStack stack, CallbackInfo ci) {
-		/*if(!stack.isEmpty() && stack.hasTag()) {
-			ItemStack taglessStack = stack.copy();
-			taglessStack.setTag(null);
-			addItem(taglessStack);
-		}*/
-	}
-	
 	@Overwrite
 	public void addNormalItem(final ItemStack stack) {
 		addItem(stack);
@@ -69,7 +59,6 @@ public abstract class RecipeFinderMixin {
 		if(itemStackMap.containsValue(id)) {
 			ItemStack result = new ItemStack(Item.byRawId(itemStackMap.inverse().get(id).getFirst()));
 			result.setTag(itemStackMap.inverse().get(id).getSecond());
-			//System.out.println(dollars);
 			return result;
 		}
 		return ItemStack.EMPTY;
