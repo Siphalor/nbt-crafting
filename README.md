@@ -1,6 +1,6 @@
-# Nbt Crafting
+# Nbt Crafting - Dollar Update
 
-![logo](images/logo.png?raw=true)
+![logo](images/logo_dollar_big.png?raw=true)
 
 ## About
 A fabric mod which allows you to add/change JSON crafting/cooking/etc. recipes to use nbt input and output.
@@ -10,7 +10,7 @@ Everything is kept nicely visualized in the vanilla gui.
 This can be achieved through the reintroduced `data` attribute.
 
 ## Example
-A simple recipe allowing to craft woode swords with 20 damage from diamond swords with 2 damage.
+A simple recipe allowing to craft wooden swords with 20 damage from diamond swords with 2 damage.
 
 ```json
 {
@@ -35,4 +35,4 @@ Due to some additions made with this mod the recipe book displays also the outpu
 
 ## License
 
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+This mod is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
