@@ -70,7 +70,6 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
                 return;
 			}
 			for (int i = 0; i < advancedEntries.length; i++) {
-				System.out.println("try entry");
 				if (advancedEntries[i].matches(stack)) {
 					callbackInfoReturnable.setReturnValue(true);
                     return;

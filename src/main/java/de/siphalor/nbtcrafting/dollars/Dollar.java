@@ -33,7 +33,7 @@ public class Dollar {
         } else if(value instanceof String)
         	compoundTag.putString(lastKeyPart, (String) value);
         else
-        	throw new DollarException("Unknown type in expression");
+        	throw new DollarException("Unknown type in dollar expression");
 	}
 
 	public static Dollar[] extractDollars(CompoundTag compoundTag) {

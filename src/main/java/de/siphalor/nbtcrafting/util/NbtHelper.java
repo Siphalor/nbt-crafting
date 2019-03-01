@@ -137,20 +137,40 @@ public class NbtHelper {
 		       Objects.equals(type, DSL.doubleType());
 	}
 
-	public static CompoundTag getParentTagOrCreate(CompoundTag main, String path) throws DollarException {
-		CompoundTag currentCompound = main;
-		String[] pathParts = path.split(".");
+	public static CompoundTag getParentTagOrCreate(Tag main, String path) throws DollarException {
+		Tag currentTag = main;
+		String[] pathParts = path.split("\\.|(?=\\[)");
 		for (int i = 0; i < pathParts.length - 1; i++) {
-			if(!currentCompound.containsKey(pathParts[i])) {
-				currentCompound.put(pathParts[i], new CompoundTag());
-				currentCompound = currentCompound.getCompound(pathParts[i]);
-			} else if(isCompound(currentCompound.getTag(pathParts[i]))) {
-				currentCompound = currentCompound.getCompound(pathParts[i]);
+			if(pathParts[i].charAt(0) == '[') {
+				if(!isList(currentTag)) {
+					throw new DollarException(path + " doesn't match on " + main.asString());
+				}
+				ListTag currentList = (ListTag) currentTag;
+                int index = Integer.parseUnsignedInt(pathParts[i].substring(1, pathParts[i].length()));
+                if(currentList.size() <= index) {
+                	throw new DollarException(path + " contains invalid list in " + main.asString());
+                } else if(isCompound(currentList.get(index)) || isList(currentList.get(index))) {
+                	currentTag = currentList.get(index);
+                } else {
+	                throw new DollarException(path + " doesn't match on " + main.asString());
+                }
 			} else {
-				throw new DollarException(path + " is not a valid path in " + main.asString());
+				if(!isCompound(currentTag)) {
+					throw new DollarException(path + " doesn't match on " + main.asString());
+				}
+				CompoundTag currentCompound = (CompoundTag) currentTag;
+				if(!currentCompound.containsKey(pathParts[i])) {
+					currentCompound.put(pathParts[i], new CompoundTag());
+				} else if(isCompound(currentCompound.getTag(pathParts[i])) || isList(currentCompound.getTag(pathParts[i]))) {
+					currentTag = currentCompound.getTag(pathParts[i]);
+				} else {
+					throw new DollarException(path + " doesn't match on " + main.asString());
+				}
 			}
 		}
-		return currentCompound;
+		if(!isCompound(currentTag))
+			throw new DollarException(path + "'s parent does not specify an object in " + main.asString());
+		return (CompoundTag) currentTag;
 	}
 
 	public static void iterateCompounds(CompoundTag tag, BiFunction<String, Tag, Boolean> biFunction) {
