@@ -22,7 +22,6 @@ public abstract class MatchableRecipeMixin {
 	
 	private RecipeFinder owner;
 
-	@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     @Shadow(aliases = "field_7552")
 	private List<Ingredient> ingredients;
 	
@@ -37,7 +36,6 @@ public abstract class MatchableRecipeMixin {
 	
 	@Inject(
 		method = "<init>",
-		//at = @At(value = "FIELD", target = "Lnet/minecraft/recipe/RecipeFinder$MatchableRecipe;field_7558:Ljava/util/BitSet;", shift = Shift.AFTER),
 		at = @At("RETURN"),
 		cancellable = true
 	)

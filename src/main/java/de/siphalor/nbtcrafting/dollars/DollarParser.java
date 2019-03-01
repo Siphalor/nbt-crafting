@@ -37,6 +37,9 @@ public class DollarParser {
 				case '/':
 					groupPart.operators.add(DollarOperator.DIVIDE);
 					break;
+				case ')':
+					eatTo(1);
+					return groupPart;
 			}
             eatTo(1);
 			groupPart.parts.add(parsePart());
@@ -57,7 +60,11 @@ public class DollarParser {
             eatTo(index);
 			return value;
 		}
-		int index = StringUtils.indexOfAny(expression, " \n\t\r+-*/");
+		if(expression.charAt(0) == '(') {
+			eatTo(1);
+			return parse();
+		}
+		int index = StringUtils.indexOfAny(expression, " \n\t\r+-*/)");
 		if(!expression.substring(0, index).matches("[\\w\\d.]+"))
 			throw new DollarException("Illegal statement: " + expression);
 		DollarPart part = new ReferenceDollarPart(expression.substring(0, index));
