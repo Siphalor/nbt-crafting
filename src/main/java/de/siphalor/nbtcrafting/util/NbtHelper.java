@@ -173,21 +173,32 @@ public class NbtHelper {
 		return (CompoundTag) currentTag;
 	}
 
-	public static void iterateCompounds(CompoundTag tag, BiFunction<String, Tag, Boolean> biFunction) {
-		iterateCompounds(tag, biFunction, "");
+	public static void iterateTags(Tag tag, BiFunction<String, Tag, Boolean> biFunction) {
+		iterateTags(tag, biFunction, "");
 	}
 
-	private static void iterateCompounds(CompoundTag tag, BiFunction<String, Tag, Boolean> biFunction, String path) {
-		if(path != "")
-			path += ".";
-		for(String key : tag.getKeys()) {
-			if(isCompound(tag.getTag(key)))
-				iterateCompounds(tag.getCompound(key), biFunction, path + key);
-			else if(isList(tag.getTag(key)))
-				continue;
-			else {
-				if(biFunction.apply(path + key, tag.getTag(key)))
-					tag.remove(key);
+	private static void iterateTags(Tag tag, BiFunction<String, Tag, Boolean> biFunction, String path) {
+		if(isCompound(tag)) {
+			CompoundTag compoundTag = (CompoundTag) tag;
+			if(path != "")
+				path += ".";
+			for(String key : compoundTag.getKeys()) {
+				if(isCompound(compoundTag.getTag(key)) || isList(compoundTag.getTag(key)))
+					iterateTags(compoundTag.getTag(key), biFunction, path + key);
+				else {
+					if(biFunction.apply(path + key, compoundTag.getTag(key)))
+						compoundTag.remove(key);
+				}
+			}
+		} else if(isList(tag)) {
+			ListTag listTag = (ListTag) tag;
+			for(int i = 0; i < listTag.size(); i++) {
+				if(isCompound(listTag.get(i)) || isList(listTag.get(i))) {
+					iterateTags(listTag.get(i), biFunction, path + "[" + i + "]");
+				} else {
+					if(biFunction.apply(path + "[" + i + "]", listTag.get(i)))
+						listTag.remove(i);
+				}
 			}
 		}
 	}

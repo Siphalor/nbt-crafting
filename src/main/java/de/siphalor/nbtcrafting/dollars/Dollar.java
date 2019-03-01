@@ -38,7 +38,7 @@ public class Dollar {
 
 	public static Dollar[] extractDollars(CompoundTag compoundTag) {
 		ArrayList<Dollar> dollars = new ArrayList<>();
-		NbtHelper.iterateCompounds(compoundTag, (path, tag) -> {
+		NbtHelper.iterateTags(compoundTag, (path, tag) -> {
 			if(NbtHelper.isString(tag)) {
 				if(tag.asString().charAt(0) == '$') {
 					dollars.add(new DollarParser().parse(path, tag.asString().substring(1)));
