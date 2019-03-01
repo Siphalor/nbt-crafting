@@ -53,7 +53,7 @@ public class DollarParser {
 			if(expression.equals("")) throw new DollarException("Illegal whitespacey statement");
 		}
 		if(expression.matches("-?\\d*\\.?\\d+.*")) {
-			int index = StringUtils.indexOfAny(expression.substring(1), "+-*/");
+			int index = StringUtils.indexOfAny(expression.substring(1), " \n\t\r+-*/");
 			if(index == -1)
 				index = expression.length();
 			ValueDollarPart value = new ValueDollarPart(Double.parseDouble(expression.substring(0, index)));
