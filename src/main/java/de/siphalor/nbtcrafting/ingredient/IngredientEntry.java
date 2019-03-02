@@ -24,7 +24,7 @@ public abstract class IngredientEntry {
 	public abstract JsonElement toJson();
 
 	public abstract Collection<ItemStack> getPreviewStacks();
-	
+
 	public abstract void write(PacketByteBuf buf);
 
 	public ItemStack getRecipeRemainder(ItemStack stack, HashMap<String, CompoundTag> reference) {

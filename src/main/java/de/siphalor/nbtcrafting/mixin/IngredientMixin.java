@@ -2,6 +2,7 @@ package de.siphalor.nbtcrafting.mixin;
 
 import com.google.common.base.Predicates;
 import com.google.gson.*;
+import de.siphalor.nbtcrafting.Core;
 import de.siphalor.nbtcrafting.ingredient.*;
 import de.siphalor.nbtcrafting.util.ICloneable;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -40,6 +41,9 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 	private ItemStack[] stackArray;
 	@Shadow
 	private IntList ids;
+
+	@Shadow
+	private void createStackArray() {};
 	
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -81,15 +85,17 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 	
 	@Inject(method = "write", at = @At("HEAD"), cancellable = true)
 	public void write(PacketByteBuf buf, CallbackInfo callbackInfo) {
-		buf.writeBoolean(advancedEntries != null);
-		if(advancedEntries != null) {
-			buf.writeVarInt(advancedEntries.length);
-			for (int i = 0; i < advancedEntries.length; i++) {
-				IngredientEntry entry = advancedEntries[i];
-				buf.writeBoolean(entry instanceof IngredientMultiStackEntry);
-				entry.write(buf);
+		if(!Core.vanillaCompatibility) {
+			buf.writeBoolean(advancedEntries != null);
+			if (advancedEntries != null) {
+				buf.writeVarInt(advancedEntries.length);
+				for (int i = 0; i < advancedEntries.length; i++) {
+					IngredientEntry entry = advancedEntries[i];
+					buf.writeBoolean(entry instanceof IngredientMultiStackEntry);
+					entry.write(buf);
+				}
+				callbackInfo.cancel();
 			}
-			callbackInfo.cancel();
 		}
 	}
 	
@@ -204,7 +210,7 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 
 	private static IngredientEntryCondition loadIngredientEntryCondition(JsonObject jsonObject) {
 		if(jsonObject.has("data")) {
-			if(JsonHelper.isString(jsonObject.get("data"))) {
+			if(jsonObject.get("data").isJsonPrimitive() && jsonObject.getAsJsonPrimitive("data").isString()) {
 				throw new JsonParseException("The data tag on recipes cannot be a string anymore; See the wiki for more information ;)");
 			}
 			if(jsonObject.get("data").isJsonObject()) {

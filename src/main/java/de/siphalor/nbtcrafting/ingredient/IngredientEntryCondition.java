@@ -43,7 +43,7 @@ public class IngredientEntryCondition {
 		if(deniedElements.getSize() > 0)
 			json.add("deny", Dynamic.convert(NbtOps.INSTANCE, JsonOps.INSTANCE, deniedElements));
 	}
-	
+
 	public CompoundTag getPreviewTag() {
 		return requiredElements;
 	}

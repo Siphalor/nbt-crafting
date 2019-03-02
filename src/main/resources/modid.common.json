@@ -3,6 +3,7 @@
 	"package": "de.siphalor.nbtcrafting.mixin",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
+		"CraftingResultSlotMixin",
 		"IngredientMixin",
 		"RecipeFinderMixin",
 		"MatchableRecipeMixin",

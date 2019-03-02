@@ -12,7 +12,7 @@ public class NbtNumberRange {
 	public boolean matches(double c) {
 		return c >= begin && c <= end; 
 	}
-	
+
 	public static NbtNumberRange equals(double a) {
 		return new NbtNumberRange(a, a);
 	}

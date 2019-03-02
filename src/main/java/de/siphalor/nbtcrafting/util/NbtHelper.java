@@ -173,6 +173,10 @@ public class NbtHelper {
 		return (CompoundTag) currentTag;
 	}
 
+	public static String getLastKey(String path) {
+		return path.substring(path.lastIndexOf('.') + 1);
+	}
+
 	public static void iterateTags(Tag tag, BiFunction<String, Tag, Boolean> biFunction) {
 		iterateTags(tag, biFunction, "");
 	}

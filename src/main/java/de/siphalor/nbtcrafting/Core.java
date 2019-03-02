@@ -9,6 +9,8 @@ import net.minecraft.sortme.JsonLikeTagParser;
 public class Core {
 	
 	public static final String JSON_NBT_KEY = "data";
+
+	public static boolean vanillaCompatibility = false;
 	
 	private static boolean lastReadNbtPresent = false;
 	private static CompoundTag lastReadNbt;

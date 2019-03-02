@@ -17,6 +17,7 @@
   },
   "mixins": {
     "client": "modid.client.json",
-    "common": "modid.common.json"
+    "common": "modid.common.json",
+    "server": "modid.server.json"
   }
 }
