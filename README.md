@@ -20,12 +20,18 @@ A simple recipe allowing to craft wooden swords with 20 damage from diamond swor
   "ingredients": [
     {
       "item": "minecraft:diamond_sword",
-	  "data": "{Damage:2}"
+      "data": {
+      	"require": {
+          "Damage": 2
+	}
+      }
     }
   ],
   "result": {
     "item": "minecraft:wooden_sword",
-	"data": "{Damage:20}"
+    "data": {
+      "Damage": 2
+    }
   }
 }
 ```
