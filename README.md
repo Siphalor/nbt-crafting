@@ -36,8 +36,6 @@ A simple recipe allowing to craft wooden swords with 20 damage from diamond swor
 }
 ```
 
-![Demo](images/demo.png?raw=true)
-
 ## Extra
 Due to some additions made with this mod the recipe book displays also the output amount of all recipes - yay!
 
