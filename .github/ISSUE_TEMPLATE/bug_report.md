@@ -13,7 +13,7 @@ The Minecraft version and the version of this mod.
 A clear and concise description of what the bug is.
 
 **To Reproduce**
-1. Use this json or craft sometjing.
+1. Use this json or craft something.
 2. Bug appears
 
 **Expected behavior**
