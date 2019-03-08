@@ -41,4 +41,4 @@ Due to some additions made with this mod the recipe book displays also the outpu
 
 ## License
 
-This mod is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+This mod is available under The Unlicense license. Feel free to learn from it and incorporate it in your own projects.
