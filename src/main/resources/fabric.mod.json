@@ -3,7 +3,7 @@
 	"name": "NBT Crafting",
 	"description": "Enables nbt crafting in JSON recipes via the item data property.",
 	"version": "${version}",
-	"license": "CC0-1.0",
+	"license": "Unlicense",
 
 	"authors": [
 		"Siphalor xyx0125@gmail.com"
