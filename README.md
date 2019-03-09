@@ -1,7 +1,7 @@
 # Nbt Crafting - Dollar Update
 
-![curseforge downloads](http://cf.way2muchnoise.eu/full_nbt-crafting_downloads.svg)
-![curseforge mc versions](http://cf.way2muchnoise.eu/versions/nbt-crafting.svg)
+[![curseforge downloads](http://cf.way2muchnoise.eu/full_nbt-crafting_downloads.svg)](https://minecraft.curseforge.com/projects/nbt-crafting)
+[![curseforge mc versions](http://cf.way2muchnoise.eu/versions/nbt-crafting.svg)](https://minecraft.curseforge.com/projects/nbt-crafting)
 
 ![logo](images/logo_dollar_big.png?raw=true)
 
