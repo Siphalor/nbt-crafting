@@ -5,7 +5,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Dollar {
@@ -34,20 +33,6 @@ public class Dollar {
         	compoundTag.putString(lastKeyPart, (String) value);
         else
         	throw new DollarException("Unknown type in dollar expression");
-	}
-
-	public static Dollar[] extractDollars(CompoundTag compoundTag) {
-		ArrayList<Dollar> dollars = new ArrayList<>();
-		NbtHelper.iterateTags(compoundTag, (path, tag) -> {
-			if(NbtHelper.isString(tag)) {
-				if(tag.asString().charAt(0) == '$') {
-					dollars.add(new DollarParser().parse(path, tag.asString().substring(1)));
-					return true;
-				}
-			}
-			return false;
-		});
-		return dollars.toArray(new Dollar[0]);
 	}
 
 }

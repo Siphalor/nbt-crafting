@@ -2,7 +2,7 @@ package de.siphalor.nbtcrafting.client.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.recipebook.AnimatedResultButton;
-import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.List;
 
 @Mixin(AnimatedResultButton.class)
-public abstract class AnimatedResultButtonMixin extends ButtonWidget {
+public abstract class AnimatedResultButtonMixin extends AbstractButtonWidget {
 
 	public AnimatedResultButtonMixin(int int_1, int int_2, String string_1) {
 		super(int_1, int_2, string_1);

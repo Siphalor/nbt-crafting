@@ -24,7 +24,7 @@ public abstract class RecipeBookGhostSlotsMixin {
 
 	@Inject(
 		method = "draw",
-		at = @At(value = "INVOKE", target = "com/mojang/blaze3d/platform/GlStateManager.enableLighting()V", shift = Shift.BEFORE),
+		at = @At(value = "INVOKE", target = "com/mojang/blaze3d/platform/GlStateManager.enableLighting()V", remap = false, shift = Shift.BEFORE),
 		locals = LocalCapture.CAPTURE_FAILSOFT
 	)
 	public void draw(MinecraftClient minecraftClient, int xOffset, int yOffset, boolean bool, float float_1, CallbackInfo ci, int i) {

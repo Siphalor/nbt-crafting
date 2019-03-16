@@ -22,24 +22,24 @@ public abstract class MatchableRecipeMixin {
 	
 	private RecipeFinder owner;
 
-    @Shadow(aliases = "field_7552")
+    @Shadow(aliases = "field_7552", remap = false)
 	private List<Ingredient> ingredients;
 	
-	@Shadow(aliases = "field_7551")
+	@Shadow(aliases = "field_7551", remap = false)
 	private int[] inputs;
 	
-	@Shadow(aliases = "field_7558")
+	@Shadow(aliases = "field_7558", remap = false)
 	private BitSet bitSet;
 	
 	@Shadow
 	protected abstract int method_7420(final boolean bool, final int int_1, final int int_2);
 	
 	@Inject(
-		method = "<init>",
+		method = "<init>(Lnet/minecraft/recipe/Recipe;)V",
 		at = @At("RETURN"),
 		cancellable = true
 	)
-	public void onConstruct(RecipeFinder rf, Recipe<?> recipe, CallbackInfo ci) {
+	public void onConstruct(Recipe<?> recipe, CallbackInfo ci) {
 		this.bitSet.clear();
 		for(int j = 0; j < ingredients.size(); j++) {
 			Ingredient ingredient = (Ingredient) ingredients.get(j);
@@ -50,7 +50,11 @@ public abstract class MatchableRecipeMixin {
 		}
 		ci.cancel();
 	}
-	
+
+	/**
+	 * @reason Builds the idToAmountMap but nbt dependent
+	 * @author Siphalor
+	 */
 	@Overwrite
 	private int[] method_7422() {
 		owner = Core.lastRecipeFinder;

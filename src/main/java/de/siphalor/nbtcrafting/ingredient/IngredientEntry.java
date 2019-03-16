@@ -3,6 +3,7 @@ package de.siphalor.nbtcrafting.ingredient;
 import com.google.gson.JsonElement;
 import de.siphalor.nbtcrafting.dollars.Dollar;
 import de.siphalor.nbtcrafting.dollars.DollarException;
+import de.siphalor.nbtcrafting.dollars.DollarParser;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.PacketByteBuf;
@@ -44,6 +45,6 @@ public abstract class IngredientEntry {
 	public void setRecipeRemainder(ItemStack stack) {
 		this.remainder = stack;
 		if(stack.hasTag())
-			this.dollars = Dollar.extractDollars(stack.getTag());
+			this.dollars = DollarParser.extractDollars(stack.getTag());
 	}
 }

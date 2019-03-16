@@ -18,6 +18,10 @@ public interface RecipeMixin {
 	@Shadow
 	DefaultedList<Ingredient> getPreviewInputs();
 
+	/**
+	 * @reason Returns the recipe remainders. Sadly has to overwrite since this is an interface.
+     * @author Siphalor
+	 */
 	@Overwrite
 	default DefaultedList<ItemStack> getRemainingStacks(Inventory inventory) {
 		final DefaultedList<ItemStack> stackList = DefaultedList.<ItemStack>create(inventory.getInvSize(), ItemStack.EMPTY);

@@ -38,12 +38,20 @@ public abstract class RecipeFinderMixin {
 	
 	@Shadow
 	public abstract void addItem(final ItemStack stack);
-	
+
+	/**
+	 * @reason Fixes nbt items to be excluded from matching sometimes? Shouldn't break anything.
+	 * @author Siphalor
+	 */
 	@Overwrite
 	public void addNormalItem(final ItemStack stack) {
 		addItem(stack);
 	}
 
+	/**
+	 * @reason Makes this function nbt dependent
+     * @author Siphalor
+	 */
 	@Overwrite
 	public static int getItemId(ItemStack stack) {
 		Pair<Integer, CompoundTag> stackPair = getStackPair(stack);
@@ -53,7 +61,11 @@ public abstract class RecipeFinderMixin {
 		itemStackMap.put(stackPair, itemStackMap.size());
 		return itemStackMap.getOrDefault(stackPair, 0);
 	}
-	
+
+	/**
+	 * @reason Makes this function nbt dependent
+     * @author Siphalor
+	 */
 	@Overwrite
 	public static ItemStack getStackFromId(final int id) {
 		if(itemStackMap.containsValue(id)) {

@@ -20,8 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public abstract class ShapedRecipeMixin {
 
 	@Inject(
-		method = "deserializeItemStack",
-		at = @At(value = "INVOKE", target = "com/google/gson/JsonObject.has(Ljava/lang/String;)Z")
+		method = "getItemStack",
+		at = @At(value = "INVOKE", target = "com/google/gson/JsonObject.has(Ljava/lang/String;)Z", remap = false)
 	)
 	private static void deserializeItemStack(JsonObject json, CallbackInfoReturnable<ItemStack> ci) {
 		Core.setLastReadNbt(null);
@@ -34,7 +34,7 @@ public abstract class ShapedRecipeMixin {
 	}
 	
 	@Inject(
-		method = "deserializeItemStack", at = @At("RETURN"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
+		method = "getItemStack", at = @At("RETURN"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void constructDeserializedItemStack(JsonObject json, CallbackInfoReturnable<ItemStack> ci, String id, Item item, int amount) {
 		ItemStack stack = new ItemStack(item, amount);
 		stack.setTag(Core.useLastReadNbt());

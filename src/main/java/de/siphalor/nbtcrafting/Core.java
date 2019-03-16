@@ -20,6 +20,11 @@ public class Core {
 	public static boolean hasLastReadNbt() {
 		return lastReadNbtPresent;
 	}
+
+	public static void clearLastReadNbt() {
+		lastReadNbt = null;
+		lastReadNbtPresent = false;
+	}
 	
 	public static void setLastReadNbt(CompoundTag nbt) {
 		lastReadNbt = nbt;

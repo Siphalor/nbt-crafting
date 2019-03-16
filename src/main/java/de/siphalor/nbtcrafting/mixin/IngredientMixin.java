@@ -184,7 +184,7 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
 				});
 				IngredientStackEntry entry = new IngredientStackEntry(Registry.ITEM.getRawId(item), loadIngredientEntryCondition(jsonObject));
 				if(jsonObject.has("remainder")) {
-					entry.setRecipeRemainder(ShapedRecipe.deserializeItemStack(JsonHelper.getObject(jsonObject, "remainder")));
+					entry.setRecipeRemainder(ShapedRecipe.getItemStack(JsonHelper.getObject(jsonObject, "remainder")));
 				}
 				return entry;
             } catch (Throwable e) {
@@ -203,7 +203,7 @@ public abstract class IngredientMixin implements IIngredient, ICloneable {
         IngredientMultiStackEntry entry = new IngredientMultiStackEntry(tag.values().stream().map(item -> Registry.ITEM.getRawId(item)).collect(Collectors.toList()), loadIngredientEntryCondition(jsonObject));
         entry.setTag(tag.toString());
         if(jsonObject.has("remainder")) {
-        	entry.setRecipeRemainder(ShapedRecipe.deserializeItemStack(JsonHelper.getObject(jsonObject, "remainder")));
+        	entry.setRecipeRemainder(ShapedRecipe.getItemStack(JsonHelper.getObject(jsonObject, "remainder")));
         }
         return entry;
 	}
