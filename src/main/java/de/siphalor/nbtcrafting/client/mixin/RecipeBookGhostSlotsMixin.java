@@ -17,7 +17,6 @@ import java.util.List;
 @Mixin(RecipeBookGhostSlots.class)
 public abstract class RecipeBookGhostSlotsMixin {
 	
-	@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 	@Shadow
 	@Final
 	private List<RecipeBookGhostSlots.GhostInputSlot> slots;

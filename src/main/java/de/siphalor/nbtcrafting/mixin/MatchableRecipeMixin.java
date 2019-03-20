@@ -34,12 +34,12 @@ public abstract class MatchableRecipeMixin {
 	@Shadow
 	protected abstract int method_7420(final boolean bool, final int int_1, final int int_2);
 	
+	@SuppressWarnings("UnresolvedMixinReference")
 	@Inject(
-		method = "<init>(Lnet/minecraft/recipe/Recipe;)V",
-		at = @At("RETURN"),
-		cancellable = true
+		method = "<init>(Lnet/minecraft/recipe/RecipeFinder;Lnet/minecraft/recipe/Recipe;)V",
+		at = @At("RETURN")
 	)
-	public void onConstruct(Recipe<?> recipe, CallbackInfo ci) {
+	public void onConstruct(RecipeFinder recipeFinder, Recipe<?> recipe, CallbackInfo ci) {
 		this.bitSet.clear();
 		for(int j = 0; j < ingredients.size(); j++) {
 			Ingredient ingredient = (Ingredient) ingredients.get(j);
@@ -48,7 +48,6 @@ public abstract class MatchableRecipeMixin {
 					this.bitSet.set(method_7420(true, i, j));
 			}
 		}
-		ci.cancel();
 	}
 
 	/**

@@ -26,6 +26,6 @@ public abstract class AnimatedResultButtonMixin extends AbstractButtonWidget {
 		locals = LocalCapture.CAPTURE_FAILSOFT
 	)
 	private void drawButton(int mouseX, int mouseY, float delta, CallbackInfo ci, MinecraftClient minecraftClient, int int_3, int int_4, boolean boolean_1, @SuppressWarnings("rawtypes") List list_1, ItemStack stack, int int_5) {
-		minecraftClient.getItemRenderer().renderGuiItemOverlay(minecraftClient.textRenderer, stack, this.x + int_5, this.y + int_5);
+		minecraftClient.getItemRenderer().renderGuiItemOverlay(minecraftClient.textRenderer, stack, this.field_2069 + int_5, this.field_2068 + int_5);
 	}
 }
