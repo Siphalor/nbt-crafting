@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ShapedRecipe.class)
-public abstract class ShapedRecipeMixin {
+public abstract class MixinShapedRecipe {
 
 	@Inject(
 		method = "getItemStack",

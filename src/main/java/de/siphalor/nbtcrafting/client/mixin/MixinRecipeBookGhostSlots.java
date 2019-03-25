@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.List;
 
 @Mixin(RecipeBookGhostSlots.class)
-public abstract class RecipeBookGhostSlotsMixin {
+public abstract class MixinRecipeBookGhostSlots {
 	
 	@Shadow
 	@Final

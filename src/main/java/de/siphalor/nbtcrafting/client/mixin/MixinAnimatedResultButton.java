@@ -14,9 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.List;
 
 @Mixin(AnimatedResultButton.class)
-public abstract class AnimatedResultButtonMixin extends AbstractButtonWidget {
+public abstract class MixinAnimatedResultButton extends AbstractButtonWidget {
 
-	public AnimatedResultButtonMixin(int int_1, int int_2, String string_1) {
+	public MixinAnimatedResultButton(int int_1, int int_2, String string_1) {
 		super(int_1, int_2, string_1);
 	}
 

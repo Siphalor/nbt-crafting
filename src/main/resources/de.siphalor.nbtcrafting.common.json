@@ -3,14 +3,14 @@
 	"package": "de.siphalor.nbtcrafting.mixin",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
-		"CookingRecipeSerializerMixin",
-		"CraftingResultSlotMixin",
-		"IngredientMixin",
-		"RecipeFinderMixin",
-		"MatchableRecipeMixin",
-		"InputSlotFillerMixin",
-		"ShapedRecipeMixin",
-		"RecipeMixin"
+		"MixinCookingRecipeSerializer",
+		"MixinCraftingResultSlot",
+		"MixinIngredient",
+		"MixinRecipeFinder",
+		"MixinMatchableRecipe",
+		"MixinInputSlotFiller",
+		"MixinShapedRecipe",
+		"MixinRecipe"
 	],
 	"injectors": {
 		"defaultRequire": 1

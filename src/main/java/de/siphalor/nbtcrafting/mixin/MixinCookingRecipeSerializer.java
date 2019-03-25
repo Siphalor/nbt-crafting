@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(CookingRecipeSerializer.class)
-public abstract class CookingRecipeSerializerMixin {
+public abstract class MixinCookingRecipeSerializer {
 	private CompoundTag resultTag = null;
 
 	@Redirect(method = "method_17736", at = @At(value = "INVOKE", target = "net/minecraft/util/JsonHelper.getString(Lcom/google/gson/JsonObject;Ljava/lang/String;)Ljava/lang/String;", ordinal = 0))

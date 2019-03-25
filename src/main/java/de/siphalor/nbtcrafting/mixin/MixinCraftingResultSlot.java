@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(CraftingResultSlot.class)
-public abstract class CraftingResultSlotMixin extends Slot {
-	public CraftingResultSlotMixin(Inventory inventory_1, int int_1, int int_2, int int_3) {
+public abstract class MixinCraftingResultSlot extends Slot {
+	public MixinCraftingResultSlot(Inventory inventory_1, int int_1, int int_2, int int_3) {
 		super(inventory_1, int_1, int_2, int_3);
 	}
 

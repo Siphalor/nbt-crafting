@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @SuppressWarnings("ALL")
 @Mixin(RecipeFinder.class)
-public abstract class RecipeFinderMixin {
+public abstract class MixinRecipeFinder {
 	
 	private static HashBiMap<Pair<Integer, CompoundTag>, Integer> itemStackMap = HashBiMap.create();
 	

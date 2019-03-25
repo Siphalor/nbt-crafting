@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.HashMap;
 
 @Mixin(Recipe.class)
-public interface RecipeMixin {
+public interface MixinRecipe {
 	@Shadow
 	DefaultedList<Ingredient> getPreviewInputs();
 

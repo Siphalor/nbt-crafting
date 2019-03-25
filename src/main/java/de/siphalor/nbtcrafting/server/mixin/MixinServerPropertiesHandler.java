@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Properties;
 
 @Mixin(ServerPropertiesHandler.class)
-public abstract class ServerPropertiesHandlerMixin extends AbstractPropertiesHandler<ServerPropertiesHandler> {
+public abstract class MixinServerPropertiesHandler extends AbstractPropertiesHandler<ServerPropertiesHandler> {
 
-	public ServerPropertiesHandlerMixin(Properties properties_1) {
+	public MixinServerPropertiesHandler(Properties properties_1) {
 		super(properties_1);
 	}
 

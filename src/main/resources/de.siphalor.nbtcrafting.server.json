@@ -3,7 +3,7 @@
 	"package": "de.siphalor.nbtcrafting.server.mixin",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
-		"ServerPropertiesHandlerMixin"
+		"MixinServerPropertiesHandler"
 	],
 	"injectors": {
 		"defaultRequire": 1

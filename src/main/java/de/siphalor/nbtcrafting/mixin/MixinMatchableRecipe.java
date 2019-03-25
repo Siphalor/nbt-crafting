@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @Mixin(targets = "net/minecraft/recipe/RecipeFinder$MatchableRecipe")
-public abstract class MatchableRecipeMixin {
+public abstract class MixinMatchableRecipe {
 	
 	private RecipeFinder owner;
 

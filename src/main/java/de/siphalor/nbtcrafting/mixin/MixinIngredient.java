@@ -33,7 +33,7 @@ import java.util.stream.StreamSupport;
 
 @SuppressWarnings("ALL")
 @Mixin(Ingredient.class)
-public abstract class IngredientMixin implements IIngredient, ICloneable {
+public abstract class MixinIngredient implements IIngredient, ICloneable {
 	
 	private IngredientEntry[] advancedEntries;
 	

@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(InputSlotFiller.class)
-public abstract class InputSlotFillerMixin {
+public abstract class MixinInputSlotFiller {
 	
 	@Shadow
 	protected PlayerInventory inventory;
