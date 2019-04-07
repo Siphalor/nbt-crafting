@@ -1,14 +1,9 @@
 package de.siphalor.nbtcrafting;
 
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.RecipeFinder;
-import net.minecraft.sortme.JsonLikeTagParser;
 
 public class Core {
-	
-	public static final String JSON_NBT_KEY = "data";
 
 	public static boolean vanillaCompatibility = false;
 	
@@ -17,10 +12,12 @@ public class Core {
 	
 	public static RecipeFinder lastRecipeFinder;
 	
+	@SuppressWarnings("unused")
 	public static boolean hasLastReadNbt() {
 		return lastReadNbtPresent;
 	}
 
+	@SuppressWarnings("unused")
 	public static void clearLastReadNbt() {
 		lastReadNbt = null;
 		lastReadNbtPresent = false;
@@ -39,15 +36,6 @@ public class Core {
 		}
 		lastReadNbtPresent = false;
 		return result;
-	}
-	
-	public static CompoundTag parseNbtString(String string) {
-		try {
-			return new JsonLikeTagParser(new StringReader(string)).parseCompoundTag();
-		} catch (CommandSyntaxException e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 }

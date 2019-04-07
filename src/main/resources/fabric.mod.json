@@ -1,23 +1,40 @@
 {
+	"schemaVersion": 1,
 	"id": "nbtcrafting",
+	"version": "${version}",
+
 	"name": "NBT Crafting",
 	"description": "Enables nbt crafting in JSON recipes via the item data property.",
-	"version": "${version}",
-	"license": "Unlicense",
 
 	"authors": [
-		"Siphalor xyx0125@gmail.com"
+		"Siphalor"
+	],
+	"contact": {
+		"email": "xyx0125@gmail.com",
+		"issues": "https://github.com/Siphalor/tweed-api/issues",
+		"sources": "https://github.com/Siphalor/tweed-api"
+	},
+
+	"license": "Unlicense",
+	"icon": "assets/nbtcrafting/logo_dollar.png",
+
+	"environment": "*",
+	"mixins": [
+		{
+			"config": "de.siphalor.nbtcrafting.client.json",
+			"environment": "client"
+		},
+		{
+			"config": "de.siphalor.nbtcrafting.common.json",
+			"environment": "*"
+		},
+		{
+			"config": "de.siphalor.nbtcrafting.server.json",
+			"environment": "server"
+		}
 	],
 
-	"side": "universal",
-	"initializers": [
-		"de.siphalor.nbtcrafting.Core"
-	],
 	"requires": {
-	},
-	"mixins": {
-		"client": "de.siphalor.nbtcrafting.client.json",
-		"common": "de.siphalor.nbtcrafting.common.json",
-		"server": "de.siphalor.nbtcrafting.server.json"
+		"fabricloader": ">=0.4.0"
 	}
 }
