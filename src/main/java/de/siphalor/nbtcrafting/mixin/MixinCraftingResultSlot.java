@@ -22,10 +22,8 @@ public abstract class MixinCraftingResultSlot extends Slot {
 
 	@Inject(method = "onTakeItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/CraftingInventory;setInvStack(ILnet/minecraft/item/ItemStack;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILSOFT)
 	public void onTakeItem(PlayerEntity playerEntity, ItemStack stack, CallbackInfoReturnable<ItemStack> cir, DefaultedList defaultedList, int index, ItemStack old, ItemStack remainder) {
-		if(Core.vanillaCompatibility) {
-			if (playerEntity instanceof ServerPlayerEntity) {
-				((ServerPlayerEntity) playerEntity).onContainerSlotUpdate(playerEntity.container, index + 1, remainder);
-			}
-		}
+		 if (playerEntity instanceof ServerPlayerEntity && !Core.hasClientMod((ServerPlayerEntity) playerEntity)) {
+			 ((ServerPlayerEntity) playerEntity).onContainerSlotUpdate(playerEntity.container, index + 1, remainder);
+		 }
 	}
 }

@@ -3,6 +3,7 @@ package de.siphalor.nbtcrafting.mixin;
 import com.google.common.base.Predicates;
 import com.google.gson.*;
 import de.siphalor.nbtcrafting.Core;
+import de.siphalor.nbtcrafting.client.ClientCore;
 import de.siphalor.nbtcrafting.ingredient.*;
 import de.siphalor.nbtcrafting.util.ICloneable;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -85,7 +86,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	
 	@Inject(method = "write", at = @At("HEAD"), cancellable = true)
 	public void write(PacketByteBuf buf, CallbackInfo callbackInfo) {
-		if(!Core.vanillaCompatibility) {
+		if(Core.hasClientMod(Core.lastServerPlayerEntity)) {
 			buf.writeBoolean(advancedEntries != null);
 			if (advancedEntries != null) {
 				buf.writeVarInt(advancedEntries.length);
@@ -142,16 +143,18 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 
 	@Inject(method = "fromPacket", at = @At("HEAD"), cancellable = true)
 	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> callbackInfoReturnable) {
-		if(buf.readBoolean()) {
-			ArrayList<IngredientEntry> entries = new ArrayList<IngredientEntry>();
-			int length = buf.readVarInt();
-			for (int i = 0; i < length; i++) {
-				if (buf.readBoolean())
-					entries.add(IngredientMultiStackEntry.read(buf));
-				else
-					entries.add(IngredientStackEntry.read(buf));
+		if(ClientCore.sentModPresent) {
+			if(buf.readBoolean()) {
+				ArrayList<IngredientEntry> entries = new ArrayList<IngredientEntry>();
+				int length = buf.readVarInt();
+				for (int i = 0; i < length; i++) {
+					if (buf.readBoolean())
+						entries.add(IngredientMultiStackEntry.read(buf));
+					else
+						entries.add(IngredientStackEntry.read(buf));
+				}
+				callbackInfoReturnable.setReturnValue(ofAdvancedEntries(entries.stream()));
 			}
-			callbackInfoReturnable.setReturnValue(ofAdvancedEntries(entries.stream()));
 		}
 	}
 

@@ -27,12 +27,15 @@
 		{
 			"config": "de.siphalor.nbtcrafting.common.json",
 			"environment": "*"
-		},
-		{
-			"config": "de.siphalor.nbtcrafting.server.json",
-			"environment": "server"
 		}
 	],
+	"entrypoints": {
+		"main": [
+			{
+				"value": "de.siphalor.nbtcrafting.Core"
+			}
+		]
+	},
 
 	"requires": {
 		"fabricloader": ">=0.4.0"

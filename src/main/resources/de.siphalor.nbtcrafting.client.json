@@ -3,8 +3,10 @@
 	"package": "de.siphalor.nbtcrafting.client.mixin",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
+		"MixinAnimatedResultButton",
+		"MixinMinecraftClient",
 		"MixinRecipeBookGhostSlots",
-		"MixinAnimatedResultButton"
+		"network.MixinClientPlayNetworkHandler"
 	],
 	"injectors": {
 		"defaultRequire": 1

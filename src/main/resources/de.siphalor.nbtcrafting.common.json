@@ -9,8 +9,10 @@
 		"MixinRecipeFinder",
 		"MixinMatchableRecipe",
 		"MixinInputSlotFiller",
+		"MixinServerPlayerEntity",
 		"MixinShapedRecipe",
-		"MixinRecipe"
+		"MixinRecipe",
+		"network.MixinServerPlayNetworkHandler"
 	],
 	"injectors": {
 		"defaultRequire": 1
