@@ -58,7 +58,7 @@ public abstract class MixinRecipeFinder {
 		if(itemStackMap.containsKey(stackPair)) {
 			return itemStackMap.get(stackPair);
 		}
-		itemStackMap.put(stackPair, itemStackMap.size());
+		itemStackMap.put(stackPair, itemStackMap.size() + 1);
 		return itemStackMap.getOrDefault(stackPair, 0);
 	}
 
