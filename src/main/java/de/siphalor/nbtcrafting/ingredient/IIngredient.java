@@ -10,6 +10,5 @@ public interface IIngredient {
 	
 	void setAdvancedEntries(Stream<? extends IngredientEntry> entries);
 
-
 	ItemStack getRecipeRemainder(ItemStack stack, HashMap<String, CompoundTag> reference);
 }

@@ -1,18 +1,27 @@
 package de.siphalor.nbtcrafting;
 
+import de.siphalor.nbtcrafting.brewing.BrewingRecipe;
+import de.siphalor.nbtcrafting.brewing.BrewingRecipeSerializer;
 import de.siphalor.nbtcrafting.util.IServerPlayerEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.client.network.packet.SynchronizeRecipesS2CPacket;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeFinder;
+import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.recipe.RecipeType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 public class Core implements ModInitializer {
 	@SuppressWarnings("WeakerAccess")
 	public static final String MODID = "nbtcrafting";
 	public static final Identifier PRESENCE_PACKET_ID = new Identifier(MODID, "present");
+
+	public static final RecipeType<BrewingRecipe> BREWING_RECIPE_TYPE = registerRecipeType("brewing");
+	public static final BrewingRecipeSerializer BREWING_RECIPE_SERIALIZER = registerRecipeSerializer("brewing", new BrewingRecipeSerializer());
 
 	private static boolean lastReadNbtPresent = false;
 	private static CompoundTag lastReadNbt;
@@ -58,5 +67,18 @@ public class Core implements ModInitializer {
 
 	public static boolean hasClientMod(ServerPlayerEntity playerEntity) {
 		return ((IServerPlayerEntity) playerEntity).nbtCrafting_hasClientMod();
+	}
+
+	public static <T extends Recipe<?>> RecipeType<T> registerRecipeType(String name) {
+		return Registry.register(Registry.RECIPE_TYPE, new Identifier(MODID, name), new RecipeType<T>() {
+			@Override
+			public String toString() {
+				return name;
+			}
+		});
+	}
+
+	public static <S extends RecipeSerializer<T>, T extends Recipe<?>> S registerRecipeSerializer(String name, S recipeSerializer) {
+		return Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(MODID, name), recipeSerializer);
 	}
 }

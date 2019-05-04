@@ -3,6 +3,9 @@
 	"package": "de.siphalor.nbtcrafting.mixin",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
+		"MixinBrewingStandBlockEntity",
+		"MixinBrewingSlotIngredient",
+		"MixinBrewingSlotPotion",
 		"MixinCookingRecipeSerializer",
 		"MixinCraftingResultSlot",
 		"MixinIngredient",

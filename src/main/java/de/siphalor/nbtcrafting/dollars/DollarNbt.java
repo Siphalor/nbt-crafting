@@ -15,7 +15,8 @@ public class DollarNbt {
 		dollars = new HashMap<>();
 	}
 
-	void apply(ItemStack to, Map<String, ItemStack> reference) {
+	public void apply(ItemStack to, Map<String, ItemStack> reference) {
+
 	}
 
 	public static DollarNbt fromCompoundTag(CompoundTag from) {
