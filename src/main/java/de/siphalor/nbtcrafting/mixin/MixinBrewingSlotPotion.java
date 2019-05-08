@@ -13,11 +13,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(targets = "net/minecraft/container/BrewingStandContainer$SlotPotion")
 public class MixinBrewingSlotPotion {
-	@Inject(method = "matches", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "matches(Lnet/minecraft/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
 	private static void matches(ItemStack stack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		Object gameInstance = FabricLoader.getInstance().getGameInstance();
 		RecipeManager recipeManager;
 		if(gameInstance instanceof MinecraftClient) {
+			//noinspection ConstantConditions
 			recipeManager = ((MinecraftClient) gameInstance).getServer().getRecipeManager();
 		} else if(gameInstance instanceof MinecraftServer) {
 			recipeManager = ((MinecraftServer) gameInstance).getRecipeManager();
