@@ -1,8 +1,9 @@
 package de.siphalor.nbtcrafting.mixin;
 
 import de.siphalor.nbtcrafting.brewing.BrewingRecipe;
+import de.siphalor.nbtcrafting.client.ClientCore;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.server.MinecraftServer;
@@ -15,15 +16,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinBrewingSlotPotion {
 	@Inject(method = "matches(Lnet/minecraft/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
 	private static void matches(ItemStack stack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		Object gameInstance = FabricLoader.getInstance().getGameInstance();
 		RecipeManager recipeManager;
-		if(gameInstance instanceof MinecraftClient) {
-			//noinspection ConstantConditions
-			recipeManager = ((MinecraftClient) gameInstance).getServer().getRecipeManager();
-		} else if(gameInstance instanceof MinecraftServer) {
-			recipeManager = ((MinecraftServer) gameInstance).getRecipeManager();
+		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+			recipeManager = ClientCore.getRecipeManager();
 		} else {
-			return;
+			recipeManager = ((MinecraftServer) FabricLoader.getInstance().getGameInstance()).getRecipeManager();
 		}
         if(BrewingRecipe.existsMatchingBase(stack, recipeManager))
         	callbackInfoReturnable.setReturnValue(true);
