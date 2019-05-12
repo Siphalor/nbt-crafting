@@ -29,12 +29,10 @@ public class IngredientEntryCondition {
 		if(!stack.hasTag()) {
 			return requiredElements.isEmpty();
 		}
-		CompoundTag tag = stack.getTag();
+		CompoundTag tag = stack.getOrCreateTag();
 		if(!deniedElements.isEmpty() && NbtHelper.compoundsOverlap(tag, deniedElements))
 			return false;
-		if(!requiredElements.isEmpty() && !NbtHelper.isCompoundContained(requiredElements, tag))
-			return false;
-		return true;
+		return requiredElements.isEmpty() || NbtHelper.isCompoundContained(requiredElements, tag);
 	}
 	
 	public void addToJson(JsonObject json) {
@@ -50,17 +48,26 @@ public class IngredientEntryCondition {
 	
 	public static IngredientEntryCondition fromJson(JsonObject json) {
 		IngredientEntryCondition condition = new IngredientEntryCondition();
+
+		boolean flatObject = true;
 		
 		if(json.has("require")) {
 			if(!json.get("require").isJsonObject())
 				throw new JsonParseException("data.require must be an object");
 			condition.requiredElements = (CompoundTag) Dynamic.convert(JsonOps.INSTANCE, NbtOps.INSTANCE, json.getAsJsonObject("require"));
+			flatObject = false;
 		}
 		if(json.has("deny")) {
 			if(!json.get("deny").isJsonObject())
 				throw new JsonParseException("data.deny must be an object");
 			condition.deniedElements = (CompoundTag) Dynamic.convert(JsonOps.INSTANCE, NbtOps.INSTANCE, json.getAsJsonObject("deny"));
+			flatObject = false;
 		}
+
+		if(flatObject) {
+			condition.requiredElements = (CompoundTag) Dynamic.convert(JsonOps.INSTANCE, NbtOps.INSTANCE, json);
+		}
+
 		return condition;
 	}
 	
