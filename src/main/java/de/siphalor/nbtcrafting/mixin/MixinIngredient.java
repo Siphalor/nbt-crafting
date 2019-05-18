@@ -9,7 +9,9 @@ import de.siphalor.nbtcrafting.util.ICloneable;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.potion.Potion;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.crafting.ShapedRecipe;
 import net.minecraft.tag.ItemTags;
@@ -168,7 +170,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
             throw new JsonSyntaxException("Item cannot be null");
         }
         if(element.isJsonObject()) {
-        	if(element.getAsJsonObject().has("data") || element.getAsJsonObject().has("remainder"))
+        	if(element.getAsJsonObject().has("data") || element.getAsJsonObject().has("remainder") || element.getAsJsonObject().has("potion"))
 				callbackInfoReturnable.setReturnValue(ofAdvancedEntries(Stream.of(advancedEntryFromJson(element.getAsJsonObject()))));
         } else if(element.isJsonArray()) {
 	        final JsonArray jsonArray = element.getAsJsonArray();
@@ -181,7 +183,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 
 	private static IngredientEntry advancedEntryFromJson(JsonObject jsonObject) {
 		if (jsonObject.has("item") && jsonObject.has("tag")) {
-            throw new JsonParseException("An ingredient entry is either a tag or an item, not both");
+            throw new JsonParseException("An ingredient entry is either a tag or an item or a potion, not both");
         }
         if (jsonObject.has("item")) {
             final Identifier identifier = new Identifier(JsonHelper.getString(jsonObject, "item"));
@@ -199,6 +201,24 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
             	return null;
             }
         }
+        if (jsonObject.has("potion")) {
+        	final Identifier identifier = new Identifier(JsonHelper.getString(jsonObject, "potion"));
+        	try {
+        		final Potion potion = Registry.POTION.getOrEmpty(identifier).orElseThrow(() -> {
+        			throw new JsonSyntaxException("Unknown potion '" + identifier.toString() + "'");
+				});
+        		IngredientEntryCondition condition = loadIngredientEntryCondition(jsonObject);
+        		condition.requiredElements.putString("Potion", identifier.toString());
+                IngredientStackEntry entry = new IngredientStackEntry(Registry.ITEM.getRawId(Items.POTION), condition);
+                if(jsonObject.has("remainder")) {
+                	entry.setRecipeRemainder(ShapedRecipe.getItemStack(JsonHelper.getObject(jsonObject, "remainder")));
+				}
+                return entry;
+			} catch (Throwable e) {
+        		e.printStackTrace();
+        		return null;
+			}
+		}
         if (!jsonObject.has("tag")) {
             throw new JsonParseException("An ingredient entry needs either a tag or an item");
         }

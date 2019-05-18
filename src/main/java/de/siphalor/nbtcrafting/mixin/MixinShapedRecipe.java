@@ -10,6 +10,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.crafting.ShapedRecipe;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
+import net.minecraft.util.registry.Registry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,6 +21,22 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ShapedRecipe.class)
 public abstract class MixinShapedRecipe {
+	@Inject(method = "getItemStack", at = @At("HEAD"))
+	private static void handlePotions(JsonObject json, CallbackInfoReturnable<ItemStack> ci) {
+		if(json.has("potion")) {
+			Identifier identifier = new Identifier(JsonHelper.getString(json, "potion"));
+            if(!Registry.POTION.getOrEmpty(identifier).isPresent())
+            	throw new JsonParseException("The given resulting potion does not exist!");
+            JsonObject dataObject;
+            if(!json.has("data")) {
+				dataObject = new JsonObject();
+				json.add("data", dataObject);
+			} else
+				dataObject = JsonHelper.getObject(json, "data");
+            dataObject.addProperty("Potion", identifier.toString());
+            json.addProperty("item", "minecraft:potion");
+		}
+	}
 
 	@Inject(
 		method = "getItemStack",

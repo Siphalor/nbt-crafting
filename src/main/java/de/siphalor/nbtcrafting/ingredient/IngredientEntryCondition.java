@@ -12,8 +12,8 @@ import net.minecraft.util.PacketByteBuf;
 
 public class IngredientEntryCondition {
 	
-	private CompoundTag requiredElements;
-	private CompoundTag deniedElements;
+	public CompoundTag requiredElements;
+	public CompoundTag deniedElements;
 	
 	public IngredientEntryCondition() {
 		requiredElements = new CompoundTag();
