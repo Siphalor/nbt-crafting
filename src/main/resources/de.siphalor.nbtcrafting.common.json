@@ -6,6 +6,7 @@
 		"MixinBrewingStandBlockEntity",
 		"MixinBrewingSlotIngredient",
 		"MixinBrewingSlotPotion",
+		"MixinCookingRecipe",
 		"MixinCookingRecipeSerializer",
 		"MixinCraftingResultSlot",
 		"MixinIngredient",
@@ -15,6 +16,7 @@
 		"MixinInputSlotFiller",
 		"MixinServerPlayerEntity",
 		"MixinShapedRecipe",
+		"MixinShapelessRecipe",
 		"MixinRecipe",
 		"network.MixinServerPlayNetworkHandler"
 	],

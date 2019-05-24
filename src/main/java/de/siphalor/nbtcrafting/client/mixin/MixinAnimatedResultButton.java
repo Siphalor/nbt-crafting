@@ -1,7 +1,7 @@
 package de.siphalor.nbtcrafting.client.mixin;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.recipebook.AnimatedResultButton;
+import net.minecraft.client.gui.screen.recipebook.AnimatedResultButton;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;

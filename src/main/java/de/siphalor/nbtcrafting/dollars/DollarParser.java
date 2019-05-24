@@ -83,6 +83,7 @@ public final class DollarParser {
 			return parse();
 		}
 		int index = StringUtils.indexOfAny(expression, " \n\t\r+-*/)");
+		index = index < 0 ? expression.length() : index;
 		if(!expression.substring(0, index).matches("[\\w\\d_.\\[\\]]+"))
 			throw new DollarException("Illegal statement: " + expression);
 		DollarPart part = new ReferenceDollarPart(expression.substring(0, index));

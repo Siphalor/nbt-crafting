@@ -7,9 +7,9 @@ import com.mojang.datafixers.types.JsonOps;
 import net.minecraft.datafixers.NbtOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.recipe.AbstractCookingRecipe;
+import net.minecraft.recipe.CookingRecipeSerializer;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.cooking.CookingRecipe;
-import net.minecraft.recipe.cooking.CookingRecipeSerializer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,7 +37,7 @@ public abstract class MixinCookingRecipeSerializer {
 	}
 
     @Inject(method = "method_17736", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void onRecipeReady(Identifier identifier, JsonObject jsonObject, CallbackInfoReturnable<CookingRecipe> callbackInfoReturnable, String group, JsonElement ingredientJson, Ingredient ingredient, String itemId, Identifier itemIdentifier, ItemStack stack, float experience, int cookingTime) {
+	public void onRecipeReady(Identifier identifier, JsonObject jsonObject, CallbackInfoReturnable<AbstractCookingRecipe> callbackInfoReturnable, String group, JsonElement ingredientJson, Ingredient ingredient, String itemId, Identifier itemIdentifier, ItemStack stack, float experience, int cookingTime) {
 		stack.setTag(resultTag);
     }
 }

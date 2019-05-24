@@ -9,8 +9,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 @SuppressWarnings("ALL")
@@ -160,7 +162,9 @@ public class NbtHelper {
 				}
 				CompoundTag currentCompound = (CompoundTag) currentTag;
 				if(!currentCompound.containsKey(pathParts[i])) {
-					currentCompound.put(pathParts[i], new CompoundTag());
+					CompoundTag newCompound = new CompoundTag();
+					currentCompound.put(pathParts[i], newCompound);
+					currentTag = newCompound;
 				} else if(isCompound(currentCompound.getTag(pathParts[i])) || isList(currentCompound.getTag(pathParts[i]))) {
 					currentTag = currentCompound.getTag(pathParts[i]);
 				} else {
@@ -182,17 +186,22 @@ public class NbtHelper {
 	}
 
 	private static void iterateTags(Tag tag, BiFunction<String, Tag, Boolean> biFunction, String path) {
+		if(tag == null) return;
 		if(isCompound(tag)) {
 			CompoundTag compoundTag = (CompoundTag) tag;
 			if(path != "")
 				path += ".";
+			Set<String> remove = new HashSet<>();
 			for(String key : compoundTag.getKeys()) {
 				if(isCompound(compoundTag.getTag(key)) || isList(compoundTag.getTag(key)))
 					iterateTags(compoundTag.getTag(key), biFunction, path + key);
 				else {
 					if(biFunction.apply(path + key, compoundTag.getTag(key)))
-						compoundTag.remove(key);
+                        remove.add(key);
 				}
+			}
+			for(String key : remove) {
+				compoundTag.remove(key);
 			}
 		} else if(isList(tag)) {
 			ListTag listTag = (ListTag) tag;
@@ -205,5 +214,29 @@ public class NbtHelper {
 				}
 			}
 		}
+	}
+
+	public static CompoundTag mergeInto(CompoundTag target, CompoundTag additions, boolean replace) {
+		if(target == null) {
+			if(additions == null)
+				return new CompoundTag();
+			return additions;
+		}
+		if(additions == null) return target;
+
+		iterateTags(additions, (path, tag) -> {
+            if(!(tag instanceof CompoundTag)) {
+				try {
+					CompoundTag parent = getParentTagOrCreate(target, path);
+					String lastKeyPart = getLastKey(path);
+					if(!parent.containsKey(getLastKey(lastKeyPart)) || replace)
+						parent.put(lastKeyPart, tag.copy());
+				} catch (DollarException e) {
+					e.printStackTrace();
+				}
+			}
+            return false;
+		});
+        return target;
 	}
 }

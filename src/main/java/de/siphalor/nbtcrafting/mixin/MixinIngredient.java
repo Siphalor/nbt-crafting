@@ -13,7 +13,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.potion.Potion;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.crafting.ShapedRecipe;
+import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;

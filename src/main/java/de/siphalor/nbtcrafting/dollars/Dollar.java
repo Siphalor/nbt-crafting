@@ -21,16 +21,22 @@ public class Dollar {
 		CompoundTag compoundTag = stack.getOrCreateTag();
         CompoundTag parent = NbtHelper.getParentTagOrCreate(compoundTag, key);
         Object value = expression.apply(references).value;
-        if(value instanceof Tag)
-        	compoundTag.put(lastKeyPart, (Tag) value);
+        if(value instanceof CompoundTag) {
+			if(lastKeyPart.equals("$")) {
+				NbtHelper.mergeInto(parent, (CompoundTag) value, true);
+			} else {
+				NbtHelper.mergeInto(parent.getCompound(lastKeyPart), (CompoundTag) value, true);
+			}
+		} if(value instanceof Tag)
+        	parent.put(lastKeyPart, (Tag) value);
         else if(value instanceof Double) {
-	        compoundTag.putDouble(lastKeyPart, (Double) value);
+	        parent.putDouble(lastKeyPart, (Double) value);
 	        if(key.equals("Damage")) {
 	        	if(stack.getDamage() >= stack.getDurability())
 	        		stack.split(1);
 	        }
         } else if(value instanceof String)
-        	compoundTag.putString(lastKeyPart, (String) value);
+        	parent.putString(lastKeyPart, (String) value);
         else
         	throw new DollarException("Unknown type in dollar expression");
 	}

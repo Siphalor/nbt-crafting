@@ -20,8 +20,8 @@ import java.util.Iterator;
 
 public class BrewingRecipe implements Recipe<BrewingStandBlockEntity> {
 	private Identifier id;
-	private Ingredient base;
-	private Ingredient ingredient;
+	public Ingredient base;
+	public Ingredient ingredient;
 	private ItemStack output;
     private Dollar[] outputDollars;
 
@@ -30,7 +30,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity> {
 		this.base = base;
 		this.ingredient = ingredient;
 		this.output = output;
-		this.outputDollars = DollarParser.extractDollars(output.getOrCreateTag());
+		this.outputDollars = DollarParser.extractDollars((CompoundTag) output.getOrCreateTag().copy());
 	}
 
 	public static boolean existsMatchingIngredient(ItemStack stack, RecipeManager recipeManager) {

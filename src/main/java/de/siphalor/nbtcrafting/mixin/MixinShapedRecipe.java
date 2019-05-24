@@ -5,15 +5,21 @@ import com.google.gson.JsonParseException;
 import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.types.JsonOps;
 import de.siphalor.nbtcrafting.Core;
+import de.siphalor.nbtcrafting.util.RecipeUtil;
 import net.minecraft.datafixers.NbtOps;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.recipe.crafting.ShapedRecipe;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.ShapedRecipe;
+import net.minecraft.util.DefaultedList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -21,6 +27,10 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ShapedRecipe.class)
 public abstract class MixinShapedRecipe {
+	@Shadow @Final private ItemStack output;
+
+	@Shadow @Final private DefaultedList<Ingredient> inputs;
+
 	@Inject(method = "getItemStack", at = @At("HEAD"))
 	private static void handlePotions(JsonObject json, CallbackInfoReturnable<ItemStack> ci) {
 		if(json.has("potion")) {
@@ -58,5 +68,11 @@ public abstract class MixinShapedRecipe {
 		ItemStack stack = new ItemStack(item, amount);
 		stack.setTag(Core.useLastReadNbt());
 		ci.setReturnValue(stack);
+	}
+
+	@Inject(method = "method_17727", at = @At("HEAD"))
+	public void craft(CraftingInventory craftingInventory, CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
+		ItemStack result = RecipeUtil.getDollarAppliedOutputStack(output, inputs, craftingInventory);
+		if(result != null) callbackInfoReturnable.setReturnValue(result);
 	}
 }
