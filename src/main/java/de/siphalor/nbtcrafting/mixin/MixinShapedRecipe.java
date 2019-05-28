@@ -70,7 +70,7 @@ public abstract class MixinShapedRecipe {
 		ci.setReturnValue(stack);
 	}
 
-	@Inject(method = "method_17727", at = @At("HEAD"))
+	@Inject(method = "method_17727", at = @At("HEAD"), cancellable = true)
 	public void craft(CraftingInventory craftingInventory, CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
 		ItemStack result = RecipeUtil.getDollarAppliedOutputStack(output, inputs, craftingInventory);
 		if(result != null) callbackInfoReturnable.setReturnValue(result);
