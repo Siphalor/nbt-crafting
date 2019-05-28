@@ -18,7 +18,7 @@ public class MixinCookingRecipe {
 
 	@Shadow @Final protected Ingredient input;
 
-	@Inject(method = "craft", at = @At("HEAD"))
+	@Inject(method = "craft", at = @At("HEAD"), cancellable = true)
 	public void craft(Inventory inventory, CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
 		ItemStack result = RecipeUtil.getDollarAppliedOutputStack(output, input, inventory);
 		if(result != null) callbackInfoReturnable.setReturnValue(result);
