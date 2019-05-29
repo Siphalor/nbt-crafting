@@ -19,10 +19,13 @@ public class RecipeUtil {
 
 		if(dollars.length > 0) {
 			HashMap<String, CompoundTag> reference = new HashMap<>();
+			ingredient:
 			for (int j = 0; j < ingredients.size(); j++) {
 				for (int i = 0; i < inventory.getInvSize(); i++) {
-					if(ingredients.get(j).method_8093(inventory.getInvStack(i)))
-						reference.putIfAbsent("i"+j, (CompoundTag) inventory.getInvStack(i).getOrCreateTag().copy());
+					if(ingredients.get(j).method_8093(inventory.getInvStack(i))) {
+						reference.putIfAbsent("i" + j, (CompoundTag) inventory.getInvStack(i).getOrCreateTag().copy());
+						continue ingredient;
+					}
 				}
 			}
 
@@ -49,7 +52,7 @@ public class RecipeUtil {
 		return null;
 	}
 
-	public static void applyDollars(ItemStack stack, Dollar[] dollars, HashMap<String, CompoundTag> reference) {
+	private static void applyDollars(ItemStack stack, Dollar[] dollars, HashMap<String, CompoundTag> reference) {
 		Arrays.stream(dollars).forEach(dollar -> {
 			try {
 				dollar.apply(stack, reference);

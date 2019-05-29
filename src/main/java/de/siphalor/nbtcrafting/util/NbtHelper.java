@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("ALL")
 public class NbtHelper {
@@ -224,19 +225,24 @@ public class NbtHelper {
 		}
 		if(additions == null) return target;
 
-		iterateTags(additions, (path, tag) -> {
-            if(!(tag instanceof CompoundTag)) {
-				try {
-					CompoundTag parent = getParentTagOrCreate(target, path);
-					String lastKeyPart = getLastKey(path);
-					if(!parent.containsKey(getLastKey(lastKeyPart)) || replace)
-						parent.put(lastKeyPart, tag.copy());
-				} catch (DollarException e) {
-					e.printStackTrace();
-				}
+		for(String key : additions.getKeys()) {
+			if(!target.containsKey(key)) {
+				target.put(key, additions.getTag(key).copy());
+				continue;
 			}
-            return false;
-		});
+
+            Tag targetTag = target.getTag(key);
+			Tag additionsTag = target.getTag(key);
+			if(isCompound(targetTag) && isCompound(additionsTag)) {
+				mergeInto((CompoundTag) targetTag, (CompoundTag) additionsTag, replace);
+			} else if(isList(targetTag) && isList(additionsTag)) {
+				((ListTag) targetTag).addAll(((ListTag) additionsTag).stream().map(Tag::copy).collect(Collectors.toList()));
+			} else {
+				if(replace)
+					target.put(key, additionsTag.copy());
+			}
+		}
+
         return target;
 	}
 }
