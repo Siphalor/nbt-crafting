@@ -5,7 +5,7 @@ import net.minecraft.nbt.AbstractNumberTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class ReferenceDollarPart implements DollarPart {
 	public String ingredientId;
@@ -32,7 +32,7 @@ public class ReferenceDollarPart implements DollarPart {
 		}
 	}
 
-	public ValueDollarPart apply(HashMap<String, CompoundTag> references) throws DollarException {
+	public ValueDollarPart apply(Map<String, CompoundTag> references) throws DollarException {
 		CompoundTag parent = NbtHelper.getParentTagOrCreate(references.get(ingredientId), path);
 		if(key.equals(""))
 			return new ValueDollarPart(parent);

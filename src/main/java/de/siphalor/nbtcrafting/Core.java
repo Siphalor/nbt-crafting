@@ -1,7 +1,11 @@
 package de.siphalor.nbtcrafting;
 
+import de.siphalor.nbtcrafting.anvil.AnvilRecipe;
+import de.siphalor.nbtcrafting.anvil.AnvilRecipeSerializer;
 import de.siphalor.nbtcrafting.brewing.BrewingRecipe;
 import de.siphalor.nbtcrafting.brewing.BrewingRecipeSerializer;
+import de.siphalor.nbtcrafting.cauldron.CauldronRecipe;
+import de.siphalor.nbtcrafting.cauldron.CauldronRecipeSerializer;
 import de.siphalor.nbtcrafting.util.IServerPlayerEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
@@ -16,12 +20,18 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public class Core implements ModInitializer {
-	@SuppressWarnings("WeakerAccess")
 	public static final String MODID = "nbtcrafting";
 	public static final Identifier PRESENCE_PACKET_ID = new Identifier(MODID, "present");
+	public static final Identifier UPDATE_ANVIL_TEXT_S2C_PACKET_ID = new Identifier(MODID, "update_anvil_text");
 
 	public static final RecipeType<BrewingRecipe> BREWING_RECIPE_TYPE = registerRecipeType("brewing");
 	public static final BrewingRecipeSerializer BREWING_RECIPE_SERIALIZER = registerRecipeSerializer("brewing", new BrewingRecipeSerializer());
+
+	public static final RecipeType<CauldronRecipe> CAULDRON_RECIPE_TYPE = registerRecipeType("cauldron");
+	public static final CauldronRecipeSerializer CAULDRON_RECIPE_SERIALIZER = registerRecipeSerializer("cauldron", new CauldronRecipeSerializer());
+
+	public static final RecipeType<AnvilRecipe> ANVIL_RECIPE_TYPE = registerRecipeType("anvil");
+	public static final AnvilRecipeSerializer ANVIL_RECIPE_SERIALIZER = registerRecipeSerializer("anvil", new AnvilRecipeSerializer());
 
 	private static boolean lastReadNbtPresent = false;
 	private static CompoundTag lastReadNbt;

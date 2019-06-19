@@ -2,6 +2,8 @@ package de.siphalor.nbtcrafting.mixin;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.types.JsonOps;
 import de.siphalor.nbtcrafting.Core;
@@ -11,6 +13,7 @@ import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.util.DefaultedList;
@@ -55,9 +58,15 @@ public abstract class MixinShapedRecipe {
 	private static void deserializeItemStack(JsonObject json, CallbackInfoReturnable<ItemStack> ci) {
 		Core.setLastReadNbt(null);
 		if(json.has("data")) {
-			if(!json.get("data").isJsonObject())
-				throw new JsonParseException("The recipe's output data tag must be a JSON object.");
-			Core.setLastReadNbt((CompoundTag) Dynamic.convert(JsonOps.INSTANCE, NbtOps.INSTANCE, json.getAsJsonObject("data")));
+			if(JsonHelper.hasString(json, "data")) {
+				try {
+					Core.setLastReadNbt(new StringNbtReader(new StringReader(json.get("data").getAsString())).parseCompoundTag());
+				} catch (CommandSyntaxException e) {
+					e.printStackTrace();
+				}
+			} else {
+				Core.setLastReadNbt((CompoundTag) Dynamic.convert(JsonOps.INSTANCE, NbtOps.INSTANCE, JsonHelper.getObject(json, "data")));
+			}
 			json.remove("data");
 		}
 	}

@@ -24,7 +24,7 @@ public abstract class MixinInputSlotFiller {
 		if(!stack.hasTag()) {
 			for(int i = 0; i < inventory.main.size(); i++) {
 				ItemStack stack2 = inventory.main.get(i);
-				if(stack2.hasTag() && stack.isEqualIgnoreTags(stack2))
+				if(stack2.hasTag() && stack.isItemEqualIgnoreDamage(stack2))
 					return i;
 			}
 		}

@@ -3,6 +3,7 @@
 	"package": "de.siphalor.nbtcrafting.client.mixin",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
+		"AnvilScreenAccessor",
 		"MixinAnimatedResultButton",
 		"MixinMinecraftClient",
 		"MixinRecipeBookGhostSlots",

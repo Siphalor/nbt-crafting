@@ -16,7 +16,7 @@
 	},
 
 	"license": "Unlicense",
-	"icon": "assets/nbtcrafting/logo_dollar.png",
+	"icon": "assets/nbtcrafting/logo_variation.png",
 
 	"environment": "*",
 	"mixins": [
@@ -33,6 +33,11 @@
 		"main": [
 			{
 				"value": "de.siphalor.nbtcrafting.Core"
+			}
+		],
+		"client": [
+			{
+				"value": "de.siphalor.nbtcrafting.client.ClientCore"
 			}
 		],
 		"rei_plugins": [

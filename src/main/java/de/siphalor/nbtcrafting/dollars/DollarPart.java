@@ -2,8 +2,8 @@ package de.siphalor.nbtcrafting.dollars;
 
 import net.minecraft.nbt.CompoundTag;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public interface DollarPart {
-	public ValueDollarPart apply(HashMap<String, CompoundTag> references) throws DollarException;
+	ValueDollarPart apply(Map<String, CompoundTag> references) throws DollarException;
 }

@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class Dollar {
 	protected final String key;
@@ -17,7 +17,7 @@ public class Dollar {
 		this.lastKeyPart = key.substring(key.lastIndexOf('.') + 1);
 	}
 
-	public void apply(ItemStack stack, HashMap<String, CompoundTag> references) throws DollarException {
+	public void apply(ItemStack stack, Map<String, CompoundTag> references) throws DollarException {
 		CompoundTag compoundTag = stack.getOrCreateTag();
         CompoundTag parent = NbtHelper.getParentTagOrCreate(compoundTag, key);
         Object value = expression.apply(references).value;
@@ -32,7 +32,7 @@ public class Dollar {
         else if(value instanceof Double) {
 	        parent.putDouble(lastKeyPart, (Double) value);
 	        if(key.equals("Damage")) {
-	        	if(stack.getDamage() >= stack.getDurability())
+	        	if(stack.getDamage() >= stack.getDamage())
 	        		stack.split(1);
 	        }
         } else if(value instanceof String)

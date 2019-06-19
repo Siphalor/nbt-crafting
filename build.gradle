@@ -7,7 +7,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version
+version = "${project.mod_version}+${project.minecraft_version}"
 group = project.maven_group
 
 minecraft {
@@ -20,15 +20,15 @@ repositories {
 dependencies {
 	//to change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}"
+	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}"
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modCompile "net.fabricmc.fabric-api:fabric-api-base:${project.fabric_version}"
-	include "net.fabricmc.fabric-api:fabric-api-base:${project.fabric_version}"
-	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:${project.fabric_version}"
-	include "net.fabricmc.fabric-api:fabric-networking-v0:${project.fabric_version}"
+	modCompile "net.fabricmc.fabric-api:fabric-api-base:+"
+	include "net.fabricmc.fabric-api:fabric-api-base:+"
+	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
+	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
 	
-	modCompile "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
+	modCompile "me.shedaniel:RoughlyEnoughItems:+"
 }
 
 processResources {

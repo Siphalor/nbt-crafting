@@ -2,7 +2,7 @@ package de.siphalor.nbtcrafting.dollars;
 
 import net.minecraft.nbt.CompoundTag;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class ValueDollarPart implements DollarPart {
 	public Object value;
@@ -16,7 +16,7 @@ public class ValueDollarPart implements DollarPart {
 	}
 
 	@Override
-	public ValueDollarPart apply(HashMap<String, CompoundTag> references) throws DollarException {
+	public ValueDollarPart apply(Map<String, CompoundTag> references) throws DollarException {
 		return this;
 	}
 }

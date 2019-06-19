@@ -3,7 +3,7 @@ package de.siphalor.nbtcrafting.dollars;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
 public class GroupDollarPart implements DollarPart {
 	public ArrayList<DollarPart> parts;
@@ -14,7 +14,7 @@ public class GroupDollarPart implements DollarPart {
 		operators = new ArrayList<>();
 	}
 
-	public ValueDollarPart apply(HashMap<String, CompoundTag> references) throws DollarException {
+	public ValueDollarPart apply(Map<String, CompoundTag> references) throws DollarException {
 		if(parts.size() <= 0)
 			return new ValueDollarPart();
 		Object value = parts.get(0).apply(references).value;

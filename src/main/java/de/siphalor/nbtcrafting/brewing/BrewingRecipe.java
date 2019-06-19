@@ -91,7 +91,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity> {
 	@Override
 	public ItemStack craft(BrewingStandBlockEntity brewingStandBlockEntity) {
 		ItemStack ingredientStack = brewingStandBlockEntity.getInvStack(3);
-		ingredientStack.subtractAmount(1);
+		ingredientStack.split(1);
 		HashMap<String, CompoundTag> map = new HashMap<>(1);
 		map.put("this", ingredientStack.getOrCreateTag());
 		ItemStack remainder = ((IIngredient)(Object) base).getRecipeRemainder(ingredientStack, map);

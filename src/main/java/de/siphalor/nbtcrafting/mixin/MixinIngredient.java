@@ -2,6 +2,8 @@ package de.siphalor.nbtcrafting.mixin;
 
 import com.google.common.base.Predicates;
 import com.google.gson.*;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.siphalor.nbtcrafting.Core;
 import de.siphalor.nbtcrafting.client.ClientCore;
 import de.siphalor.nbtcrafting.ingredient.*;
@@ -11,6 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.potion.Potion;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
@@ -29,7 +32,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -237,10 +240,21 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 
 	private static IngredientEntryCondition loadIngredientEntryCondition(JsonObject jsonObject) {
 		if(jsonObject.has("data")) {
-			if(jsonObject.get("data").isJsonPrimitive() && jsonObject.getAsJsonPrimitive("data").isString()) {
-				throw new JsonParseException("The data tag on recipes cannot be a string anymore; See the wiki for more information ;)");
-			}
-			if(jsonObject.get("data").isJsonObject()) {
+			if(JsonHelper.hasString(jsonObject, "data")) {
+				try {
+					CompoundTag compoundTag = new StringNbtReader(new StringReader(jsonObject.get("data").getAsString())).parseCompoundTag();
+                    IngredientEntryCondition condition = new IngredientEntryCondition();
+                    if(compoundTag.containsKey("require") || compoundTag.containsKey("deny")) {
+                    	if(compoundTag.containsKey("require")) condition.requiredElements = compoundTag.getCompound("require");
+                    	if(compoundTag.containsKey("deny")) condition.deniedElements = compoundTag.getCompound("deny");
+					} else {
+                    	condition.requiredElements = compoundTag;
+					}
+                    return condition;
+				} catch (CommandSyntaxException e) {
+					e.printStackTrace();
+				}
+			} else if(jsonObject.get("data").isJsonObject()) {
 				return IngredientEntryCondition.fromJson(jsonObject.get("data").getAsJsonObject());
 			}
 		}
@@ -253,7 +267,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	}
 
 	@Override
-	public ItemStack getRecipeRemainder(ItemStack stack, HashMap<String, CompoundTag> reference) {
+	public ItemStack getRecipeRemainder(ItemStack stack, Map<String, CompoundTag> reference) {
 		if(advancedEntries != null) {
 			for(IngredientEntry entry : advancedEntries) {
 				if(entry.matches(stack)) {
