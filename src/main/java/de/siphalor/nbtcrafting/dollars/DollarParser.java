@@ -12,7 +12,7 @@ public final class DollarParser {
 	public static Dollar[] extractDollars(CompoundTag compoundTag) {
 		ArrayList<Dollar> dollars = new ArrayList<>();
 		NbtHelper.iterateTags(compoundTag, (path, tag) -> {
-			if(NbtHelper.isString(tag)) {
+			if(NbtHelper.isString(tag) && !tag.asString().isEmpty()) {
 				if(tag.asString().charAt(0) == '$') {
 					dollars.add(new DollarParser().parse(path, tag.asString().substring(1)));
 					return true;
