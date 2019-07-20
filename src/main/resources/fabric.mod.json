@@ -11,6 +11,7 @@
 	],
 	"contact": {
 		"email": "xyx0125@gmail.com",
+		"homepage": "https://github.com/Siphalor/nbt-crafting",
 		"issues": "https://github.com/Siphalor/nbt-crafting/issues",
 		"sources": "https://github.com/Siphalor/nbt-crafting"
 	},
@@ -47,5 +48,9 @@
 
 	"requires": {
 		"fabricloader": ">=0.4.0"
+	},
+
+	"custom": {
+		"modmenu:api": true
 	}
 }
