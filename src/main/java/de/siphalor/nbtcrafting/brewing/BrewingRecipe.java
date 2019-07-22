@@ -96,7 +96,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity> {
 		map.put("this", ingredientStack.getOrCreateTag());
 		ItemStack remainder = ((IIngredient)(Object) base).getRecipeRemainder(ingredientStack, map);
 		if(!ingredientStack.isEmpty()) {
-			ItemScatterer.spawn(brewingStandBlockEntity.getWorld(), brewingStandBlockEntity.getPos(), DefaultedList.create(remainder));
+			ItemScatterer.spawn(brewingStandBlockEntity.getWorld(), brewingStandBlockEntity.getPos(), DefaultedList.copyOf(remainder));
 		} else if(remainder != null) {
 			brewingStandBlockEntity.setInvStack(3, remainder);
 		}

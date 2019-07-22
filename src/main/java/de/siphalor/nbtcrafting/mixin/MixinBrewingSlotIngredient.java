@@ -1,14 +1,8 @@
 package de.siphalor.nbtcrafting.mixin;
 
-import de.siphalor.nbtcrafting.brewing.BrewingRecipe;
-import de.siphalor.nbtcrafting.client.ClientCore;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.container.Slot;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.RecipeManager;
-import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,13 +16,14 @@ public abstract class MixinBrewingSlotIngredient extends Slot {
 
 	@Inject(method = "canInsert(Lnet/minecraft/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
 	public void canInsert(ItemStack stack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		RecipeManager recipeManager;
+		/*RecipeManager recipeManager;
 		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
 			recipeManager = ClientCore.getRecipeManager();
 		} else {
 			recipeManager = ((MinecraftServer) FabricLoader.getInstance().getGameInstance()).getRecipeManager();
 		}
         if(BrewingRecipe.existsMatchingIngredient(stack, recipeManager))
-        	callbackInfoReturnable.setReturnValue(true);
+        	callbackInfoReturnable.setReturnValue(true);*/
+		callbackInfoReturnable.setReturnValue(true);
 	}
 }

@@ -24,7 +24,7 @@ public interface MixinRecipe {
 	 */
 	@Overwrite
 	default DefaultedList<ItemStack> getRemainingStacks(Inventory inventory) {
-		final DefaultedList<ItemStack> stackList = DefaultedList.<ItemStack>create(inventory.getInvSize(), ItemStack.EMPTY);
+		final DefaultedList<ItemStack> stackList = DefaultedList.ofSize(inventory.getInvSize(), ItemStack.EMPTY);
 		HashMap<String, CompoundTag> reference = new HashMap<>();
         DefaultedList<Ingredient> ingredients = getPreviewInputs();
 		for (int j = 0; j < ingredients.size(); j++) {

@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.2.2-SNAPSHOT'
+	id 'fabric-loom' version '0.2.4-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -28,7 +28,8 @@ dependencies {
 	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
 	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
 	
-	modCompile "me.shedaniel:RoughlyEnoughItems:+"
+    modImplementation "cloth-config:ClothConfig2:0.2.0"
+	modImplementation "me.shedaniel:RoughlyEnoughItems:+"
 }
 
 processResources {
