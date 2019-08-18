@@ -27,9 +27,10 @@ dependencies {
 	include "net.fabricmc.fabric-api:fabric-api-base:+"
 	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
 	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
-	
-    modImplementation "cloth-config:ClothConfig2:0.2.0"
-	modImplementation "me.shedaniel:RoughlyEnoughItems:+"
+
+	modImplementation ("me.shedaniel:RoughlyEnoughItems:+") {
+		exclude module: "ModMenu"
+	}
 }
 
 processResources {
