@@ -41,7 +41,7 @@
 				"value": "de.siphalor.nbtcrafting.client.ClientCore"
 			}
 		],
-		"rei_plugins": [
+		"rei_plugins_v0": [
 			"de.siphalor.nbtcrafting.client.rei.REIPlugin"
 		]
 	},
