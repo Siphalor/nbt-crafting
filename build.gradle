@@ -28,9 +28,7 @@ dependencies {
 	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
 	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
 
-	modImplementation ("me.shedaniel:RoughlyEnoughItems:+") {
-		exclude module: "ModMenu"
-	}
+	modImplementation "me.shedaniel:RoughlyEnoughItems:3.0-pre+build.3"
 }
 
 processResources {

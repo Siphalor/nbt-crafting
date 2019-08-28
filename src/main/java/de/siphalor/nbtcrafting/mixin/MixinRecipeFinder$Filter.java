@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.ints.IntCollection;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeFinder;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,13 +22,13 @@ public abstract class MixinRecipeFinder$Filter {
 	
 	private RecipeFinder owner;
 
-    @Shadow(aliases = "field_7552", remap = false)
+    @Shadow(aliases = "field_7552", remap = false) @Final
 	private List<Ingredient> ingredients;
 	
-	@Shadow(aliases = "field_7551", remap = false)
+	@Shadow(aliases = "field_7551", remap = false) @Final
 	private int[] inputs;
 	
-	@Shadow(aliases = "field_7558", remap = false)
+	@Shadow(aliases = "field_7558", remap = false) @Final
 	private BitSet bitSet;
 	
 	@Shadow
