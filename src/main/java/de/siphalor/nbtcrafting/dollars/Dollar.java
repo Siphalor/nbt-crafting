@@ -32,7 +32,7 @@ public class Dollar {
 		} else if(value instanceof Double) {
 	        parent.putDouble(lastKeyPart, (Double) value);
 	        if(key.equals("Damage")) {
-	        	if(stack.getDamage() >= stack.getDamage())
+	        	if(stack.getDamage() >= stack.getMaxDamage())
 	        		stack.split(1);
 	        }
         } else if(value instanceof String) {
