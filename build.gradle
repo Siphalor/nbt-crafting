@@ -1,6 +1,7 @@
 plugins {
-	id 'fabric-loom' version '0.2.4-SNAPSHOT'
+	id 'fabric-loom' version '0.2.5-SNAPSHOT'
 	id 'maven-publish'
+	id 'com.github.johnrengelman.shadow' version '4.0.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -61,6 +62,17 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
 	from "LICENSE"
+	classifier = ""
+}
+
+shadowJar {
+	configurations = [project.configurations.shadow]
+	classifier = "fat"
+}
+
+remapJar {
+	dependsOn shadowJar
+	input = shadowJar.archivePath
 }
 
 // configure the maven publication
