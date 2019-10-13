@@ -36,9 +36,9 @@ public class ReferenceDollarPart implements DollarPart {
 		CompoundTag parent = NbtHelper.getParentTagOrCreate(references.get(ingredientId), path);
 		if(key.equals(""))
 			return new ValueDollarPart(parent);
-		if(!parent.containsKey(key))
+		if(!parent.contains(key))
 			return new ValueDollarPart();
-		Tag tag = parent.getTag(this.key);
+		Tag tag = parent.get(this.key);
 		if(NbtHelper.isString(tag))
 			return new ValueDollarPart(tag.asString());
 		else if(NbtHelper.isNumeric(tag))

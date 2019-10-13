@@ -27,9 +27,9 @@ public class DollarNbt {
 
 	private void loadFromCompoundTagRecurse(CompoundTag from, String path) {
 		for(String key : from.getKeys()) {
-			if(NbtHelper.isCompound(from.getTag(key))) {
+			if(NbtHelper.isCompound(from.get(key))) {
 				loadFromCompoundTagRecurse(from.getCompound(key), path + "." + key);
-			} else if(NbtHelper.isString(from.getTag(key))) {
+			} else if(NbtHelper.isString(from.get(key))) {
 				if(from.getString(key).charAt(0) == '$') {
 					dollars.put(path + "." + key, from.getString(key).substring(1));
 				}

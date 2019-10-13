@@ -29,15 +29,17 @@ dependencies {
 	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
 	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
 
-	modImplementation "me.shedaniel:RoughlyEnoughItems:3.0-pre+build.3"
+	modImplementation("me.shedaniel:RoughlyEnoughItems:3.1.5-unstable.201910101247") {
+		exclude module: "modmenu"
+	}
 }
 
 processResources {
-	inputs.property "version", project.version
+	inputs.property "version", version
 
 	from(sourceSets.main.resources.srcDirs) {
 		include "fabric.mod.json"
-		expand "version": project.version
+		expand "version": version
 	}
 
 	from(sourceSets.main.resources.srcDirs) {

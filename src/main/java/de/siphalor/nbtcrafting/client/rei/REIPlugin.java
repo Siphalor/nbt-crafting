@@ -28,7 +28,7 @@ public class REIPlugin implements REIPluginV0 {
 	public void registerRecipeDisplays(RecipeHelper recipeHelper) {
 		recipeHelper.getAllSortedRecipes().forEach(recipe -> {
 			if(recipe instanceof BrewingRecipe) {
-                for(ItemStack stack : ((BrewingRecipe) recipe).base.getStackArray()) {
+                for(ItemStack stack : ((BrewingRecipe) recipe).base.getMatchingStacksClient()) {
                 	recipeHelper.registerDisplay(DefaultPlugin.BREWING, new DefaultBrewingDisplay(stack, ((BrewingRecipe) recipe).ingredient, recipe.getOutput()));
 				}
 			}

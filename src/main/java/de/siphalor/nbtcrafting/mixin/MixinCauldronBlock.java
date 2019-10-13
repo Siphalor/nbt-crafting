@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @Mixin(CauldronBlock.class)
 public class MixinCauldronBlock {
-	@Inject(method = "activate", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
 	public void onActivate(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockHitResult blockHitResult, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if(!world.isClient()) {
 			TemporaryCauldronInventory inventory = new TemporaryCauldronInventory(playerEntity, hand, world, blockPos);

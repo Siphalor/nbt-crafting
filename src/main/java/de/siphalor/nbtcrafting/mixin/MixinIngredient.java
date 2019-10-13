@@ -42,15 +42,12 @@ import java.util.stream.StreamSupport;
 public abstract class MixinIngredient implements IIngredient, ICloneable {
 	
 	private IngredientEntry[] advancedEntries;
-	
-	@Shadow
-	private ItemStack[] stackArray;
+
 	@Shadow
 	private IntList ids;
 
-	@Shadow
-	private void createStackArray() {};
-	
+	@Shadow private ItemStack[] matchingStacks;
+
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
@@ -61,13 +58,13 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 		advancedEntries = null;
 	}
 	
-	@Inject(method = "createStackArray", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "cacheMatchingStacks", at = @At("HEAD"), cancellable = true)
 	private void createStackArray(CallbackInfo callbackInfo) {
 		if(advancedEntries != null) {
 			callbackInfo.cancel();
-			if (stackArray != null)
+			if (matchingStacks != null)
 				return;
-			stackArray = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks().stream()).distinct().toArray(ItemStack[]::new);
+			matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks().stream()).distinct().toArray(ItemStack[]::new);
 			return;
 		}
 	}
@@ -244,9 +241,9 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 				try {
 					CompoundTag compoundTag = new StringNbtReader(new StringReader(jsonObject.get("data").getAsString())).parseCompoundTag();
                     IngredientEntryCondition condition = new IngredientEntryCondition();
-                    if(compoundTag.containsKey("require") || compoundTag.containsKey("deny")) {
-                    	if(compoundTag.containsKey("require")) condition.requiredElements = compoundTag.getCompound("require");
-                    	if(compoundTag.containsKey("deny")) condition.deniedElements = compoundTag.getCompound("deny");
+                    if(compoundTag.contains("require") || compoundTag.contains("deny")) {
+                    	if(compoundTag.contains("require")) condition.requiredElements = compoundTag.getCompound("require");
+                    	if(compoundTag.contains("deny")) condition.deniedElements = compoundTag.getCompound("deny");
 					} else {
                     	condition.requiredElements = compoundTag;
 					}

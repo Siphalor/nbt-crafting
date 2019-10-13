@@ -36,15 +36,15 @@ public class NbtHelper {
 
 	public static boolean compoundsOverlap(CompoundTag main, CompoundTag reference) {
 		for(String key : main.getKeys()) {
-			if(!reference.containsKey(key))
+			if(!reference.contains(key))
 				continue;
-			if(isCompound(main.getTag(key)) && isCompound(reference.getTag(key))) {
+			if(isCompound(main.get(key)) && isCompound(reference.get(key))) {
 				if(compoundsOverlap(main.getCompound(key), reference.getCompound(key)))
 					return true;
-			} else if(isList(main.getTag(key)) && isList(reference.getTag(key))) {
-				if(listsOverlap((ListTag) main.getTag(key), (ListTag) reference.getTag(key)))
+			} else if(isList(main.get(key)) && isList(reference.get(key))) {
+				if(listsOverlap((ListTag) main.get(key), (ListTag) reference.get(key)))
 					return true;
-			} else if(tagsMatch(main.getTag(key), reference.getTag(key))) {
+			} else if(tagsMatch(main.get(key), reference.get(key))) {
 				return true;
 			}
 		}
@@ -72,10 +72,10 @@ public class NbtHelper {
 	
 	public static boolean isCompoundContained(CompoundTag inner, CompoundTag outer) {
 		for(String key : inner.getKeys()) {
-			Tag innerTag = inner.getTag(key);
-			if(!outer.containsKey(key))
+			Tag innerTag = inner.get(key);
+			if(!outer.contains(key))
 				return false;
-			Tag outerTag = outer.getTag(key);
+			Tag outerTag = outer.get(key);
 			if(isCompound(innerTag) && isCompound(outerTag)) {
 				if(isCompoundContained((CompoundTag) innerTag, (CompoundTag) outerTag))
 					continue;
@@ -162,12 +162,12 @@ public class NbtHelper {
 					throw new DollarException(path + " doesn't match on " + main.asString());
 				}
 				CompoundTag currentCompound = (CompoundTag) currentTag;
-				if(!currentCompound.containsKey(pathParts[i])) {
+				if(!currentCompound.contains(pathParts[i])) {
 					CompoundTag newCompound = new CompoundTag();
 					currentCompound.put(pathParts[i], newCompound);
 					currentTag = newCompound;
-				} else if(isCompound(currentCompound.getTag(pathParts[i])) || isList(currentCompound.getTag(pathParts[i]))) {
-					currentTag = currentCompound.getTag(pathParts[i]);
+				} else if(isCompound(currentCompound.get(pathParts[i])) || isList(currentCompound.get(pathParts[i]))) {
+					currentTag = currentCompound.get(pathParts[i]);
 				} else {
 					throw new DollarException(path + " doesn't match on " + main.asString());
 				}
@@ -194,10 +194,10 @@ public class NbtHelper {
 				path += ".";
 			Set<String> remove = new HashSet<>();
 			for(String key : compoundTag.getKeys()) {
-				if(isCompound(compoundTag.getTag(key)) || isList(compoundTag.getTag(key)))
-					iterateTags(compoundTag.getTag(key), biFunction, path + key);
+				if(isCompound(compoundTag.get(key)) || isList(compoundTag.get(key)))
+					iterateTags(compoundTag.get(key), biFunction, path + key);
 				else {
-					if(biFunction.apply(path + key, compoundTag.getTag(key)))
+					if(biFunction.apply(path + key, compoundTag.get(key)))
                         remove.add(key);
 				}
 			}
@@ -226,13 +226,13 @@ public class NbtHelper {
 		if(additions == null) return target;
 
 		for(String key : additions.getKeys()) {
-			if(!target.containsKey(key)) {
-				target.put(key, additions.getTag(key).copy());
+			if(!target.contains(key)) {
+				target.put(key, additions.get(key).copy());
 				continue;
 			}
 
-            Tag targetTag = target.getTag(key);
-			Tag additionsTag = target.getTag(key);
+            Tag targetTag = target.get(key);
+			Tag additionsTag = target.get(key);
 			if(isCompound(targetTag) && isCompound(additionsTag)) {
 				mergeInto((CompoundTag) targetTag, (CompoundTag) additionsTag, replace);
 			} else if(isList(targetTag) && isList(additionsTag)) {
