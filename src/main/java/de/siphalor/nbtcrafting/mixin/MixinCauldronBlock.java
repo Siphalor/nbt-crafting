@@ -8,6 +8,7 @@ import net.minecraft.block.CauldronBlock;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -22,7 +23,7 @@ import java.util.Optional;
 @Mixin(CauldronBlock.class)
 public class MixinCauldronBlock {
 	@Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
-	public void onActivate(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockHitResult blockHitResult, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+	public void onActivate(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockHitResult blockHitResult, CallbackInfoReturnable<ActionResult> callbackInfoReturnable) {
 		if(!world.isClient()) {
 			TemporaryCauldronInventory inventory = new TemporaryCauldronInventory(playerEntity, hand, world, blockPos);
 			Optional<CauldronRecipe> cauldronRecipe = world.getRecipeManager().getFirstMatch(Core.CAULDRON_RECIPE_TYPE, inventory, world);
@@ -35,7 +36,7 @@ public class MixinCauldronBlock {
 						itemEntity.setOwner(playerEntity.getUuid());
 					}
 				}
-				callbackInfoReturnable.setReturnValue(true);
+				callbackInfoReturnable.setReturnValue(ActionResult.SUCCESS);
 			}
 		}
 	}

@@ -12,6 +12,7 @@ version = "${project.mod_version}+${project.minecraft_version}"
 group = project.maven_group
 
 minecraft {
+	refmapName = "${project.mod_id}-refmap.json"
 }
 
 repositories {
@@ -29,8 +30,16 @@ dependencies {
 	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
 	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
 
-	modImplementation("me.shedaniel:RoughlyEnoughItems:3.1.5-unstable.201910101247") {
+	/*modImplementation("me.shedaniel:RoughlyEnoughItems:3.1.5-unstable.201910101247") {
 		exclude module: "modmenu"
+	}*/
+}
+
+sourceSets {
+	main {
+		java {
+			exclude "de/siphalor/nbtcrafting/client/rei/**"
+		}
 	}
 }
 
