@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.2.5-SNAPSHOT'
+	id 'fabric-loom' version '0.2.6-SNAPSHOT'
 	id 'maven-publish'
 	id 'com.github.johnrengelman.shadow' version '4.0.0'
 }
@@ -16,6 +16,7 @@ minecraft {
 }
 
 repositories {
+	maven { url = "https://maven.fabricmc.net/" }
 	maven { url "https://minecraft.curseforge.com/api/maven" }
 }
 
@@ -30,16 +31,8 @@ dependencies {
 	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
 	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
 
-	/*modImplementation("me.shedaniel:RoughlyEnoughItems:3.1.5-unstable.201910101247") {
-		exclude module: "modmenu"
-	}*/
-}
-
-sourceSets {
-	main {
-		java {
-			exclude "de/siphalor/nbtcrafting/client/rei/**"
-		}
+	modCompile("me.shedaniel:RoughlyEnoughItems:3.2.9-unstable.201911220940") {
+		exclude module: "autoconfig1u"
 	}
 }
 
