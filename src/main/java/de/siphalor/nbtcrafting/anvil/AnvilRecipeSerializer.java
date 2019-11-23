@@ -18,10 +18,7 @@ public class AnvilRecipeSerializer implements RecipeSerializer<AnvilRecipe> {
 			ingredient = Ingredient.fromJson(JsonHelper.getObject(jsonObject, "ingredient"));
 		}
 		ItemStack output = ShapedRecipe.getItemStack(JsonHelper.getObject(jsonObject, "result"));
-		int levels = 0;
-		if(jsonObject.has("levels")) {
-			levels = JsonHelper.getInt(jsonObject, "levels");
-		}
+		int levels = JsonHelper.getInt(jsonObject, "levels", 0);
 		return new AnvilRecipe(identifier, base, ingredient, output, levels);
 	}
 
