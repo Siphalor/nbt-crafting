@@ -4,6 +4,8 @@ import de.siphalor.nbtcrafting.util.NbtHelper;
 import net.minecraft.nbt.CompoundTag;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 
 public final class DollarParser {
@@ -32,6 +34,34 @@ public final class DollarParser {
 			e.printStackTrace();
 		}
 		return dollar;
+	}
+
+	public static DollarPart parse(Reader reader, DollarOperator operator) throws IOException {
+		reader.mark(1);
+		int peek = reader.read();
+
+		DollarValue dollarValue;
+		if(peek == '"' || peek == '\'') {
+			reader.reset();
+			int start = reader.read();
+			StringBuilder stringBuilder = new StringBuilder();
+			boolean escaped = false;
+			int character = -1;
+			while (character != start) {
+				character = reader.read();
+				if(escaped) {
+					stringBuilder.append(character);
+					escaped = false;
+				} else {
+					if (character == '\\') {
+						escaped = true;
+					} else {
+						stringBuilder.append(character);
+					}
+				}
+			}
+			dollarValue = new DollarValue.StringValue(stringBuilder.toString());
+		}
 	}
 
 	private GroupDollarPart parse() throws DollarException {

@@ -16,7 +16,7 @@ public class ValueDollarPart implements DollarPart {
 	}
 
 	@Override
-	public ValueDollarPart apply(Map<String, CompoundTag> references) throws DollarException {
+	public ValueDollarPart apply(Map<String, CompoundTag> reference) throws DollarException {
 		return this;
 	}
 }

@@ -32,8 +32,8 @@ public class ReferenceDollarPart implements DollarPart {
 		}
 	}
 
-	public ValueDollarPart apply(Map<String, CompoundTag> references) throws DollarException {
-		CompoundTag parent = NbtHelper.getParentTagOrCreate(references.get(ingredientId), path);
+	public ValueDollarPart apply(Map<String, CompoundTag> reference) throws DollarException {
+		CompoundTag parent = NbtHelper.getParentTagOrCreate(reference.get(ingredientId), path);
 		if(key.equals(""))
 			return new ValueDollarPart(parent);
 		if(!parent.contains(key))

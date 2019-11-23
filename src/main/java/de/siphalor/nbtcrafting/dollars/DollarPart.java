@@ -5,5 +5,5 @@ import net.minecraft.nbt.CompoundTag;
 import java.util.Map;
 
 public interface DollarPart {
-	ValueDollarPart apply(Map<String, CompoundTag> references) throws DollarException;
+	DollarValue apply(Map<String, CompoundTag> reference) throws DollarException;
 }
