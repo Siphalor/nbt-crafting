@@ -7,6 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.types.JsonOps;
 import de.siphalor.nbtcrafting.Core;
+import de.siphalor.nbtcrafting.util.IItemStack;
 import de.siphalor.nbtcrafting.util.RecipeUtil;
 import net.minecraft.datafixers.NbtOps;
 import net.minecraft.inventory.CraftingInventory;
@@ -56,7 +57,7 @@ public abstract class MixinShapedRecipe {
 		at = @At(value = "INVOKE", target = "com/google/gson/JsonObject.has(Ljava/lang/String;)Z", remap = false)
 	)
 	private static void deserializeItemStack(JsonObject json, CallbackInfoReturnable<ItemStack> ci) {
-		Core.setLastReadNbt(null);
+		Core.clearLastReadNbt();
 		if(json.has("data")) {
 			if(JsonHelper.hasString(json, "data")) {
 				try {
@@ -75,11 +76,15 @@ public abstract class MixinShapedRecipe {
 		method = "getItemStack", at = @At("RETURN"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void constructDeserializedItemStack(JsonObject json, CallbackInfoReturnable<ItemStack> ci, String id, Item item, int amount) {
 		ItemStack stack = new ItemStack(item, amount);
-		stack.setTag(Core.useLastReadNbt());
+		if(Core.hasLastReadNbt()) {
+			CompoundTag lastReadNbt = Core.useLastReadNbt();
+
+			((IItemStack)(Object) stack).setRawTag(lastReadNbt);
+		}
 		ci.setReturnValue(stack);
 	}
 
-	@Inject(method = "method_17727", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "craft", at = @At("HEAD"), cancellable = true)
 	public void craft(CraftingInventory craftingInventory, CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
 		ItemStack result = RecipeUtil.getDollarAppliedOutputStack(output, inputs, craftingInventory);
 		if(result != null) callbackInfoReturnable.setReturnValue(result);

@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.types.JsonOps;
+import de.siphalor.nbtcrafting.util.IItemStack;
 import net.minecraft.datafixers.NbtOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -23,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public abstract class MixinCookingRecipeSerializer {
 	private CompoundTag resultTag = null;
 
-	@Redirect(method = "method_17736", at = @At(value = "INVOKE", target = "net/minecraft/util/JsonHelper.getString(Lcom/google/gson/JsonObject;Ljava/lang/String;)Ljava/lang/String;", ordinal = 0))
+	@Redirect(method = "read(Lnet/minecraft/util/Identifier;Lcom/google/gson/JsonObject;)Lnet/minecraft/recipe/AbstractCookingRecipe;", at = @At(value = "INVOKE", target = "net/minecraft/util/JsonHelper.getString(Lcom/google/gson/JsonObject;Ljava/lang/String;)Ljava/lang/String;", ordinal = 0))
 	public String getItemIdentifier(JsonObject jsonObject, String resultPropertyName) {
         resultTag = null;
 		if(!jsonObject.has(resultPropertyName) || !jsonObject.get(resultPropertyName).isJsonObject()) {
@@ -36,8 +37,8 @@ public abstract class MixinCookingRecipeSerializer {
 		return JsonHelper.getString(itemCompound, "item");
 	}
 
-    @Inject(method = "method_17736", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "read(Lnet/minecraft/util/Identifier;Lcom/google/gson/JsonObject;)Lnet/minecraft/recipe/AbstractCookingRecipe;", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void onRecipeReady(Identifier identifier, JsonObject jsonObject, CallbackInfoReturnable<AbstractCookingRecipe> callbackInfoReturnable, String group, JsonElement ingredientJson, Ingredient ingredient, String itemId, Identifier itemIdentifier, ItemStack stack, float experience, int cookingTime) {
-		stack.setTag(resultTag);
+	    ((IItemStack)(Object) stack).setRawTag(resultTag);
     }
 }

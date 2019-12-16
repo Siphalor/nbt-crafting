@@ -22,8 +22,8 @@ public class RecipeUtil {
 			ingredient:
 			for (int j = 0; j < ingredients.size(); j++) {
 				for (int i = 0; i < inventory.getInvSize(); i++) {
-					if(ingredients.get(j).method_8093(inventory.getInvStack(i))) {
-						reference.putIfAbsent("i" + j, (CompoundTag) inventory.getInvStack(i).getOrCreateTag().copy());
+					if(ingredients.get(j).test(inventory.getInvStack(i))) {
+						reference.putIfAbsent("i" + j, inventory.getInvStack(i).getOrCreateTag().copy());
 						continue ingredient;
 					}
 				}

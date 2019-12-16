@@ -69,7 +69,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 		}
 	}
 
-    @Inject(method = "method_8093", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "test", at = @At("HEAD"), cancellable = true)
 	public void matches(ItemStack stack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if(stack == null) {
 			callbackInfoReturnable.setReturnValue(false);

@@ -19,7 +19,7 @@ public class MixinShapelessRecipe {
 
 	@Shadow @Final private DefaultedList<Ingredient> input;
 
-	@Inject(method = "method_17729", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "craft", at = @At("HEAD"), cancellable = true)
 	public void craft(CraftingInventory craftingInventory, CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
         ItemStack result = RecipeUtil.getDollarAppliedOutputStack(output, input, craftingInventory);
         if(result != null) callbackInfoReturnable.setReturnValue(result);

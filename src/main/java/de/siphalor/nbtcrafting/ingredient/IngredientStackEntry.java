@@ -2,6 +2,7 @@ package de.siphalor.nbtcrafting.ingredient;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import de.siphalor.nbtcrafting.util.IItemStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.PacketByteBuf;
@@ -45,7 +46,7 @@ public class IngredientStackEntry extends IngredientEntry {
 	@Override
 	public Collection<ItemStack> getPreviewStacks() {
 		ItemStack stack = new ItemStack(Registry.ITEM.get(id));
-		stack.setTag(condition.getPreviewTag());
+		((IItemStack)(Object) stack).setRawTag(condition.getPreviewTag());
 		return Collections.singleton(stack);
 	}
 

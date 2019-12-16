@@ -30,7 +30,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity> {
 		this.base = base;
 		this.ingredient = ingredient;
 		this.output = output;
-		this.outputDollars = DollarParser.extractDollars((CompoundTag) output.getOrCreateTag().copy());
+		this.outputDollars = DollarParser.extractDollars(output.getOrCreateTag().copy());
 	}
 
 	public static boolean existsMatchingIngredient(ItemStack stack, RecipeManager recipeManager) {
@@ -44,7 +44,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity> {
 	}
 
 	public boolean ingredientMatches(ItemStack stack) {
-		return ingredient.method_8093(stack);
+		return ingredient.test(stack);
 	}
 
 	public static boolean existsMatchingBase(ItemStack stack, RecipeManager recipeManager) {
@@ -58,7 +58,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity> {
 	}
 
 	public boolean baseMatches(ItemStack stack) {
-		return base.method_8093(stack);
+		return base.test(stack);
 	}
 
 	public void write(PacketByteBuf buffer) {
@@ -78,11 +78,11 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity> {
 
 	@Override
 	public boolean matches(BrewingStandBlockEntity brewingStandBlockEntity, World var2) {
-		if(!ingredient.method_8093(brewingStandBlockEntity.getInvStack(3))) {
+		if(!ingredient.test(brewingStandBlockEntity.getInvStack(3))) {
 			return false;
 		}
 		for(byte i = 0; i < 3; i++) {
-			if(base.method_8093(brewingStandBlockEntity.getInvStack(i)))
+			if(base.test(brewingStandBlockEntity.getInvStack(i)))
 				return true;
 		}
 		return false;
@@ -103,7 +103,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity> {
 
 		for(byte i = 0; i < 3; i++) {
             ItemStack baseStack = brewingStandBlockEntity.getInvStack(i);
-            if(base.method_8093(baseStack)) {
+            if(base.test(baseStack)) {
             	map.replace("this", baseStack.getOrCreateTag());
                 ItemStack out = output.copy();
                 for(Dollar dollar : outputDollars) {

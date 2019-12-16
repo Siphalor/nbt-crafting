@@ -30,8 +30,8 @@ dependencies {
 	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
 	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
 
-	modCompile("me.shedaniel:RoughlyEnoughItems:3.2.9-unstable.201911220940") {
-		exclude module: "autoconfig1u"
+	modCompile("me.shedaniel:RoughlyEnoughItems:3.2.25") {
+		//exclude module: "autoconfig1u"
 	}
 }
 

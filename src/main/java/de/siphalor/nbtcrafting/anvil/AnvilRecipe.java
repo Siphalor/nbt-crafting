@@ -55,8 +55,8 @@ public class AnvilRecipe implements Recipe<Inventory> {
 
 	@Override
 	public boolean matches(Inventory inventory, World world) {
-		if(ingredient != null && !ingredient.method_8093(inventory.getInvStack(1))) return false;
-		return base.method_8093(inventory.getInvStack(0));
+		if(ingredient != null && !ingredient.test(inventory.getInvStack(1))) return false;
+		return base.test(inventory.getInvStack(0));
 	}
 
 	@Override

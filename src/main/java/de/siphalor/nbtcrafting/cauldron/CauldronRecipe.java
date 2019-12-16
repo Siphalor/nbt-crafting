@@ -50,7 +50,7 @@ public class CauldronRecipe implements Recipe<TemporaryCauldronInventory> {
 
 	@Override
 	public boolean matches(TemporaryCauldronInventory inventory, World world) {
-		return inventory.getLevel() >= levels && input.method_8093(inventory.getInvStack(0));
+		return inventory.getLevel() >= levels && input.test(inventory.getInvStack(0));
 	}
 
 	@Override

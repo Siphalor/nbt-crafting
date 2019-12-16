@@ -44,7 +44,7 @@ public abstract class MixinRecipeFinder$Filter {
 		for(int j = 0; j < ingredients.size(); j++) {
 			Ingredient ingredient = ingredients.get(j);
 			for (int i = 0; i < inputs.length; i++) {
-				if(ingredient.method_8093(RecipeFinder.getStackFromId(inputs[i])))
+				if(ingredient.test(RecipeFinder.getStackFromId(inputs[i])))
 					this.bitSet.set(method_7420(true, i, j));
 			}
 		}
@@ -60,7 +60,7 @@ public abstract class MixinRecipeFinder$Filter {
 		IntCollection ints = new IntAVLTreeSet();
 		for(int id : owner.idToAmountMap.keySet()) {
 			for (Ingredient ingredient : ingredients) {
-				if (ingredient.method_8093(RecipeFinder.getStackFromId(id)))
+				if (ingredient.test(RecipeFinder.getStackFromId(id)))
 					ints.add(id);
 			}
 		}
@@ -77,7 +77,7 @@ public abstract class MixinRecipeFinder$Filter {
 		for (final Ingredient ingredient : this.ingredients) {
 			int maxPerIngredient = 0;
 			for(int id : owner.idToAmountMap.keySet()) {
-				if(ingredient.method_8093(RecipeFinder.getStackFromId(id)))
+				if(ingredient.test(RecipeFinder.getStackFromId(id)))
 					maxPerIngredient = Math.max(maxPerIngredient, owner.idToAmountMap.get(id));
 			}
 			if (result > 0) {

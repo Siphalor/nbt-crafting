@@ -2,6 +2,7 @@ package de.siphalor.nbtcrafting.ingredient;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import de.siphalor.nbtcrafting.util.IItemStack;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.ItemStack;
@@ -11,7 +12,6 @@ import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.stream.Collectors;
 
 public class IngredientMultiStackEntry extends IngredientEntry {
@@ -44,9 +44,8 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 	public Collection<ItemStack> getPreviewStacks() {
 		CompoundTag tag = condition.getPreviewTag();
 		Collection<ItemStack> stacks = itemIds.stream().map(id -> new ItemStack(Registry.ITEM.get(id))).collect(Collectors.toList());
-		for (Iterator<ItemStack> iterator = stacks.iterator(); iterator.hasNext();) {
-			ItemStack itemStack = iterator.next();
-			itemStack.setTag(tag);
+		for(ItemStack itemStack : stacks) {
+			((IItemStack)(Object) itemStack).setRawTag(tag);
 		}
 		return stacks;
 	}

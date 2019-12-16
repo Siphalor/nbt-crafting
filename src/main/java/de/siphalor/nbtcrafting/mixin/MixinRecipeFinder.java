@@ -3,6 +3,8 @@ package de.siphalor.nbtcrafting.mixin;
 import com.google.common.collect.HashBiMap;
 import com.mojang.datafixers.util.Pair;
 import de.siphalor.nbtcrafting.Core;
+import de.siphalor.nbtcrafting.util.IItemStack;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -10,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.util.registry.Registry;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -38,6 +41,8 @@ public abstract class MixinRecipeFinder {
 	
 	@Shadow
 	public abstract void addItem(final ItemStack stack);
+
+	@Shadow @Final public Int2IntMap idToAmountMap;
 
 	/**
 	 * @reason Fixes nbt items to be excluded from matching sometimes? Shouldn't break anything.
@@ -70,7 +75,7 @@ public abstract class MixinRecipeFinder {
 	public static ItemStack getStackFromId(final int id) {
 		if(itemStackMap.containsValue(id)) {
 			ItemStack result = new ItemStack(Item.byRawId(itemStackMap.inverse().get(id).getFirst()));
-			result.setTag(itemStackMap.inverse().get(id).getSecond());
+			((IItemStack)(Object) result).setRawTag(itemStackMap.inverse().get(id).getSecond());
 			return result;
 		}
 		return ItemStack.EMPTY;
