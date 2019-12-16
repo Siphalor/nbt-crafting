@@ -8,6 +8,7 @@ import net.minecraft.nbt.AbstractNumberTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.JsonHelper;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -234,9 +235,18 @@ public class NbtHelper {
             Tag targetTag = target.get(key);
 			Tag additionsTag = target.get(key);
 			if(isCompound(targetTag) && isCompound(additionsTag)) {
-				mergeInto((CompoundTag) targetTag, (CompoundTag) additionsTag, replace);
+				if(((CompoundTag) additionsTag).contains("$overwrite") && ((CompoundTag) additionsTag).getBoolean("$overwrite")) {
+					target.put(key, additionsTag.copy());
+				} else {
+					mergeInto((CompoundTag) targetTag, (CompoundTag) additionsTag, replace);
+				}
 			} else if(isList(targetTag) && isList(additionsTag)) {
-				((ListTag) targetTag).addAll(((ListTag) additionsTag).stream().map(Tag::copy).collect(Collectors.toList()));
+				int additionsSize = ((ListTag) additionsTag).size();
+				if(additionsSize > 0 && isString(((ListTag) additionsTag).get(additionsSize - 1)) && ((ListTag) additionsTag).getString(additionsSize - 1) == "$overwrite") {
+					target.put(key, additionsTag);
+				} else {
+					((ListTag) targetTag).addAll(((ListTag) additionsTag).stream().map(Tag::copy).collect(Collectors.toList()));
+				}
 			} else {
 				if(replace)
 					target.put(key, additionsTag.copy());

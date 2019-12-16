@@ -1,22 +1,50 @@
 package de.siphalor.nbtcrafting.dollars;
 
+import de.siphalor.nbtcrafting.dollars.operator.AsteriskDollarOperator;
+import de.siphalor.nbtcrafting.dollars.operator.MinusDollarOperator;
+import de.siphalor.nbtcrafting.dollars.operator.PlusDollarOperator;
+import de.siphalor.nbtcrafting.dollars.value.NumberDollarValue;
+import de.siphalor.nbtcrafting.dollars.value.StringDollarValue;
 import de.siphalor.nbtcrafting.util.NbtHelper;
 import net.minecraft.nbt.CompoundTag;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
+import java.io.StringReader;
+import java.util.*;
 
 public final class DollarParser {
-	private String expression;
+	private static final Collection<DollarPart.Factory> DOLLAR_PART_FACTORIES = new LinkedList<>();
+	private Stack<Integer> stopStack = new Stack<>();
+	private Reader reader;
+
+	public DollarParser(Reader reader) {
+		this.reader = reader;
+	}
+
+	public int eat() throws IOException {
+		return reader.read();
+	}
+
+	public int peek() throws IOException {
+		reader.mark(1);
+		int character = reader.read();
+		reader.reset();
+		return character;
+	}
+
+	public static void registerDollarPart(DollarPart.Factory dollarPartFactory) {
+		DOLLAR_PART_FACTORIES.add(dollarPartFactory);
+	}
 
 	public static Dollar[] extractDollars(CompoundTag compoundTag) {
 		ArrayList<Dollar> dollars = new ArrayList<>();
 		NbtHelper.iterateTags(compoundTag, (path, tag) -> {
 			if(NbtHelper.isString(tag) && !tag.asString().isEmpty()) {
 				if(tag.asString().charAt(0) == '$') {
-					dollars.add(new DollarParser().parse(path, tag.asString().substring(1)));
+					dollars.add(DollarParser.parse(path, tag.asString().substring(1)));
 					return true;
 				}
 			}
@@ -25,103 +53,90 @@ public final class DollarParser {
 		return dollars.toArray(new Dollar[0]);
 	}
 
-	public Dollar parse(String key, String value) {
+	public static Dollar parse(String key, String value) {
         Dollar dollar = new Dollar(key);
-		try {
-			this.expression = value;
-			dollar.expression = parse();
-		} catch (DollarException e) {
-			e.printStackTrace();
-		}
+		dollar.expression = new DollarParser(new StringReader(value)).parse();
 		return dollar;
 	}
 
-	public static DollarPart parse(Reader reader, DollarOperator operator) throws IOException {
-		reader.mark(1);
-		int peek = reader.read();
+	public DollarPart parse() {
+		try {
+			return parse(DOLLAR_PART_FACTORIES.size());
+		} catch (IOException | DollarException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
-		DollarValue dollarValue;
-		if(peek == '"' || peek == '\'') {
-			reader.reset();
-			int start = reader.read();
-			StringBuilder stringBuilder = new StringBuilder();
-			boolean escaped = false;
-			int character = -1;
-			while (character != start) {
-				character = reader.read();
-				if(escaped) {
-					stringBuilder.append(character);
-					escaped = false;
-				} else {
-					if (character == '\\') {
-						escaped = true;
-					} else {
-						stringBuilder.append(character);
-					}
+	public void pushStopStack(int stop) {
+		stopStack.push(stop);
+	}
+
+	public void popStopStack() {
+		stopStack.pop();
+	}
+
+	public DollarPart parse(int maxPriority) throws IOException, DollarException {
+		int peek = peek();
+
+		DollarPart dollarPart = null;
+		int priority;
+
+		while(peek != -1) {
+			if(!stopStack.isEmpty() && stopStack.lastElement() == peek) {
+				return dollarPart;
+			}
+			if(peek == ' ' || peek == '\t' || peek == '\n' || peek == '\r') {
+				eat();
+				peek = peek();
+				continue;
+			}
+
+			priority = 0;
+			for(DollarPart.Factory factory : DOLLAR_PART_FACTORIES) {
+				if(factory.matches(peek)) {
+					dollarPart = factory.parse(this, dollarPart, priority);
+					break;
+				}
+				if(++priority > maxPriority) {
+					break;
 				}
 			}
-			dollarValue = new DollarValue.StringValue(stringBuilder.toString());
+			peek = peek();
 		}
+
+		return dollarPart;
 	}
 
-	private GroupDollarPart parse() throws DollarException {
-		GroupDollarPart groupPart = new GroupDollarPart();
-		groupPart.parts.add(parsePart());
-		while(!expression.equals("")) {
-			if(StringUtils.isWhitespace(expression.substring(0, 1))) {
-				eatTo(1);
-				if(expression.equals("")) throw new DollarException("Illegal whitespacey statement");
-			}
-			switch(expression.charAt(0)) {
-				case '+':
-					groupPart.operators.add(DollarOperator.ADD);
-					break;
-				case '-':
-					groupPart.operators.add(DollarOperator.SUBTRACT);
-					break;
-				case '*':
-					groupPart.operators.add(DollarOperator.MULTIPLY);
-					break;
-				case '/':
-					groupPart.operators.add(DollarOperator.DIVIDE);
-					break;
-				case ')':
-					eatTo(1);
-					return groupPart;
-			}
-            eatTo(1);
-			groupPart.parts.add(parsePart());
-		}
-		return groupPart;
+	public DollarPart parseTo(int stop) throws IOException {
+		pushStopStack(stop);
+		DollarPart dollarPart = parse();
+		popStopStack();
+		eat();
+		return dollarPart;
 	}
 
-	private DollarPart parsePart() throws DollarException {
-		if(StringUtils.isWhitespace(expression.substring(0, 1))) {
-            eatTo(1);
-			if(expression.equals("")) throw new DollarException("Illegal whitespacey statement");
+	public String readTo(int... stops) throws IOException {
+		int character = reader.read();
+		StringBuilder stringBuilder = new StringBuilder();
+		while(!ArrayUtils.contains(stops, character)) {
+			stringBuilder.append(character);
+			character = reader.read();
 		}
-		if(expression.matches("-?\\d*\\.?\\d+.*")) {
-			int index = StringUtils.indexOfAny(expression.substring(1), " \n\t\r+-*/");
-			if(index == -1)
-				index = expression.length();
-			ValueDollarPart value = new ValueDollarPart(Double.parseDouble(expression.substring(0, index)));
-            eatTo(index);
-			return value;
-		}
-		if(expression.charAt(0) == '(') {
-			eatTo(1);
-			return parse();
-		}
-		int index = StringUtils.indexOfAny(expression, " \n\t\r+-*/)");
-		index = index < 0 ? expression.length() : index;
-		if(!expression.substring(0, index).matches("[\\w\\d_.\\[\\]]+"))
-			throw new DollarException("Illegal statement: " + expression);
-		DollarPart part = new ReferenceDollarPart(expression.substring(0, index));
-        eatTo(index);
-		return part;
+		return stringBuilder.toString();
 	}
 
-	private void eatTo(int index) {
-		expression = expression.substring(index);
+
+	static {
+		DOLLAR_PART_FACTORIES.add(new CombinationDollarPartFactory());
+		DOLLAR_PART_FACTORIES.add(new StringDollarValue.Factory());
+		DOLLAR_PART_FACTORIES.add(new NumberDollarValue.Factory());
+		DOLLAR_PART_FACTORIES.add(new AsteriskDollarOperator.Factory());
+		DOLLAR_PART_FACTORIES.add(new MinusDollarOperator.Factory());
+		DOLLAR_PART_FACTORIES.add(new PlusDollarOperator.Factory());
+	}
+
+	public static void main(String[] args) throws DollarException {
+		System.out.println(new DollarParser(new StringReader(" 5+( 8 - 1 )")).parse().apply(null));
 	}
 }

@@ -1,5 +1,6 @@
 package de.siphalor.nbtcrafting.dollars;
 
+import de.siphalor.nbtcrafting.dollars.value.DollarValue;
 import de.siphalor.nbtcrafting.util.NbtHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -10,7 +11,7 @@ import java.util.Map;
 public class Dollar {
 	protected final String key;
 	protected final String lastKeyPart;
-	protected GroupDollarPart expression;
+	protected DollarPart expression;
 
 	protected Dollar(String key) {
 		this.key = key;
@@ -19,28 +20,13 @@ public class Dollar {
 
 	public void apply(ItemStack stack, Map<String, CompoundTag> references) throws DollarException {
 		CompoundTag compoundTag = stack.getOrCreateTag();
-        CompoundTag parent = NbtHelper.getParentTagOrCreate(compoundTag, key);
-        Object value = expression.apply(references).value;
-        if(value instanceof CompoundTag) {
-			if(lastKeyPart.equals("$")) {
-				NbtHelper.mergeInto(parent, (CompoundTag) value, true);
-			} else {
-				NbtHelper.mergeInto(parent.getCompound(lastKeyPart), (CompoundTag) value, true);
-			}
-		} else if(value instanceof Tag) {
-			parent.put(lastKeyPart, (Tag) value);
-		} else if(value instanceof Double) {
-	        parent.putDouble(lastKeyPart, (Double) value);
-	        if(key.equals("Damage")) {
-	        	if(stack.getDamage() >= stack.getMaxDamage())
-	        		stack.split(1);
-	        }
-        } else if(value instanceof String) {
-			parent.putString(lastKeyPart, (String) value);
+		CompoundTag parent = NbtHelper.getParentTagOrCreate(compoundTag, key);
+		DollarValue value = expression.apply(references);
+
+		if(value.isNumeric()) {
+			parent.putDouble(lastKeyPart, value.asNumber().doubleValue());
 		} else {
-        	if(value != null)
-				throw new DollarException("Unknown type in dollar expression");
+			parent.putString(lastKeyPart, value.toString());
 		}
 	}
-
 }
