@@ -142,12 +142,15 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 		return Ingredient.EMPTY;
 	}
 
+ 	/*
+ 	 This is client side :/
 	@Inject(method = "ofStacks", at = @At("HEAD"), cancellable = true)
 	private static void ofStacks(ItemStack[] arr, CallbackInfoReturnable<Ingredient> callbackInfoReturnable) {
 		if(Arrays.stream(arr).anyMatch(stack -> stack.hasTag())) {
 			callbackInfoReturnable.setReturnValue(ofAdvancedEntries(Arrays.stream(arr).map(stack -> new IngredientStackEntry(stack))));
 		}
 	}
+	*/
 
 	@Inject(method = "fromPacket", at = @At("HEAD"), cancellable = true)
 	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> callbackInfoReturnable) {
