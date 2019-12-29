@@ -6,6 +6,7 @@ import de.siphalor.nbtcrafting.dollars.Dollar;
 import de.siphalor.nbtcrafting.dollars.DollarException;
 import de.siphalor.nbtcrafting.dollars.DollarParser;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
+import de.siphalor.nbtcrafting.util.ServerRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.Ingredient;
@@ -18,7 +19,7 @@ import net.minecraft.world.World;
 
 import java.util.Map;
 
-public class CauldronRecipe implements Recipe<TemporaryCauldronInventory> {
+public class CauldronRecipe implements Recipe<TemporaryCauldronInventory>, ServerRecipe {
 	private Identifier identifier;
 	public Ingredient input;
 	public ItemStack output;

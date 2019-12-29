@@ -20,7 +20,8 @@
 		"MixinShapedRecipe",
 		"MixinShapelessRecipe",
 		"MixinRecipe",
-		"network.MixinServerPlayNetworkHandler"
+		"network.MixinServerPlayNetworkHandler",
+		"network.MixinSynchronizeRecipesS2CPacket"
 	],
 	"injectors": {
 		"defaultRequire": 1

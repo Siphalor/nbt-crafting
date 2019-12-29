@@ -5,6 +5,7 @@ import de.siphalor.nbtcrafting.dollars.Dollar;
 import de.siphalor.nbtcrafting.dollars.DollarException;
 import de.siphalor.nbtcrafting.dollars.DollarParser;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
+import de.siphalor.nbtcrafting.util.ServerRecipe;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -18,7 +19,7 @@ import net.minecraft.world.World;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class BrewingRecipe implements Recipe<BrewingStandBlockEntity> {
+public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRecipe {
 	private Identifier id;
 	public Ingredient base;
 	public Ingredient ingredient;
