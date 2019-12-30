@@ -44,6 +44,6 @@ public class ReferenceDollarPart implements DollarPart {
 		else if(NbtHelper.isNumeric(tag))
 			return new ValueDollarPart(((AbstractNumberTag) tag).getDouble());
 		else
-            return new ValueDollarPart(tag);
+            return new ValueDollarPart(tag.copy());
 	}
 }

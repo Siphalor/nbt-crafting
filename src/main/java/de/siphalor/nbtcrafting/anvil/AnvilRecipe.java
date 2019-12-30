@@ -6,6 +6,7 @@ import de.siphalor.nbtcrafting.dollars.Dollar;
 import de.siphalor.nbtcrafting.dollars.DollarException;
 import de.siphalor.nbtcrafting.dollars.DollarParser;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
+import de.siphalor.nbtcrafting.util.NbtHelper;
 import de.siphalor.nbtcrafting.util.ServerRecipe;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -34,7 +35,7 @@ public class AnvilRecipe implements Recipe<Inventory>, ServerRecipe {
 		this.ingredient = ingredient;
 		this.output = output;
 		this.levels = levels;
-		this.dollars = DollarParser.extractDollars(output.getOrCreateTag());
+		this.dollars = DollarParser.extractDollars(output.getTag());
 	}
 
 	public void write(PacketByteBuf packetByteBuf) {
@@ -62,7 +63,7 @@ public class AnvilRecipe implements Recipe<Inventory>, ServerRecipe {
 
 	@Override
 	public ItemStack craft(Inventory inventory) {
-		Map<String, CompoundTag> reference = ImmutableMap.of("i0", inventory.getInvStack(0).getOrCreateTag(), "i1", inventory.getInvStack(1).getOrCreateTag());
+		Map<String, CompoundTag> reference = ImmutableMap.of("i0", NbtHelper.getTagOrEmpty(inventory.getInvStack(0)), "i1", NbtHelper.getTagOrEmpty(inventory.getInvStack(1)));
 
 		ItemStack remainder = ((IIngredient)(Object) base).getRecipeRemainder(inventory.getInvStack(0), reference);
 		if(remainder != null) inventory.setInvStack(0, remainder);

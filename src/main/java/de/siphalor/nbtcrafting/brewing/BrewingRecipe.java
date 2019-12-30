@@ -5,6 +5,7 @@ import de.siphalor.nbtcrafting.dollars.Dollar;
 import de.siphalor.nbtcrafting.dollars.DollarException;
 import de.siphalor.nbtcrafting.dollars.DollarParser;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
+import de.siphalor.nbtcrafting.util.NbtHelper;
 import de.siphalor.nbtcrafting.util.ServerRecipe;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.item.ItemStack;
@@ -31,7 +32,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRec
 		this.base = base;
 		this.ingredient = ingredient;
 		this.output = output;
-		this.outputDollars = DollarParser.extractDollars(output.getOrCreateTag().copy());
+		this.outputDollars = DollarParser.extractDollarsFromCopy(output.getTag());
 	}
 
 	public static boolean existsMatchingIngredient(ItemStack stack, RecipeManager recipeManager) {
@@ -94,7 +95,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRec
 		ItemStack ingredientStack = brewingStandBlockEntity.getInvStack(3);
 		ingredientStack.split(1);
 		HashMap<String, CompoundTag> map = new HashMap<>(1);
-		map.put("this", ingredientStack.getOrCreateTag());
+		map.put("this", NbtHelper.getTagOrEmpty(ingredientStack));
 		ItemStack remainder = ((IIngredient)(Object) base).getRecipeRemainder(ingredientStack, map);
 		if(!ingredientStack.isEmpty()) {
 			ItemScatterer.spawn(brewingStandBlockEntity.getWorld(), brewingStandBlockEntity.getPos(), DefaultedList.copyOf(remainder));
@@ -105,7 +106,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRec
 		for(byte i = 0; i < 3; i++) {
             ItemStack baseStack = brewingStandBlockEntity.getInvStack(i);
             if(base.test(baseStack)) {
-            	map.replace("this", baseStack.getOrCreateTag());
+            	map.replace("this", NbtHelper.getTagOrEmpty(baseStack));
                 ItemStack out = output.copy();
                 for(Dollar dollar : outputDollars) {
 					try {

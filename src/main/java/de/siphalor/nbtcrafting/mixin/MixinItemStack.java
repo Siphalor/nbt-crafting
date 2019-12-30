@@ -21,6 +21,9 @@ public class MixinItemStack implements IItemStack {
 
 	@Override
 	public void setRawTag(CompoundTag tag) {
-		this.tag = tag;
+		if(tag == null || tag.isEmpty())
+			this.tag = null;
+		else
+			this.tag = tag;
 	}
 }

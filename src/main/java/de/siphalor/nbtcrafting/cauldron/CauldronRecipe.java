@@ -6,6 +6,7 @@ import de.siphalor.nbtcrafting.dollars.Dollar;
 import de.siphalor.nbtcrafting.dollars.DollarException;
 import de.siphalor.nbtcrafting.dollars.DollarParser;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
+import de.siphalor.nbtcrafting.util.NbtHelper;
 import de.siphalor.nbtcrafting.util.ServerRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -31,7 +32,7 @@ public class CauldronRecipe implements Recipe<TemporaryCauldronInventory>, Serve
 		this.input = ingredient;
 		this.output = output;
 		this.levels = levels;
-		outputDollars = DollarParser.extractDollars(output.getOrCreateTag());
+		outputDollars = DollarParser.extractDollarsFromCopy(output.getTag());
 	}
 
 	public void write(PacketByteBuf packetByteBuf) {
@@ -58,7 +59,7 @@ public class CauldronRecipe implements Recipe<TemporaryCauldronInventory>, Serve
 	public ItemStack craft(TemporaryCauldronInventory inventory) {
 		inventory.setLevel(inventory.getLevel() - levels);
 
-		Map<String, CompoundTag> reference = ImmutableMap.of("i0", inventory.getInvStack(0).getOrCreateTag());
+		Map<String, CompoundTag> reference = ImmutableMap.of("i0", NbtHelper.getTagOrEmpty(inventory.getInvStack(0)));
 
 		ItemStack remainder = ((IIngredient)(Object) input).getRecipeRemainder(inventory.getInvStack(0), reference);
 		if(remainder != null)

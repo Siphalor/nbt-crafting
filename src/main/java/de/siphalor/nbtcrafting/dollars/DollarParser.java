@@ -9,7 +9,18 @@ import java.util.ArrayList;
 public final class DollarParser {
 	private String expression;
 
+	private static final Dollar[] NO_DOLLARS = new Dollar[0];
+
+	public static Dollar[] extractDollarsFromCopy(CompoundTag compoundTag) {
+		if(compoundTag == null)
+			return NO_DOLLARS;
+		else
+			return extractDollars(compoundTag.copy());
+	}
+
 	public static Dollar[] extractDollars(CompoundTag compoundTag) {
+		if(compoundTag == null)
+			return NO_DOLLARS;
 		ArrayList<Dollar> dollars = new ArrayList<>();
 		NbtHelper.iterateTags(compoundTag, (path, tag) -> {
 			if(NbtHelper.isString(tag) && !tag.asString().isEmpty()) {

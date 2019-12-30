@@ -4,6 +4,7 @@ import com.mojang.datafixers.DSL;
 import com.mojang.datafixers.types.Type;
 import de.siphalor.nbtcrafting.dollars.DollarException;
 import net.minecraft.datafixers.NbtOps;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.AbstractNumberTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -18,6 +19,21 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("ALL")
 public class NbtHelper {
+	public static final CompoundTag EMPTY_COMPOUND = new CompoundTag();
+
+	public static CompoundTag getTagOrEmpty(ItemStack itemStack) {
+		if(itemStack.hasTag())
+			return itemStack.getTag();
+		else
+			return EMPTY_COMPOUND;
+	}
+
+	public static CompoundTag copyOrEmpty(CompoundTag compoundTag) {
+		if(compoundTag == null)
+			return EMPTY_COMPOUND;
+		else
+			return compoundTag.copy();
+	}
 	
 	public static boolean tagsMatch(Tag main, Tag reference) {
 		if(isString(reference) && reference.asString().equals(""))
