@@ -2,8 +2,8 @@ package de.siphalor.nbtcrafting.dollars.operator;
 
 import de.siphalor.nbtcrafting.dollars.DollarException;
 import de.siphalor.nbtcrafting.dollars.DollarPart;
-import de.siphalor.nbtcrafting.dollars.value.DollarValue;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 
 import java.util.Map;
 
@@ -17,9 +17,9 @@ public abstract class BinaryDollarOperator implements DollarPart {
 	}
 
 	@Override
-	public DollarValue apply(Map<String, CompoundTag> reference) throws DollarException {
-		return apply(first.apply(reference), second.apply(reference));
+	public Tag evaluate(Map<String, CompoundTag> reference) throws DollarException {
+		return apply(first.evaluate(reference), second.evaluate(reference));
 	}
 
-	public abstract DollarValue apply(DollarValue first, DollarValue second);
+	public abstract Tag apply(Tag first, Tag second);
 }

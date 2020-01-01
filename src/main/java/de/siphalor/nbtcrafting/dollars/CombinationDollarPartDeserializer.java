@@ -2,9 +2,9 @@ package de.siphalor.nbtcrafting.dollars;
 
 import java.io.IOException;
 
-public class CombinationDollarPartFactory implements DollarPart.Factory<DollarPart> {
+public class CombinationDollarPartDeserializer implements DollarPart.Deserializer {
 	@Override
-	public boolean matches(int character) {
+	public boolean matches(int character, DollarParser dollarParser, boolean hasOtherPart) {
 		return character == '(';
 	}
 

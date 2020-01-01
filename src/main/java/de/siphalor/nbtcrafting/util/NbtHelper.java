@@ -1,14 +1,8 @@
 package de.siphalor.nbtcrafting.util;
 
-import com.mojang.datafixers.DSL;
-import com.mojang.datafixers.types.Type;
 import de.siphalor.nbtcrafting.dollars.DollarException;
 import net.minecraft.datafixers.NbtOps;
-import net.minecraft.nbt.AbstractNumberTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.util.JsonHelper;
+import net.minecraft.nbt.*;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -120,30 +114,76 @@ public class NbtHelper {
 	}
 	
 	public static boolean isString(Tag tag) {
-		return Objects.equals(NbtOps.INSTANCE.getType(tag), DSL.string());
+		return tag instanceof StringTag;
 	}
 	
 	public static boolean isCompound(Tag tag) {
-		return Objects.equals(NbtOps.INSTANCE.getType(tag), DSL.compoundList(DSL.remainderType(), DSL.remainderType()));
+		return tag instanceof CompoundTag;
 	}
 	
 	public static boolean isList(Tag tag) {
-		return Objects.equals(NbtOps.INSTANCE.getType(tag), DSL.list(DSL.remainderType()));
+		return tag instanceof ListTag;
 	}
 	
 	public static boolean isNumeric(Tag tag) {
-		Type<?> type = NbtOps.INSTANCE.getType(tag);
-		return Objects.equals(type, DSL.byteType()) ||
-		       Objects.equals(type, DSL.shortType()) ||
-		       Objects.equals(type, DSL.intType()) ||
-		       Objects.equals(type, DSL.longType()) ||
-		       Objects.equals(type, DSL.floatType()) ||
-		       Objects.equals(type, DSL.doubleType());
+		return tag instanceof AbstractNumberTag;
+	}
+
+	public static boolean isFloatingPoint(Tag tag) {
+		return tag instanceof FloatTag || tag instanceof DoubleTag;
+	}
+
+	public static String asString(Tag tag) {
+		if(tag instanceof AbstractNumberTag) {
+			return ((AbstractNumberTag) tag).getNumber().toString();
+		} else if(tag instanceof StringTag) {
+			return tag.asString();
+		} else if(tag instanceof ListTag) {
+			return ((ListTag) tag).stream().map(NbtHelper::asString).collect(Collectors.joining(", "));
+		} else {
+			return tag.toString();
+		}
+	}
+
+	public static Tag getTag(Tag main, String path) {
+		return getTag(main, splitPath(path));
+	}
+
+	public static Tag getTag(Tag main, String[] pathKeys) {
+		Tag currentTag = main;
+		for(int i = 0; i < pathKeys.length - 1; i++) {
+			if(currentTag == null)
+				return null;
+			if(pathKeys[i].charAt(0) == '[') {
+				int index = Integer.parseUnsignedInt(pathKeys[i], 1, pathKeys[i].length() - 2, 10);
+				if(currentTag instanceof ListTag) {
+					ListTag list = (ListTag) currentTag;
+					if(i >= list.size())
+						return null;
+					else
+						currentTag = list.get(i);
+				} else {
+					return null;
+				}
+			} else {
+				if(currentTag instanceof CompoundTag) {
+					CompoundTag compound = (CompoundTag) currentTag;
+					if(compound.contains(pathKeys[i])) {
+						currentTag = compound.get(pathKeys[i]);
+					} else {
+						return null;
+					}
+				} else {
+					return null;
+				}
+			}
+		}
+		return currentTag;
 	}
 
 	public static CompoundTag getParentTagOrCreate(Tag main, String path) throws DollarException {
 		Tag currentTag = main;
-		String[] pathParts = path.split("\\.|(?=\\[)");
+		String[] pathParts = splitPath(path);
 		for (int i = 0; i < pathParts.length - 1; i++) {
 			if(pathParts[i].charAt(0) == '[') {
 				if(!isList(currentTag)) {
@@ -177,6 +217,10 @@ public class NbtHelper {
 		if(!isCompound(currentTag))
 			throw new DollarException(path + "'s parent does not specify an object in " + main.asString());
 		return (CompoundTag) currentTag;
+	}
+
+	private static String[] splitPath(String path) {
+		return path.split("\\.|(?=\\[)");
 	}
 
 	public static String getLastKey(String path) {

@@ -1,6 +1,5 @@
 package de.siphalor.nbtcrafting.dollars;
 
-import de.siphalor.nbtcrafting.dollars.value.DollarValue;
 import de.siphalor.nbtcrafting.util.NbtHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -21,12 +20,9 @@ public class Dollar {
 	public void apply(ItemStack stack, Map<String, CompoundTag> references) throws DollarException {
 		CompoundTag compoundTag = stack.getOrCreateTag();
 		CompoundTag parent = NbtHelper.getParentTagOrCreate(compoundTag, key);
-		DollarValue value = expression.apply(references);
+		Tag value = expression.evaluate(references);
 
-		if(value.isNumeric()) {
-			parent.putDouble(lastKeyPart, value.asNumber().doubleValue());
-		} else {
-			parent.putString(lastKeyPart, value.toString());
-		}
+		if(value != null)
+			parent.put(lastKeyPart, value);
 	}
 }
