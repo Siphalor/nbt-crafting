@@ -1,8 +1,8 @@
 package de.siphalor.nbtcrafting.util;
 
-import de.siphalor.nbtcrafting.dollars.Dollar;
-import de.siphalor.nbtcrafting.dollars.DollarException;
-import de.siphalor.nbtcrafting.dollars.DollarParser;
+import de.siphalor.nbtcrafting.dollar.Dollar;
+import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarParser;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;

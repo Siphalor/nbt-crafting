@@ -1,5 +1,6 @@
-package de.siphalor.nbtcrafting.dollars;
+package de.siphalor.nbtcrafting.dollar;
 
+import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.util.NbtHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;

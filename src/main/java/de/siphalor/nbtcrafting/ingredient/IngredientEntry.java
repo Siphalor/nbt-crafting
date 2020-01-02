@@ -1,9 +1,9 @@
 package de.siphalor.nbtcrafting.ingredient;
 
 import com.google.gson.JsonElement;
-import de.siphalor.nbtcrafting.dollars.Dollar;
-import de.siphalor.nbtcrafting.dollars.DollarException;
-import de.siphalor.nbtcrafting.dollars.DollarParser;
+import de.siphalor.nbtcrafting.dollar.Dollar;
+import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarParser;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.PacketByteBuf;

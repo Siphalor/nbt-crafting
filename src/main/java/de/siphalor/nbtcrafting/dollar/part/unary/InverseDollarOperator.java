@@ -1,11 +1,9 @@
-package de.siphalor.nbtcrafting.dollars.operator;
+package de.siphalor.nbtcrafting.dollar.part.unary;
 
-import de.siphalor.nbtcrafting.dollars.DollarException;
-import de.siphalor.nbtcrafting.dollars.DollarParser;
-import de.siphalor.nbtcrafting.dollars.DollarPart;
+import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import net.minecraft.nbt.*;
-
-import java.io.IOException;
 
 public class InverseDollarOperator extends UnaryDollarOperator {
 	public InverseDollarOperator(DollarPart dollarPart) {
@@ -30,15 +28,15 @@ public class InverseDollarOperator extends UnaryDollarOperator {
 		return IntTag.of(0);
 	}
 
-	public static class Deserializer implements DollarPart.Deserializer {
+	public static class Deserializer implements DollarPart.UnaryDeserializer {
 		@Override
-		public boolean matches(int character, DollarParser dollarParser, boolean hasOtherPart) {
-			return !hasOtherPart && character == '-';
+		public boolean matches(int character, DollarParser dollarParser) {
+			return character == '-';
 		}
 
 		@Override
-		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException, IOException {
-			return new InverseDollarOperator(dollarParser.parse(priority));
+		public DollarPart parse(DollarParser dollarParser) throws DollarException {
+			return new InverseDollarOperator(dollarParser.parseUnary());
 		}
 	}
 }

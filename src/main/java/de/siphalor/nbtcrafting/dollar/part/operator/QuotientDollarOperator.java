@@ -1,8 +1,8 @@
-package de.siphalor.nbtcrafting.dollars.operator;
+package de.siphalor.nbtcrafting.dollar.part.operator;
 
-import de.siphalor.nbtcrafting.dollars.DollarException;
-import de.siphalor.nbtcrafting.dollars.DollarParser;
-import de.siphalor.nbtcrafting.dollars.DollarPart;
+import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.util.NbtHelper;
 import net.minecraft.nbt.AbstractNumberTag;
 import net.minecraft.nbt.DoubleTag;
@@ -12,8 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 
-public class QuotientDollarPart extends BinaryDollarOperator {
-	public QuotientDollarPart(DollarPart first, DollarPart second) {
+public class QuotientDollarOperator extends BinaryDollarOperator {
+	public QuotientDollarOperator(DollarPart first, DollarPart second) {
 		super(first, second);
 	}
 
@@ -28,14 +28,14 @@ public class QuotientDollarPart extends BinaryDollarOperator {
 
 	public static class Deserializer implements DollarPart.Deserializer {
 		@Override
-		public boolean matches(int character, DollarParser dollarParser, boolean hasOtherPart) {
-			return hasOtherPart && character == '/';
+		public boolean matches(int character, DollarParser dollarParser) {
+			return character == '/';
 		}
 
 		@Override
 		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException, IOException {
 			dollarParser.skip();
-			return new QuotientDollarPart(lastDollarPart, dollarParser.parse(priority));
+			return new QuotientDollarOperator(lastDollarPart, dollarParser.parse(priority));
 		}
 	}
 }

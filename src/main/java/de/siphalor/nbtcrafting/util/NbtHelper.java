@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.util;
 
-import de.siphalor.nbtcrafting.dollars.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarException;
 import net.minecraft.datafixers.NbtOps;
 import net.minecraft.nbt.*;
 

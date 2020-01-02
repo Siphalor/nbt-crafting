@@ -1,7 +1,7 @@
-package de.siphalor.nbtcrafting.dollars.operator;
+package de.siphalor.nbtcrafting.dollar.part.operator;
 
-import de.siphalor.nbtcrafting.dollars.DollarException;
-import de.siphalor.nbtcrafting.dollars.DollarPart;
+import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 

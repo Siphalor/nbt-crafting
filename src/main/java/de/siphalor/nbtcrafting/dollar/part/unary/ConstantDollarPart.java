@@ -1,5 +1,6 @@
-package de.siphalor.nbtcrafting.dollars;
+package de.siphalor.nbtcrafting.dollar.part.unary;
 
+import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
@@ -21,7 +22,7 @@ public class ConstantDollarPart implements DollarPart {
 	}
 
 	@Override
-	public Tag evaluate(Map<String, CompoundTag> reference) throws DollarException {
+	public Tag evaluate(Map<String, CompoundTag> reference) {
 		return tag;
 	}
 }

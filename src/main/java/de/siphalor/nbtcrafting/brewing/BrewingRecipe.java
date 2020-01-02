@@ -1,9 +1,9 @@
 package de.siphalor.nbtcrafting.brewing;
 
 import de.siphalor.nbtcrafting.Core;
-import de.siphalor.nbtcrafting.dollars.Dollar;
-import de.siphalor.nbtcrafting.dollars.DollarException;
-import de.siphalor.nbtcrafting.dollars.DollarParser;
+import de.siphalor.nbtcrafting.dollar.Dollar;
+import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
 import de.siphalor.nbtcrafting.util.ServerRecipe;
 import net.minecraft.block.entity.BrewingStandBlockEntity;

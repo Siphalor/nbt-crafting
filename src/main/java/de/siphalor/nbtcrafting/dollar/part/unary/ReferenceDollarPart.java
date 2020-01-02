@@ -1,9 +1,11 @@
-package de.siphalor.nbtcrafting.dollars;
+package de.siphalor.nbtcrafting.dollar.part.unary;
 
+import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
-import java.io.IOException;
 import java.util.Map;
 
 public class ReferenceDollarPart implements DollarPart {
@@ -21,20 +23,21 @@ public class ReferenceDollarPart implements DollarPart {
 		return reference.get(key);
 	}
 
-	public static class Deserializer implements DollarPart.Deserializer {
+	public static class Deserializer implements DollarPart.UnaryDeserializer {
 		@Override
-		public boolean matches(int character, DollarParser dollarParser, boolean hasOtherPart) {
-			return Character.isJavaIdentifierPart(character);
+		public boolean matches(int character, DollarParser dollarParser) {
+			return Character.isJavaIdentifierStart(character);
 		}
 
 		@Override
-		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException, IOException {
+		public DollarPart parse(DollarParser dollarParser) {
 			StringBuilder stringBuilder = new StringBuilder(String.valueOf(Character.toChars(dollarParser.eat())));
 			int character;
 			while(true) {
 				character = dollarParser.peek();
 				if(Character.isJavaIdentifierPart(character)) {
-					stringBuilder.append(Character.toChars(dollarParser.eat()));
+					dollarParser.skip();
+					stringBuilder.append(Character.toChars(character));
 				} else {
 					return new ReferenceDollarPart(stringBuilder.toString());
 				}

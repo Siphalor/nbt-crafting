@@ -1,9 +1,9 @@
-package de.siphalor.nbtcrafting.dollars.operator;
+package de.siphalor.nbtcrafting.dollar.part.operator;
 
-import de.siphalor.nbtcrafting.dollars.ConstantDollarPart;
-import de.siphalor.nbtcrafting.dollars.DollarException;
-import de.siphalor.nbtcrafting.dollars.DollarParser;
-import de.siphalor.nbtcrafting.dollars.DollarPart;
+import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.dollar.part.DollarPart;
+import de.siphalor.nbtcrafting.dollar.part.unary.ConstantDollarPart;
 import de.siphalor.nbtcrafting.util.NbtHelper;
 import net.minecraft.nbt.*;
 
@@ -32,12 +32,11 @@ public class ChildDollarOperator extends BinaryDollarOperator {
 
 	public static class DotDeserializer implements Deserializer {
 		@Override
-		public boolean matches(int character, DollarParser dollarParser, boolean hasOtherPart) {
+		public boolean matches(int character, DollarParser dollarParser) {
 			return character == '.';
 		}
 
-		@Override
-		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException, IOException {
+		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) {
 			dollarParser.skip();
 			StringBuilder stringBuilder = new StringBuilder();
 			int character = dollarParser.eat();
@@ -60,12 +59,13 @@ public class ChildDollarOperator extends BinaryDollarOperator {
 
 	public static class BracketDeserializer implements DollarPart.Deserializer {
 		@Override
-		public boolean matches(int character, DollarParser dollarParser, boolean hasOtherPart) {
-			return hasOtherPart && character == '[';
+		public boolean matches(int character, DollarParser dollarParser) {
+			return character == '[';
 		}
 
 		@Override
 		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException, IOException {
+			dollarParser.skip();
 			return new ChildDollarOperator(lastDollarPart, dollarParser.parseTo(']'));
 		}
 	}

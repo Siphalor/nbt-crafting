@@ -1,8 +1,8 @@
-package de.siphalor.nbtcrafting.dollars.operator;
+package de.siphalor.nbtcrafting.dollar.part.operator;
 
-import de.siphalor.nbtcrafting.dollars.DollarException;
-import de.siphalor.nbtcrafting.dollars.DollarParser;
-import de.siphalor.nbtcrafting.dollars.DollarPart;
+import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.util.NbtHelper;
 import net.minecraft.nbt.AbstractNumberTag;
 import net.minecraft.nbt.DoubleTag;
@@ -31,8 +31,8 @@ public class ProductDollarOperator extends BinaryDollarOperator {
 
 	public static class Deserializer implements DollarPart.Deserializer {
 		@Override
-		public boolean matches(int character, DollarParser dollarParser, boolean hasOtherPart) {
-			return hasOtherPart && character == '*';
+		public boolean matches(int character, DollarParser dollarParser) {
+			return character == '*';
 		}
 
 		@Override
