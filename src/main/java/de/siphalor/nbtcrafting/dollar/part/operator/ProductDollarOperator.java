@@ -3,28 +3,31 @@ package de.siphalor.nbtcrafting.dollar.part.operator;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-import de.siphalor.nbtcrafting.util.NbtHelper;
-import net.minecraft.nbt.AbstractNumberTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
+import de.siphalor.nbtcrafting.util.NumberUtil;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.IOException;
 
 public class ProductDollarOperator extends BinaryDollarOperator {
 	public ProductDollarOperator(DollarPart first, DollarPart second) {
 		super(first, second);
 	}
 
+	public static DollarPart of(DollarPart first, DollarPart second) throws DollarException {
+		DollarPart instance = new ProductDollarOperator(first, second);
+		if(first.isConstant() && second.isConstant()) {
+			return ValueDollarPart.of(instance.evaluate(null));
+		}
+		return null;
+	}
+
 	@Override
-	public Tag apply(Tag first, Tag second) {
-		if(first instanceof AbstractNumberTag) {
-			if(second instanceof AbstractNumberTag)
-				return DoubleTag.of(((AbstractNumberTag) first).getDouble() * ((AbstractNumberTag) second).getDouble());
-			return StringTag.of(StringUtils.repeat(NbtHelper.asString(second), ((AbstractNumberTag) first).getInt()));
-		} else if(second instanceof AbstractNumberTag) {
-			return StringTag.of(StringUtils.repeat(NbtHelper.asString(first), ((AbstractNumberTag) second).getInt()));
+	public Object apply(Object first, Object second) {
+		if(first instanceof Number) {
+			if(second instanceof Number)
+				return NumberUtil.product((Number) first, (Number) second);
+			return StringUtils.repeat(second.toString(), ((Number) first).intValue());
+		} else if(second instanceof Number) {
+			return StringUtils.repeat(first.toString(), ((Number) second).intValue());
 		}
 		return null;
 	}
@@ -36,7 +39,7 @@ public class ProductDollarOperator extends BinaryDollarOperator {
 		}
 
 		@Override
-		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException, IOException {
+		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException {
 			if(lastDollarPart == null) {
 				throw new DollarException("Unexpected asterisk!");
 			}

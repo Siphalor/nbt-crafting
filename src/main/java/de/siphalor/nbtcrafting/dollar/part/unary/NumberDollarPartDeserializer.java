@@ -3,8 +3,7 @@ package de.siphalor.nbtcrafting.dollar.part.unary;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.IntTag;
+import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
 
 public class NumberDollarPartDeserializer implements DollarPart.UnaryDeserializer {
 	@Override
@@ -33,9 +32,9 @@ public class NumberDollarPartDeserializer implements DollarPart.UnaryDeserialize
 
 		try {
 			if(dot)
-				return ConstantDollarPart.of(DoubleTag.of(Double.parseDouble(stringBuilder.toString())));
+				return ValueDollarPart.of(Double.parseDouble(stringBuilder.toString()));
 			else
-				return ConstantDollarPart.of(IntTag.of(Integer.parseInt(stringBuilder.toString())));
+				return ValueDollarPart.of(Integer.parseInt(stringBuilder.toString()));
 		} catch (NumberFormatException e) {
 			throw new DollarException(e.getMessage());
 		}

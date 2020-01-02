@@ -129,10 +129,6 @@ public class NbtHelper {
 		return tag instanceof AbstractNumberTag;
 	}
 
-	public static boolean isFloatingPoint(Tag tag) {
-		return tag instanceof FloatTag || tag instanceof DoubleTag;
-	}
-
 	public static String asString(Tag tag) {
 		if(tag instanceof AbstractNumberTag) {
 			return ((AbstractNumberTag) tag).getNumber().toString();
@@ -298,5 +294,27 @@ public class NbtHelper {
 		}
 
         return target;
+	}
+
+	public static Tag asTag(Object value) {
+		if(value instanceof Tag) {
+			return (Tag) value;
+		} else if(value instanceof String) {
+			return StringTag.of((String) value);
+		} else if(value instanceof Float) {
+			return FloatTag.of((Float) value);
+		} else if(value instanceof Double) {
+			return DoubleTag.of((Double) value);
+		} else if(value instanceof Byte || value instanceof Character) {
+			return ByteTag.of(((Number) value).byteValue());
+		} else if(value instanceof Short) {
+			return ShortTag.of((Short) value);
+		} else if(value instanceof Integer) {
+			return IntTag.of((Integer) value);
+		} else if(value instanceof Long) {
+			return LongTag.of((Long) value);
+		} else {
+			return null;
+		}
 	}
 }

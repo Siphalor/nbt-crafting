@@ -3,24 +3,27 @@ package de.siphalor.nbtcrafting.dollar.part.operator;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-import de.siphalor.nbtcrafting.util.NbtHelper;
-import net.minecraft.nbt.AbstractNumberTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
-
-import java.io.IOException;
+import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
+import de.siphalor.nbtcrafting.util.NumberUtil;
 
 public class SumDollarOperator extends BinaryDollarOperator {
-	public SumDollarOperator(DollarPart first, DollarPart second) {
+	private SumDollarOperator(DollarPart first, DollarPart second) {
 		super(first, second);
 	}
 
+	public static DollarPart of(DollarPart first, DollarPart second) throws DollarException {
+		DollarPart instance = new SumDollarOperator(first, second);
+		if(first.isConstant() && second.isConstant()) {
+			return ValueDollarPart.of(instance.evaluate(null));
+		}
+		return instance;
+	}
+
 	@Override
-	public Tag apply(Tag first, Tag second) {
-		if(first instanceof AbstractNumberTag && second instanceof AbstractNumberTag)
-			return DoubleTag.of(((AbstractNumberTag) first).getDouble() + ((AbstractNumberTag) second).getDouble());
-		return StringTag.of(NbtHelper.asString(first) + NbtHelper.asString(second));
+	public Object apply(Object first, Object second) {
+		if(first instanceof Number && second instanceof Number)
+			return NumberUtil.sum((Number) first, (Number) second);
+		return first.toString() + second.toString();
 	}
 
 	public static class Deserializer implements DollarPart.Deserializer {
@@ -30,11 +33,11 @@ public class SumDollarOperator extends BinaryDollarOperator {
 		}
 
 		@Override
-		public SumDollarOperator parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException, IOException {
+		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException {
 			dollarParser.skip();
 			if(lastDollarPart == null)
 				throw new DollarException("Unexpected plus!");
-			return new SumDollarOperator(lastDollarPart, dollarParser.parse(priority));
+			return SumDollarOperator.of(lastDollarPart, dollarParser.parse(priority));
 		}
 	}
 }

@@ -1,13 +1,10 @@
 package de.siphalor.nbtcrafting.dollar.part.operator;
 
-import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-import de.siphalor.nbtcrafting.dollar.part.unary.ConstantDollarPart;
-import de.siphalor.nbtcrafting.util.NbtHelper;
-import net.minecraft.nbt.*;
-
-import java.io.IOException;
+import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 public class ChildDollarOperator extends BinaryDollarOperator {
 	public ChildDollarOperator(DollarPart first, DollarPart second) {
@@ -15,14 +12,14 @@ public class ChildDollarOperator extends BinaryDollarOperator {
 	}
 
 	@Override
-	public Tag apply(Tag first, Tag second) {
+	public Object apply(Object first, Object second) {
 		if(first instanceof CompoundTag) {
-			String key = NbtHelper.asString(second);
+			String key = second.toString();
 			if(((CompoundTag) first).contains(key)) {
 				return ((CompoundTag) first).get(key);
 			}
-		} else if(first instanceof ListTag && second instanceof AbstractNumberTag) {
-			int index = ((AbstractNumberTag) second).getInt();
+		} else if(first instanceof ListTag && second instanceof Number) {
+			int index = ((Number) second).intValue();
 			if(index < ((ListTag) first).size()) {
 				return ((ListTag) first).get(index);
 			}
@@ -51,7 +48,7 @@ public class ChildDollarOperator extends BinaryDollarOperator {
 						break;
 					}
 				}
-				return new ChildDollarOperator(lastDollarPart, ConstantDollarPart.of(StringTag.of(stringBuilder.toString())));
+				return new ChildDollarOperator(lastDollarPart, ValueDollarPart.of(stringBuilder.toString()));
 			}
 			return null;
 		}
@@ -64,7 +61,7 @@ public class ChildDollarOperator extends BinaryDollarOperator {
 		}
 
 		@Override
-		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException, IOException {
+		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) {
 			dollarParser.skip();
 			return new ChildDollarOperator(lastDollarPart, dollarParser.parseTo(']'));
 		}

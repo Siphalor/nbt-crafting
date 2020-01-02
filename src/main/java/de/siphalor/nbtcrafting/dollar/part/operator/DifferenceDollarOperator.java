@@ -3,25 +3,28 @@ package de.siphalor.nbtcrafting.dollar.part.operator;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-import de.siphalor.nbtcrafting.util.NbtHelper;
-import net.minecraft.nbt.AbstractNumberTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
-
-import java.io.IOException;
+import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
+import de.siphalor.nbtcrafting.util.NumberUtil;
 
 public class DifferenceDollarOperator extends BinaryDollarOperator {
-	public DifferenceDollarOperator(DollarPart first, DollarPart second) {
+	private DifferenceDollarOperator(DollarPart first, DollarPart second) {
 		super(first, second);
 	}
 
+	public static DollarPart of(DollarPart first, DollarPart second) throws DollarException {
+		DollarPart instance = new DifferenceDollarOperator(first, second);
+		if(first.isConstant() && second.isConstant()) {
+			return ValueDollarPart.of(instance.evaluate(null));
+		}
+		return instance;
+	}
+
 	@Override
-	public Tag apply(Tag first, Tag second) {
-		if(first instanceof AbstractNumberTag && second instanceof AbstractNumberTag)
-			return DoubleTag.of(((AbstractNumberTag) first).getDouble() - ((AbstractNumberTag) second).getDouble());
+	public Object apply(Object first, Object second) {
+		if(first instanceof Number && second instanceof Number)
+			return NumberUtil.difference((Number) first, (Number) second);
 		else
-			return StringTag.of(NbtHelper.asString(first).replace(NbtHelper.asString(second), ""));
+			return first.toString().replace(second.toString(), "");
 	}
 
 	public static class Deserializer implements DollarPart.Deserializer {
@@ -31,9 +34,9 @@ public class DifferenceDollarOperator extends BinaryDollarOperator {
 		}
 
 		@Override
-		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException, IOException {
+		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException {
 			dollarParser.skip();
-			return new DifferenceDollarOperator(lastDollarPart, dollarParser.parse(priority));
+			return DifferenceDollarOperator.of(lastDollarPart, dollarParser.parse(priority));
 		}
 	}
 }

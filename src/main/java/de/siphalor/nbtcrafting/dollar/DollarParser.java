@@ -8,11 +8,7 @@ import de.siphalor.nbtcrafting.util.NbtHelper;
 import net.minecraft.nbt.CompoundTag;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public final class DollarParser {
 	private static final Collection<DollarPart.UnaryDeserializer> UNARY_DESERIALIZERS = ImmutableList.of(
@@ -34,7 +30,7 @@ public final class DollarParser {
 			),
 			ImmutableList.of(
 					new SumDollarOperator.Deserializer(),
-					new QuotientDollarOperator.Deserializer()
+					new DifferenceDollarOperator.Deserializer()
 			)
 	);
 	private Stack<Integer> stopStack = new Stack<>();
@@ -69,7 +65,7 @@ public final class DollarParser {
 		NbtHelper.iterateTags(compoundTag, (path, tag) -> {
 			if(NbtHelper.isString(tag) && !tag.asString().isEmpty()) {
 				if(tag.asString().charAt(0) == '$') {
-					dollars.add(DollarParser.parse(path, tag.asString().substring(1)));
+					DollarParser.parse(path, tag.asString().substring(1)).ifPresent(dollars::add);
 					return true;
 				}
 			}
@@ -78,16 +74,22 @@ public final class DollarParser {
 		return dollars.toArray(new Dollar[0]);
 	}
 
-	public static Dollar parse(String key, String value) {
+	public static Optional<Dollar> parse(String key, String value) {
         Dollar dollar = new Dollar(key);
-		dollar.expression = new DollarParser(value).parse();
-		return dollar;
+		return parse(value).map(dollarPart -> {
+			dollar.expression = dollarPart;
+			return dollar;
+		});
+	}
+
+	public static Optional<DollarPart> parse(String string) {
+		return Optional.ofNullable(new DollarParser(string).parse());
 	}
 
 	public DollarPart parse() {
 		try {
 			return parse(DESERIALIZERS.size());
-		} catch (IOException | DollarException e) {
+		} catch (DollarException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -101,7 +103,7 @@ public final class DollarParser {
 		stopStack.pop();
 	}
 
-	public DollarPart parse(int maxPriority) throws IOException, DollarException {
+	public DollarPart parse(int maxPriority) throws DollarException {
 		int peek;
 
 		DollarPart dollarPart = parseUnary();
@@ -178,7 +180,14 @@ public final class DollarParser {
 		return stringBuilder.toString();
 	}
 
-	public static void main(String[] args) throws DollarException {
-		System.out.println(new DollarParser("(1/2)#a+(0)+':'+(1/2)#i").parse().evaluate(null));
+	public static void main(String[] args) {
+		parse("(1./2)#a+(0)+':'+(1/2)#i").flatMap(dollarPart -> {
+			try {
+				return Optional.of(dollarPart.evaluate(null));
+			} catch (DollarException e) {
+				e.printStackTrace();
+				return Optional.empty();
+			}
+		}).ifPresent(System.out::println);
 	}
 }

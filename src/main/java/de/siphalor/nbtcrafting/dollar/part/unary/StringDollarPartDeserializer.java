@@ -2,7 +2,7 @@ package de.siphalor.nbtcrafting.dollar.part.unary;
 
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-import net.minecraft.nbt.StringTag;
+import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
 
 public class StringDollarPartDeserializer implements DollarPart.UnaryDeserializer {
 	@Override
@@ -13,6 +13,6 @@ public class StringDollarPartDeserializer implements DollarPart.UnaryDeserialize
 	@Override
 	public DollarPart parse(DollarParser dollarParser) {
 		int marker = dollarParser.eat();
-		return ConstantDollarPart.of(StringTag.of(dollarParser.readTo(marker)));
+		return ValueDollarPart.of(dollarParser.readTo(marker));
 	}
 }

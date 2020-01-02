@@ -21,8 +21,7 @@ public class Dollar {
 	public void apply(ItemStack stack, Map<String, CompoundTag> references) throws DollarException {
 		CompoundTag compoundTag = stack.getOrCreateTag();
 		CompoundTag parent = NbtHelper.getParentTagOrCreate(compoundTag, key);
-		Tag value = expression.evaluate(references);
-
+		Tag value = NbtHelper.asTag(expression.evaluate(references));
 		if(value != null)
 			parent.put(lastKeyPart, value);
 	}

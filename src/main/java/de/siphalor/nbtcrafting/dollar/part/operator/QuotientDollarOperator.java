@@ -3,26 +3,29 @@ package de.siphalor.nbtcrafting.dollar.part.operator;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-import de.siphalor.nbtcrafting.util.NbtHelper;
-import net.minecraft.nbt.AbstractNumberTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.Tag;
+import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
+import de.siphalor.nbtcrafting.util.NumberUtil;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
-
 public class QuotientDollarOperator extends BinaryDollarOperator {
-	public QuotientDollarOperator(DollarPart first, DollarPart second) {
+	private QuotientDollarOperator(DollarPart first, DollarPart second) {
 		super(first, second);
 	}
 
+	public static DollarPart of(DollarPart first, DollarPart second) throws DollarException {
+		DollarPart instance = new QuotientDollarOperator(first, second);
+		if(first.isConstant() && second.isConstant()) {
+			return ValueDollarPart.of(instance.evaluate(null));
+		}
+		return instance;
+	}
+
 	@Override
-	public Tag apply(Tag first, Tag second) {
-		if(first instanceof AbstractNumberTag && second instanceof AbstractNumberTag) {
-			return DoubleTag.of(((AbstractNumberTag) first).getDouble() / ((AbstractNumberTag) second).getDouble());
+	public Object apply(Object first, Object second) {
+		if(first instanceof Number && second instanceof Number) {
+			return NumberUtil.quotient((Number) first, (Number) second);
 		} else {
-			return IntTag.of(StringUtils.countMatches(NbtHelper.asString(first), NbtHelper.asString(second)));
+			return StringUtils.countMatches(first.toString(), second.toString());
 		}
 	}
 
@@ -33,7 +36,7 @@ public class QuotientDollarOperator extends BinaryDollarOperator {
 		}
 
 		@Override
-		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException, IOException {
+		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException {
 			dollarParser.skip();
 			return new QuotientDollarOperator(lastDollarPart, dollarParser.parse(priority));
 		}
