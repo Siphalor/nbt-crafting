@@ -2,8 +2,8 @@ package de.siphalor.nbtcrafting.ingredient;
 
 import com.google.gson.JsonElement;
 import de.siphalor.nbtcrafting.dollar.Dollar;
-import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.util.RecipeUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.PacketByteBuf;
@@ -31,15 +31,7 @@ public abstract class IngredientEntry {
 	public ItemStack getRecipeRemainder(ItemStack stack, Map<String, CompoundTag> reference) {
 		if(remainder == null)
 			return null;
-        ItemStack result = remainder.copy();
-        for(Dollar dollar : dollars) {
-	        try {
-		        dollar.apply(result, reference);
-	        } catch (DollarException e) {
-		        e.printStackTrace();
-	        }
-        }
-        return result;
+        return RecipeUtil.applyDollars(remainder.copy(), dollars, reference);
 	}
 
 	public void setRecipeRemainder(ItemStack stack) {

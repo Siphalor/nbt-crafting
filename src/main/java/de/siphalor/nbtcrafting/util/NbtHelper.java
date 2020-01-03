@@ -178,25 +178,28 @@ public class NbtHelper {
 	}
 
 	public static CompoundTag getParentTagOrCreate(Tag main, String path) throws DollarException {
+		return getParentTagOrCreate(main, splitPath(path));
+	}
+
+	public static CompoundTag getParentTagOrCreate(Tag main, String[] pathParts) throws DollarException {
 		Tag currentTag = main;
-		String[] pathParts = splitPath(path);
 		for (int i = 0; i < pathParts.length - 1; i++) {
 			if(pathParts[i].charAt(0) == '[') {
 				if(!isList(currentTag)) {
-					throw new DollarException(path + " doesn't match on " + main.asString());
+					throw new DollarException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 				}
 				ListTag currentList = (ListTag) currentTag;
                 int index = Integer.parseUnsignedInt(pathParts[i].substring(1, pathParts[i].length()));
                 if(currentList.size() <= index) {
-                	throw new DollarException(path + " contains invalid list in " + main.asString());
+                	throw new DollarException(String.join(".", pathParts) + " contains invalid list in " + main.asString());
                 } else if(isCompound(currentList.get(index)) || isList(currentList.get(index))) {
                 	currentTag = currentList.get(index);
                 } else {
-	                throw new DollarException(path + " doesn't match on " + main.asString());
+	                throw new DollarException(String.join(".", pathParts) + " doesn't match on " + main.asString());
                 }
 			} else {
 				if(!isCompound(currentTag)) {
-					throw new DollarException(path + " doesn't match on " + main.asString());
+					throw new DollarException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 				}
 				CompoundTag currentCompound = (CompoundTag) currentTag;
 				if(!currentCompound.contains(pathParts[i])) {
@@ -206,16 +209,16 @@ public class NbtHelper {
 				} else if(isCompound(currentCompound.get(pathParts[i])) || isList(currentCompound.get(pathParts[i]))) {
 					currentTag = currentCompound.get(pathParts[i]);
 				} else {
-					throw new DollarException(path + " doesn't match on " + main.asString());
+					throw new DollarException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 				}
 			}
 		}
 		if(!isCompound(currentTag))
-			throw new DollarException(path + "'s parent does not specify an object in " + main.asString());
+			throw new DollarException(String.join(".", pathParts) + "'s parent does not specify an object in " + main.asString());
 		return (CompoundTag) currentTag;
 	}
 
-	private static String[] splitPath(String path) {
+	public static String[] splitPath(String path) {
 		return path.split("\\.|(?=\\[)");
 	}
 
@@ -313,6 +316,28 @@ public class NbtHelper {
 			return IntTag.of((Integer) value);
 		} else if(value instanceof Long) {
 			return LongTag.of((Long) value);
+		} else if(value instanceof Boolean) {
+			return ByteTag.of((byte) (((Boolean) value) == true ? 1 : 0));
+		} else {
+			return null;
+		}
+	}
+
+	public static Object toDollarValue(Tag value) {
+		if(value instanceof StringTag) {
+			return value.asString();
+		} else if(value instanceof FloatTag) {
+			return ((FloatTag) value).getFloat();
+		} else if(value instanceof DoubleTag) {
+			return ((DoubleTag) value).getDouble();
+		} else if(value instanceof ByteTag) {
+			return ((ByteTag) value).getByte();
+		} else if(value instanceof ShortTag) {
+			return ((ShortTag) value).getShort();
+		} else if(value instanceof IntTag) {
+			return ((IntTag) value).getInt();
+		} else if(value instanceof LongTag) {
+			return ((LongTag) value).getLong();
 		} else {
 			return null;
 		}

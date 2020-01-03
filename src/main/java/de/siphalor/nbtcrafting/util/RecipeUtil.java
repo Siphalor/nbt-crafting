@@ -11,6 +11,7 @@ import net.minecraft.util.DefaultedList;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 public class RecipeUtil {
 	public static ItemStack getDollarAppliedOutputStack(ItemStack baseOutput, DefaultedList<Ingredient> ingredients, Inventory inventory) {
@@ -29,30 +30,30 @@ public class RecipeUtil {
 				}
 			}
 
-			applyDollars(stack, dollars, reference);
-
-            return stack;
+			return applyDollars(stack, dollars, reference);
 		}
 		return null;
 	}
 
 	public static ItemStack getDollarAppliedOutputStack(ItemStack baseOutput, Ingredient ingredient, Inventory inventory) {
+		return getDollarAppliedOutputStack(baseOutput, ingredient, "this", inventory);
+	}
+
+	public static ItemStack getDollarAppliedOutputStack(ItemStack baseOutput, Ingredient ingredient, String referenceName, Inventory inventory) {
 		Dollar[] dollars = DollarParser.extractDollars(baseOutput.getOrCreateTag());
 
 		if(dollars.length > 0) {
 			ItemStack stack = baseOutput.copy();
 
 			HashMap<String, CompoundTag> reference = new HashMap<>();
-			reference.put("i0", inventory.getInvStack(0).getOrCreateTag());
+			reference.put(referenceName, inventory.getInvStack(0).getOrCreateTag());
 
-			applyDollars(stack, dollars, reference);
-
-			return stack;
+			return applyDollars(stack, dollars, reference);
 		}
 		return null;
 	}
 
-	private static void applyDollars(ItemStack stack, Dollar[] dollars, HashMap<String, CompoundTag> reference) {
+	public static ItemStack applyDollars(ItemStack stack, Dollar[] dollars, Map<String, CompoundTag> reference) {
 		Arrays.stream(dollars).forEach(dollar -> {
 			try {
 				dollar.apply(stack, reference);
@@ -60,5 +61,9 @@ public class RecipeUtil {
 				e.printStackTrace();
 			}
 		});
+		if(stack.getDamage() > stack.getMaxDamage()) {
+			return ItemStack.EMPTY;
+		}
+		return stack;
 	}
 }

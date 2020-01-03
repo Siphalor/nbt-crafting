@@ -3,9 +3,9 @@ package de.siphalor.nbtcrafting.anvil;
 import com.google.common.collect.ImmutableMap;
 import de.siphalor.nbtcrafting.Core;
 import de.siphalor.nbtcrafting.dollar.Dollar;
-import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
+import de.siphalor.nbtcrafting.util.RecipeUtil;
 import de.siphalor.nbtcrafting.util.ServerRecipe;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -62,22 +62,14 @@ public class AnvilRecipe implements Recipe<Inventory>, ServerRecipe {
 
 	@Override
 	public ItemStack craft(Inventory inventory) {
-		Map<String, CompoundTag> reference = ImmutableMap.of("i0", inventory.getInvStack(0).getOrCreateTag(), "i1", inventory.getInvStack(1).getOrCreateTag());
+		Map<String, CompoundTag> reference = ImmutableMap.of("base", inventory.getInvStack(0).getOrCreateTag(), "ingredient", inventory.getInvStack(1).getOrCreateTag());
 
 		ItemStack remainder = ((IIngredient)(Object) base).getRecipeRemainder(inventory.getInvStack(0), reference);
 		if(remainder != null) inventory.setInvStack(0, remainder);
 		remainder = ((IIngredient)(Object) base).getRecipeRemainder(inventory.getInvStack(1), reference);
 		if(remainder != null) inventory.setInvStack(1, remainder);
 
-		ItemStack result = output.copy();
-		for(Dollar dollar : dollars) {
-			try {
-				dollar.apply(result, reference);
-			} catch (DollarException e) {
-				e.printStackTrace();
-			}
-		}
-		return result;
+		return RecipeUtil.applyDollars(output.copy(), dollars, reference);
 	}
 
 	@Override

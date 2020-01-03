@@ -2,9 +2,9 @@ package de.siphalor.nbtcrafting.brewing;
 
 import de.siphalor.nbtcrafting.Core;
 import de.siphalor.nbtcrafting.dollar.Dollar;
-import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
+import de.siphalor.nbtcrafting.util.RecipeUtil;
 import de.siphalor.nbtcrafting.util.ServerRecipe;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.item.ItemStack;
@@ -24,7 +24,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRec
 	public Ingredient base;
 	public Ingredient ingredient;
 	private ItemStack output;
-    private Dollar[] outputDollars;
+	private Dollar[] outputDollars;
 
 	public BrewingRecipe(Identifier id, Ingredient base, Ingredient ingredient, ItemStack output) {
 		this.id = id;
@@ -38,7 +38,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRec
 		Iterator<BrewingRecipe> iterator = recipeManager.values().stream().filter(recipe -> recipe.getType() == Core.BREWING_RECIPE_TYPE).map(recipe -> (BrewingRecipe) recipe).iterator();
 		while(iterator.hasNext()) {
 			if(iterator.next().ingredientMatches(stack)) {
-                return true;
+				return true;
 			}
 		}
 		return false;
@@ -94,7 +94,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRec
 		ItemStack ingredientStack = brewingStandBlockEntity.getInvStack(3);
 		ingredientStack.split(1);
 		HashMap<String, CompoundTag> map = new HashMap<>(1);
-		map.put("this", ingredientStack.getOrCreateTag());
+		map.put("ingredient", ingredientStack.getOrCreateTag());
 		ItemStack remainder = ((IIngredient)(Object) base).getRecipeRemainder(ingredientStack, map);
 		if(!ingredientStack.isEmpty()) {
 			ItemScatterer.spawn(brewingStandBlockEntity.getWorld(), brewingStandBlockEntity.getPos(), DefaultedList.copyOf(remainder));
@@ -103,18 +103,10 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRec
 		}
 
 		for(byte i = 0; i < 3; i++) {
-            ItemStack baseStack = brewingStandBlockEntity.getInvStack(i);
-            if(base.test(baseStack)) {
-            	map.replace("this", baseStack.getOrCreateTag());
-                ItemStack out = output.copy();
-                for(Dollar dollar : outputDollars) {
-					try {
-						dollar.apply(out, map);
-					} catch (DollarException e) {
-						e.printStackTrace();
-					}
-				}
-                brewingStandBlockEntity.setInvStack(i, out);
+			ItemStack baseStack = brewingStandBlockEntity.getInvStack(i);
+			if(base.test(baseStack)) {
+				map.replace("base", baseStack.getOrCreateTag());
+				brewingStandBlockEntity.setInvStack(i, RecipeUtil.applyDollars(output.copy(), outputDollars, map));
 			}
 		}
 		return null;

@@ -10,19 +10,18 @@ import java.util.Map;
 
 public class Dollar {
 	protected final String key;
-	protected final String lastKeyPart;
 	protected DollarPart expression;
 
 	protected Dollar(String key) {
 		this.key = key;
-		this.lastKeyPart = key.substring(key.lastIndexOf('.') + 1);
 	}
 
 	public void apply(ItemStack stack, Map<String, CompoundTag> references) throws DollarException {
 		CompoundTag compoundTag = stack.getOrCreateTag();
-		CompoundTag parent = NbtHelper.getParentTagOrCreate(compoundTag, key);
+		String[] pathParts = NbtHelper.splitPath(key);
+		CompoundTag parent = NbtHelper.getParentTagOrCreate(compoundTag, pathParts);
 		Tag value = NbtHelper.asTag(expression.evaluate(references));
 		if(value != null)
-			parent.put(lastKeyPart, value);
+			parent.put(pathParts[pathParts.length - 1], value);
 	}
 }

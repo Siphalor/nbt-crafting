@@ -58,7 +58,7 @@ public class CauldronRecipe implements Recipe<TemporaryCauldronInventory>, Serve
 	public ItemStack craft(TemporaryCauldronInventory inventory) {
 		inventory.setLevel(inventory.getLevel() - levels);
 
-		Map<String, CompoundTag> reference = ImmutableMap.of("i0", inventory.getInvStack(0).getOrCreateTag());
+		Map<String, CompoundTag> reference = ImmutableMap.of("ingredient", inventory.getInvStack(0).getOrCreateTag());
 
 		ItemStack remainder = ((IIngredient)(Object) input).getRecipeRemainder(inventory.getInvStack(0), reference);
 		if(remainder != null)
