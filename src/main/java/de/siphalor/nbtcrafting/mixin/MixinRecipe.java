@@ -39,6 +39,7 @@ public interface MixinRecipe {
 			ItemStack itemStack = inventory.getInvStack(i);
 			for(Ingredient ingredient : ingredients) {
 				if(ingredient.test(itemStack)) {
+					//noinspection ConstantConditions
 					ItemStack remainder = ((IIngredient)(Object) ingredient).getRecipeRemainder(itemStack, reference);
 					if(remainder != null) {
 						stackList.set(i, remainder);

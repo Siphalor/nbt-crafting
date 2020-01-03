@@ -8,31 +8,31 @@ public enum DollarOperator {
 			case ADD:
 				if(first == null) {
 					if(second instanceof Double)
-						return (Double) second;
+						return second;
 					else if(second instanceof String)
-						return (String) second;
+						return second;
 				} else if(first instanceof Double) {
 					if(second instanceof Double) {
-						return (Double) first + (Double) second;
+						return (double) first + (double) second;
 					} else
 						throw new DollarException("type conflict at '+'");
 				} else if(first instanceof String) {
-					return (String) first + second.toString();
+					return first + second.toString();
 				}
 				break;
 			case SUBTRACT:
 				if(first instanceof Double && second instanceof Double) {
-					return (Double) first + (Double) second;
+					return (double) first + (double) second;
 				} else
 					throw new DollarException("type conflict at '-'");
 			case MULTIPLY:
 				if(first instanceof Double && second instanceof Double) {
-					return (Double) first * (Double) second;
+					return (double) first * (double) second;
 				} else
 					throw new DollarException("type conflict at '*'");
 			case DIVIDE:
 				if(first instanceof Double && second instanceof Double) {
-					return (Double) first / (Double) second;
+					return (double) first / (double) second;
 				} else
 					throw new DollarException("type conflict at '/'");
 		}

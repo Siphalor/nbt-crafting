@@ -16,7 +16,7 @@ public class MixinServerPlayNetworkHandler {
 	@Shadow public ServerPlayerEntity player;
 
 	@Inject(method = "sendPacket(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V", at = @At("HEAD"))
-	public void onSendPacket(Packet packet, GenericFutureListener futureListener, CallbackInfo callbackInfo) {
+	public void onSendPacket(Packet<?> packet, GenericFutureListener<?> futureListener, CallbackInfo callbackInfo) {
 		Core.lastServerPlayerEntity = player;
 	}
 }

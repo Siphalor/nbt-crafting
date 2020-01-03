@@ -58,7 +58,7 @@ public class Core implements ModInitializer {
 	public static CompoundTag useLastReadNbt() {
 		CompoundTag result = null;
 		if(lastReadNbt != null) {
-			result = (CompoundTag) lastReadNbt.copy();
+			result = lastReadNbt.copy();
 			lastReadNbt = null;
 		}
 		lastReadNbtPresent = false;
@@ -69,14 +69,14 @@ public class Core implements ModInitializer {
 	public void onInitialize() {
 		ServerSidePacketRegistry.INSTANCE.register(PRESENCE_PACKET_ID, (packetContext, packetByteBuf) -> {
 			ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) packetContext.getPlayer();
-			((IServerPlayerEntity) serverPlayerEntity).nbtCrafting_setClientModPresent(true);
+			((IServerPlayerEntity) serverPlayerEntity).setClientModPresent(true);
 			serverPlayerEntity.networkHandler.sendPacket(new SynchronizeRecipesS2CPacket(serverPlayerEntity.server.getRecipeManager().values()));
 			serverPlayerEntity.getRecipeBook().sendInitRecipesPacket(serverPlayerEntity);
 		});
 	}
 
 	public static boolean hasClientMod(ServerPlayerEntity playerEntity) {
-		return ((IServerPlayerEntity) playerEntity).nbtCrafting_hasClientMod();
+		return ((IServerPlayerEntity) playerEntity).hasClientMod();
 	}
 
 	public static <T extends Recipe<?>> RecipeType<T> registerRecipeType(String name) {

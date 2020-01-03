@@ -14,6 +14,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -22,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(CookingRecipeSerializer.class)
 public abstract class MixinCookingRecipeSerializer {
+	@Unique
 	private CompoundTag resultTag = null;
 
 	@Redirect(method = "read(Lnet/minecraft/util/Identifier;Lcom/google/gson/JsonObject;)Lnet/minecraft/recipe/AbstractCookingRecipe;", at = @At(value = "INVOKE", target = "net/minecraft/util/JsonHelper.getString(Lcom/google/gson/JsonObject;Ljava/lang/String;)Ljava/lang/String;", ordinal = 0))
@@ -39,6 +41,7 @@ public abstract class MixinCookingRecipeSerializer {
 
     @Inject(method = "read(Lnet/minecraft/util/Identifier;Lcom/google/gson/JsonObject;)Lnet/minecraft/recipe/AbstractCookingRecipe;", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void onRecipeReady(Identifier identifier, JsonObject jsonObject, CallbackInfoReturnable<AbstractCookingRecipe> callbackInfoReturnable, String group, JsonElement ingredientJson, Ingredient ingredient, String itemId, Identifier itemIdentifier, ItemStack stack, float experience, int cookingTime) {
+	    //noinspection ConstantConditions
 	    ((IItemStack)(Object) stack).setRawTag(resultTag);
     }
 }

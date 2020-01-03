@@ -3,6 +3,7 @@ package de.siphalor.nbtcrafting.dollars;
 import de.siphalor.nbtcrafting.util.NbtHelper;
 import net.minecraft.nbt.AbstractNumberTag;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 
 import java.util.Map;
@@ -39,11 +40,12 @@ public class ReferenceDollarPart implements DollarPart {
 		if(!parent.contains(key))
 			return new ValueDollarPart();
 		Tag tag = parent.get(this.key);
-		if(NbtHelper.isString(tag))
+		if(tag instanceof StringTag)
 			return new ValueDollarPart(tag.asString());
-		else if(NbtHelper.isNumeric(tag))
+		else if(tag instanceof AbstractNumberTag)
 			return new ValueDollarPart(((AbstractNumberTag) tag).getDouble());
 		else
-            return new ValueDollarPart(tag.copy());
+			//noinspection ConstantConditions
+			return new ValueDollarPart(tag.copy());
 	}
 }

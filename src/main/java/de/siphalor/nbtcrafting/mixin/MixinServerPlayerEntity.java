@@ -3,18 +3,22 @@ package de.siphalor.nbtcrafting.mixin;
 import de.siphalor.nbtcrafting.util.IServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(ServerPlayerEntity.class)
 public class MixinServerPlayerEntity implements IServerPlayerEntity {
-	private boolean nbtCrafting_clientModPresent = false;
+	@Unique
+	private boolean clientModPresent = false;
 
+	@Unique
 	@Override
-	public boolean nbtCrafting_hasClientMod() {
-		return nbtCrafting_clientModPresent;
+	public boolean hasClientMod() {
+		return clientModPresent;
 	}
 
+	@Unique
 	@Override
-	public void nbtCrafting_setClientModPresent(boolean present) {
-		nbtCrafting_clientModPresent = present;
+	public void setClientModPresent(boolean present) {
+		clientModPresent = present;
 	}
 }

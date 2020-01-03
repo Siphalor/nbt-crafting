@@ -7,7 +7,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AnvilScreen;
-import net.minecraft.recipe.RecipeManager;
 import net.minecraft.util.PacketByteBuf;
 
 public class ClientCore implements ClientModInitializer {
@@ -17,10 +16,6 @@ public class ClientCore implements ClientModInitializer {
 		PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
 		ClientSidePacketRegistry.INSTANCE.sendToServer(Core.PRESENCE_PACKET_ID, buffer);
 		sentModPresent = true;
-	}
-
-	public static RecipeManager getRecipeManager() {
-        return MinecraftClient.getInstance().getServer().getRecipeManager();
 	}
 
 	@Override

@@ -13,10 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.util.registry.Registry;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -24,9 +21,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @SuppressWarnings("ALL")
 @Mixin(RecipeFinder.class)
 public abstract class MixinRecipeFinder {
-	
+	@Shadow
+	public abstract void addItem(final ItemStack stack);
+
+	@Shadow @Final public Int2IntMap idToAmountMap;
+
+	@Unique
 	private static HashBiMap<Pair<Integer, CompoundTag>, Integer> itemStackMap = HashBiMap.create();
-	
+
+	@Unique
 	private static Pair<Integer, CompoundTag> getStackPair(ItemStack stack) {
 		return new Pair<Integer, CompoundTag>(Registry.ITEM.getRawId(stack.getItem()), NbtHelper.getTagOrEmpty(stack));
 	}
@@ -39,11 +42,6 @@ public abstract class MixinRecipeFinder {
 	public void onCountCrafts(@SuppressWarnings("rawtypes") Recipe recipe, int int_1, IntList ints, CallbackInfoReturnable<Integer> ci) {
 		Core.lastRecipeFinder = (RecipeFinder)(Object)this;
 	}
-	
-	@Shadow
-	public abstract void addItem(final ItemStack stack);
-
-	@Shadow @Final public Int2IntMap idToAmountMap;
 
 	/**
 	 * @reason Fixes nbt items to be excluded from matching sometimes? Shouldn't break anything.

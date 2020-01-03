@@ -79,6 +79,7 @@ public abstract class MixinShapedRecipe {
 		if(Core.hasLastReadNbt()) {
 			CompoundTag lastReadNbt = Core.useLastReadNbt();
 
+			//noinspection ConstantConditions
 			((IItemStack)(Object) stack).setRawTag(lastReadNbt);
 		}
 		ci.setReturnValue(stack);

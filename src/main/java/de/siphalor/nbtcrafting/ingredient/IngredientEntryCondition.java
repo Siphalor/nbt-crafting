@@ -30,6 +30,7 @@ public class IngredientEntryCondition {
 			return requiredElements.isEmpty();
 		}
 		CompoundTag tag = stack.getTag();
+		//noinspection ConstantConditions
 		if(!deniedElements.isEmpty() && NbtHelper.compoundsOverlap(tag, deniedElements))
 			return false;
 		return requiredElements.isEmpty() || NbtHelper.isCompoundContained(requiredElements, tag);

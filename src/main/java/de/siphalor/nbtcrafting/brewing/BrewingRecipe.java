@@ -96,6 +96,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRec
 		ingredientStack.split(1);
 		HashMap<String, CompoundTag> map = new HashMap<>(1);
 		map.put("this", NbtHelper.getTagOrEmpty(ingredientStack));
+		//noinspection ConstantConditions
 		ItemStack remainder = ((IIngredient)(Object) base).getRecipeRemainder(ingredientStack, map);
 		if(!ingredientStack.isEmpty()) {
 			ItemScatterer.spawn(brewingStandBlockEntity.getWorld(), brewingStandBlockEntity.getPos(), DefaultedList.copyOf(remainder));

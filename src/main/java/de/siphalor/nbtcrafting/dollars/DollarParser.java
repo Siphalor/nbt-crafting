@@ -2,6 +2,7 @@ package de.siphalor.nbtcrafting.dollars;
 
 import de.siphalor.nbtcrafting.util.NbtHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.StringTag;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public final class DollarParser {
 			return NO_DOLLARS;
 		ArrayList<Dollar> dollars = new ArrayList<>();
 		NbtHelper.iterateTags(compoundTag, (path, tag) -> {
-			if(NbtHelper.isString(tag) && !tag.asString().isEmpty()) {
+			if(tag instanceof StringTag && !tag.asString().isEmpty()) {
 				if(tag.asString().charAt(0) == '$') {
 					dollars.add(new DollarParser().parse(path, tag.asString().substring(1)));
 					return true;

@@ -61,6 +61,7 @@ public class CauldronRecipe implements Recipe<TemporaryCauldronInventory>, Serve
 
 		Map<String, CompoundTag> reference = ImmutableMap.of("i0", NbtHelper.getTagOrEmpty(inventory.getInvStack(0)));
 
+		//noinspection ConstantConditions
 		ItemStack remainder = ((IIngredient)(Object) input).getRecipeRemainder(inventory.getInvStack(0), reference);
 		if(remainder != null)
 			inventory.setInvStack(0, remainder);

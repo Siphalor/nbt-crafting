@@ -1,6 +1,5 @@
 package de.siphalor.nbtcrafting.mixin;
 
-import com.google.common.base.Predicates;
 import com.google.gson.*;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -8,13 +7,11 @@ import de.siphalor.nbtcrafting.Core;
 import de.siphalor.nbtcrafting.client.ClientCore;
 import de.siphalor.nbtcrafting.ingredient.*;
 import de.siphalor.nbtcrafting.util.ICloneable;
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.StringNbtReader;
-import net.minecraft.potion.Potion;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.tag.ItemTags;
@@ -25,6 +22,7 @@ import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -33,20 +31,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-@SuppressWarnings("ALL")
 @Mixin(Ingredient.class)
 public abstract class MixinIngredient implements IIngredient, ICloneable {
-	
-	private IngredientEntry[] advancedEntries;
-
-	@Shadow
-	private IntList ids;
-
 	@Shadow private ItemStack[] matchingStacks;
+
+	@Unique
+	private IngredientEntry[] advancedEntries;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -65,7 +60,6 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			if (matchingStacks != null)
 				return;
 			matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks().stream()).distinct().toArray(ItemStack[]::new);
-			return;
 		}
 	}
 
@@ -80,10 +74,10 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
                 callbackInfoReturnable.setReturnValue(stack.isEmpty());
                 return;
 			}
-			for (int i = 0; i < advancedEntries.length; i++) {
-				if (advancedEntries[i].matches(stack)) {
+			for(IngredientEntry advancedEntry : advancedEntries) {
+				if (advancedEntry.matches(stack)) {
 					callbackInfoReturnable.setReturnValue(true);
-                    return;
+					return;
 				}
 			}
             callbackInfoReturnable.setReturnValue(false);
@@ -96,8 +90,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			buf.writeBoolean(advancedEntries != null);
 			if (advancedEntries != null) {
 				buf.writeVarInt(advancedEntries.length);
-				for (int i = 0; i < advancedEntries.length; i++) {
-					IngredientEntry entry = advancedEntries[i];
+				for(IngredientEntry entry : advancedEntries) {
 					buf.writeBoolean(entry instanceof IngredientMultiStackEntry);
 					entry.write(buf);
 				}
@@ -114,8 +107,8 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 				return;
 			}
 			JsonArray array = new JsonArray();
-			for (int i = 0; i < advancedEntries.length; i++) {
-				array.add(advancedEntries[i].toJson());
+			for(IngredientEntry advancedEntry : advancedEntries) {
+				array.add(advancedEntry.toJson());
 			}
             callbackInfoReturnable.setReturnValue(array);
 		}
@@ -127,12 +120,14 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			callbackInfoReturnable.setReturnValue(advancedEntries.length == 0);
 		}
 	}
-	
+
+	@Unique
 	private static Ingredient ofAdvancedEntries(Stream<? extends IngredientEntry> entries) {
 		if(entries == null)
 			System.out.println("ERROR");
 		try {
 			Ingredient ingredient;
+			//noinspection ConstantConditions
 			ingredient = (Ingredient)((ICloneable)(Object)Ingredient.EMPTY).clone();
 			((IIngredient)(Object)ingredient).setAdvancedEntries(entries);
 			return ingredient;
@@ -156,7 +151,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> callbackInfoReturnable) {
 		if(ClientCore.sentModPresent) {
 			if(buf.readBoolean()) {
-				ArrayList<IngredientEntry> entries = new ArrayList<IngredientEntry>();
+				ArrayList<IngredientEntry> entries = new ArrayList<>();
 				int length = buf.readVarInt();
 				for (int i = 0; i < length; i++) {
 					if (buf.readBoolean())
@@ -182,10 +177,11 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	        if (jsonArray.size() == 0) {
 		        throw new JsonSyntaxException("Item array cannot be empty, at least one item must be defined");
 	        }
-	        callbackInfoReturnable.setReturnValue(ofAdvancedEntries(StreamSupport.<JsonElement>stream(jsonArray.spliterator(), false).map(e-> advancedEntryFromJson(JsonHelper.asObject(e, "item")))));
+	        callbackInfoReturnable.setReturnValue(ofAdvancedEntries(StreamSupport.stream(jsonArray.spliterator(), false).map(e-> advancedEntryFromJson(JsonHelper.asObject(e, "item")))));
         }
     }
 
+    @Unique
 	private static IngredientEntry advancedEntryFromJson(JsonObject jsonObject) {
 		if (jsonObject.has("item") && jsonObject.has("tag")) {
             throw new JsonParseException("An ingredient entry is either a tag or an item or a potion, not both");
@@ -209,7 +205,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
         if (jsonObject.has("potion")) {
         	final Identifier identifier = new Identifier(JsonHelper.getString(jsonObject, "potion"));
         	try {
-        		final Potion potion = Registry.POTION.getOrEmpty(identifier).orElseThrow(() -> {
+        		Registry.POTION.getOrEmpty(identifier).orElseThrow(() -> {
         			throw new JsonSyntaxException("Unknown potion '" + identifier.toString() + "'");
 				});
         		IngredientEntryCondition condition = loadIngredientEntryCondition(jsonObject);
@@ -232,7 +228,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
         if (tag == null) {
             throw new JsonSyntaxException("Unknown item tag '" + identifier2 + "'");
         }
-        IngredientMultiStackEntry entry = new IngredientMultiStackEntry(tag.values().stream().map(item -> Registry.ITEM.getRawId(item)).collect(Collectors.toList()), loadIngredientEntryCondition(jsonObject));
+        IngredientMultiStackEntry entry = new IngredientMultiStackEntry(tag.values().stream().map(Registry.ITEM::getRawId).collect(Collectors.toList()), loadIngredientEntryCondition(jsonObject));
         entry.setTag(tag.toString());
         if(jsonObject.has("remainder")) {
         	entry.setRecipeRemainder(ShapedRecipe.getItemStack(JsonHelper.getObject(jsonObject, "remainder")));
@@ -240,6 +236,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
         return entry;
 	}
 
+	@Unique
 	private static IngredientEntryCondition loadIngredientEntryCondition(JsonObject jsonObject) {
 		if(jsonObject.has("data")) {
 			if(JsonHelper.hasString(jsonObject, "data")) {
@@ -265,7 +262,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 
 	@Override
 	public void setAdvancedEntries(Stream<? extends IngredientEntry> entries) {
-		advancedEntries = entries.filter(Predicates.notNull()).toArray(IngredientEntry[]::new);
+		advancedEntries = entries.filter(Objects::nonNull).toArray(IngredientEntry[]::new);
 	}
 
 	@Override

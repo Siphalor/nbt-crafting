@@ -6,10 +6,7 @@ import it.unimi.dsi.fastutil.ints.IntCollection;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeFinder;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -19,9 +16,6 @@ import java.util.List;
 
 @Mixin(targets = "net/minecraft/recipe/RecipeFinder$Filter")
 public abstract class MixinRecipeFinder$Filter {
-	
-	private RecipeFinder owner;
-
     @Shadow(aliases = "field_7552", remap = false) @Final
 	private List<Ingredient> ingredients;
 	
@@ -33,7 +27,10 @@ public abstract class MixinRecipeFinder$Filter {
 	
 	@Shadow
 	protected abstract int method_7420(final boolean bool, final int int_1, final int int_2);
-	
+
+	@Unique
+	private RecipeFinder owner;
+
 	@SuppressWarnings({"UnresolvedMixinReference", "WeakerAccess"})
 	@Inject(
 		method = "<init>(Lnet/minecraft/recipe/RecipeFinder;Lnet/minecraft/recipe/Recipe;)V",

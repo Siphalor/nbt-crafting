@@ -65,8 +65,10 @@ public class AnvilRecipe implements Recipe<Inventory>, ServerRecipe {
 	public ItemStack craft(Inventory inventory) {
 		Map<String, CompoundTag> reference = ImmutableMap.of("i0", NbtHelper.getTagOrEmpty(inventory.getInvStack(0)), "i1", NbtHelper.getTagOrEmpty(inventory.getInvStack(1)));
 
+		//noinspection ConstantConditions
 		ItemStack remainder = ((IIngredient)(Object) base).getRecipeRemainder(inventory.getInvStack(0), reference);
 		if(remainder != null) inventory.setInvStack(0, remainder);
+		//noinspection ConstantConditions
 		remainder = ((IIngredient)(Object) base).getRecipeRemainder(inventory.getInvStack(1), reference);
 		if(remainder != null) inventory.setInvStack(1, remainder);
 
