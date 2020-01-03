@@ -1,7 +1,6 @@
 package de.siphalor.nbtcrafting.util;
 
 import de.siphalor.nbtcrafting.dollar.DollarException;
-import net.minecraft.datafixers.NbtOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 
@@ -163,7 +162,7 @@ public class NbtHelper {
 			if(currentTag == null)
 				return null;
 			if(pathKeys[i].charAt(0) == '[') {
-				int index = Integer.parseUnsignedInt(pathKeys[i], 1, pathKeys[i].length() - 2, 10);
+				int index = Integer.parseUnsignedInt(pathKeys[i].substring(1, pathKeys[i].length() - 2), 10);
 				if(currentTag instanceof ListTag) {
 					ListTag list = (ListTag) currentTag;
 					if(i >= list.size())
@@ -300,7 +299,7 @@ public class NbtHelper {
 				}
 			} else if(targetTag instanceof ListTag && additionsTag instanceof ListTag) {
 				int additionsSize = ((ListTag) additionsTag).size();
-				if(additionsSize > 0 && isString(((ListTag) additionsTag).get(additionsSize - 1)) && ((ListTag) additionsTag).getString(additionsSize - 1) == "$overwrite") {
+				if(additionsSize > 0 && isString(((ListTag) additionsTag).get(additionsSize - 1)) && "$overwrite".equals(((ListTag) additionsTag).getString(additionsSize - 1))) {
 					target.put(key, additionsTag);
 				} else {
 					((ListTag) targetTag).addAll(((ListTag) additionsTag).stream().map(Tag::copy).collect(Collectors.toList()));
@@ -322,8 +321,10 @@ public class NbtHelper {
 			return FloatTag.of((Float) value);
 		} else if(value instanceof Double) {
 			return DoubleTag.of((Double) value);
-		} else if(value instanceof Byte || value instanceof Character) {
-			return ByteTag.of(((Number) value).byteValue());
+		} else if(value instanceof Byte) {
+			return ByteTag.of((Byte) value);
+		} else if(value instanceof Character) {
+			return StringTag.of(String.valueOf(value));
 		} else if(value instanceof Short) {
 			return ShortTag.of((Short) value);
 		} else if(value instanceof Integer) {
@@ -331,7 +332,7 @@ public class NbtHelper {
 		} else if(value instanceof Long) {
 			return LongTag.of((Long) value);
 		} else if(value instanceof Boolean) {
-			return ByteTag.of((byte) (((Boolean) value) == true ? 1 : 0));
+			return ByteTag.of((byte) ((Boolean) value ? 1 : 0));
 		} else {
 			return null;
 		}

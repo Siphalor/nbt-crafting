@@ -1,5 +1,6 @@
 package de.siphalor.nbtcrafting.dollar.part.operator;
 
+import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
@@ -39,9 +40,9 @@ public class ProductDollarOperator extends BinaryDollarOperator {
 		}
 
 		@Override
-		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException {
+		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarDeserializationException {
 			if(lastDollarPart == null) {
-				throw new DollarException("Unexpected asterisk!");
+				throw new DollarDeserializationException("Unexpected asterisk!");
 			}
 			dollarParser.skip();
 			return new ProductDollarOperator(lastDollarPart, dollarParser.parse(priority));

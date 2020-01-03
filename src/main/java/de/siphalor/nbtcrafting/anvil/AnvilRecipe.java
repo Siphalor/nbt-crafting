@@ -22,12 +22,12 @@ import net.minecraft.world.World;
 import java.util.Map;
 
 public class AnvilRecipe implements Recipe<Inventory>, ServerRecipe {
-	private Identifier identifier;
-	public Ingredient base;
-	public Ingredient ingredient;
-	public ItemStack output;
-	public int levels;
-	private Dollar[] dollars;
+	private final Identifier identifier;
+	public final Ingredient base;
+	public final Ingredient ingredient;
+	public final ItemStack output;
+	public final int levels;
+	private final Dollar[] dollars;
 
 	public AnvilRecipe(Identifier id, Ingredient base, Ingredient ingredient, ItemStack output, int levels) {
 		this.identifier = id;
@@ -35,7 +35,7 @@ public class AnvilRecipe implements Recipe<Inventory>, ServerRecipe {
 		this.ingredient = ingredient;
 		this.output = output;
 		this.levels = levels;
-		this.dollars = DollarParser.extractDollars(output.getTag());
+		this.dollars = DollarParser.extractDollars(output.getTag(), true);
 	}
 
 	public void write(PacketByteBuf packetByteBuf) {

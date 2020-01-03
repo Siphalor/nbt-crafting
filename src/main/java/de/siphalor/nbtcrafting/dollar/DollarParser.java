@@ -33,8 +33,8 @@ public final class DollarParser {
 					new DifferenceDollarOperator.Deserializer()
 			)
 	);
-	private Stack<Integer> stopStack = new Stack<>();
-	private String string;
+	private final Stack<Integer> stopStack = new Stack<>();
+	private final String string;
 	private final int stringLength;
 	private int currentIndex;
 
@@ -60,13 +60,13 @@ public final class DollarParser {
 		return string.codePointAt(currentIndex + 1);
 	}
 
-	public static Dollar[] extractDollars(CompoundTag compoundTag) {
+	public static Dollar[] extractDollars(CompoundTag compoundTag, boolean remove) {
 		ArrayList<Dollar> dollars = new ArrayList<>();
 		NbtHelper.iterateTags(compoundTag, (path, tag) -> {
 			if(NbtHelper.isString(tag) && !tag.asString().isEmpty()) {
 				if(tag.asString().charAt(0) == '$') {
 					DollarParser.parse(path, tag.asString().substring(1)).ifPresent(dollars::add);
-					return true;
+					return remove;
 				}
 			}
 			return false;
@@ -103,7 +103,7 @@ public final class DollarParser {
 		stopStack.pop();
 	}
 
-	public DollarPart parse(int maxPriority) throws DollarException {
+	public DollarPart parse(int maxPriority) throws DollarDeserializationException {
 		int peek;
 
 		DollarPart dollarPart = parseUnary();
@@ -132,11 +132,11 @@ public final class DollarParser {
 					}
 				}
 			}
-			throw new DollarException("Unable to resolve token in dollar expression: \"" + String.valueOf(Character.toChars(peek)) + "\"");
+			throw new DollarDeserializationException("Unable to resolve token in dollar expression: \"" + String.valueOf(Character.toChars(peek)) + "\"");
 		}
 	}
 
-	public DollarPart parseUnary() throws DollarException {
+	public DollarPart parseUnary() throws DollarDeserializationException {
 		int peek;
 
 		while(Character.isWhitespace(peek = peek())) {

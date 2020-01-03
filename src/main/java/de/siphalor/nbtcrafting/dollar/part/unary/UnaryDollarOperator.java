@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.dollar.part.unary;
 
-import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import net.minecraft.nbt.CompoundTag;
 
@@ -14,9 +14,9 @@ public abstract class UnaryDollarOperator implements DollarPart {
 	}
 
 	@Override
-	public final Object evaluate(Map<String, CompoundTag> reference) throws DollarException {
+	public final Object evaluate(Map<String, CompoundTag> reference) throws DollarEvaluationException {
 		return evaluate(dollarPart.evaluate(reference));
 	}
 
-	public abstract Object evaluate(Object value);
+	public abstract Object evaluate(Object value) throws DollarEvaluationException;
 }

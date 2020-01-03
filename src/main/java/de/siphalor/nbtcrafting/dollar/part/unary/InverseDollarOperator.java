@@ -1,6 +1,7 @@
 package de.siphalor.nbtcrafting.dollar.part.unary;
 
-import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
+import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
@@ -10,10 +11,14 @@ public class InverseDollarOperator extends UnaryDollarOperator {
 		super(dollarPart);
 	}
 
-	public static DollarPart of(DollarPart dollarPart) throws DollarException {
+	public static DollarPart of(DollarPart dollarPart) throws DollarDeserializationException {
 		DollarPart instance = new InverseDollarOperator(dollarPart);
 		if(dollarPart.isConstant()) {
-			return ValueDollarPart.of(instance.evaluate(null));
+			try {
+				return ValueDollarPart.of(instance.evaluate(null));
+			} catch (DollarEvaluationException e) {
+				throw new DollarDeserializationException(e);
+			}
 		}
 		return instance;
 	}
@@ -43,7 +48,7 @@ public class InverseDollarOperator extends UnaryDollarOperator {
 		}
 
 		@Override
-		public DollarPart parse(DollarParser dollarParser) throws DollarException {
+		public DollarPart parse(DollarParser dollarParser) throws DollarDeserializationException {
 			return InverseDollarOperator.of(dollarParser.parseUnary());
 		}
 	}

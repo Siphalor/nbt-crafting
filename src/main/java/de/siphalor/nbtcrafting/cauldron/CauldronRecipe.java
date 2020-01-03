@@ -3,10 +3,10 @@ package de.siphalor.nbtcrafting.cauldron;
 import com.google.common.collect.ImmutableMap;
 import de.siphalor.nbtcrafting.Core;
 import de.siphalor.nbtcrafting.dollar.Dollar;
-import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
 import de.siphalor.nbtcrafting.util.NbtHelper;
+import de.siphalor.nbtcrafting.util.RecipeUtil;
 import de.siphalor.nbtcrafting.util.ServerRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -21,18 +21,18 @@ import net.minecraft.world.World;
 import java.util.Map;
 
 public class CauldronRecipe implements Recipe<TemporaryCauldronInventory>, ServerRecipe {
-	private Identifier identifier;
-	public Ingredient input;
-	public ItemStack output;
-	public int levels;
-	private Dollar[] outputDollars;
+	private final Identifier identifier;
+	public final Ingredient input;
+	public final ItemStack output;
+	public final int levels;
+	private final Dollar[] outputDollars;
 
 	public CauldronRecipe(Identifier id, Ingredient ingredient, ItemStack output, int levels) {
 		this.identifier = id;
 		this.input = ingredient;
 		this.output = output;
 		this.levels = levels;
-		outputDollars = DollarParser.extractDollarsFromCopy(output.getTag());
+		this.outputDollars = DollarParser.extractDollars(output.getTag(), false);
 	}
 
 	public void write(PacketByteBuf packetByteBuf) {
@@ -66,15 +66,7 @@ public class CauldronRecipe implements Recipe<TemporaryCauldronInventory>, Serve
 		if(remainder != null)
 			inventory.setInvStack(0, remainder);
 
-		ItemStack result = output.copy();
-		for(Dollar dollar : outputDollars) {
-			try {
-				dollar.apply(result, reference);
-			} catch (DollarException e) {
-				e.printStackTrace();
-			}
-		}
-		return result;
+		return RecipeUtil.applyDollars(output.copy(), outputDollars, reference);
 	}
 
 	@Override

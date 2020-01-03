@@ -11,11 +11,11 @@ import net.minecraft.world.World;
 
 public class TemporaryCauldronInventory implements Inventory {
 	private ItemStack stackInHand;
-	private PlayerEntity playerEntity;
-	private Hand hand;
+	private final PlayerEntity playerEntity;
+	private final Hand hand;
 	private int level;
-	private World world;
-	private BlockPos blockPos;
+	private final World world;
+	private final BlockPos blockPos;
 
 	public TemporaryCauldronInventory(PlayerEntity playerEntity, Hand hand, World world, BlockPos blockPos) {
 		this.playerEntity = playerEntity;

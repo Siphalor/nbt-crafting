@@ -16,7 +16,7 @@ import java.util.Map;
 public class RecipeUtil {
 	public static ItemStack getDollarAppliedOutputStack(ItemStack baseOutput, DefaultedList<Ingredient> ingredients, Inventory inventory) {
         ItemStack stack = baseOutput.copy();
-		Dollar[] dollars = DollarParser.extractDollars(stack.getTag());
+		Dollar[] dollars = DollarParser.extractDollars(stack.getTag(), true);
 
 		if(dollars.length > 0) {
 			HashMap<String, CompoundTag> reference = new HashMap<>();
@@ -40,7 +40,7 @@ public class RecipeUtil {
 	}
 
 	public static ItemStack getDollarAppliedOutputStack(ItemStack baseOutput, Ingredient ingredient, String referenceName, Inventory inventory) {
-		Dollar[] dollars = DollarParser.extractDollars(baseOutput.getTag());
+		Dollar[] dollars = DollarParser.extractDollars(baseOutput.getTag(), true);
 
 		if(dollars.length > 0) {
 			ItemStack stack = baseOutput.copy();

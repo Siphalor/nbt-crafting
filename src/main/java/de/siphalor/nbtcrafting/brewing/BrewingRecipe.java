@@ -21,18 +21,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRecipe {
-	private Identifier id;
-	public Ingredient base;
-	public Ingredient ingredient;
-	private ItemStack output;
-	private Dollar[] outputDollars;
+	private final Identifier id;
+	public final Ingredient base;
+	public final Ingredient ingredient;
+	private final ItemStack output;
+	private final Dollar[] outputDollars;
 
 	public BrewingRecipe(Identifier id, Ingredient base, Ingredient ingredient, ItemStack output) {
 		this.id = id;
 		this.base = base;
 		this.ingredient = ingredient;
 		this.output = output;
-		this.outputDollars = DollarParser.extractDollarsFromCopy(output.getTag());
+		this.outputDollars = DollarParser.extractDollars(output.getTag(), false);
 	}
 
 	public static boolean existsMatchingIngredient(ItemStack stack, RecipeManager recipeManager) {

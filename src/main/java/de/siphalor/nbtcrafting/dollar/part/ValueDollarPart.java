@@ -1,7 +1,7 @@
 package de.siphalor.nbtcrafting.dollar.part;
 
 public class ValueDollarPart extends ConstantDollarPart {
-	private Object value;
+	private final Object value;
 
 	private ValueDollarPart(Object value) {
 		this.value = value;

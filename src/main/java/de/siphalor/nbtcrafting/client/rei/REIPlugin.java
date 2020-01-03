@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
 public class REIPlugin implements REIPluginV0 {
-	public static final Identifier IDENTIFIER = new Identifier(Core.MODID, "rei_plugin");
+	public static final Identifier IDENTIFIER = new Identifier(Core.MOD_ID, "rei_plugin");
 
 	@Override
 	public Identifier getPluginIdentifier() {

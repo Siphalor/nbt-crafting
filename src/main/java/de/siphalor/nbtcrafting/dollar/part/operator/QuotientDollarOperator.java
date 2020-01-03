@@ -1,5 +1,6 @@
 package de.siphalor.nbtcrafting.dollar.part.operator;
 
+import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
@@ -36,7 +37,7 @@ public class QuotientDollarOperator extends BinaryDollarOperator {
 		}
 
 		@Override
-		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException {
+		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarDeserializationException {
 			dollarParser.skip();
 			return new QuotientDollarOperator(lastDollarPart, dollarParser.parse(priority));
 		}

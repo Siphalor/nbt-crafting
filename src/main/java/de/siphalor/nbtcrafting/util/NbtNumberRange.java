@@ -1,8 +1,8 @@
 package de.siphalor.nbtcrafting.util;
 
 public class NbtNumberRange {
-	public double begin;
-	public double end;
+	public final double begin;
+	public final double end;
 	
 	private NbtNumberRange(double begin, double end) {
 		this.begin = begin;

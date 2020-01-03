@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 public class IngredientMultiStackEntry extends IngredientEntry {
 	
-	private IngredientEntryCondition condition;
-	private IntList itemIds;
+	private final IngredientEntryCondition condition;
+	private final IntList itemIds;
 	private String tag;
 
 	public IngredientMultiStackEntry(Collection<Integer> items, IngredientEntryCondition condition) {
@@ -45,6 +45,7 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 		CompoundTag tag = condition.getPreviewTag();
 		Collection<ItemStack> stacks = itemIds.stream().map(id -> new ItemStack(Registry.ITEM.get(id))).collect(Collectors.toList());
 		for(ItemStack itemStack : stacks) {
+			//noinspection ConstantConditions
 			((IItemStack)(Object) itemStack).setRawTag(tag);
 		}
 		return stacks;

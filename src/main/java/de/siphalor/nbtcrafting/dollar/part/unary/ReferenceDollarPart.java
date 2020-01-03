@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.dollar.part.unary;
 
-import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import net.minecraft.nbt.CompoundTag;
@@ -8,7 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import java.util.Map;
 
 public class ReferenceDollarPart implements DollarPart {
-	private String key;
+	private final String key;
 
 	private ReferenceDollarPart(String key) {
 		this.key = key;
@@ -19,9 +19,9 @@ public class ReferenceDollarPart implements DollarPart {
 	}
 
 	@Override
-	public Object evaluate(Map<String, CompoundTag> reference) throws DollarException {
+	public Object evaluate(Map<String, CompoundTag> reference) throws DollarEvaluationException {
 		if(!reference.containsKey(key)) {
-			throw new DollarException("Could not resolve reference to nbt tag '" + key + "'");
+			throw new DollarEvaluationException("Could not resolve reference to nbt tag '" + key + "'");
 		}
 		return reference.get(key);
 	}

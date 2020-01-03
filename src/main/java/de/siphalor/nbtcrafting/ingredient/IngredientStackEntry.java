@@ -13,8 +13,8 @@ import java.util.Collections;
 
 public class IngredientStackEntry extends IngredientEntry {
 	
-	private IngredientEntryCondition condition;
-	private int id;
+	private final IngredientEntryCondition condition;
+	private final int id;
 
 	public IngredientStackEntry(int id, IngredientEntryCondition condition) {
 		super();
@@ -46,6 +46,7 @@ public class IngredientStackEntry extends IngredientEntry {
 	@Override
 	public Collection<ItemStack> getPreviewStacks() {
 		ItemStack stack = new ItemStack(Registry.ITEM.get(id));
+		//noinspection ConstantConditions
 		((IItemStack)(Object) stack).setRawTag(condition.getPreviewTag());
 		return Collections.singleton(stack);
 	}

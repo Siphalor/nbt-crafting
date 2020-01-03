@@ -1,6 +1,7 @@
 package de.siphalor.nbtcrafting.dollar.part.operator;
 
-import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
+import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
@@ -11,10 +12,14 @@ public class SumDollarOperator extends BinaryDollarOperator {
 		super(first, second);
 	}
 
-	public static DollarPart of(DollarPart first, DollarPart second) throws DollarException {
+	public static DollarPart of(DollarPart first, DollarPart second) throws DollarDeserializationException {
 		DollarPart instance = new SumDollarOperator(first, second);
 		if(first.isConstant() && second.isConstant()) {
-			return ValueDollarPart.of(instance.evaluate(null));
+			try {
+				return ValueDollarPart.of(instance.evaluate(null));
+			} catch (DollarEvaluationException e) {
+				throw new DollarDeserializationException(e);
+			}
 		}
 		return instance;
 	}
@@ -33,10 +38,10 @@ public class SumDollarOperator extends BinaryDollarOperator {
 		}
 
 		@Override
-		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarException {
+		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarDeserializationException {
 			dollarParser.skip();
 			if(lastDollarPart == null)
-				throw new DollarException("Unexpected plus!");
+				throw new DollarDeserializationException("Unexpected plus!");
 			return SumDollarOperator.of(lastDollarPart, dollarParser.parse(priority));
 		}
 	}

@@ -20,9 +20,11 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public class Core implements ModInitializer {
-	public static final String MODID = "nbtcrafting";
-	public static final Identifier PRESENCE_PACKET_ID = new Identifier(MODID, "present");
-	public static final Identifier UPDATE_ANVIL_TEXT_S2C_PACKET_ID = new Identifier(MODID, "update_anvil_text");
+	public static final String MOD_ID = "nbtcrafting";
+	@Deprecated
+	public static final String MODID = MOD_ID;
+	public static final Identifier PRESENCE_PACKET_ID = new Identifier(MOD_ID, "present");
+	public static final Identifier UPDATE_ANVIL_TEXT_S2C_PACKET_ID = new Identifier(MOD_ID, "update_anvil_text");
 
 	public static final RecipeType<BrewingRecipe> BREWING_RECIPE_TYPE = registerRecipeType("brewing");
 	public static final BrewingRecipeSerializer BREWING_RECIPE_SERIALIZER = registerRecipeSerializer("brewing", new BrewingRecipeSerializer());
@@ -80,7 +82,7 @@ public class Core implements ModInitializer {
 	}
 
 	public static <T extends Recipe<?>> RecipeType<T> registerRecipeType(String name) {
-		return Registry.register(Registry.RECIPE_TYPE, new Identifier(MODID, name), new RecipeType<T>() {
+		return Registry.register(Registry.RECIPE_TYPE, new Identifier(MOD_ID, name), new RecipeType<T>() {
 			@Override
 			public String toString() {
 				return name;
@@ -89,6 +91,6 @@ public class Core implements ModInitializer {
 	}
 
 	public static <S extends RecipeSerializer<T>, T extends Recipe<?>> S registerRecipeSerializer(String name, S recipeSerializer) {
-		return Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(MODID, name), recipeSerializer);
+		return Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(MOD_ID, name), recipeSerializer);
 	}
 }
