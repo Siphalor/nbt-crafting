@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Optional;
 
+@SuppressWarnings("ConstantConditions")
 @Mixin(BrewingStandBlockEntity.class)
 public abstract class MixinBrewingStandBlockEntity extends LockableContainerBlockEntity {
 	protected MixinBrewingStandBlockEntity(BlockEntityType<?> blockEntityType_1) {

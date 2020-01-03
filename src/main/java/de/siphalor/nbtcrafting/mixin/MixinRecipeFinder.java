@@ -4,6 +4,7 @@ import com.google.common.collect.HashBiMap;
 import com.mojang.datafixers.util.Pair;
 import de.siphalor.nbtcrafting.Core;
 import de.siphalor.nbtcrafting.util.IItemStack;
+import de.siphalor.nbtcrafting.util.NbtHelper;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.Item;
@@ -20,13 +21,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @SuppressWarnings("ALL")
 @Mixin(RecipeFinder.class)
 public abstract class MixinRecipeFinder {
+	@Shadow
+	public abstract void addItem(final ItemStack stack);
+
+	@Shadow @Final public Int2IntMap idToAmountMap;
 
 	@Unique
 	private static HashBiMap<Pair<Integer, CompoundTag>, Integer> itemStackMap = HashBiMap.create();
 
 	@Unique
 	private static Pair<Integer, CompoundTag> getStackPair(ItemStack stack) {
-		return new Pair<Integer, CompoundTag>(Registry.ITEM.getRawId(stack.getItem()), stack.getOrCreateTag());
+		return new Pair<Integer, CompoundTag>(Registry.ITEM.getRawId(stack.getItem()), NbtHelper.getTagOrEmpty(stack));
 	}
 
 	@Inject(method = "findRecipe(Lnet/minecraft/recipe/Recipe;Lit/unimi/dsi/fastutil/ints/IntList;I)Z", at = @At("HEAD"))
@@ -37,11 +42,6 @@ public abstract class MixinRecipeFinder {
 	public void onCountCrafts(@SuppressWarnings("rawtypes") Recipe recipe, int int_1, IntList ints, CallbackInfoReturnable<Integer> ci) {
 		Core.lastRecipeFinder = (RecipeFinder)(Object)this;
 	}
-	
-	@Shadow
-	public abstract void addItem(final ItemStack stack);
-
-	@Shadow @Final public Int2IntMap idToAmountMap;
 
 	/**
 	 * @reason Fixes nbt items to be excluded from matching sometimes? Shouldn't break anything.

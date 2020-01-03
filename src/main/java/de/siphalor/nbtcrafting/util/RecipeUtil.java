@@ -16,7 +16,7 @@ import java.util.Map;
 public class RecipeUtil {
 	public static ItemStack getDollarAppliedOutputStack(ItemStack baseOutput, DefaultedList<Ingredient> ingredients, Inventory inventory) {
         ItemStack stack = baseOutput.copy();
-		Dollar[] dollars = DollarParser.extractDollars(stack.getOrCreateTag());
+		Dollar[] dollars = DollarParser.extractDollars(stack.getTag());
 
 		if(dollars.length > 0) {
 			HashMap<String, CompoundTag> reference = new HashMap<>();
@@ -24,7 +24,7 @@ public class RecipeUtil {
 			for (int j = 0; j < ingredients.size(); j++) {
 				for (int i = 0; i < inventory.getInvSize(); i++) {
 					if(ingredients.get(j).test(inventory.getInvStack(i))) {
-						reference.putIfAbsent("i" + j, inventory.getInvStack(i).getOrCreateTag().copy());
+						reference.putIfAbsent("i" + j, NbtHelper.getTagOrEmpty(inventory.getInvStack(i)));
 						continue ingredient;
 					}
 				}
@@ -40,13 +40,13 @@ public class RecipeUtil {
 	}
 
 	public static ItemStack getDollarAppliedOutputStack(ItemStack baseOutput, Ingredient ingredient, String referenceName, Inventory inventory) {
-		Dollar[] dollars = DollarParser.extractDollars(baseOutput.getOrCreateTag());
+		Dollar[] dollars = DollarParser.extractDollars(baseOutput.getTag());
 
 		if(dollars.length > 0) {
 			ItemStack stack = baseOutput.copy();
 
 			HashMap<String, CompoundTag> reference = new HashMap<>();
-			reference.put(referenceName, inventory.getInvStack(0).getOrCreateTag());
+			reference.put(referenceName, NbtHelper.getTagOrEmpty(inventory.getInvStack(0)));
 
 			return applyDollars(stack, dollars, reference);
 		}

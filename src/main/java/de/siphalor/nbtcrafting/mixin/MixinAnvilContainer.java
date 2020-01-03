@@ -17,6 +17,7 @@ import net.minecraft.util.PacketByteBuf;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -35,7 +36,8 @@ public abstract class MixinAnvilContainer extends Container {
 
 	@Shadow private String newItemName;
 
-	private boolean nbtCrafting_userChangedName = false;
+	@Unique
+	private boolean userChangedName = false;
 
 	protected MixinAnvilContainer(ContainerType<?> containerType_1, int int_1) {
 		super(containerType_1, int_1);
@@ -46,10 +48,10 @@ public abstract class MixinAnvilContainer extends Container {
 		Optional<AnvilRecipe> optionalAnvilRecipe = player.world.getRecipeManager().getFirstMatch(Core.ANVIL_RECIPE_TYPE, inventory, player.world);
 		if(optionalAnvilRecipe.isPresent()) {
 			ItemStack resultStack = optionalAnvilRecipe.get().craft(inventory);
-			if(nbtCrafting_userChangedName) {
+			if(userChangedName) {
 				if (!newItemName.equals(resultStack.getName().getString()))
 					resultStack.setCustomName(new LiteralText(newItemName));
-				nbtCrafting_userChangedName = false;
+				userChangedName = false;
 			} else {
 				newItemName = resultStack.getName().getString();
 				if(player instanceof ServerPlayerEntity) {
@@ -71,6 +73,6 @@ public abstract class MixinAnvilContainer extends Container {
 
 	@Inject(method = "setNewItemName", at = @At("HEAD"))
 	public void onNewItemNameSet(String newNewItemName, CallbackInfo callbackInfo) {
-		nbtCrafting_userChangedName = true;
+		userChangedName = true;
 	}
 }

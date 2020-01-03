@@ -2,27 +2,42 @@ package de.siphalor.nbtcrafting.util;
 
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import net.minecraft.datafixers.NbtOps;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("unused")
 public class NbtHelper {
-	
+	public static final CompoundTag EMPTY_COMPOUND = new CompoundTag();
+
+	public static CompoundTag getTagOrEmpty(ItemStack itemStack) {
+		if(itemStack.hasTag())
+			return itemStack.getTag();
+		else
+			return EMPTY_COMPOUND;
+	}
+
+	public static CompoundTag copyOrEmpty(CompoundTag compoundTag) {
+		if(compoundTag == null)
+			return EMPTY_COMPOUND;
+		else
+			return compoundTag.copy();
+	}
+
 	public static boolean tagsMatch(Tag main, Tag reference) {
-		if(isString(reference) && reference.asString().equals(""))
+		if(reference instanceof StringTag && reference.asString().equals(""))
 			return true;
-		if(isString(main) && isString(reference))
+		if(main instanceof StringTag && reference instanceof StringTag)
 			return main.asString().equals(reference.asString());
-		if(isNumeric(main)) {
-			if(isNumeric(reference))
+		if(main instanceof AbstractNumberTag) {
+			if(reference instanceof AbstractNumberTag)
 				return ((AbstractNumberTag) main).getDouble() == ((AbstractNumberTag) reference).getDouble();
-			if(isString(reference) && reference.asString().startsWith("$"))
+			if(reference instanceof StringTag && reference.asString().startsWith("$"))
 				return NbtNumberRange.ofString(reference.asString().substring(1)).matches(((AbstractNumberTag) main).getDouble());
 			return false;
 		}
@@ -33,10 +48,11 @@ public class NbtHelper {
 		for(String key : main.getKeys()) {
 			if(!reference.contains(key))
 				continue;
-			if(isCompound(main.get(key)) && isCompound(reference.get(key))) {
+			if(main.get(key) instanceof CompoundTag && reference.get(key) instanceof CompoundTag) {
 				if(compoundsOverlap(main.getCompound(key), reference.getCompound(key)))
 					return true;
-			} else if(isList(main.get(key)) && isList(reference.get(key))) {
+			} else if(main.get(key) instanceof ListTag && reference.get(key) instanceof ListTag) {
+				//noinspection ConstantConditions
 				if(listsOverlap((ListTag) main.get(key), (ListTag) reference.get(key)))
 					return true;
 			} else if(tagsMatch(main.get(key), reference.get(key))) {
@@ -47,15 +63,13 @@ public class NbtHelper {
 	}
 	
 	public static boolean listsOverlap(ListTag main, ListTag reference) {
-		for (Iterator<Tag> it_1 = main.iterator(); it_1.hasNext();) {
-			Tag mainTag = it_1.next();
-			for (Iterator<Tag> it_2 = main.iterator(); it_2.hasNext();) {
-				Tag referenceTag = it_2.next();
-				if(isCompound(mainTag) && isCompound(referenceTag)) {
+		for(Tag mainTag : main) {
+			for(Tag referenceTag : main) {
+				if(mainTag instanceof CompoundTag && referenceTag instanceof CompoundTag) {
 					if(compoundsOverlap((CompoundTag) mainTag, (CompoundTag) referenceTag))
 						return true;
-				} else if(isList(mainTag) && isList(referenceTag)) {
-					if(listsOverlap((ListTag) mainTag, (ListTag) referenceTag))
+				} else if(mainTag instanceof ListTag && referenceTag instanceof ListTag) {
+					if (listsOverlap((ListTag) mainTag, (ListTag) referenceTag))
 						return true;
 				} else if(tagsMatch(mainTag, referenceTag)) {
 					return true;
@@ -71,11 +85,11 @@ public class NbtHelper {
 			if(!outer.contains(key))
 				return false;
 			Tag outerTag = outer.get(key);
-			if(isCompound(innerTag) && isCompound(outerTag)) {
+			if(innerTag instanceof CompoundTag && outerTag instanceof CompoundTag) {
 				if(isCompoundContained((CompoundTag) innerTag, (CompoundTag) outerTag))
 					continue;
 				return false;
-			} else if(isList(innerTag) && isList(outerTag)) {
+			} else if(innerTag instanceof ListTag && outerTag instanceof ListTag) {
 				if(isListContained((ListTag) innerTag, (ListTag) outerTag))
 					continue;
 				return false;
@@ -87,15 +101,13 @@ public class NbtHelper {
 	}
 	
 	public static boolean isListContained(ListTag inner, ListTag outer) {
-		for (Iterator<Tag> it_1 = inner.iterator(); it_1.hasNext();) {
-			Tag innerTag = it_1.next();
+		for(Tag innerTag : inner) {
 			boolean success = false;
-			for (Iterator<Tag> it_2 = outer.iterator(); it_2.hasNext();) {
-				Tag outerTag = it_2.next();
-				if(isCompound(innerTag) && isCompound(outerTag) && isCompoundContained((CompoundTag) innerTag, (CompoundTag) outerTag)) {
+			for(Tag outerTag : outer) {
+				if(innerTag instanceof CompoundTag && outerTag instanceof CompoundTag && isCompoundContained((CompoundTag) innerTag, (CompoundTag) outerTag)) {
 					success = true;
 					break;
-				} else if(isList(innerTag) && isList(outerTag) && isListContained((ListTag) innerTag, (ListTag) outerTag)) {
+				} else if(innerTag instanceof ListTag && outerTag instanceof ListTag && isListContained((ListTag) innerTag, (ListTag) outerTag)) {
 					success = true;
 					break;
 				} else if(tagsMatch(innerTag, outerTag)) {
@@ -110,21 +122,21 @@ public class NbtHelper {
 	}
 	
 	public static boolean sameType(Tag tag1, Tag tag2) {
-		return Objects.equals(NbtOps.INSTANCE.getType(tag1), NbtOps.INSTANCE.getType(tag2));
+		return tag1.getType() == tag2.getType();
 	}
 	
 	public static boolean isString(Tag tag) {
 		return tag instanceof StringTag;
 	}
-	
+
 	public static boolean isCompound(Tag tag) {
 		return tag instanceof CompoundTag;
 	}
-	
+
 	public static boolean isList(Tag tag) {
 		return tag instanceof ListTag;
 	}
-	
+
 	public static boolean isNumeric(Tag tag) {
 		return tag instanceof AbstractNumberTag;
 	}
@@ -185,20 +197,20 @@ public class NbtHelper {
 		Tag currentTag = main;
 		for (int i = 0; i < pathParts.length - 1; i++) {
 			if(pathParts[i].charAt(0) == '[') {
-				if(!isList(currentTag)) {
+				if(!(currentTag instanceof ListTag)) {
 					throw new DollarException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 				}
 				ListTag currentList = (ListTag) currentTag;
-                int index = Integer.parseUnsignedInt(pathParts[i].substring(1, pathParts[i].length()));
-                if(currentList.size() <= index) {
+                int index = Integer.parseUnsignedInt(pathParts[i].substring(1, pathParts[i].length() - 1));
+				if(currentList.size() <= index) {
                 	throw new DollarException(String.join(".", pathParts) + " contains invalid list in " + main.asString());
-                } else if(isCompound(currentList.get(index)) || isList(currentList.get(index))) {
+                } else if(currentList.get(index) instanceof CompoundTag || currentList.get(index) instanceof ListTag) {
                 	currentTag = currentList.get(index);
                 } else {
 	                throw new DollarException(String.join(".", pathParts) + " doesn't match on " + main.asString());
                 }
 			} else {
-				if(!isCompound(currentTag)) {
+				if(!(currentTag instanceof CompoundTag)) {
 					throw new DollarException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 				}
 				CompoundTag currentCompound = (CompoundTag) currentTag;
@@ -206,14 +218,14 @@ public class NbtHelper {
 					CompoundTag newCompound = new CompoundTag();
 					currentCompound.put(pathParts[i], newCompound);
 					currentTag = newCompound;
-				} else if(isCompound(currentCompound.get(pathParts[i])) || isList(currentCompound.get(pathParts[i]))) {
+				} else if(currentCompound.get(pathParts[i]) instanceof CompoundTag || currentCompound.get(pathParts[i]) instanceof ListTag) {
 					currentTag = currentCompound.get(pathParts[i]);
 				} else {
 					throw new DollarException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 				}
 			}
 		}
-		if(!isCompound(currentTag))
+		if(!(currentTag instanceof CompoundTag))
 			throw new DollarException(String.join(".", pathParts) + "'s parent does not specify an object in " + main.asString());
 		return (CompoundTag) currentTag;
 	}
@@ -232,13 +244,13 @@ public class NbtHelper {
 
 	private static void iterateTags(Tag tag, BiFunction<String, Tag, Boolean> biFunction, String path) {
 		if(tag == null) return;
-		if(isCompound(tag)) {
+		if(tag instanceof CompoundTag) {
 			CompoundTag compoundTag = (CompoundTag) tag;
-			if(path != "")
+			if(!path.equals(""))
 				path += ".";
 			Set<String> remove = new HashSet<>();
 			for(String key : compoundTag.getKeys()) {
-				if(isCompound(compoundTag.get(key)) || isList(compoundTag.get(key)))
+				if(compoundTag.get(key) instanceof CompoundTag || compoundTag.get(key) instanceof ListTag)
 					iterateTags(compoundTag.get(key), biFunction, path + key);
 				else {
 					if(biFunction.apply(path + key, compoundTag.get(key)))
@@ -248,42 +260,45 @@ public class NbtHelper {
 			for(String key : remove) {
 				compoundTag.remove(key);
 			}
-		} else if(isList(tag)) {
+		} else if(tag instanceof ListTag) {
 			ListTag listTag = (ListTag) tag;
-			for(int i = 0; i < listTag.size(); i++) {
-				if(isCompound(listTag.get(i)) || isList(listTag.get(i))) {
-					iterateTags(listTag.get(i), biFunction, path + "[" + i + "]");
+			int i = 0;
+			for(Iterator<Tag> iterator = listTag.iterator(); iterator.hasNext(); ) {
+				Tag currentTag = iterator.next();
+				if(currentTag instanceof CompoundTag || currentTag instanceof ListTag) {
+					iterateTags(currentTag, biFunction, path + "[" + i + "]");
+					i++;
 				} else {
-					if(biFunction.apply(path + "[" + i + "]", listTag.get(i)))
-						listTag.remove(i);
+					if(biFunction.apply(path + "[" + i + "]", currentTag)) {
+						iterator.remove();
+					} else {
+						i++;
+					}
 				}
+
 			}
 		}
 	}
 
-	public static CompoundTag mergeInto(CompoundTag target, CompoundTag additions, boolean replace) {
-		if(target == null) {
-			if(additions == null)
-				return new CompoundTag();
-			return additions;
-		}
-		if(additions == null) return target;
+	public static void mergeInto(CompoundTag target, CompoundTag additions, boolean replace) {
+		if(additions == null) return;
 
 		for(String key : additions.getKeys()) {
 			if(!target.contains(key)) {
+				//noinspection ConstantConditions
 				target.put(key, additions.get(key).copy());
 				continue;
 			}
 
             Tag targetTag = target.get(key);
 			Tag additionsTag = target.get(key);
-			if(isCompound(targetTag) && isCompound(additionsTag)) {
+			if(targetTag instanceof CompoundTag && additionsTag instanceof CompoundTag) {
 				if(((CompoundTag) additionsTag).contains("$overwrite") && ((CompoundTag) additionsTag).getBoolean("$overwrite")) {
 					target.put(key, additionsTag.copy());
 				} else {
 					mergeInto((CompoundTag) targetTag, (CompoundTag) additionsTag, replace);
 				}
-			} else if(isList(targetTag) && isList(additionsTag)) {
+			} else if(targetTag instanceof ListTag && additionsTag instanceof ListTag) {
 				int additionsSize = ((ListTag) additionsTag).size();
 				if(additionsSize > 0 && isString(((ListTag) additionsTag).get(additionsSize - 1)) && ((ListTag) additionsTag).getString(additionsSize - 1) == "$overwrite") {
 					target.put(key, additionsTag);
@@ -292,11 +307,10 @@ public class NbtHelper {
 				}
 			} else {
 				if(replace)
+					//noinspection ConstantConditions
 					target.put(key, additionsTag.copy());
 			}
 		}
-
-        return target;
 	}
 
 	public static Tag asTag(Object value) {

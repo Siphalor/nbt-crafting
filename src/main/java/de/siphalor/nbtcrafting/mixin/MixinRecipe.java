@@ -1,6 +1,7 @@
 package de.siphalor.nbtcrafting.mixin;
 
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
+import de.siphalor.nbtcrafting.util.NbtHelper;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -30,7 +31,7 @@ public interface MixinRecipe {
 		for (int j = 0; j < ingredients.size(); j++) {
 			for (int i = 0; i < stackList.size(); i++) {
 				if(ingredients.get(j).test(inventory.getInvStack(i)))
-					reference.putIfAbsent("i"+j, inventory.getInvStack(i).getOrCreateTag());
+					reference.putIfAbsent("i"+j, NbtHelper.getTagOrEmpty(inventory.getInvStack(i)));
 			}
 		}
 		main:
@@ -38,6 +39,7 @@ public interface MixinRecipe {
 			ItemStack itemStack = inventory.getInvStack(i);
 			for(Ingredient ingredient : ingredients) {
 				if(ingredient.test(itemStack)) {
+					//noinspection ConstantConditions
 					ItemStack remainder = ((IIngredient)(Object) ingredient).getRecipeRemainder(itemStack, reference);
 					if(remainder != null) {
 						stackList.set(i, remainder);
