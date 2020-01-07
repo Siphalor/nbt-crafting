@@ -62,11 +62,15 @@ public final class DollarParser {
 	}
 
 	public static Dollar[] extractDollars(CompoundTag compoundTag, boolean remove) {
-		ArrayList<Dollar> dollars = new ArrayList<>();
+		LinkedList<Dollar> dollars = new LinkedList<>();
 		NbtIterator.iterateTags(compoundTag, (path, key, tag) -> {
 			if(tag instanceof StringTag && !tag.asString().isEmpty()) {
 				if(tag.asString().charAt(0) == '$') {
-					DollarParser.parse(path, tag.asString().substring(1)).ifPresent(dollars::add);
+					if(path.isEmpty() && key.equals("$") && tag.asString().charAt(0) == '$') {
+						DollarParser.parse(path, tag.asString().substring(1)).ifPresent(dollars::addFirst);
+					} else {
+						DollarParser.parse(path, tag.asString().substring(1)).ifPresent(dollars::add);
+					}
 					return remove;
 				}
 			}

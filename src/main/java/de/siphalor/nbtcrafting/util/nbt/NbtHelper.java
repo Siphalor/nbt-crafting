@@ -18,7 +18,7 @@ public class NbtHelper {
 
 	public static CompoundTag copyOrEmpty(CompoundTag compoundTag) {
 		if(compoundTag == null)
-			return EMPTY_COMPOUND;
+			return new CompoundTag();
 		else
 			return compoundTag.copy();
 	}
@@ -249,16 +249,12 @@ public class NbtHelper {
             Tag targetTag = target.get(key);
 			Tag additionsTag = target.get(key);
 			if(targetTag instanceof CompoundTag && additionsTag instanceof CompoundTag) {
-				if(((CompoundTag) additionsTag).contains("$overwrite", 1) && ((CompoundTag) additionsTag).getBoolean("$overwrite")) {
-					target.put(key, additionsTag.copy());
-				} else {
+				if(!(((CompoundTag) targetTag).contains("$overwrite", 1) && ((CompoundTag) targetTag).getBoolean("$overwrite"))) {
 					mergeInto((CompoundTag) targetTag, (CompoundTag) additionsTag, replace);
 				}
 			} else if(targetTag instanceof ListTag && additionsTag instanceof ListTag) {
-				int additionsSize = ((ListTag) additionsTag).size();
-				if(additionsSize > 0 && isString(((ListTag) additionsTag).get(additionsSize - 1)) && "$overwrite".equals(((ListTag) additionsTag).getString(additionsSize - 1))) {
-					target.put(key, additionsTag);
-				} else {
+				int targetSize = ((ListTag) targetTag).size();
+				if(!(targetSize > 0 && isString(((ListTag) targetTag).get(targetSize - 1)) && "$overwrite".equals(((ListTag) targetTag).getString(targetSize - 1)))) {
 					((ListTag) targetTag).addAll(((ListTag) additionsTag).stream().map(Tag::copy).collect(Collectors.toList()));
 				}
 			} else {
