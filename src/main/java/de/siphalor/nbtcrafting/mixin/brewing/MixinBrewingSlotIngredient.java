@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.mixin;
+package de.siphalor.nbtcrafting.mixin.brewing;
 
 import net.minecraft.container.Slot;
 import net.minecraft.inventory.Inventory;

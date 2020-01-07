@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.mixin;
+package de.siphalor.nbtcrafting.mixin.brewing;
 
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;

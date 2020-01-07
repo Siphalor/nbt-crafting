@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.mixin;
+package de.siphalor.nbtcrafting.mixin.cauldron;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.cauldron.CauldronRecipe;

@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.mixin;
+package de.siphalor.nbtcrafting.mixin.cooking;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

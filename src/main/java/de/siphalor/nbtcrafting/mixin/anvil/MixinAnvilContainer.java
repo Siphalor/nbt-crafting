@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.mixin;
+package de.siphalor.nbtcrafting.mixin.anvil;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.anvil.AnvilRecipe;

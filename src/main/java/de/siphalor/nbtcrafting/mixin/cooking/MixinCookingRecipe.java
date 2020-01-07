@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.mixin;
+package de.siphalor.nbtcrafting.mixin.cooking;
 
 import de.siphalor.nbtcrafting.util.RecipeUtil;
 import net.minecraft.inventory.Inventory;

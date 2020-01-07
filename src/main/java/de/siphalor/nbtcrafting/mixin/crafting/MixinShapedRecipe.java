@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.mixin;
+package de.siphalor.nbtcrafting.mixin.crafting;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
