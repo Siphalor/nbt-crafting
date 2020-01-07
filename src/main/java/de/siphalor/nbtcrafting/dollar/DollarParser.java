@@ -4,8 +4,9 @@ import com.google.common.collect.ImmutableList;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.operator.*;
 import de.siphalor.nbtcrafting.dollar.part.unary.*;
-import de.siphalor.nbtcrafting.util.NbtHelper;
+import de.siphalor.nbtcrafting.util.nbt.NbtIterator;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.StringTag;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
@@ -62,8 +63,8 @@ public final class DollarParser {
 
 	public static Dollar[] extractDollars(CompoundTag compoundTag, boolean remove) {
 		ArrayList<Dollar> dollars = new ArrayList<>();
-		NbtHelper.iterateTags(compoundTag, (path, tag) -> {
-			if(NbtHelper.isString(tag) && !tag.asString().isEmpty()) {
+		NbtIterator.iterateTags(compoundTag, (path, key, tag) -> {
+			if(tag instanceof StringTag && !tag.asString().isEmpty()) {
 				if(tag.asString().charAt(0) == '$') {
 					DollarParser.parse(path, tag.asString().substring(1)).ifPresent(dollars::add);
 					return remove;
@@ -71,6 +72,7 @@ public final class DollarParser {
 			}
 			return false;
 		});
+
 		return dollars.toArray(new Dollar[0]);
 	}
 

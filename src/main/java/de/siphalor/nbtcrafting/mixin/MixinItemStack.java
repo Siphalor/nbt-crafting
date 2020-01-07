@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.mixin;
 
-import de.siphalor.nbtcrafting.util.IItemStack;
+import de.siphalor.nbtcrafting.util.duck.IItemStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import org.spongepowered.asm.mixin.Mixin;

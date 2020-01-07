@@ -3,12 +3,11 @@ package de.siphalor.nbtcrafting.dollar.part;
 import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
-import net.minecraft.nbt.CompoundTag;
 
 import java.util.Map;
 
 public interface DollarPart {
-	Object evaluate(Map<String, CompoundTag> reference) throws DollarEvaluationException;
+	Object evaluate(Map<String, Object> reference) throws DollarEvaluationException;
 	default boolean isConstant() {
 		return false;
 	}

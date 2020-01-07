@@ -1,15 +1,14 @@
 package de.siphalor.nbtcrafting.brewing;
 
-import de.siphalor.nbtcrafting.Core;
+import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
-import de.siphalor.nbtcrafting.util.NbtHelper;
 import de.siphalor.nbtcrafting.util.RecipeUtil;
 import de.siphalor.nbtcrafting.util.ServerRecipe;
+import de.siphalor.nbtcrafting.util.nbt.NbtHelper;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.*;
 import net.minecraft.util.DefaultedList;
 import net.minecraft.util.Identifier;
@@ -36,7 +35,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRec
 	}
 
 	public static boolean existsMatchingIngredient(ItemStack stack, RecipeManager recipeManager) {
-		Iterator<BrewingRecipe> iterator = recipeManager.values().stream().filter(recipe -> recipe.getType() == Core.BREWING_RECIPE_TYPE).map(recipe -> (BrewingRecipe) recipe).iterator();
+		Iterator<BrewingRecipe> iterator = recipeManager.values().stream().filter(recipe -> recipe.getType() == NbtCrafting.BREWING_RECIPE_TYPE).map(recipe -> (BrewingRecipe) recipe).iterator();
 		while(iterator.hasNext()) {
 			if(iterator.next().ingredientMatches(stack)) {
 				return true;
@@ -50,7 +49,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRec
 	}
 
 	public static boolean existsMatchingBase(ItemStack stack, RecipeManager recipeManager) {
-		Iterator<BrewingRecipe> iterator = recipeManager.values().stream().filter(recipe -> recipe.getType() == Core.BREWING_RECIPE_TYPE).map(recipe -> (BrewingRecipe) recipe).iterator();
+		Iterator<BrewingRecipe> iterator = recipeManager.values().stream().filter(recipe -> recipe.getType() == NbtCrafting.BREWING_RECIPE_TYPE).map(recipe -> (BrewingRecipe) recipe).iterator();
 		while(iterator.hasNext()) {
 			if(iterator.next().baseMatches(stack)) {
 				return true;
@@ -94,7 +93,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRec
 	public ItemStack craft(BrewingStandBlockEntity brewingStandBlockEntity) {
 		ItemStack ingredientStack = brewingStandBlockEntity.getInvStack(3);
 		ingredientStack.split(1);
-		HashMap<String, CompoundTag> map = new HashMap<>(1);
+		HashMap<String, Object> map = new HashMap<>(1);
 		map.put("ingredient", NbtHelper.getTagOrEmpty(ingredientStack));
 		//noinspection ConstantConditions
 		ItemStack remainder = ((IIngredient)(Object) base).getRecipeRemainder(ingredientStack, map);
@@ -131,11 +130,11 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRec
 
 	@Override
 	public RecipeSerializer<?> getSerializer() {
-		return Core.BREWING_RECIPE_SERIALIZER;
+		return NbtCrafting.BREWING_RECIPE_SERIALIZER;
 	}
 
 	@Override
 	public RecipeType<?> getType() {
-		return Core.BREWING_RECIPE_TYPE;
+		return NbtCrafting.BREWING_RECIPE_TYPE;
 	}
 }

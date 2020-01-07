@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.mixin.network;
 
-import de.siphalor.nbtcrafting.Core;
+import de.siphalor.nbtcrafting.NbtCrafting;
 import io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.network.Packet;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -17,6 +17,6 @@ public class MixinServerPlayNetworkHandler {
 
 	@Inject(method = "sendPacket(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V", at = @At("HEAD"))
 	public void onSendPacket(Packet<?> packet, GenericFutureListener<?> futureListener, CallbackInfo callbackInfo) {
-		Core.lastServerPlayerEntity = player;
+		NbtCrafting.lastServerPlayerEntity = player;
 	}
 }

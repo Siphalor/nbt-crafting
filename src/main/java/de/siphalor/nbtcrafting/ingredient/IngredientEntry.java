@@ -5,7 +5,6 @@ import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.util.RecipeUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.PacketByteBuf;
 
 import java.util.Collection;
@@ -28,7 +27,7 @@ public abstract class IngredientEntry {
 
 	public abstract void write(PacketByteBuf buf);
 
-	public ItemStack getRecipeRemainder(ItemStack stack, Map<String, CompoundTag> reference) {
+	public ItemStack getRecipeRemainder(ItemStack stack, Map<String, Object> reference) {
 		if(remainder == null)
 			return null;
         return RecipeUtil.applyDollars(remainder.copy(), dollars, reference);

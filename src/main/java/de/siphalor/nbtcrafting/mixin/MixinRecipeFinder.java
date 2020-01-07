@@ -2,9 +2,9 @@ package de.siphalor.nbtcrafting.mixin;
 
 import com.google.common.collect.HashBiMap;
 import com.mojang.datafixers.util.Pair;
-import de.siphalor.nbtcrafting.Core;
-import de.siphalor.nbtcrafting.util.IItemStack;
-import de.siphalor.nbtcrafting.util.NbtHelper;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.util.duck.IItemStack;
+import de.siphalor.nbtcrafting.util.nbt.NbtHelper;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.Item;
@@ -36,11 +36,11 @@ public abstract class MixinRecipeFinder {
 
 	@Inject(method = "findRecipe(Lnet/minecraft/recipe/Recipe;Lit/unimi/dsi/fastutil/ints/IntList;I)Z", at = @At("HEAD"))
 	public void onFindRecipe(@SuppressWarnings("rawtypes") Recipe recipe, IntList ints, int int_1, CallbackInfoReturnable<Boolean> ci) {
-		Core.lastRecipeFinder = (RecipeFinder)(Object)this;
+		NbtCrafting.lastRecipeFinder = (RecipeFinder)(Object)this;
 	}	
 	@Inject(method = "countRecipeCrafts(Lnet/minecraft/recipe/Recipe;ILit/unimi/dsi/fastutil/ints/IntList;)I", at = @At("HEAD"))
 	public void onCountCrafts(@SuppressWarnings("rawtypes") Recipe recipe, int int_1, IntList ints, CallbackInfoReturnable<Integer> ci) {
-		Core.lastRecipeFinder = (RecipeFinder)(Object)this;
+		NbtCrafting.lastRecipeFinder = (RecipeFinder)(Object)this;
 	}
 
 	/**

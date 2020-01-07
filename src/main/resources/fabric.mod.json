@@ -33,12 +33,12 @@
 	"entrypoints": {
 		"main": [
 			{
-				"value": "de.siphalor.nbtcrafting.Core"
+				"value": "de.siphalor.nbtcrafting.NbtCrafting"
 			}
 		],
 		"client": [
 			{
-				"value": "de.siphalor.nbtcrafting.client.ClientCore"
+				"value": "de.siphalor.nbtcrafting.client.NbtCraftingClient"
 			}
 		],
 		"rei_plugins_v0": [

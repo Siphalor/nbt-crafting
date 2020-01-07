@@ -3,9 +3,9 @@ package de.siphalor.nbtcrafting.util;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.util.nbt.NbtHelper;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.DefaultedList;
 
@@ -19,7 +19,7 @@ public class RecipeUtil {
 		Dollar[] dollars = DollarParser.extractDollars(stack.getTag(), true);
 
 		if(dollars.length > 0) {
-			HashMap<String, CompoundTag> reference = new HashMap<>();
+			Map<String, Object> reference = new HashMap<>();
 			ingredient:
 			for (int j = 0; j < ingredients.size(); j++) {
 				for (int i = 0; i < inventory.getInvSize(); i++) {
@@ -45,7 +45,7 @@ public class RecipeUtil {
 		if(dollars.length > 0) {
 			ItemStack stack = baseOutput.copy();
 
-			HashMap<String, CompoundTag> reference = new HashMap<>();
+			Map<String, Object> reference = new HashMap<>();
 			reference.put(referenceName, NbtHelper.getTagOrEmpty(inventory.getInvStack(0)));
 
 			return applyDollars(stack, dollars, reference);
@@ -53,7 +53,7 @@ public class RecipeUtil {
 		return null;
 	}
 
-	public static ItemStack applyDollars(ItemStack stack, Dollar[] dollars, Map<String, CompoundTag> reference) {
+	public static ItemStack applyDollars(ItemStack stack, Dollar[] dollars, Map<String, Object> reference) {
 		Arrays.stream(dollars).forEach(dollar -> {
 			try {
 				dollar.apply(stack, reference);

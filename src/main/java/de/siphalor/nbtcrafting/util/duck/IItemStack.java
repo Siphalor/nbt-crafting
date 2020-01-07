@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.util;
+package de.siphalor.nbtcrafting.util.duck;
 
 import net.minecraft.nbt.CompoundTag;
 

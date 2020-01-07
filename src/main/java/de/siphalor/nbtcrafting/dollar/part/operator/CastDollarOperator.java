@@ -5,7 +5,6 @@ import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
-import net.minecraft.nbt.CompoundTag;
 
 import java.util.Map;
 
@@ -27,7 +26,7 @@ public class CastDollarOperator implements DollarPart {
 	}
 
 	@Override
-	public Object evaluate(Map<String, CompoundTag> reference) throws DollarEvaluationException {
+	public Object evaluate(Map<String, Object> reference) throws DollarEvaluationException {
 		Object value = dollarPart.evaluate(reference);
 		switch(typeId) {
 			case 'd':

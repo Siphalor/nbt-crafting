@@ -1,12 +1,10 @@
 package de.siphalor.nbtcrafting.dollar.part;
 
-import net.minecraft.nbt.CompoundTag;
-
 import java.util.Map;
 
 public abstract class ConstantDollarPart implements DollarPart {
 	@Override
-	public Object evaluate(Map<String, CompoundTag> reference) {
+	public Object evaluate(Map<String, Object> reference) {
 		return getValue();
 	}
 

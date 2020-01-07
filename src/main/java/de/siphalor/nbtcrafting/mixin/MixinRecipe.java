@@ -1,10 +1,9 @@
 package de.siphalor.nbtcrafting.mixin;
 
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
-import de.siphalor.nbtcrafting.util.NbtHelper;
+import de.siphalor.nbtcrafting.util.nbt.NbtHelper;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.util.DefaultedList;
@@ -26,7 +25,7 @@ public interface MixinRecipe {
 	@Overwrite
 	default DefaultedList<ItemStack> getRemainingStacks(Inventory inventory) {
 		final DefaultedList<ItemStack> stackList = DefaultedList.ofSize(inventory.getInvSize(), ItemStack.EMPTY);
-		HashMap<String, CompoundTag> reference = new HashMap<>();
+		HashMap<String, Object> reference = new HashMap<>();
         DefaultedList<Ingredient> ingredients = getPreviewInputs();
 		for (int j = 0; j < ingredients.size(); j++) {
 			for (int i = 0; i < stackList.size(); i++) {

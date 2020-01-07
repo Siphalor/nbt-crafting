@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.mixin;
 
-import de.siphalor.nbtcrafting.Core;
+import de.siphalor.nbtcrafting.NbtCrafting;
 import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
 import it.unimi.dsi.fastutil.ints.IntCollection;
 import net.minecraft.recipe.Ingredient;
@@ -53,7 +53,7 @@ public abstract class MixinRecipeFinder$Filter {
 	 */
 	@Overwrite
 	private int[] method_7422() {
-		owner = Core.lastRecipeFinder;
+		owner = NbtCrafting.lastRecipeFinder;
 		IntCollection ints = new IntAVLTreeSet();
 		for(int id : owner.idToAmountMap.keySet()) {
 			for (Ingredient ingredient : ingredients) {

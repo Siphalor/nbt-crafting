@@ -1,16 +1,15 @@
 package de.siphalor.nbtcrafting.anvil;
 
 import com.google.common.collect.ImmutableMap;
-import de.siphalor.nbtcrafting.Core;
+import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
-import de.siphalor.nbtcrafting.util.NbtHelper;
 import de.siphalor.nbtcrafting.util.RecipeUtil;
 import de.siphalor.nbtcrafting.util.ServerRecipe;
+import de.siphalor.nbtcrafting.util.nbt.NbtHelper;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
@@ -63,7 +62,7 @@ public class AnvilRecipe implements Recipe<Inventory>, ServerRecipe {
 
 	@Override
 	public ItemStack craft(Inventory inventory) {
-		Map<String, CompoundTag> reference = ImmutableMap.of("base", NbtHelper.getTagOrEmpty(inventory.getInvStack(0)), "ingredient", NbtHelper.getTagOrEmpty(inventory.getInvStack(1)));
+		Map<String, Object> reference = ImmutableMap.of("base", NbtHelper.getTagOrEmpty(inventory.getInvStack(0)), "ingredient", NbtHelper.getTagOrEmpty(inventory.getInvStack(1)));
 
 		//noinspection ConstantConditions
 		ItemStack remainder = ((IIngredient)(Object) base).getRecipeRemainder(inventory.getInvStack(0), reference);
@@ -92,11 +91,11 @@ public class AnvilRecipe implements Recipe<Inventory>, ServerRecipe {
 
 	@Override
 	public RecipeSerializer<?> getSerializer() {
-		return Core.ANVIL_RECIPE_SERIALIZER;
+		return NbtCrafting.ANVIL_RECIPE_SERIALIZER;
 	}
 
 	@Override
 	public RecipeType<?> getType() {
-		return Core.ANVIL_RECIPE_TYPE;
+		return NbtCrafting.ANVIL_RECIPE_TYPE;
 	}
 }

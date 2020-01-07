@@ -1,13 +1,8 @@
-package de.siphalor.nbtcrafting.util;
+package de.siphalor.nbtcrafting.util.nbt;
 
-import de.siphalor.nbtcrafting.dollar.DollarException;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -158,25 +153,27 @@ public class NbtHelper {
 
 	public static Tag getTag(Tag main, String[] pathKeys) {
 		Tag currentTag = main;
-		for(int i = 0; i < pathKeys.length - 1; i++) {
+		for(String pathKey : pathKeys) {
+			if("".equals(pathKey))
+				continue;
 			if(currentTag == null)
 				return null;
-			if(pathKeys[i].charAt(0) == '[') {
-				int index = Integer.parseUnsignedInt(pathKeys[i].substring(1, pathKeys[i].length() - 2), 10);
+			if(pathKey.charAt(0) == '[') {
+				int index = Integer.parseUnsignedInt(pathKey.substring(1, pathKey.length() - 2), 10);
 				if(currentTag instanceof ListTag) {
 					ListTag list = (ListTag) currentTag;
-					if(i >= list.size())
+					if(index >= list.size())
 						return null;
 					else
-						currentTag = list.get(i);
+						currentTag = list.get(index);
 				} else {
 					return null;
 				}
 			} else {
 				if(currentTag instanceof CompoundTag) {
 					CompoundTag compound = (CompoundTag) currentTag;
-					if(compound.contains(pathKeys[i])) {
-						currentTag = compound.get(pathKeys[i]);
+					if(compound.contains(pathKey)) {
+						currentTag = compound.get(pathKey);
 					} else {
 						return null;
 					}
@@ -188,44 +185,46 @@ public class NbtHelper {
 		return currentTag;
 	}
 
-	public static CompoundTag getParentTagOrCreate(Tag main, String path) throws DollarException {
-		return getParentTagOrCreate(main, splitPath(path));
+	public static CompoundTag getTagOrCreate(Tag main, String path) throws NbtException {
+		return getTagOrCreate(main, splitPath(path));
 	}
 
-	public static CompoundTag getParentTagOrCreate(Tag main, String[] pathParts) throws DollarException {
+	public static CompoundTag getTagOrCreate(Tag main, String[] pathParts) throws NbtException {
 		Tag currentTag = main;
-		for (int i = 0; i < pathParts.length - 1; i++) {
-			if(pathParts[i].charAt(0) == '[') {
+		for(String pathPart : pathParts) {
+			if("".equals(pathPart))
+				continue;
+			if(pathPart.charAt(0) == '[') {
 				if(!(currentTag instanceof ListTag)) {
-					throw new DollarException(String.join(".", pathParts) + " doesn't match on " + main.asString());
+					throw new NbtException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 				}
 				ListTag currentList = (ListTag) currentTag;
-                int index = Integer.parseUnsignedInt(pathParts[i].substring(1, pathParts[i].length() - 1));
+				int index = Integer.parseUnsignedInt(pathPart.substring(1, pathPart.length() - 1));
 				if(currentList.size() <= index) {
-                	throw new DollarException(String.join(".", pathParts) + " contains invalid list in " + main.asString());
-                } else if(currentList.get(index) instanceof CompoundTag || currentList.get(index) instanceof ListTag) {
-                	currentTag = currentList.get(index);
-                } else {
-	                throw new DollarException(String.join(".", pathParts) + " doesn't match on " + main.asString());
-                }
+					throw new NbtException(String.join(".", pathParts) + " contains invalid list in " + main.asString());
+				} else if(currentList.get(index) instanceof CompoundTag || currentList.get(index) instanceof ListTag) {
+					currentTag = currentList.get(index);
+				} else {
+					throw new NbtException(String.join(".", pathParts) + " doesn't match on " + main.asString());
+				}
 			} else {
 				if(!(currentTag instanceof CompoundTag)) {
-					throw new DollarException(String.join(".", pathParts) + " doesn't match on " + main.asString());
+					throw new NbtException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 				}
 				CompoundTag currentCompound = (CompoundTag) currentTag;
-				if(!currentCompound.contains(pathParts[i])) {
+				if(!currentCompound.contains(pathPart)) {
 					CompoundTag newCompound = new CompoundTag();
-					currentCompound.put(pathParts[i], newCompound);
+					currentCompound.put(pathPart, newCompound);
 					currentTag = newCompound;
-				} else if(currentCompound.get(pathParts[i]) instanceof CompoundTag || currentCompound.get(pathParts[i]) instanceof ListTag) {
-					currentTag = currentCompound.get(pathParts[i]);
+				} else if(currentCompound.get(pathPart) instanceof CompoundTag || currentCompound.get(pathPart) instanceof ListTag) {
+					currentTag = currentCompound.get(pathPart);
 				} else {
-					throw new DollarException(String.join(".", pathParts) + " doesn't match on " + main.asString());
+					throw new NbtException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 				}
 			}
 		}
 		if(!(currentTag instanceof CompoundTag))
-			throw new DollarException(String.join(".", pathParts) + "'s parent does not specify an object in " + main.asString());
+			throw new NbtException(String.join(".", pathParts) + "'s parent does not specify an object in " + main.asString());
 		return (CompoundTag) currentTag;
 	}
 
@@ -235,48 +234,6 @@ public class NbtHelper {
 
 	public static String getLastKey(String path) {
 		return path.substring(path.lastIndexOf('.') + 1);
-	}
-
-	public static void iterateTags(Tag tag, BiFunction<String, Tag, Boolean> biFunction) {
-		iterateTags(tag, biFunction, "");
-	}
-
-	private static void iterateTags(Tag tag, BiFunction<String, Tag, Boolean> biFunction, String path) {
-		if(tag == null) return;
-		if(tag instanceof CompoundTag) {
-			CompoundTag compoundTag = (CompoundTag) tag;
-			if(!path.equals(""))
-				path += ".";
-			Set<String> remove = new HashSet<>();
-			for(String key : compoundTag.getKeys()) {
-				if(compoundTag.get(key) instanceof CompoundTag || compoundTag.get(key) instanceof ListTag)
-					iterateTags(compoundTag.get(key), biFunction, path + key);
-				else {
-					if(biFunction.apply(path + key, compoundTag.get(key)))
-                        remove.add(key);
-				}
-			}
-			for(String key : remove) {
-				compoundTag.remove(key);
-			}
-		} else if(tag instanceof ListTag) {
-			ListTag listTag = (ListTag) tag;
-			int i = 0;
-			for(Iterator<Tag> iterator = listTag.iterator(); iterator.hasNext(); ) {
-				Tag currentTag = iterator.next();
-				if(currentTag instanceof CompoundTag || currentTag instanceof ListTag) {
-					iterateTags(currentTag, biFunction, path + "[" + i + "]");
-					i++;
-				} else {
-					if(biFunction.apply(path + "[" + i + "]", currentTag)) {
-						iterator.remove();
-					} else {
-						i++;
-					}
-				}
-
-			}
-		}
 	}
 
 	public static void mergeInto(CompoundTag target, CompoundTag additions, boolean replace) {
@@ -292,7 +249,7 @@ public class NbtHelper {
             Tag targetTag = target.get(key);
 			Tag additionsTag = target.get(key);
 			if(targetTag instanceof CompoundTag && additionsTag instanceof CompoundTag) {
-				if(((CompoundTag) additionsTag).contains("$overwrite") && ((CompoundTag) additionsTag).getBoolean("$overwrite")) {
+				if(((CompoundTag) additionsTag).contains("$overwrite", 1) && ((CompoundTag) additionsTag).getBoolean("$overwrite")) {
 					target.put(key, additionsTag.copy());
 				} else {
 					mergeInto((CompoundTag) targetTag, (CompoundTag) additionsTag, replace);

@@ -3,10 +3,11 @@ package de.siphalor.nbtcrafting.mixin;
 import com.google.gson.*;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import de.siphalor.nbtcrafting.Core;
-import de.siphalor.nbtcrafting.client.ClientCore;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.client.NbtCraftingClient;
 import de.siphalor.nbtcrafting.ingredient.*;
-import de.siphalor.nbtcrafting.util.ICloneable;
+import de.siphalor.nbtcrafting.util.JsonPreprocessor;
+import de.siphalor.nbtcrafting.util.duck.ICloneable;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -86,7 +87,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	
 	@Inject(method = "write", at = @At("HEAD"), cancellable = true)
 	public void write(PacketByteBuf buf, CallbackInfo callbackInfo) {
-		if(Core.hasClientMod(Core.lastServerPlayerEntity)) {
+		if(NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity)) {
 			buf.writeBoolean(advancedEntries != null);
 			if (advancedEntries != null) {
 				buf.writeVarInt(advancedEntries.length);
@@ -149,7 +150,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 
 	@Inject(method = "fromPacket", at = @At("HEAD"), cancellable = true)
 	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> callbackInfoReturnable) {
-		if(ClientCore.sentModPresent) {
+		if(NbtCraftingClient.sentModPresent) {
 			if(buf.readBoolean()) {
 				ArrayList<IngredientEntry> entries = new ArrayList<>();
 				int length = buf.readVarInt();
@@ -254,7 +255,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 					e.printStackTrace();
 				}
 			} else if(jsonObject.get("data").isJsonObject()) {
-				return IngredientEntryCondition.fromJson(jsonObject.get("data").getAsJsonObject());
+				return IngredientEntryCondition.fromJson((JsonObject) JsonPreprocessor.process(jsonObject.get("data").getAsJsonObject()));
 			}
 		}
 		return new IngredientEntryCondition();
@@ -266,7 +267,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	}
 
 	@Override
-	public ItemStack getRecipeRemainder(ItemStack stack, Map<String, CompoundTag> reference) {
+	public ItemStack getRecipeRemainder(ItemStack stack, Map<String, Object> reference) {
 		if(advancedEntries != null) {
 			for(IngredientEntry entry : advancedEntries) {
 				if(entry.matches(stack)) {

@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.client.rei;
 
-import de.siphalor.nbtcrafting.Core;
+import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.brewing.BrewingRecipe;
 import me.shedaniel.rei.api.RecipeHelper;
 import me.shedaniel.rei.api.plugins.REIPluginV0;
@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
 public class REIPlugin implements REIPluginV0 {
-	public static final Identifier IDENTIFIER = new Identifier(Core.MOD_ID, "rei_plugin");
+	public static final Identifier IDENTIFIER = new Identifier(NbtCrafting.MOD_ID, "rei_plugin");
 
 	@Override
 	public Identifier getPluginIdentifier() {

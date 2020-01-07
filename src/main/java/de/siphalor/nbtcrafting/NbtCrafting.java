@@ -6,7 +6,7 @@ import de.siphalor.nbtcrafting.brewing.BrewingRecipe;
 import de.siphalor.nbtcrafting.brewing.BrewingRecipeSerializer;
 import de.siphalor.nbtcrafting.cauldron.CauldronRecipe;
 import de.siphalor.nbtcrafting.cauldron.CauldronRecipeSerializer;
-import de.siphalor.nbtcrafting.util.IServerPlayerEntity;
+import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.client.network.packet.SynchronizeRecipesS2CPacket;
@@ -19,10 +19,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-public class Core implements ModInitializer {
+public class NbtCrafting implements ModInitializer {
 	public static final String MOD_ID = "nbtcrafting";
-	@Deprecated
-	public static final String MODID = MOD_ID;
 	public static final Identifier PRESENCE_PACKET_ID = new Identifier(MOD_ID, "present");
 	public static final Identifier UPDATE_ANVIL_TEXT_S2C_PACKET_ID = new Identifier(MOD_ID, "update_anvil_text");
 

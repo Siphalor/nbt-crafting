@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.client.mixin.network;
 
-import de.siphalor.nbtcrafting.client.ClientCore;
+import de.siphalor.nbtcrafting.client.NbtCraftingClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.packet.SynchronizeRecipesS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,8 +13,8 @@ public abstract class MixinClientPlayNetworkHandler {
 
 	@Inject(method = "onSynchronizeRecipes", at = @At("RETURN"))
 	public void onGameJoin(SynchronizeRecipesS2CPacket packet, CallbackInfo callbackInfo) {
-		if(!ClientCore.sentModPresent) {
-            ClientCore.sendModPresent();
+		if(!NbtCraftingClient.sentModPresent) {
+            NbtCraftingClient.sendModPresent();
 		}
 	}
 }

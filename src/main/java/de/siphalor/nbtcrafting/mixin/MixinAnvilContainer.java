@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.mixin;
 
-import de.siphalor.nbtcrafting.Core;
+import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.anvil.AnvilRecipe;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
@@ -45,7 +45,7 @@ public abstract class MixinAnvilContainer extends Container {
 
 	@Inject(method = "updateResult", at = @At("HEAD"), cancellable = true)
 	public void updateResult(CallbackInfo callbackInfo) {
-		Optional<AnvilRecipe> optionalAnvilRecipe = player.world.getRecipeManager().getFirstMatch(Core.ANVIL_RECIPE_TYPE, inventory, player.world);
+		Optional<AnvilRecipe> optionalAnvilRecipe = player.world.getRecipeManager().getFirstMatch(NbtCrafting.ANVIL_RECIPE_TYPE, inventory, player.world);
 		if(optionalAnvilRecipe.isPresent()) {
 			ItemStack resultStack = optionalAnvilRecipe.get().craft(inventory);
 			if(userChangedName) {
@@ -55,10 +55,10 @@ public abstract class MixinAnvilContainer extends Container {
 			} else {
 				newItemName = resultStack.getName().getString();
 				if(player instanceof ServerPlayerEntity) {
-					if(Core.hasClientMod((ServerPlayerEntity) player)) {
+					if(NbtCrafting.hasClientMod((ServerPlayerEntity) player)) {
 						PacketByteBuf packetByteBuf = new PacketByteBuf(Unpooled.buffer());
 						packetByteBuf.writeString(newItemName);
-						ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, Core.UPDATE_ANVIL_TEXT_S2C_PACKET_ID, packetByteBuf);
+						ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, NbtCrafting.UPDATE_ANVIL_TEXT_S2C_PACKET_ID, packetByteBuf);
 					}
 				}
 			}

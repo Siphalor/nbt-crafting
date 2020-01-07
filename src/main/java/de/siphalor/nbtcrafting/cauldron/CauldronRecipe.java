@@ -1,15 +1,14 @@
 package de.siphalor.nbtcrafting.cauldron;
 
 import com.google.common.collect.ImmutableMap;
-import de.siphalor.nbtcrafting.Core;
+import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
-import de.siphalor.nbtcrafting.util.NbtHelper;
 import de.siphalor.nbtcrafting.util.RecipeUtil;
 import de.siphalor.nbtcrafting.util.ServerRecipe;
+import de.siphalor.nbtcrafting.util.nbt.NbtHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
@@ -59,7 +58,7 @@ public class CauldronRecipe implements Recipe<TemporaryCauldronInventory>, Serve
 	public ItemStack craft(TemporaryCauldronInventory inventory) {
 		inventory.setLevel(inventory.getLevel() - levels);
 
-		Map<String, CompoundTag> reference = ImmutableMap.of("ingredient", NbtHelper.getTagOrEmpty(inventory.getInvStack(0)));
+		Map<String, Object> reference = ImmutableMap.of("ingredient", NbtHelper.getTagOrEmpty(inventory.getInvStack(0)));
 
 		//noinspection ConstantConditions
 		ItemStack remainder = ((IIngredient)(Object) input).getRecipeRemainder(inventory.getInvStack(0), reference);
@@ -86,11 +85,11 @@ public class CauldronRecipe implements Recipe<TemporaryCauldronInventory>, Serve
 
 	@Override
 	public RecipeSerializer<?> getSerializer() {
-		return Core.CAULDRON_RECIPE_SERIALIZER;
+		return NbtCrafting.CAULDRON_RECIPE_SERIALIZER;
 	}
 
 	@Override
 	public RecipeType<?> getType() {
-		return Core.CAULDRON_RECIPE_TYPE;
+		return NbtCrafting.CAULDRON_RECIPE_TYPE;
 	}
 }

@@ -6,9 +6,10 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.types.JsonOps;
-import de.siphalor.nbtcrafting.Core;
-import de.siphalor.nbtcrafting.util.IItemStack;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.util.JsonPreprocessor;
 import de.siphalor.nbtcrafting.util.RecipeUtil;
+import de.siphalor.nbtcrafting.util.duck.IItemStack;
 import net.minecraft.datafixers.NbtOps;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
@@ -57,16 +58,16 @@ public abstract class MixinShapedRecipe {
 		at = @At(value = "INVOKE", target = "com/google/gson/JsonObject.has(Ljava/lang/String;)Z", remap = false)
 	)
 	private static void deserializeItemStack(JsonObject json, CallbackInfoReturnable<ItemStack> ci) {
-		Core.clearLastReadNbt();
+		NbtCrafting.clearLastReadNbt();
 		if(json.has("data")) {
 			if(JsonHelper.hasString(json, "data")) {
 				try {
-					Core.setLastReadNbt(new StringNbtReader(new StringReader(json.get("data").getAsString())).parseCompoundTag());
+					NbtCrafting.setLastReadNbt(new StringNbtReader(new StringReader(json.get("data").getAsString())).parseCompoundTag());
 				} catch (CommandSyntaxException e) {
 					e.printStackTrace();
 				}
 			} else {
-				Core.setLastReadNbt((CompoundTag) Dynamic.convert(JsonOps.INSTANCE, NbtOps.INSTANCE, JsonHelper.getObject(json, "data")));
+				NbtCrafting.setLastReadNbt((CompoundTag) Dynamic.convert(JsonOps.INSTANCE, NbtOps.INSTANCE, JsonPreprocessor.process(JsonHelper.getObject(json, "data"))));
 			}
 			json.remove("data");
 		}
@@ -76,8 +77,8 @@ public abstract class MixinShapedRecipe {
 		method = "getItemStack", at = @At("RETURN"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void constructDeserializedItemStack(JsonObject json, CallbackInfoReturnable<ItemStack> ci, String id, Item item, int amount) {
 		ItemStack stack = new ItemStack(item, amount);
-		if(Core.hasLastReadNbt()) {
-			CompoundTag lastReadNbt = Core.useLastReadNbt();
+		if(NbtCrafting.hasLastReadNbt()) {
+			CompoundTag lastReadNbt = NbtCrafting.useLastReadNbt();
 
 			//noinspection ConstantConditions
 			((IItemStack)(Object) stack).setRawTag(lastReadNbt);

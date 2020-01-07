@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.mixin;
 
-import de.siphalor.nbtcrafting.Core;
+import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.brewing.BrewingRecipe;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
@@ -23,7 +23,7 @@ public abstract class MixinBrewingStandBlockEntity extends LockableContainerBloc
 
 	@Inject(method = "canCraft", at = @At("HEAD"), cancellable = true)
 	private void canCraft(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		Optional<BrewingRecipe> recipe = world.getRecipeManager().getFirstMatch(Core.BREWING_RECIPE_TYPE, (BrewingStandBlockEntity)(Object) this, world);
+		Optional<BrewingRecipe> recipe = world.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, (BrewingStandBlockEntity)(Object) this, world);
 		if(recipe.isPresent()) {
 			callbackInfoReturnable.setReturnValue(true);
 		}
@@ -31,7 +31,7 @@ public abstract class MixinBrewingStandBlockEntity extends LockableContainerBloc
 
 	@Inject(method = "craft", at = @At("HEAD"), cancellable = true)
 	private void craft(CallbackInfo callbackInfo) {
-		Optional<BrewingRecipe> recipe = world.getRecipeManager().getFirstMatch(Core.BREWING_RECIPE_TYPE, (BrewingStandBlockEntity)(Object) this, world);
+		Optional<BrewingRecipe> recipe = world.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, (BrewingStandBlockEntity)(Object) this, world);
 		if(recipe.isPresent()) {
 			recipe.get().craft((BrewingStandBlockEntity)(Object) this);
 			callbackInfo.cancel();

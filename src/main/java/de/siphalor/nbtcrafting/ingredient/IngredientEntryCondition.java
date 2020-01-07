@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.types.JsonOps;
-import de.siphalor.nbtcrafting.util.NbtHelper;
+import de.siphalor.nbtcrafting.util.nbt.NbtHelper;
 import net.minecraft.datafixers.NbtOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;

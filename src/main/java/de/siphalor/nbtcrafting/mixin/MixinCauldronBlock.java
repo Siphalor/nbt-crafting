@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.mixin;
 
-import de.siphalor.nbtcrafting.Core;
+import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.cauldron.CauldronRecipe;
 import de.siphalor.nbtcrafting.cauldron.TemporaryCauldronInventory;
 import net.minecraft.block.BlockState;
@@ -26,7 +26,7 @@ public class MixinCauldronBlock {
 	public void onActivate(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockHitResult blockHitResult, CallbackInfoReturnable<ActionResult> callbackInfoReturnable) {
 		if(!world.isClient()) {
 			TemporaryCauldronInventory inventory = new TemporaryCauldronInventory(playerEntity, hand, world, blockPos);
-			Optional<CauldronRecipe> cauldronRecipe = world.getRecipeManager().getFirstMatch(Core.CAULDRON_RECIPE_TYPE, inventory, world);
+			Optional<CauldronRecipe> cauldronRecipe = world.getRecipeManager().getFirstMatch(NbtCrafting.CAULDRON_RECIPE_TYPE, inventory, world);
 			if(cauldronRecipe.isPresent()) {
 				ItemStack itemStack = cauldronRecipe.get().craft(inventory);
 				if(!playerEntity.inventory.insertStack(itemStack)) {
