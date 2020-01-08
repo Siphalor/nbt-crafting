@@ -12,6 +12,7 @@
 		"cooking.MixinCookingRecipeSerializer",
 		"crafting.MixinShapedRecipe",
 		"crafting.MixinShapelessRecipe",
+		"cutting.MixinCuttingRecipe",
 		"MixinCraftingResultSlot",
 		"MixinIngredient",
 		"MixinItemStack",
@@ -22,6 +23,13 @@
 		"MixinRecipe",
 		"network.MixinServerPlayNetworkHandler",
 		"network.MixinSynchronizeRecipesS2CPacket"
+	],
+	"client": [
+		"client.AnvilScreenAccessor",
+		"client.MixinAnimatedResultButton",
+		"client.MixinMinecraftClient",
+		"client.MixinRecipeBookGhostSlots",
+		"client.network.MixinClientPlayNetworkHandler"
 	],
 	"injectors": {
 		"defaultRequire": 1

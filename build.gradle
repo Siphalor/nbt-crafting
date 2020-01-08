@@ -15,8 +15,9 @@ minecraft {
 }
 
 repositories {
-	maven { url = "https://maven.fabricmc.net/" }
+	maven { url "https://maven.fabricmc.net/" }
 	maven { url "https://minecraft.curseforge.com/api/maven" }
+	maven { url "https://jitpack.io/" }
 }
 
 dependencies {
@@ -30,9 +31,8 @@ dependencies {
 	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
 	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
 
-	modCompile("me.shedaniel:RoughlyEnoughItems:3.2.25") {
-		//exclude module: "autoconfig1u"
-	}
+	modImplementation "me.shedaniel:RoughlyEnoughItems:3.2.25"
+	modImplementation "com.github.Siphalor:ModsOfTheWorld:0999e66163"
 }
 
 processResources {

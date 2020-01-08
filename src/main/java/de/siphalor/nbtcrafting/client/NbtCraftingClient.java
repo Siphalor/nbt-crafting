@@ -1,7 +1,7 @@
 package de.siphalor.nbtcrafting.client;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.client.mixin.AnvilScreenAccessor;
+import de.siphalor.nbtcrafting.mixin.client.AnvilScreenAccessor;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;

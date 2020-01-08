@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.client.mixin;
+package de.siphalor.nbtcrafting.mixin.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookGhostSlots;

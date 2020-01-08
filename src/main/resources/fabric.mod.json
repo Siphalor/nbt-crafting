@@ -4,7 +4,7 @@
 	"version": "${version}",
 
 	"name": "NBT Crafting",
-	"description": "Enables nbt crafting in JSON recipes via the item data property.",
+	"description": "Offers data tags in recipe, dollars, anvil and brewing recipes, dollars, ingredient nbt conditions and a lot of dollars to you. Do you like dollars - this is the thing!",
 
 	"authors": [
 		"Siphalor"
@@ -22,12 +22,7 @@
 	"environment": "*",
 	"mixins": [
 		{
-			"config": "de.siphalor.nbtcrafting.client.json",
-			"environment": "client"
-		},
-		{
-			"config": "de.siphalor.nbtcrafting.common.json",
-			"environment": "*"
+			"config": "nbtcrafting.mixins.json"
 		}
 	],
 	"entrypoints": {
@@ -51,6 +46,7 @@
 	},
 
 	"custom": {
-		"modmenu:api": true
+		"modmenu:api": true,
+		"modsoftheworld:splashes": "nbtcrafting:splashes.txt"
 	}
 }
