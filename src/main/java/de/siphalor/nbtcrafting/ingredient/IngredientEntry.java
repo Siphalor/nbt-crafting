@@ -24,7 +24,11 @@ public abstract class IngredientEntry {
 
 	public abstract JsonElement toJson();
 
-	public abstract Collection<ItemStack> getPreviewStacks();
+	public Collection<ItemStack> getPreviewStacks() {
+		return getPreviewStacks(true);
+	}
+
+	public abstract Collection<ItemStack> getPreviewStacks(boolean nbt);
 
 	public abstract void write(PacketByteBuf buf);
 

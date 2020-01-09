@@ -59,7 +59,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			callbackInfo.cancel();
 			if (matchingStacks != null)
 				return;
-			matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks().stream()).distinct().toArray(ItemStack[]::new);
+			matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(Core.hasClientMod(Core.lastServerPlayerEntity)).stream()).distinct().toArray(ItemStack[]::new);
 		}
 	}
 

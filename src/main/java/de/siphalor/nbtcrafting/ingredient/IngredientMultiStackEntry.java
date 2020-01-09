@@ -41,11 +41,13 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 	}
 
 	@Override
-	public Collection<ItemStack> getPreviewStacks() {
+	public Collection<ItemStack> getPreviewStacks(boolean nbt) {
 		CompoundTag tag = condition.getPreviewTag();
 		Collection<ItemStack> stacks = itemIds.stream().map(id -> new ItemStack(Registry.ITEM.get(id))).collect(Collectors.toList());
-		for(ItemStack itemStack : stacks) {
-			((IItemStack)(Object) itemStack).setRawTag(tag);
+		if(nbt) {
+			for (ItemStack itemStack : stacks) {
+				((IItemStack) (Object) itemStack).setRawTag(tag);
+			}
 		}
 		return stacks;
 	}
