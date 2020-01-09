@@ -250,14 +250,12 @@ public class NbtHelper {
 			Tag additionsTag = additions.get(key);
 			if(targetTag instanceof CompoundTag && additionsTag instanceof CompoundTag) {
 				if(((CompoundTag) targetTag).contains("$overwrite", 1) && ((CompoundTag) targetTag).getBoolean("$overwrite")) {
-					((CompoundTag) targetTag).remove("$overwrite");
 				} else {
 					mergeInto((CompoundTag) targetTag, (CompoundTag) additionsTag, replace);
 				}
 			} else if(targetTag instanceof ListTag && additionsTag instanceof ListTag) {
 				int targetSize = ((ListTag) targetTag).size();
 				if(targetSize > 0 && isString(((ListTag) targetTag).get(targetSize - 1)) && "$overwrite".equals(((ListTag) targetTag).getString(targetSize - 1))) {
-					((ListTag) targetTag).remove(targetSize - 1);
 				} else {
 					((ListTag) targetTag).addAll(((ListTag) additionsTag).stream().map(Tag::copy).collect(Collectors.toList()));
 				}
