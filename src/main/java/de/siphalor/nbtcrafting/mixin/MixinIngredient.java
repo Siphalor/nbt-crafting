@@ -28,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,8 +89,8 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	@Inject(method = "write", at = @At("HEAD"), cancellable = true)
 	public void write(PacketByteBuf buf, CallbackInfo callbackInfo) {
 		if(NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity)) {
-			buf.writeBoolean(advancedEntries != null);
 			if (advancedEntries != null) {
+				buf.writeVarInt(-1);
 				buf.writeVarInt(advancedEntries.length);
 				for(IngredientEntry entry : advancedEntries) {
 					buf.writeBoolean(entry instanceof IngredientMultiStackEntry);
@@ -148,10 +149,10 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	}
 	*/
 
-	@Inject(method = "fromPacket", at = @At("HEAD"), cancellable = true)
-	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> callbackInfoReturnable) {
+	@Inject(method = "fromPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/recipe/Ingredient;ofEntries(Ljava/util/stream/Stream;)Lnet/minecraft/recipe/Ingredient;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> callbackInfoReturnable, int entryAmount) {
 		if(NbtCraftingClient.sentModPresent) {
-			if(buf.readBoolean()) {
+			if(entryAmount == -1) {
 				ArrayList<IngredientEntry> entries = new ArrayList<>();
 				int length = buf.readVarInt();
 				for (int i = 0; i < length; i++) {
