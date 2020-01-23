@@ -76,6 +76,8 @@ public class NbtCrafting implements ModInitializer {
 	}
 
 	public static boolean hasClientMod(ServerPlayerEntity playerEntity) {
+		if(!(playerEntity instanceof IServerPlayerEntity))
+			return false;
 		return ((IServerPlayerEntity) playerEntity).hasClientMod();
 	}
 

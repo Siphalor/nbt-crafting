@@ -44,10 +44,11 @@ public class IngredientStackEntry extends IngredientEntry {
 	}
 
 	@Override
-	public Collection<ItemStack> getPreviewStacks() {
+	public Collection<ItemStack> getPreviewStacks(boolean nbt) {
 		ItemStack stack = new ItemStack(Registry.ITEM.get(id));
-		//noinspection ConstantConditions
-		((IItemStack)(Object) stack).setRawTag(condition.getPreviewTag());
+		if(nbt) {
+			((IItemStack) (Object) stack).setRawTag(condition.getPreviewTag());
+		}
 		return Collections.singleton(stack);
 	}
 

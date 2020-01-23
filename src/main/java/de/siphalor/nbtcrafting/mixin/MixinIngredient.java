@@ -8,6 +8,8 @@ import de.siphalor.nbtcrafting.client.NbtCraftingClient;
 import de.siphalor.nbtcrafting.ingredient.*;
 import de.siphalor.nbtcrafting.util.JsonPreprocessor;
 import de.siphalor.nbtcrafting.util.duck.ICloneable;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -61,7 +63,11 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			callbackInfo.cancel();
 			if (matchingStacks != null)
 				return;
-			matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks().stream()).distinct().toArray(ItemStack[]::new);
+			if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+				matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(true).stream()).distinct().toArray(ItemStack[]::new);
+			} else {
+				matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(Core.hasClientMod(Core.lastServerPlayerEntity)).stream()).distinct().toArray(ItemStack[]::new);
+			}
 		}
 	}
 
