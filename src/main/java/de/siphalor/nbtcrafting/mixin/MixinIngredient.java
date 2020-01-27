@@ -4,7 +4,6 @@ import com.google.gson.*;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.client.NbtCraftingClient;
 import de.siphalor.nbtcrafting.ingredient.*;
 import de.siphalor.nbtcrafting.util.JsonPreprocessor;
 import de.siphalor.nbtcrafting.util.duck.ICloneable;
@@ -157,19 +156,17 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 
 	@Inject(method = "fromPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/recipe/Ingredient;ofEntries(Ljava/util/stream/Stream;)Lnet/minecraft/recipe/Ingredient;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> callbackInfoReturnable, int entryAmount) {
-		if(NbtCraftingClient.sentModPresent) {
-			if(entryAmount == -1) {
-				ArrayList<IngredientEntry> entries = new ArrayList<>();
-				int length = buf.readVarInt();
-				for (int i = 0; i < length; i++) {
-					if (buf.readBoolean())
-						entries.add(IngredientMultiStackEntry.read(buf));
-					else
-						entries.add(IngredientStackEntry.read(buf));
-				}
-				callbackInfoReturnable.setReturnValue(ofAdvancedEntries(entries.stream()));
-			}
-		}
+		 if(entryAmount == -1) {
+			 ArrayList<IngredientEntry> entries = new ArrayList<>();
+			 int length = buf.readVarInt();
+			 for (int i = 0; i < length; i++) {
+				  if (buf.readBoolean())
+					  entries.add(IngredientMultiStackEntry.read(buf));
+				  else
+					  entries.add(IngredientStackEntry.read(buf));
+			 }
+			 callbackInfoReturnable.setReturnValue(ofAdvancedEntries(entries.stream()));
+		 }
 	}
 
 	@Inject(method = "fromJson", at = @At("HEAD"), cancellable = true)
@@ -182,10 +179,24 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 				callbackInfoReturnable.setReturnValue(ofAdvancedEntries(Stream.of(advancedEntryFromJson(element.getAsJsonObject()))));
         } else if(element.isJsonArray()) {
 	        final JsonArray jsonArray = element.getAsJsonArray();
-	        if (jsonArray.size() == 0) {
-		        throw new JsonSyntaxException("Item array cannot be empty, at least one item must be defined");
+
+	        boolean containsCustomData = false;
+	        for (JsonElement jsonElement : jsonArray) {
+				if (jsonElement.isJsonObject()) {
+					JsonObject jsonObject = jsonElement.getAsJsonObject();
+					if (jsonObject.has("data") || jsonObject.has("remainder") || jsonObject.has("potion")) {
+						containsCustomData = true;
+						break;
+					}
+				}
 	        }
-	        callbackInfoReturnable.setReturnValue(ofAdvancedEntries(StreamSupport.stream(jsonArray.spliterator(), false).map(e-> advancedEntryFromJson(JsonHelper.asObject(e, "item")))));
+
+	        if (containsCustomData) {
+		        if (jsonArray.size() == 0) {
+			        throw new JsonSyntaxException("Item array cannot be empty, at least one item must be defined");
+		        }
+		        callbackInfoReturnable.setReturnValue(ofAdvancedEntries(StreamSupport.stream(jsonArray.spliterator(), false).map(e -> advancedEntryFromJson(JsonHelper.asObject(e, "item")))));
+	        }
         }
     }
 
