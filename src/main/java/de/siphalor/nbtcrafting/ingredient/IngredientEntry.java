@@ -12,11 +12,11 @@ import java.util.Map;
 
 public abstract class IngredientEntry {
 	protected ItemStack remainder;
-	protected Dollar[] dollars;
+	protected Dollar[] remainderDollars;
 
 	public IngredientEntry() {
 		this.remainder = null;
-		this.dollars = new Dollar[0];
+		this.remainderDollars = new Dollar[0];
 	}
 	
 	public abstract boolean matches(ItemStack stack);
@@ -34,12 +34,12 @@ public abstract class IngredientEntry {
 	public ItemStack getRecipeRemainder(ItemStack stack, Map<String, Object> reference) {
 		if(remainder == null)
 			return null;
-        return RecipeUtil.applyDollars(remainder.copy(), dollars, reference);
+        return RecipeUtil.applyDollars(remainder.copy(), remainderDollars, reference);
 	}
 
 	public void setRecipeRemainder(ItemStack stack) {
 		this.remainder = stack;
 		if(stack.hasTag())
-			this.dollars = DollarParser.extractDollars(stack.getTag(), true);
+			this.remainderDollars = DollarParser.extractDollars(stack.getTag(), true);
 	}
 }

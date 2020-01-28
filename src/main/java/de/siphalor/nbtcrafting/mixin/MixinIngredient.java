@@ -157,8 +157,8 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	@Inject(method = "fromPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/recipe/Ingredient;ofEntries(Ljava/util/stream/Stream;)Lnet/minecraft/recipe/Ingredient;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> callbackInfoReturnable, int entryAmount) {
 		 if(entryAmount == -1) {
-			 ArrayList<IngredientEntry> entries = new ArrayList<>();
 			 int length = buf.readVarInt();
+			 ArrayList<IngredientEntry> entries = new ArrayList<>(length);
 			 for (int i = 0; i < length; i++) {
 				  if (buf.readBoolean())
 					  entries.add(IngredientMultiStackEntry.read(buf));
@@ -248,7 +248,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
             throw new JsonSyntaxException("Unknown item tag '" + identifier2 + "'");
         }
         IngredientMultiStackEntry entry = new IngredientMultiStackEntry(tag.values().stream().map(Registry.ITEM::getRawId).collect(Collectors.toList()), loadIngredientEntryCondition(jsonObject));
-        entry.setTag(tag.toString());
+        entry.setTag(identifier2.toString());
         if(jsonObject.has("remainder")) {
         	entry.setRecipeRemainder(ShapedRecipe.getItemStack(JsonHelper.getObject(jsonObject, "remainder")));
         }

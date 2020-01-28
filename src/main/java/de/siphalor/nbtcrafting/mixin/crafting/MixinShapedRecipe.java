@@ -10,7 +10,7 @@ import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.util.JsonPreprocessor;
 import de.siphalor.nbtcrafting.util.RecipeUtil;
 import de.siphalor.nbtcrafting.util.duck.IItemStack;
-import net.minecraft.datafixers.NbtOps;
+import net.minecraft.datafixer.NbtOps;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

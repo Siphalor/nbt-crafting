@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.types.JsonOps;
 import de.siphalor.nbtcrafting.util.duck.IItemStack;
-import net.minecraft.datafixers.NbtOps;
+import net.minecraft.datafixer.NbtOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.AbstractCookingRecipe;

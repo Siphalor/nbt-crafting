@@ -66,7 +66,7 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 
 	public static IngredientMultiStackEntry read(PacketByteBuf buf) {
 		int length = buf.readVarInt();
-		ArrayList<Integer> ids = new ArrayList<>();
+		ArrayList<Integer> ids = new ArrayList<>(length);
 		for(int i = 0; i < length; i++) {
 			ids.add(buf.readVarInt());
 		}
