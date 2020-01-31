@@ -95,7 +95,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	public void write(PacketByteBuf buf, CallbackInfo callbackInfo) {
 		if(NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity)) {
 			if (advancedEntries != null) {
-				buf.writeVarInt(-1);
+				buf.writeVarInt(Integer.MAX_VALUE);
 				buf.writeVarInt(advancedEntries.length);
 				for(IngredientEntry entry : advancedEntries) {
 					buf.writeBoolean(entry instanceof IngredientMultiStackEntry);
@@ -156,7 +156,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 
 	@Inject(method = "fromPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/recipe/Ingredient;ofEntries(Ljava/util/stream/Stream;)Lnet/minecraft/recipe/Ingredient;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> callbackInfoReturnable, int entryAmount) {
-		 if(entryAmount == -1) {
+		 if(entryAmount == Integer.MAX_VALUE) {
 			 int length = buf.readVarInt();
 			 ArrayList<IngredientEntry> entries = new ArrayList<>(length);
 			 for (int i = 0; i < length; i++) {

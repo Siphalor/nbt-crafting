@@ -7,6 +7,7 @@ import de.siphalor.nbtcrafting.brewing.BrewingRecipeSerializer;
 import de.siphalor.nbtcrafting.cauldron.CauldronRecipe;
 import de.siphalor.nbtcrafting.cauldron.CauldronRecipeSerializer;
 import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
+import io.netty.buffer.ByteBuf;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.client.network.packet.SynchronizeRecipesS2CPacket;
@@ -38,6 +39,8 @@ public class NbtCrafting implements ModInitializer {
 	
 	public static RecipeFinder lastRecipeFinder;
 	public static ServerPlayerEntity lastServerPlayerEntity;
+
+	public static ByteBuf tempBB;
 	
 	@SuppressWarnings("unused")
 	public static boolean hasLastReadNbt() {

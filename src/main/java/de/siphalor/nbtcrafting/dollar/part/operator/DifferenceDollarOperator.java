@@ -26,9 +26,11 @@ public class DifferenceDollarOperator extends BinaryDollarOperator {
 
 	@Override
 	public Object apply(Object first, Object second) {
-		if(first instanceof Number && second instanceof Number)
+		if((first instanceof Number || first == null) && (second instanceof Number || second == null))
 			return NumberUtil.difference((Number) first, (Number) second);
 		else
+			if(first == null || second == null)
+				return first;
 			return first.toString().replace(second.toString(), "");
 	}
 

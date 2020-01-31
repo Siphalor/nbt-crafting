@@ -67,9 +67,9 @@ public final class DollarParser {
 			if(tag instanceof StringTag && !tag.asString().isEmpty()) {
 				if(tag.asString().charAt(0) == '$') {
 					if(path.isEmpty() && key.equals("$") && tag.asString().charAt(0) == '$') {
-						DollarParser.parse(path, tag.asString().substring(1)).ifPresent(dollars::addFirst);
+						DollarParser.parse(path + key, tag.asString().substring(1)).ifPresent(dollars::addFirst);
 					} else {
-						DollarParser.parse(path, tag.asString().substring(1)).ifPresent(dollars::add);
+						DollarParser.parse(path + key, tag.asString().substring(1)).ifPresent(dollars::add);
 					}
 					return remove;
 				}
@@ -80,8 +80,8 @@ public final class DollarParser {
 		return dollars.toArray(new Dollar[0]);
 	}
 
-	public static Optional<Dollar> parse(String key, String value) {
-        Dollar dollar = new Dollar(key);
+	public static Optional<Dollar> parse(String path, String value) {
+        Dollar dollar = new Dollar(path);
 		return parse(value).map(dollarPart -> {
 			dollar.expression = dollarPart;
 			return dollar;

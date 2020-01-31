@@ -91,7 +91,8 @@ public class NumberUtil {
 
 	public static Number quotient(Number a, Number b) {
 		a = denullify(a);
-		b = denullify(b);
+		if (b == null || b.doubleValue() == 0.0D)
+			return Math.signum(a.doubleValue()) * Double.POSITIVE_INFINITY;
 		switch(findSmallestType(a, b)) {
 			case 0:
 			case 1:

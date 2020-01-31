@@ -1,17 +1,11 @@
 package de.siphalor.nbtcrafting.util;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import net.minecraft.util.JsonHelper;
-
-import java.util.Map;
 
 public class JsonPreprocessor {
 	public static JsonElement process(JsonElement jsonElement) {
 		boolean marked = false;
-		if(jsonElement instanceof JsonObject) {
+		/*if(jsonElement instanceof JsonObject) {
 			for(Map.Entry<String, JsonElement> entry : ((JsonObject) jsonElement).entrySet()) {
 				if(!marked && entry.getKey().equals("$stringify") && entry.getValue().getAsBoolean()) {
 					((JsonObject) jsonElement).remove(entry.getKey());
@@ -34,7 +28,7 @@ public class JsonPreprocessor {
 		}
 		if(marked) {
 			return new JsonPrimitive(jsonElement.toString());
-		}
+		}*/
 		return jsonElement;
 	}
 }

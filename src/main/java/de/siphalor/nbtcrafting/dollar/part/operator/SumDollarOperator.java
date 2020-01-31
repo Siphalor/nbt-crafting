@@ -26,9 +26,9 @@ public class SumDollarOperator extends BinaryDollarOperator {
 
 	@Override
 	public Object apply(Object first, Object second) {
-		if(first instanceof Number && second instanceof Number)
+		if((first instanceof Number || first == null) && (second instanceof Number || second == null))
 			return NumberUtil.sum((Number) first, (Number) second);
-		return first.toString() + second.toString();
+		return first + "" + second;
 	}
 
 	public static class Deserializer implements DollarPart.Deserializer {

@@ -23,12 +23,13 @@ public class ProductDollarOperator extends BinaryDollarOperator {
 
 	@Override
 	public Object apply(Object first, Object second) {
-		if(first instanceof Number) {
-			if(second instanceof Number)
+		if(first instanceof Number || first == null) {
+			first = NumberUtil.denullify((Number) first);
+			if(second instanceof Number || second == null)
 				return NumberUtil.product((Number) first, (Number) second);
 			return StringUtils.repeat(second.toString(), ((Number) first).intValue());
-		} else if(second instanceof Number) {
-			return StringUtils.repeat(first.toString(), ((Number) second).intValue());
+		} else if(second instanceof Number || second == null) {
+			return StringUtils.repeat(first.toString(), NumberUtil.denullify((Number) second).intValue());
 		}
 		return null;
 	}
