@@ -22,7 +22,6 @@
 		"MixinInputSlotFiller",
 		"MixinServerPlayerEntity",
 		"MixinRecipe",
-		"network.MixinDecoderHandler",
 		"network.MixinServerPlayNetworkHandler",
 		"network.MixinSynchronizeRecipesS2CPacket"
 	],
