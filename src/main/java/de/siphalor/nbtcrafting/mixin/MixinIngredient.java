@@ -67,6 +67,9 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			} else {
 				matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity)).stream()).distinct().toArray(ItemStack[]::new);
 			}
+			if (matchingStacks.length == 0) {
+				matchingStacks = new ItemStack[] { ItemStack.EMPTY };
+			}
 		}
 	}
 
