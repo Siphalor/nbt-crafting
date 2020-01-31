@@ -13,6 +13,7 @@
 		"crafting.MixinShapedRecipe",
 		"crafting.MixinShapelessRecipe",
 		"cutting.MixinCuttingRecipe",
+		"cutting.MixinCuttingRecipeSerializer",
 		"MixinCraftingResultSlot",
 		"MixinIngredient",
 		"MixinItemStack",

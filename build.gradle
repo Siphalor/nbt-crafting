@@ -31,7 +31,7 @@ dependencies {
 	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
 	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
 
-	modImplementation "me.shedaniel:RoughlyEnoughItems:3.3.5"
+	modImplementation "me.shedaniel:RoughlyEnoughItems:3.3.17"
 	modImplementation "com.github.Siphalor:ModsOfTheWorld:0999e66163"
 }
 
