@@ -21,7 +21,7 @@ public class JsonPreprocessor {
 		} else if(jsonElement instanceof JsonArray) {
 			for(int i = 0; i < ((JsonArray) jsonElement).size(); i++) {
 				JsonElement jsonElement1 = ((JsonArray) jsonElement).get(i);
-				if(!marked && JsonHelper.isString(jsonElement1) && jsonElement1.getAsString().equals("$stringify")) {
+				if(!marked && jsonElement1 instanceof JsonPrimitive && ((JsonPrimitive) jsonElement1).isString() && jsonElement1.getAsString().equals("$stringify")) {
 					((JsonArray) jsonElement).remove(i);
 					i--;
 					marked = true;

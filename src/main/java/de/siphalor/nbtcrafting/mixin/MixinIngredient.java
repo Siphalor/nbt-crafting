@@ -60,15 +60,15 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	private void createStackArray(CallbackInfo callbackInfo) {
 		if(advancedEntries != null) {
 			callbackInfo.cancel();
-			if (matchingStacks != null)
-				return;
-			if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-				matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(true).stream()).distinct().toArray(ItemStack[]::new);
-			} else {
-				matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity)).stream()).distinct().toArray(ItemStack[]::new);
-			}
-			if (matchingStacks.length == 0) {
-				matchingStacks = new ItemStack[] { ItemStack.EMPTY };
+			if (matchingStacks == null || matchingStacks.length == 0) {
+				if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+					matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(true).stream()).distinct().toArray(ItemStack[]::new);
+				} else {
+					matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity)).stream()).distinct().toArray(ItemStack[]::new);
+				}
+				if (matchingStacks.length == 0) {
+					matchingStacks = new ItemStack[]{ItemStack.EMPTY};
+				}
 			}
 		}
 	}
