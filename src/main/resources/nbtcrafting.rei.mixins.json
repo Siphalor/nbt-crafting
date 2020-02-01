@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "de.siphalor.nbtcrafting.rei.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"MixinREIRecipeFinder"
+	],
+	"injectors": {
+		"defaultRequire": 0
+	}
+}

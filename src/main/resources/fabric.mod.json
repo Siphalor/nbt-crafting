@@ -23,6 +23,9 @@
 	"mixins": [
 		{
 			"config": "nbtcrafting.mixins.json"
+		},
+		{
+			"config": "nbtcrafting.rei.mixins.json"
 		}
 	],
 	"entrypoints": {
