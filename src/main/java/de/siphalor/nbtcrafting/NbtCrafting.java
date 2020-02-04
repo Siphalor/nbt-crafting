@@ -1,11 +1,13 @@
 package de.siphalor.nbtcrafting;
 
+import de.siphalor.nbtcrafting.advancement.StatChangedCriterion;
 import de.siphalor.nbtcrafting.anvil.AnvilRecipe;
 import de.siphalor.nbtcrafting.anvil.AnvilRecipeSerializer;
 import de.siphalor.nbtcrafting.brewing.BrewingRecipe;
 import de.siphalor.nbtcrafting.brewing.BrewingRecipeSerializer;
 import de.siphalor.nbtcrafting.cauldron.CauldronRecipe;
 import de.siphalor.nbtcrafting.cauldron.CauldronRecipeSerializer;
+import de.siphalor.nbtcrafting.mixin.advancement.MixinCriterions;
 import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
 import io.netty.buffer.ByteBuf;
 import net.fabricmc.api.ModInitializer;
@@ -33,6 +35,8 @@ public class NbtCrafting implements ModInitializer {
 
 	public static final RecipeType<AnvilRecipe> ANVIL_RECIPE_TYPE = registerRecipeType("anvil");
 	public static final AnvilRecipeSerializer ANVIL_RECIPE_SERIALIZER = registerRecipeSerializer("anvil", new AnvilRecipeSerializer());
+
+	public static final StatChangedCriterion STAT_CHANGED_CRITERION = MixinCriterions.registerCriterion(new StatChangedCriterion());
 
 	private static boolean lastReadNbtPresent = false;
 	private static CompoundTag lastReadNbt;

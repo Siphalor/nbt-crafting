@@ -3,6 +3,7 @@
 	"package": "de.siphalor.nbtcrafting.mixin",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
+		"advancement.MixinCriterions",
 		"anvil.MixinAnvilContainer",
 		"brewing.MixinBrewingStandBlockEntity",
 		"brewing.MixinBrewingSlotIngredient",
@@ -14,6 +15,8 @@
 		"crafting.MixinShapelessRecipe",
 		"cutting.MixinCuttingRecipe",
 		"cutting.MixinCuttingRecipeSerializer",
+		"network.MixinServerPlayNetworkHandler",
+		"network.MixinSynchronizeRecipesS2CPacket",
 		"MixinCraftingResultSlot",
 		"MixinIngredient",
 		"MixinItemStack",
@@ -21,9 +24,8 @@
 		"MixinRecipeFinder$Filter",
 		"MixinInputSlotFiller",
 		"MixinServerPlayerEntity",
-		"MixinRecipe",
-		"network.MixinServerPlayNetworkHandler",
-		"network.MixinSynchronizeRecipesS2CPacket"
+		"MixinServerStatHandler",
+		"MixinRecipe"
 	],
 	"client": [
 		"client.AnvilScreenAccessor",
