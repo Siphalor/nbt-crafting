@@ -67,7 +67,7 @@ public final class DollarParser {
 			if(tag instanceof StringTag && !tag.asString().isEmpty()) {
 				if(tag.asString().charAt(0) == '$') {
 					if(path.isEmpty() && key.equals("$") && tag.asString().charAt(0) == '$') {
-						DollarParser.parse(path + key, tag.asString().substring(1)).ifPresent(dollars::addFirst);
+						DollarParser.parse("", tag.asString().substring(1)).ifPresent(dollars::addFirst);
 					} else {
 						DollarParser.parse(path + key, tag.asString().substring(1)).ifPresent(dollars::add);
 					}
