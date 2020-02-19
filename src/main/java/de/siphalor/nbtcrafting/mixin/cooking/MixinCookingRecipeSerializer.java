@@ -11,8 +11,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.AbstractCookingRecipe;
 import net.minecraft.recipe.CookingRecipeSerializer;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
+import net.minecraft.util.registry.Registry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,11 +34,9 @@ public abstract class MixinCookingRecipeSerializer {
 		if(!jsonObject.has(resultPropertyName) || !jsonObject.get(resultPropertyName).isJsonObject()) {
 			return JsonHelper.getString(jsonObject, resultPropertyName);
 		}
-		JsonObject itemCompound = jsonObject.getAsJsonObject(resultPropertyName);
-		if(itemCompound.has("data")) {
-            resultTag = (CompoundTag) Dynamic.convert(JsonOps.INSTANCE, NbtOps.INSTANCE, itemCompound.get("data"));
-		}
-		return JsonHelper.getString(itemCompound, "item");
+		ItemStack output = ShapedRecipe.getItemStack(jsonObject.getAsJsonObject(resultPropertyName));
+		resultTag = output.getTag();
+		return Registry.ITEM.getId(output.getItem()).toString();
 	}
 
     @Inject(method = "read(Lnet/minecraft/util/Identifier;Lcom/google/gson/JsonObject;)Lnet/minecraft/recipe/AbstractCookingRecipe;", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)

@@ -31,7 +31,11 @@ dependencies {
 	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
 	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
 
+<<<<<<< Updated upstream
 	modImplementation "me.shedaniel:RoughlyEnoughItems:3.3.17"
+=======
+	modImplementation "me.shedaniel:RoughlyEnoughItems:3.3.12"
+>>>>>>> Stashed changes
 	modImplementation "com.github.Siphalor:ModsOfTheWorld:0999e66163"
 }
 

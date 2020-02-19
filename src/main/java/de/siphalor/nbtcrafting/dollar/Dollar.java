@@ -1,9 +1,11 @@
 package de.siphalor.nbtcrafting.dollar;
 
+import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.util.nbt.NbtException;
 import de.siphalor.nbtcrafting.util.nbt.NbtHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.AbstractNumberTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import org.apache.commons.lang3.ArrayUtils;
@@ -21,10 +23,16 @@ public class Dollar {
 	public void apply(ItemStack stack, Map<String, Object> references) throws DollarException {
 		Tag value = NbtHelper.asTag(expression.evaluate(references));
 		if(path.isEmpty()) {
-			if(!(value instanceof CompoundTag)) {
+			if (!(value instanceof CompoundTag)) {
 				throw new DollarEvaluationException("Couldn't set stacks main tag as given dollar expression evaluates to non-object value.");
 			} else {
 				NbtHelper.mergeInto(stack.getOrCreateTag(), (CompoundTag) value, false);
+			}
+		} else if (path.equals(NbtCrafting.MOD_ID + ":count")) {
+			if (!(value instanceof AbstractNumberTag)) {
+				throw new DollarEvaluationException("Couldn't set dollar computed count of stack as it's not a number");
+			} else {
+				stack.setCount(((AbstractNumberTag) value).getInt());
 			}
 		} else {
 			CompoundTag compoundTag = stack.getOrCreateTag();
