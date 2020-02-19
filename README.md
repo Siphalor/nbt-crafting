@@ -12,7 +12,7 @@ Everything is kept nicely visualized in the vanilla gui.
 
 This can be achieved through the reintroduced `data` attribute. 
 
-**You can find more information in the [wiki](https://github.com/Siphalor/nbt-crafting/wiki).**
+**You can find more information in the [wiki](https://mcwiki.siphalor.de/nbt-crafting/v1).**
 
 ## Example
 A simple recipe allowing to craft wooden swords with 20 damage from diamond swords with 2 damage.
