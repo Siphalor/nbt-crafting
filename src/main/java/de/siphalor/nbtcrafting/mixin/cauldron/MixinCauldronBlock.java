@@ -9,6 +9,7 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.DefaultedList;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -28,7 +29,18 @@ public class MixinCauldronBlock {
 			TemporaryCauldronInventory inventory = new TemporaryCauldronInventory(playerEntity, hand, world, blockPos);
 			Optional<CauldronRecipe> cauldronRecipe = world.getRecipeManager().getFirstMatch(NbtCrafting.CAULDRON_RECIPE_TYPE, inventory, world);
 			if(cauldronRecipe.isPresent()) {
+				DefaultedList<ItemStack> remainingStacks = cauldronRecipe.get().getRemainingStacks(inventory);
+
 				ItemStack itemStack = cauldronRecipe.get().craft(inventory);
+
+				if(!playerEntity.inventory.insertStack(remainingStacks.get(0))) {
+					ItemEntity itemEntity = playerEntity.dropItem(remainingStacks.get(0), false);
+					if(itemEntity != null) {
+						itemEntity.resetPickupDelay();
+						itemEntity.setOwner(playerEntity.getUuid());
+					}
+				}
+
 				if(!playerEntity.inventory.insertStack(itemStack)) {
 					ItemEntity itemEntity = playerEntity.dropItem(itemStack, false);
 					if(itemEntity != null) {
