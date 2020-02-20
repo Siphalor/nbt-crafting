@@ -5,7 +5,6 @@ import de.siphalor.nbtcrafting.Core;
 import de.siphalor.nbtcrafting.dollars.Dollar;
 import de.siphalor.nbtcrafting.dollars.DollarException;
 import de.siphalor.nbtcrafting.dollars.DollarParser;
-import de.siphalor.nbtcrafting.ingredient.IIngredient;
 import de.siphalor.nbtcrafting.util.NbtHelper;
 import de.siphalor.nbtcrafting.util.ServerRecipe;
 import net.minecraft.item.ItemStack;
@@ -14,6 +13,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.util.DefaultedList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.world.World;
@@ -61,10 +61,7 @@ public class CauldronRecipe implements Recipe<TemporaryCauldronInventory>, Serve
 
 		Map<String, CompoundTag> reference = ImmutableMap.of("i0", NbtHelper.getTagOrEmpty(inventory.getInvStack(0)));
 
-		//noinspection ConstantConditions
-		ItemStack remainder = ((IIngredient)(Object) input).getRecipeRemainder(inventory.getInvStack(0), reference);
-		if(remainder != null)
-			inventory.setInvStack(0, remainder);
+		inventory.getInvStack(0).decrement(1);
 
 		ItemStack result = output.copy();
 		for(Dollar dollar : outputDollars) {
@@ -85,6 +82,11 @@ public class CauldronRecipe implements Recipe<TemporaryCauldronInventory>, Serve
 	@Override
 	public ItemStack getOutput() {
 		return output;
+	}
+
+	@Override
+	public DefaultedList<Ingredient> getPreviewInputs() {
+		return DefaultedList.copyOf(Ingredient.EMPTY, input);
 	}
 
 	@Override
