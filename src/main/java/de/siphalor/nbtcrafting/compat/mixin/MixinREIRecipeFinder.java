@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.rei.mixin;
+package de.siphalor.nbtcrafting.compat.mixin;
 
 import me.shedaniel.rei.server.RecipeFinder;
 import net.minecraft.item.ItemStack;

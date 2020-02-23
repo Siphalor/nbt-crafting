@@ -25,7 +25,7 @@
 			"config": "nbtcrafting.mixins.json"
 		},
 		{
-			"config": "nbtcrafting.rei.mixins.json"
+			"config": "nbtcrafting.compat.mixins.json"
 		}
 	],
 	"entrypoints": {
@@ -40,7 +40,7 @@
 			}
 		],
 		"rei_plugins_v0": [
-			"de.siphalor.nbtcrafting.client.rei.REIPlugin"
+			"de.siphalor.nbtcrafting.compat.REIPlugin"
 		]
 	},
 

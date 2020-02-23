@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.client.rei;
+package de.siphalor.nbtcrafting.compat;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.brewing.BrewingRecipe;
