@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.util;
+package de.siphalor.nbtcrafting.api;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

@@ -1,10 +1,9 @@
-package de.siphalor.nbtcrafting.util;
+package de.siphalor.nbtcrafting.api;
 
+import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
-import de.siphalor.nbtcrafting.util.nbt.NbtHelper;
-import de.siphalor.nbtcrafting.util.nbt.NbtIterator;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
@@ -62,7 +61,6 @@ public class RecipeUtil {
 				e.printStackTrace();
 			}
 		});
-		NbtIterator.iterateTags(NbtHelper.getTagOrEmpty(stack), (path, key, tag) -> key.equals("$overwrite") || tag.asString().equals("$overwrite"));
 		if(stack.getDamage() > stack.getMaxDamage()) {
 			return ItemStack.EMPTY;
 		}

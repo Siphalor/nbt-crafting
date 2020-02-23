@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.util.nbt;
+package de.siphalor.nbtcrafting.api.nbt;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

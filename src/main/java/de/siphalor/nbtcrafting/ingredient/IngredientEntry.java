@@ -1,9 +1,9 @@
 package de.siphalor.nbtcrafting.ingredient;
 
 import com.google.gson.JsonElement;
+import de.siphalor.nbtcrafting.api.RecipeUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
-import de.siphalor.nbtcrafting.util.RecipeUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.PacketByteBuf;
 

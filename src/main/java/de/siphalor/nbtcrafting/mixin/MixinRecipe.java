@@ -1,7 +1,7 @@
 package de.siphalor.nbtcrafting.mixin;
 
+import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
-import de.siphalor.nbtcrafting.util.nbt.NbtHelper;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;

@@ -1,7 +1,7 @@
 package de.siphalor.nbtcrafting.mixin.network;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.util.ServerRecipe;
+import de.siphalor.nbtcrafting.api.ServerRecipe;
 import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
 import net.minecraft.client.network.packet.SynchronizeRecipesS2CPacket;
 import net.minecraft.recipe.Recipe;

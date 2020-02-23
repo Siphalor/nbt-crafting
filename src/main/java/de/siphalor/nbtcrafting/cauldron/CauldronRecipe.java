@@ -2,11 +2,11 @@ package de.siphalor.nbtcrafting.cauldron;
 
 import com.google.common.collect.ImmutableMap;
 import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.api.RecipeUtil;
+import de.siphalor.nbtcrafting.api.ServerRecipe;
+import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
-import de.siphalor.nbtcrafting.util.RecipeUtil;
-import de.siphalor.nbtcrafting.util.ServerRecipe;
-import de.siphalor.nbtcrafting.util.nbt.NbtHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;

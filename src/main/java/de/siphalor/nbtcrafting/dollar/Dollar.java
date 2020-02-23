@@ -1,9 +1,9 @@
 package de.siphalor.nbtcrafting.dollar;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.api.nbt.NbtException;
+import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-import de.siphalor.nbtcrafting.util.nbt.NbtException;
-import de.siphalor.nbtcrafting.util.nbt.NbtHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.AbstractNumberTag;
 import net.minecraft.nbt.CompoundTag;

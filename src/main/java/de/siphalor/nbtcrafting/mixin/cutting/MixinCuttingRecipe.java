@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.mixin.cutting;
 
-import de.siphalor.nbtcrafting.util.RecipeUtil;
+import de.siphalor.nbtcrafting.api.RecipeUtil;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.CuttingRecipe;

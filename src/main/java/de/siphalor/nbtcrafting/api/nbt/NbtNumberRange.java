@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.util.nbt;
+package de.siphalor.nbtcrafting.api.nbt;
 
 public class NbtNumberRange {
 	public final double begin;
