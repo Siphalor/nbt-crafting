@@ -30,6 +30,8 @@ dependencies {
 	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
 	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
 
+	modImplementation "net.fabricmc.fabric-api:fabric-registry-sync-v0:+"
+
 	modCompile("me.shedaniel:RoughlyEnoughItems:3.2.25") {
 		//exclude module: "autoconfig1u"
 	}

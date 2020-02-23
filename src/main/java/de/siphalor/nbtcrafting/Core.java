@@ -2,6 +2,7 @@ package de.siphalor.nbtcrafting;
 
 import de.siphalor.nbtcrafting.anvil.AnvilRecipe;
 import de.siphalor.nbtcrafting.anvil.AnvilRecipeSerializer;
+import de.siphalor.nbtcrafting.api.RecipeTypeHelper;
 import de.siphalor.nbtcrafting.brewing.BrewingRecipe;
 import de.siphalor.nbtcrafting.brewing.BrewingRecipeSerializer;
 import de.siphalor.nbtcrafting.cauldron.CauldronRecipe;
@@ -82,7 +83,9 @@ public class Core implements ModInitializer {
 	}
 
 	public static <T extends Recipe<?>> RecipeType<T> registerRecipeType(String name) {
-		return Registry.register(Registry.RECIPE_TYPE, new Identifier(MODID, name), new RecipeType<T>() {
+		Identifier recipeTypeId = new Identifier(MODID, name);
+		RecipeTypeHelper.addToSyncBlacklist(recipeTypeId);
+		return Registry.register(Registry.RECIPE_TYPE, recipeTypeId, new RecipeType<T>() {
 			@Override
 			public String toString() {
 				return name;

@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "de.siphalor.nbtcrafting.compat.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"MixinRegistrySyncManager"
+	],
+	"injectors": {
+		"defaultRequire": 0
+	}
+}

@@ -28,6 +28,9 @@
 		{
 			"config": "de.siphalor.nbtcrafting.common.json",
 			"environment": "*"
+		},
+		{
+			"config": "de.siphalor.nbtcrafting.compat.json"
 		}
 	],
 	"entrypoints": {
