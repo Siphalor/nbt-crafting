@@ -106,7 +106,7 @@ public class BrewingRecipe implements Recipe<BrewingStandBlockEntity>, ServerRec
 		for(byte i = 0; i < 3; i++) {
 			ItemStack baseStack = brewingStandBlockEntity.getInvStack(i);
 			if(base.test(baseStack)) {
-				map.replace("base", NbtHelper.getTagOrEmpty(baseStack));
+				map.put("base", NbtHelper.getTagOrEmpty(baseStack));
 				brewingStandBlockEntity.setInvStack(i, RecipeUtil.applyDollars(output.copy(), outputDollars, map));
 			}
 		}
