@@ -1,8 +1,8 @@
 package de.siphalor.nbtcrafting.mixin.cauldron;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.cauldron.CauldronRecipe;
-import de.siphalor.nbtcrafting.cauldron.TemporaryCauldronInventory;
+import de.siphalor.nbtcrafting.recipetype.cauldron.CauldronRecipe;
+import de.siphalor.nbtcrafting.recipetype.cauldron.TemporaryCauldronInventory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CauldronBlock;
 import net.minecraft.entity.ItemEntity;

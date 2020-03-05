@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.brewing;
+package de.siphalor.nbtcrafting.recipetype.brewing;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.RecipeUtil;

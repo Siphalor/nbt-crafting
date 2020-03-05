@@ -1,7 +1,7 @@
 package de.siphalor.nbtcrafting.compat;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.brewing.BrewingRecipe;
+import de.siphalor.nbtcrafting.recipetype.brewing.BrewingRecipe;
 import me.shedaniel.rei.api.RecipeHelper;
 import me.shedaniel.rei.api.plugins.REIPluginV0;
 import me.shedaniel.rei.plugin.DefaultPlugin;

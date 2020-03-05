@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.brewing;
+package de.siphalor.nbtcrafting.recipetype.brewing;
 
 import com.google.gson.JsonObject;
 import net.minecraft.recipe.Ingredient;

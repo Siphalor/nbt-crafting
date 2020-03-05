@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.cauldron;
+package de.siphalor.nbtcrafting.recipetype.cauldron;
 
 import com.google.common.collect.ImmutableMap;
 import de.siphalor.nbtcrafting.NbtCrafting;

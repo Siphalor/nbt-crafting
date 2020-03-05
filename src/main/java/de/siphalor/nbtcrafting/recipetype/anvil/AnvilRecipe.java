@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.anvil;
+package de.siphalor.nbtcrafting.recipetype.anvil;
 
 import com.google.common.collect.ImmutableMap;
 import de.siphalor.nbtcrafting.NbtCrafting;
