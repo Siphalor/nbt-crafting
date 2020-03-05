@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
+@SuppressWarnings("UnstableApiUsage")
 @Mixin(RecipeFinder.class)
 public class MixinREIRecipeFinder {
 	/**
