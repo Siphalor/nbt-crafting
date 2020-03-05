@@ -8,13 +8,21 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.DefaultedList;
+import net.minecraft.util.ItemScatterer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RecipeUtil {
+	@Deprecated
 	public static ItemStack getDollarAppliedOutputStack(ItemStack baseOutput, DefaultedList<Ingredient> ingredients, Inventory inventory) {
+		return getDollarAppliedResult(baseOutput, ingredients, inventory);
+	}
+
+	public static ItemStack getDollarAppliedResult(ItemStack baseOutput, DefaultedList<Ingredient> ingredients, Inventory inventory) {
         ItemStack stack = baseOutput.copy();
 		Dollar[] dollars = DollarParser.extractDollars(stack.getTag(), true);
 
@@ -32,14 +40,24 @@ public class RecipeUtil {
 
 			return applyDollars(stack, dollars, reference);
 		}
-		return null;
+		return baseOutput;
 	}
 
+	@Deprecated
 	public static ItemStack getDollarAppliedOutputStack(ItemStack baseOutput, Ingredient ingredient, Inventory inventory) {
-		return getDollarAppliedOutputStack(baseOutput, ingredient, "this", inventory);
+		return getDollarAppliedResult(baseOutput, ingredient, inventory);
 	}
 
+	public static ItemStack getDollarAppliedResult(ItemStack baseOutput, Ingredient ingredient, Inventory inventory) {
+		return getDollarAppliedResult(baseOutput, ingredient, "this", inventory);
+	}
+
+	@Deprecated
 	public static ItemStack getDollarAppliedOutputStack(ItemStack baseOutput, Ingredient ingredient, String referenceName, Inventory inventory) {
+		return getDollarAppliedResult(baseOutput, ingredient, referenceName, inventory);
+	}
+
+	public static ItemStack getDollarAppliedResult(ItemStack baseOutput, Ingredient ingredient, String referenceName, Inventory inventory) {
 		Dollar[] dollars = DollarParser.extractDollars(baseOutput.getTag(), true);
 
 		if(dollars.length > 0) {
@@ -50,7 +68,25 @@ public class RecipeUtil {
 
 			return applyDollars(stack, dollars, reference);
 		}
-		return null;
+		return baseOutput;
+	}
+
+	public static void putRemainders(DefaultedList<ItemStack> remainders, Inventory target, World world, BlockPos scatterPos) {
+		putRemainders(remainders, target, world, scatterPos, 0);
+	}
+
+	public static void putRemainders(DefaultedList<ItemStack> remainders, Inventory target, World world, BlockPos scatterPos, int offset) {
+		final int size = remainders.size();
+		if (size > target.getInvSize()) {
+			throw new IllegalArgumentException("Size of given remainder list must be <= size of target inventory");
+		}
+		for (int i = 0; i < size; i++) {
+			if (target.getInvStack(offset + i).isEmpty()) {
+				target.setInvStack(offset + i, remainders.get(i));
+				remainders.set(i, ItemStack.EMPTY);
+			}
+		}
+		ItemScatterer.spawn(world, scatterPos, remainders);
 	}
 
 	public static ItemStack applyDollars(ItemStack stack, Dollar[] dollars, Map<String, Object> reference) {

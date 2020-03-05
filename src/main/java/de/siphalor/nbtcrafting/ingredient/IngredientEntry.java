@@ -33,7 +33,7 @@ public abstract class IngredientEntry {
 
 	public ItemStack getRecipeRemainder(ItemStack stack, Map<String, Object> reference) {
 		if(remainder == null)
-			return null;
+			return ItemStack.EMPTY;
         return RecipeUtil.applyDollars(remainder.copy(), remainderDollars, reference);
 	}
 

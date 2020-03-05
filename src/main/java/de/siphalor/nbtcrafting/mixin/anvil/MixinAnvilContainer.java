@@ -1,7 +1,7 @@
 package de.siphalor.nbtcrafting.mixin.anvil;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.recipetype.anvil.AnvilRecipe;
+import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.container.AnvilContainer;
@@ -64,7 +64,9 @@ public abstract class MixinAnvilContainer extends Container {
 			}
 
 			result.setInvStack(0, resultStack);
-			levelCost.set(optionalAnvilRecipe.get().levels);
+			resultStack.onCraft(player.world, player, resultStack.getCount());
+
+			levelCost.set(optionalAnvilRecipe.get().getLevels());
 			sendContentUpdates();
 
 			callbackInfo.cancel();

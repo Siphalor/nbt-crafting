@@ -1,6 +1,7 @@
 package de.siphalor.nbtcrafting.mixin;
 
 import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
+import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -11,7 +12,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 @Mixin(Recipe.class)
 public interface MixinRecipe {
@@ -25,14 +28,23 @@ public interface MixinRecipe {
 	@Overwrite
 	default DefaultedList<ItemStack> getRemainingStacks(Inventory inventory) {
 		final DefaultedList<ItemStack> stackList = DefaultedList.ofSize(inventory.getInvSize(), ItemStack.EMPTY);
-		HashMap<String, Object> reference = new HashMap<>();
-        DefaultedList<Ingredient> ingredients = getPreviewInputs();
-		for (int j = 0; j < ingredients.size(); j++) {
-			for (int i = 0; i < stackList.size(); i++) {
-				if(ingredients.get(j).test(inventory.getInvStack(i)))
-					reference.putIfAbsent("i"+j, NbtHelper.getTagOrEmpty(inventory.getInvStack(i)));
-			}
-		}
+		Map<String, Object> reference;
+        Collection<Ingredient> ingredients;
+        if (this instanceof NBTCRecipe) {
+	        ingredients = ((NBTCRecipe<?>) this).getIngredients();
+	        // noinspection unchecked
+	        reference = ((NBTCRecipe<Inventory>) this).buildDollarReference(inventory);
+        } else {
+        	DefaultedList<Ingredient> ingredientList = getPreviewInputs();
+        	ingredients = ingredientList;
+        	reference = new HashMap<>();
+	        for (int j = 0; j < ingredientList.size(); j++) {
+		        for (int i = 0; i < stackList.size(); i++) {
+			        if (ingredientList.get(j).test(inventory.getInvStack(i)))
+				        reference.putIfAbsent("i" + j, NbtHelper.getTagOrEmpty(inventory.getInvStack(i)));
+		        }
+	        }
+        }
 		main:
 		for(int i = 0; i < stackList.size(); ++i) {
 			ItemStack itemStack = inventory.getInvStack(i);
