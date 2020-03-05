@@ -1,7 +1,7 @@
 package de.siphalor.nbtcrafting.mixin.brewing;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.brewing.BrewingRecipe;
+import de.siphalor.nbtcrafting.recipetype.brewing.BrewingRecipe;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.block.entity.LockableContainerBlockEntity;

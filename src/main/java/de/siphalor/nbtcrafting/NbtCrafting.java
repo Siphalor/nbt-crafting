@@ -1,14 +1,14 @@
 package de.siphalor.nbtcrafting;
 
 import de.siphalor.nbtcrafting.advancement.StatChangedCriterion;
-import de.siphalor.nbtcrafting.anvil.AnvilRecipe;
-import de.siphalor.nbtcrafting.anvil.AnvilRecipeSerializer;
 import de.siphalor.nbtcrafting.api.RecipeTypeHelper;
-import de.siphalor.nbtcrafting.brewing.BrewingRecipe;
-import de.siphalor.nbtcrafting.brewing.BrewingRecipeSerializer;
-import de.siphalor.nbtcrafting.cauldron.CauldronRecipe;
-import de.siphalor.nbtcrafting.cauldron.CauldronRecipeSerializer;
 import de.siphalor.nbtcrafting.mixin.advancement.MixinCriterions;
+import de.siphalor.nbtcrafting.recipetype.anvil.AnvilRecipe;
+import de.siphalor.nbtcrafting.recipetype.anvil.AnvilRecipeSerializer;
+import de.siphalor.nbtcrafting.recipetype.brewing.BrewingRecipe;
+import de.siphalor.nbtcrafting.recipetype.brewing.BrewingRecipeSerializer;
+import de.siphalor.nbtcrafting.recipetype.cauldron.CauldronRecipe;
+import de.siphalor.nbtcrafting.recipetype.cauldron.CauldronRecipeSerializer;
 import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;

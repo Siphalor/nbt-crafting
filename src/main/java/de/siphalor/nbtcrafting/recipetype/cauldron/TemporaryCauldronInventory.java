@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.cauldron;
+package de.siphalor.nbtcrafting.recipetype.cauldron;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CauldronBlock;

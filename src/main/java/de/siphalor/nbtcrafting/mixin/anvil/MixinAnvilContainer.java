@@ -1,7 +1,7 @@
 package de.siphalor.nbtcrafting.mixin.anvil;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.anvil.AnvilRecipe;
+import de.siphalor.nbtcrafting.recipetype.anvil.AnvilRecipe;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.class_4861;

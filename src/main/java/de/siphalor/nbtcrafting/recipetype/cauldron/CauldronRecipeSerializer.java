@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.cauldron;
+package de.siphalor.nbtcrafting.recipetype.cauldron;
 
 import com.google.gson.JsonObject;
 import net.minecraft.recipe.Ingredient;
