@@ -299,6 +299,6 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 				}
 			}
 		}
-		return null;
+		return ItemStack.EMPTY;
 	}
 }

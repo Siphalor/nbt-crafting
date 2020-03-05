@@ -1,8 +1,8 @@
 package de.siphalor.nbtcrafting.mixin.cauldron;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.recipetype.cauldron.CauldronRecipe;
-import de.siphalor.nbtcrafting.recipetype.cauldron.TemporaryCauldronInventory;
+import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipe;
+import de.siphalor.nbtcrafting.recipe.cauldron.TemporaryCauldronInventory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CauldronBlock;
 import net.minecraft.entity.ItemEntity;
@@ -32,6 +32,7 @@ public class MixinCauldronBlock {
 				DefaultedList<ItemStack> remainingStacks = cauldronRecipe.get().getRemainingStacks(inventory);
 
 				ItemStack itemStack = cauldronRecipe.get().craft(inventory);
+				itemStack.onCraft(world, playerEntity, itemStack.getCount());
 
 				if(!playerEntity.inventory.insertStack(remainingStacks.get(0))) {
 					ItemEntity itemEntity = playerEntity.dropItem(remainingStacks.get(0), false);
