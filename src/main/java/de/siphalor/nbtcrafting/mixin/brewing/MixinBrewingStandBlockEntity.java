@@ -20,9 +20,9 @@ import java.util.Optional;
 @SuppressWarnings("ConstantConditions")
 @Mixin(BrewingStandBlockEntity.class)
 public abstract class MixinBrewingStandBlockEntity extends LockableContainerBlockEntity {
-	@Shadow private DefaultedList<ItemStack> inventory;
-
 	@Shadow public abstract void setInvStack(int slot, ItemStack stack);
+
+	@Shadow public abstract ItemStack getInvStack(int slot);
 
 	protected MixinBrewingStandBlockEntity(BlockEntityType<?> blockEntityType_1) {
 		super(blockEntityType_1);
@@ -59,15 +59,7 @@ public abstract class MixinBrewingStandBlockEntity extends LockableContainerBloc
 
 	@Inject(method = "isValidInvStack", at = @At("HEAD"), cancellable = true)
 	public void isValidInvStack(int slotId, ItemStack stack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		callbackInfoReturnable.setReturnValue(true);
-		// TODO: Fix this again (-> maybe a LoadingCache?)
-		/*if(slotId == 3) {
-			if(BrewingRecipe.existsMatchingIngredient(stack, world.getRecipeManager()))
-				callbackInfoReturnable.setReturnValue(true);
-		} else if(slotId != 4) {
-			if(BrewingRecipe.existsMatchingBase(stack, world.getRecipeManager()))
-				callbackInfoReturnable.setReturnValue(true);
-		}*/
+		if (slotId < 4 && getInvStack(slotId).isEmpty())
+			callbackInfoReturnable.setReturnValue(true);
 	}
-
 }
