@@ -40,7 +40,7 @@ public class RecipeUtil {
 
 			return applyDollars(stack, dollars, reference);
 		}
-		return baseOutput;
+		return stack;
 	}
 
 	@Deprecated
