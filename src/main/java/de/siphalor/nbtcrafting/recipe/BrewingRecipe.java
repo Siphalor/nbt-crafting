@@ -3,6 +3,7 @@ package de.siphalor.nbtcrafting.recipe;
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.RecipeUtil;
 import de.siphalor.nbtcrafting.api.ServerRecipe;
+import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -38,11 +39,11 @@ public class BrewingRecipe extends IngredientRecipe<Inventory> implements Server
 		ItemStack[] stacks = new ItemStack[3];
 
 		Map<String, Object> reference = new HashMap<>();
-		reference.put("ingredient", inv.getInvStack(3));
+		reference.put("ingredient", NbtHelper.getTagOrEmpty(inv.getInvStack(3)));
 
 		for (int i = 0; i < 3; i++) {
 			if (base.test(inv.getInvStack(i))) {
-				reference.put("base", inv.getInvStack(i));
+				reference.put("base", NbtHelper.getTagOrEmpty(inv.getInvStack(i)));
 				stacks[i] = RecipeUtil.applyDollars(result.copy(), resultDollars, reference);
 			}
 		}
