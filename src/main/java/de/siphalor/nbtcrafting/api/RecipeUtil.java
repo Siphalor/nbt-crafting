@@ -58,11 +58,10 @@ public class RecipeUtil {
 	}
 
 	public static ItemStack getDollarAppliedResult(ItemStack baseOutput, Ingredient ingredient, String referenceName, Inventory inventory) {
+		ItemStack stack = baseOutput.copy();
 		Dollar[] dollars = DollarParser.extractDollars(baseOutput.getTag(), true);
 
 		if(dollars.length > 0) {
-			ItemStack stack = baseOutput.copy();
-
 			Map<String, Object> reference = new HashMap<>();
 			reference.put(referenceName, NbtHelper.getTagOrEmpty(inventory.getInvStack(0)));
 
