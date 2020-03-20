@@ -59,7 +59,7 @@ public class RecipeUtil {
 
 	public static ItemStack getDollarAppliedResult(ItemStack baseOutput, Ingredient ingredient, String referenceName, Inventory inventory) {
 		ItemStack stack = baseOutput.copy();
-		Dollar[] dollars = DollarParser.extractDollars(baseOutput.getTag(), true);
+		Dollar[] dollars = DollarParser.extractDollars(stack.getTag(), true);
 
 		if(dollars.length > 0) {
 			Map<String, Object> reference = new HashMap<>();
@@ -67,7 +67,7 @@ public class RecipeUtil {
 
 			return applyDollars(stack, dollars, reference);
 		}
-		return baseOutput;
+		return stack;
 	}
 
 	public static void putRemainders(DefaultedList<ItemStack> remainders, Inventory target, World world, BlockPos scatterPos) {
