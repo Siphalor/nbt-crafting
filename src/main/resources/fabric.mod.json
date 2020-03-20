@@ -3,8 +3,8 @@
 	"id": "nbtcrafting",
 	"version": "${version}",
 
-	"name": "NBT Crafting",
-	"description": "Offers data tags in recipe, dollars, anvil and brewing recipes, dollars, ingredient nbt conditions and a lot of dollars to you. Do you like dollars - this is the thing!",
+	"name": "NBT Crafting - I hate REI Edition",
+	"description": "Offers data tags in recipe, dollars, anvil and brewing recipes, dollars, ingredient nbt conditions and a lot of dollars to you. Do you like dollars - this is the thing!\nAlso: Who needs REI?\nIt messes up your Gradle dependencies and you don't even need it because recipe books exist >:|",
 
 	"authors": [
 		"Siphalor"

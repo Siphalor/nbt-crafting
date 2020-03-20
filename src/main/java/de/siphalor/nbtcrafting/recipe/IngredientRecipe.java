@@ -9,13 +9,13 @@ import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.ShapedRecipe;
-import net.minecraft.util.DefaultedList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
 import java.util.Map;

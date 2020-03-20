@@ -1,12 +1,10 @@
 package de.siphalor.nbtcrafting.compat.mixin;
 
-import me.shedaniel.rei.server.RecipeFinder;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-@SuppressWarnings("UnstableApiUsage")
-@Mixin(RecipeFinder.class)
+@Mixin(targets = "me/shedaniel/rei/server/RecipeFinder")
 public class MixinREIRecipeFinder {
 	/**
 	 * @author Siphalor

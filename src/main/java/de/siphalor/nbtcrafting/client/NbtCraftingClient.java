@@ -7,7 +7,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AnvilScreen;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 
 public class NbtCraftingClient implements ClientModInitializer {
 	public static boolean sentModPresent = false;

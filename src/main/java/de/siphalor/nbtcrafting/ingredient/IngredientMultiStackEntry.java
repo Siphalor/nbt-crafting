@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;

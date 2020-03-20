@@ -8,7 +8,7 @@ import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
 import net.minecraft.datafixer.NbtOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 
 public class IngredientEntryCondition {
 	

@@ -5,12 +5,12 @@ import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.ServerRecipe;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.PacketByteBuf;
 
 public class AnvilRecipe extends IngredientRecipe<Inventory> implements ServerRecipe {
 	protected int levels = 0;

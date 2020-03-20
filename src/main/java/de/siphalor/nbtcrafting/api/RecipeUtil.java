@@ -7,8 +7,8 @@ import de.siphalor.nbtcrafting.dollar.DollarParser;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.util.DefaultedList;
 import net.minecraft.util.ItemScatterer;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 

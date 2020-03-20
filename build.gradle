@@ -7,7 +7,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = project.archives_base_name
-version = "${project.mod_version}+${project.minecraft_version}"
+version = "${project.mod_version}+mc${project.minecraft_version}"
 group = project.maven_group
 
 minecraft {
@@ -31,9 +31,15 @@ dependencies {
 	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
 	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
 
-	modImplementation "me.shedaniel:RoughlyEnoughItems:4.0.6+"
-	modImplementation "com.github.Siphalor:ModsOfTheWorld:0999e66163"
+	modImplementation "net.fabricmc.fabric-api:fabric-registry-sync-v0:+"
+
+	// Fricking annoys me because it doesn't pull the Cloth dependencies in
+	//modImplementation "me.shedaniel:RoughlyEnoughItems:+"
+
+	modImplementation "com.github.Siphalor:ModsOfTheWorld:1.16-SNAPSHOT"
 }
+
+sourceSets.main.java.exclude("de/siphalor/nbtcrafting/compat/**/*REI*")
 
 processResources {
 	inputs.property "version", version

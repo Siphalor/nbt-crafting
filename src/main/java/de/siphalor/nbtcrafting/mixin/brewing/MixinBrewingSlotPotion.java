@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(targets = "net/minecraft/container/BrewingStandContainer$SlotPotion")
+@Mixin(targets = "net/minecraft/screen/BrewingStandScreenHandler$PotionSlot")
 public class MixinBrewingSlotPotion {
 	@Inject(method = "matches(Lnet/minecraft/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
 	private static void matches(ItemStack stack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {

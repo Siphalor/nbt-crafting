@@ -4,16 +4,12 @@ import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.class_4861;
-import net.minecraft.container.AnvilContainer;
-import net.minecraft.container.BlockContext;
-import net.minecraft.container.ContainerType;
-import net.minecraft.container.Property;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
-import net.minecraft.util.PacketByteBuf;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,41 +20,41 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Optional;
 
-@Mixin(AnvilContainer.class)
-public abstract class MixinAnvilContainer extends class_4861 {
-	@Shadow @Final private Property levelCost;
+@Mixin(AnvilScreenHandler.class)
+public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 
 	@Shadow private String newItemName;
 
+	@Shadow @Final private Property levelCost;
 	@Unique
 	private boolean userChangedName = false;
 
-	public MixinAnvilContainer(ContainerType<?> containerType, int i, PlayerInventory playerInventory, BlockContext blockContext) {
-		super(containerType, i, playerInventory, blockContext);
+	public MixinAnvilContainer(ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
+		super(type, syncId, playerInventory, context);
 	}
 
-	@Inject(method = "method_24928", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "updateResult", at = @At("HEAD"), cancellable = true)
 	public void updateResult(CallbackInfo callbackInfo) {
-		Optional<AnvilRecipe> optionalAnvilRecipe = field_22482.world.getRecipeManager().getFirstMatch(NbtCrafting.ANVIL_RECIPE_TYPE, field_22480, field_22482.world);
+		Optional<AnvilRecipe> optionalAnvilRecipe = player.world.getRecipeManager().getFirstMatch(NbtCrafting.ANVIL_RECIPE_TYPE, input, player.world);
 		if(optionalAnvilRecipe.isPresent()) {
-			ItemStack resultStack = optionalAnvilRecipe.get().craft(field_22480);
+			ItemStack resultStack = optionalAnvilRecipe.get().craft(input);
 			if(userChangedName) {
 				if (!newItemName.equals(resultStack.getName().getString()))
 					resultStack.setCustomName(new LiteralText(newItemName));
 				userChangedName = false;
 			} else {
 				newItemName = resultStack.getName().getString();
-				if(field_22482 instanceof ServerPlayerEntity) {
-					if(NbtCrafting.hasClientMod((ServerPlayerEntity) field_22482)) {
+				if(player instanceof ServerPlayerEntity) {
+					if(NbtCrafting.hasClientMod((ServerPlayerEntity) player)) {
 						PacketByteBuf packetByteBuf = new PacketByteBuf(Unpooled.buffer());
 						packetByteBuf.writeString(newItemName);
-						ServerSidePacketRegistry.INSTANCE.sendToPlayer(field_22482, NbtCrafting.UPDATE_ANVIL_TEXT_S2C_PACKET_ID, packetByteBuf);
+						ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, NbtCrafting.UPDATE_ANVIL_TEXT_S2C_PACKET_ID, packetByteBuf);
 					}
 				}
 			}
 
-			field_22479.setInvStack(0, resultStack);
-			resultStack.onCraft(field_22482.world, field_22482, resultStack.getCount());
+			input.setInvStack(0, resultStack);
+			resultStack.onCraft(player.world, player, resultStack.getCount());
 
 			levelCost.set(optionalAnvilRecipe.get().getLevels());
 			sendContentUpdates();

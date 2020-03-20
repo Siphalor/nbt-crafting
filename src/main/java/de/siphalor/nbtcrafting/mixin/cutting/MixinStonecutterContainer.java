@@ -1,10 +1,10 @@
 package de.siphalor.nbtcrafting.mixin.cutting;
 
 import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
-import net.minecraft.container.StonecutterContainer;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.StonecuttingRecipe;
+import net.minecraft.screen.StonecutterScreenHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-@Mixin(StonecutterContainer.class)
+@Mixin(StonecutterScreenHandler.class)
 public class MixinStonecutterContainer {
 	@Shadow private List<StonecuttingRecipe> availableRecipes;
 
