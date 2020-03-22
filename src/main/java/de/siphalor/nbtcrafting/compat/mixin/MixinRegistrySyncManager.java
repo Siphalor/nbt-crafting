@@ -44,10 +44,7 @@ public class MixinRegistrySyncManager {
 			ordinal = 1
 	)
 	private static Identifier cancelSync(Identifier oldId) {
-		if (isRecipeTypeRegistry)
-			System.out.println(oldId);
 		if (isRecipeTypeRegistry && RecipeTypeHelper.getSyncBlacklist().contains(oldId)) {
-			System.out.println("blocked!");
 			return null;
 		}
 		return oldId;
