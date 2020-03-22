@@ -16,8 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.Iterator;
 
 @Mixin(
-		value = RegistrySyncManager.class,
-		remap = false
+		value = RegistrySyncManager.class
 )
 public class MixinRegistrySyncManager {
 	private static boolean isRecipeTypeRegistry = false;
@@ -45,7 +44,10 @@ public class MixinRegistrySyncManager {
 			ordinal = 1
 	)
 	private static Identifier cancelSync(Identifier oldId) {
+		if (isRecipeTypeRegistry)
+			System.out.println(oldId);
 		if (isRecipeTypeRegistry && RecipeTypeHelper.getSyncBlacklist().contains(oldId)) {
+			System.out.println("blocked!");
 			return null;
 		}
 		return oldId;
