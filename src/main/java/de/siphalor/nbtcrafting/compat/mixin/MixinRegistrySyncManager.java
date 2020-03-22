@@ -31,7 +31,7 @@ public class MixinRegistrySyncManager {
 			locals = LocalCapture.CAPTURE_FAILSOFT
 	)
 	private static void onRegistry(boolean isClientSync, CallbackInfoReturnable<?> callbackInfoReturnable, CompoundTag mainTag, Iterator<?> iterator, Identifier registryId, MutableRegistry<?> registry) {
-		isRecipeTypeRegistry = registry == Registry.RECIPE_TYPE;
+		isRecipeTypeRegistry = registry == Registry.RECIPE_TYPE || registry == Registry.RECIPE_SERIALIZER;
 	}
 
 	@ModifyVariable(
