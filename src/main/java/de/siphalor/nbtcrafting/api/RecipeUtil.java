@@ -4,6 +4,7 @@ import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.ingredient.IIngredient;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
@@ -68,6 +69,14 @@ public class RecipeUtil {
 			return applyDollars(stack, dollars, reference);
 		}
 		return stack;
+	}
+
+	public static ItemStack getRemainder(ItemStack itemStack, Ingredient ingredient, Map<String, Object> reference) {
+		ItemStack result = ((IIngredient)(Object) ingredient).getRecipeRemainder(itemStack, reference);
+		if (result == null) {
+			return new ItemStack(itemStack.getItem().getRecipeRemainder());
+		}
+		return result;
 	}
 
 	public static void putRemainders(DefaultedList<ItemStack> remainders, Inventory target, World world, BlockPos scatterPos) {
