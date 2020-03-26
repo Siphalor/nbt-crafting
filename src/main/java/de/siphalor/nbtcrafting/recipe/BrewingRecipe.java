@@ -4,7 +4,6 @@ import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.RecipeUtil;
 import de.siphalor.nbtcrafting.api.ServerRecipe;
 import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
-import de.siphalor.nbtcrafting.ingredient.IIngredient;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
@@ -55,12 +54,12 @@ public class BrewingRecipe extends IngredientRecipe<Inventory> implements Server
 		DefaultedList<ItemStack> stacks = DefaultedList.ofSize(4, ItemStack.EMPTY);
 		Map<String, Object> reference = new HashMap<>();
 		reference.put("ingredient", inv.getInvStack(3));
-		stacks.set(3, ((IIngredient)(Object) ingredient).getRecipeRemainder(inv.getInvStack(3), reference));
+		stacks.set(3, RecipeUtil.getRemainder(inv.getInvStack(3), ingredient, reference));
 
 		for (int i = 0; i < 3; i++) {
 			if (base.test(inv.getInvStack(i))) {
 				reference.put("base", inv.getInvStack(i));
-				stacks.set(i, ((IIngredient)(Object) base).getRecipeRemainder(inv.getInvStack(i), reference));
+				stacks.set(i, RecipeUtil.getRemainder(inv.getInvStack(i), base, reference));
 			}
 		}
 		return stacks;
