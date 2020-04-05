@@ -26,13 +26,17 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}"
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modCompile "net.fabricmc.fabric-api:fabric-api-base:+"
-	include "net.fabricmc.fabric-api:fabric-api-base:+"
-	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
-	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
+	modCompile "net.fabricmc.fabric-api:fabric-api-base:0.1.2+b7f9825d0c"
+	include "net.fabricmc.fabric-api:fabric-api-base:0.1.2+b7f9825d0c"
+	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:0.1.7+12515ed90c"
+	include "net.fabricmc.fabric-api:fabric-networking-v0:0.1.7+12515ed90c"
 
-	modImplementation "me.shedaniel:RoughlyEnoughItems:3.3.17"
-	modImplementation "com.github.Siphalor:ModsOfTheWorld:0999e66163"
+	modImplementation("me.shedaniel:RoughlyEnoughItems:3.3.17") {
+		transitive false
+	}
+	modImplementation("com.github.Siphalor:ModsOfTheWorld:0999e66163") {
+		transitive false
+	}
 }
 
 processResources {
