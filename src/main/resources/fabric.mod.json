@@ -3,7 +3,7 @@
 	"id": "nbtcrafting",
 	"version": "${version}",
 
-	"name": "NBT Crafting - I'm OK with REI Edition",
+	"name": "NBT Crafting",
 	"description": "Offers data tags in recipe, dollars, anvil and brewing recipes, dollars, ingredient nbt conditions and a lot of dollars to you. Do you like dollars - this is the thing!",
 
 	"authors": [

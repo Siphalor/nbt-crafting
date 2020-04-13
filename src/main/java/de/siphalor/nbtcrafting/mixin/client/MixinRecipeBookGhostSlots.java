@@ -1,5 +1,7 @@
 package de.siphalor.nbtcrafting.mixin.client;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookGhostSlots;
 import org.spongepowered.asm.mixin.Final;
@@ -13,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
 
+@Environment(EnvType.CLIENT)
 @Mixin(RecipeBookGhostSlots.class)
 public abstract class MixinRecipeBookGhostSlots {
 	

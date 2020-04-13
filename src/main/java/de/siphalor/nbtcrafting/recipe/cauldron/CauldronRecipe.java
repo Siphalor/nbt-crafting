@@ -51,14 +51,14 @@ public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, S
 
 	@Override
 	public boolean matches(TemporaryCauldronInventory inventory, World world) {
-		return inventory.getLevel() >= levels && input.test(inventory.getInvStack(0));
+		return inventory.getLevel() >= levels && input.test(inventory.getStack(0));
 	}
 
 	@Override
 	public ItemStack craft(TemporaryCauldronInventory inventory) {
 		inventory.setLevel(inventory.getLevel() - levels);
 
-		inventory.getInvStack(0).decrement(1);
+		inventory.getStack(0).decrement(1);
 
 		return RecipeUtil.applyDollars(output.copy(), outputDollars, buildDollarReference(inventory));
 	}
@@ -95,6 +95,6 @@ public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, S
 
 	@Override
 	public Map<String, Object> buildDollarReference(TemporaryCauldronInventory inv) {
-		return ImmutableMap.of("ingredient", NbtHelper.getTagOrEmpty(inv.getInvStack(0)));
+		return ImmutableMap.of("ingredient", NbtHelper.getTagOrEmpty(inv.getStack(0)));
 	}
 }

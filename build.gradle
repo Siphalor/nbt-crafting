@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.2.6-SNAPSHOT'
+	id 'fabric-loom' version '0.2.7-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -26,20 +26,23 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}"
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modCompile "net.fabricmc.fabric-api:fabric-api-base:+"
-	include "net.fabricmc.fabric-api:fabric-api-base:+"
-	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:+"
-	include "net.fabricmc.fabric-api:fabric-networking-v0:+"
+	modCompile "net.fabricmc.fabric-api:fabric-api-base:0.1.3+12a8474c88"
+	include "net.fabricmc.fabric-api:fabric-api-base:0.1.3+12a8474c88"
+	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:0.1.9+1a47cd7888"
+	include "net.fabricmc.fabric-api:fabric-networking-v0:0.1.9+1a47cd7888"
 
-	modImplementation "net.fabricmc.fabric-api:fabric-registry-sync-v0:+"
+	modImplementation "net.fabricmc.fabric-api:fabric-registry-sync-v0:0.2.9+372d827d88"
 
-	// Fricking annoys me because it doesn't pull the Cloth dependencies in
-	//modImplementation "me.shedaniel:RoughlyEnoughItems:+"
+	modImplementation "net.fabricmc.fabric-api:fabric-tag-extensions-v0:0.2.3+9cd8d66088"
 
-	modImplementation "com.github.Siphalor:ModsOfTheWorld:1.16-SNAPSHOT"
+	modImplementation "me.shedaniel:RoughlyEnoughItems:4.1.7-unstable"
+
+	modImplementation("com.github.Siphalor:ModsOfTheWorld:1.16-SNAPSHOT") {
+		exclude group: "net.fabricmc:fabric-api"
+	}
 }
 
-sourceSets.main.java.exclude("de/siphalor/nbtcrafting/compat/**/*REI*")
+//sourceSets.main.java.exclude("de/siphalor/nbtcrafting/compat/**/*REI*")
 
 processResources {
 	inputs.property "version", version

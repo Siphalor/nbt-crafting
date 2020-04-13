@@ -37,27 +37,27 @@ public class TemporaryCauldronInventory implements Inventory {
 	}
 
 	@Override
-	public int getInvSize() {
+	public int size () {
 		return 1;
 	}
 
 	@Override
-	public boolean isInvEmpty() {
+	public boolean isEmpty() {
         return stackInHand.isEmpty();
 	}
 
 	@Override
-	public ItemStack getInvStack(int var1) {
+	public ItemStack getStack(int var1) {
 		return stackInHand;
 	}
 
 	@Override
-	public ItemStack takeInvStack(int var1, int var2) {
+	public ItemStack removeStack(int var1, int var2) {
 		return stackInHand.split(var2);
 	}
 
 	@Override
-	public ItemStack removeInvStack(int var1) {
+	public ItemStack removeStack(int var1) {
 		playerEntity.setStackInHand(hand, ItemStack.EMPTY);
 		ItemStack result = stackInHand;
 		stackInHand = ItemStack.EMPTY;
@@ -65,7 +65,7 @@ public class TemporaryCauldronInventory implements Inventory {
 	}
 
 	@Override
-	public void setInvStack(int var1, ItemStack var2) {
+	public void setStack(int var1, ItemStack var2) {
 		playerEntity.setStackInHand(hand, var2);
 	}
 
@@ -75,12 +75,12 @@ public class TemporaryCauldronInventory implements Inventory {
 	}
 
 	@Override
-	public boolean canPlayerUseInv(PlayerEntity var1) {
+	public boolean canPlayerUse(PlayerEntity var1) {
 		return playerEntity == var1;
 	}
 
 	@Override
 	public void clear() {
-		removeInvStack(0);
+		removeStack(0);
 	}
 }

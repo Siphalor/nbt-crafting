@@ -31,9 +31,9 @@ public class RecipeUtil {
 			Map<String, Object> reference = new HashMap<>();
 			ingredient:
 			for (int j = 0; j < ingredients.size(); j++) {
-				for (int i = 0; i < inventory.getInvSize(); i++) {
-					if(ingredients.get(j).test(inventory.getInvStack(i))) {
-						reference.putIfAbsent("i" + j, NbtHelper.getTagOrEmpty(inventory.getInvStack(i)));
+				for (int i = 0; i < inventory.size(); i++) {
+					if(ingredients.get(j).test(inventory.getStack(i))) {
+						reference.putIfAbsent("i" + j, NbtHelper.getTagOrEmpty(inventory.getStack(i)));
 						continue ingredient;
 					}
 				}
@@ -64,7 +64,7 @@ public class RecipeUtil {
 
 		if(dollars.length > 0) {
 			Map<String, Object> reference = new HashMap<>();
-			reference.put(referenceName, NbtHelper.getTagOrEmpty(inventory.getInvStack(0)));
+			reference.put(referenceName, NbtHelper.getTagOrEmpty(inventory.getStack(0)));
 
 			return applyDollars(stack, dollars, reference);
 		}
@@ -85,12 +85,12 @@ public class RecipeUtil {
 
 	public static void putRemainders(DefaultedList<ItemStack> remainders, Inventory target, World world, BlockPos scatterPos, int offset) {
 		final int size = remainders.size();
-		if (size > target.getInvSize()) {
+		if (size > target.size()) {
 			throw new IllegalArgumentException("Size of given remainder list must be <= size of target inventory");
 		}
 		for (int i = 0; i < size; i++) {
-			if (target.getInvStack(offset + i).isEmpty()) {
-				target.setInvStack(offset + i, remainders.get(i));
+			if (target.getStack(offset + i).isEmpty()) {
+				target.setStack(offset + i, remainders.get(i));
 				remainders.set(i, ItemStack.EMPTY);
 			}
 		}

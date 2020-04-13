@@ -1,5 +1,7 @@
 package de.siphalor.nbtcrafting.mixin.client;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.recipebook.AnimatedResultButton;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
@@ -13,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
 
+@Environment(EnvType.CLIENT)
 @Mixin(AnimatedResultButton.class)
 public abstract class MixinAnimatedResultButton extends AbstractButtonWidget {
 

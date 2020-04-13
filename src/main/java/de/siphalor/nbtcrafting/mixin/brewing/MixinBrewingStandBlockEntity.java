@@ -9,7 +9,6 @@ import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -20,9 +19,6 @@ import java.util.Optional;
 @SuppressWarnings("ConstantConditions")
 @Mixin(BrewingStandBlockEntity.class)
 public abstract class MixinBrewingStandBlockEntity extends LockableContainerBlockEntity {
-	@Shadow public abstract void setInvStack(int slot, ItemStack stack);
-
-	@Shadow public abstract ItemStack getInvStack(int slot);
 
 	protected MixinBrewingStandBlockEntity(BlockEntityType<?> blockEntityType_1) {
 		super(blockEntityType_1);
@@ -44,10 +40,10 @@ public abstract class MixinBrewingStandBlockEntity extends LockableContainerBloc
 			DefaultedList<ItemStack> remainingStacks = recipe.get().getRemainingStacks(inv);
 			ItemStack[] results = recipe.get().craftAll(inv);
 
-			getInvStack(3).decrement(1);
+			getStack(3).decrement(1);
 			for (int i = 0; i < 3; i++) {
 				if(results[i] != null) {
-					setInvStack(i, results[i]);
+					setStack(i, results[i]);
 				}
 			}
 
@@ -57,9 +53,9 @@ public abstract class MixinBrewingStandBlockEntity extends LockableContainerBloc
 		}
 	}
 
-	@Inject(method = "isValidInvStack", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "isValid", at = @At("HEAD"), cancellable = true)
 	public void isValidInvStack(int slotId, ItemStack stack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		if (slotId < 4 && getInvStack(slotId).isEmpty())
+		if (slotId < 4 && getStack(slotId).isEmpty())
 			callbackInfoReturnable.setReturnValue(true);
 	}
 }

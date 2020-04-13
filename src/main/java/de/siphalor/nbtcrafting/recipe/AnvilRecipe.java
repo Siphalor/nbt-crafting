@@ -7,8 +7,6 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 
@@ -17,22 +15,12 @@ public class AnvilRecipe extends IngredientRecipe<Inventory> implements ServerRe
 
 	public static final IngredientRecipe.Serializer<AnvilRecipe> SERIALIZER = new IngredientRecipe.Serializer<>(AnvilRecipe::new);
 
-	public AnvilRecipe(Identifier identifier, Ingredient base, Ingredient ingredient, ItemStack result) {
-		super(identifier, base, ingredient, result);
+	public AnvilRecipe(Identifier identifier, Ingredient base, Ingredient ingredient, ItemStack result, Serializer<AnvilRecipe> serializer) {
+		super(identifier, base, ingredient, result, NbtCrafting.ANVIL_RECIPE_TYPE, SERIALIZER);
 	}
 
 	public int getLevels() {
 		return levels;
-	}
-
-	@Override
-	public RecipeType<?> getType() {
-		return NbtCrafting.ANVIL_RECIPE_TYPE;
-	}
-
-	@Override
-	public RecipeSerializer<?> getSerializer() {
-		return SERIALIZER;
 	}
 
 	@Override

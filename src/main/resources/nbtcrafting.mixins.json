@@ -26,7 +26,8 @@
 		"cutting.MixinCuttingRecipeSerializer",
 		"cutting.MixinStonecutterContainer",
 		"network.MixinServerPlayNetworkHandler",
-		"network.MixinSynchronizeRecipesS2CPacket"
+		"network.MixinSynchronizeRecipesS2CPacket",
+		"smithing.MixinSmithingScreenHandler"
 	],
 	"client": [
 		"client.AnvilScreenAccessor",

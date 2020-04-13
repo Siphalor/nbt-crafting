@@ -27,7 +27,7 @@ public interface MixinRecipe {
 	 */
 	@Overwrite
 	default DefaultedList<ItemStack> getRemainingStacks(Inventory inventory) {
-		final DefaultedList<ItemStack> stackList = DefaultedList.ofSize(inventory.getInvSize(), ItemStack.EMPTY);
+		final DefaultedList<ItemStack> stackList = DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
 		Map<String, Object> reference;
         Collection<Ingredient> ingredients;
         if (this instanceof NBTCRecipe) {
@@ -40,14 +40,14 @@ public interface MixinRecipe {
         	reference = new HashMap<>();
 	        for (int j = 0; j < ingredientList.size(); j++) {
 		        for (int i = 0; i < stackList.size(); i++) {
-			        if (ingredientList.get(j).test(inventory.getInvStack(i)))
-				        reference.putIfAbsent("i" + j, NbtHelper.getTagOrEmpty(inventory.getInvStack(i)));
+			        if (ingredientList.get(j).test(inventory.getStack(i)))
+				        reference.putIfAbsent("i" + j, NbtHelper.getTagOrEmpty(inventory.getStack(i)));
 		        }
 	        }
         }
 		main:
 		for(int i = 0; i < stackList.size(); ++i) {
-			ItemStack itemStack = inventory.getInvStack(i);
+			ItemStack itemStack = inventory.getStack(i);
 			for(Ingredient ingredient : ingredients) {
 				if(ingredient.test(itemStack)) {
 					//noinspection ConstantConditions
