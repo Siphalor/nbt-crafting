@@ -32,6 +32,9 @@ public final class DollarParser {
 			ImmutableList.of(
 					new SumDollarOperator.Deserializer(),
 					new DifferenceDollarOperator.Deserializer()
+			),
+			ImmutableList.of(
+					new ConditionDollarOperator.Deserializer()
 			)
 	);
 	private final Stack<Integer> stopStack = new Stack<>();
@@ -128,9 +131,8 @@ public final class DollarParser {
 
 			priority = 0;
 			for(Collection<DollarPart.Deserializer> deserializers : DESERIALIZERS) {
-				if(priority > maxPriority)
+				if(++priority > maxPriority)
 					break;
-				priority++;
 				for(DollarPart.Deserializer deserializer : deserializers) {
 					if(deserializer.matches(peek, this)) {
 						dollarPart = deserializer.parse(this, dollarPart, priority);
@@ -138,6 +140,8 @@ public final class DollarParser {
 					}
 				}
 			}
+			if (maxPriority < DESERIALIZERS.size())
+				return dollarPart;
 			throw new DollarDeserializationException("Unable to resolve token in dollar expression: \"" + String.valueOf(Character.toChars(peek)) + "\"");
 		}
 	}
@@ -187,7 +191,7 @@ public final class DollarParser {
 	}
 
 	public static void main(String[] args) {
-		parse("(1./2)#a+(0)+':'+(1/2)#i").flatMap(dollarPart -> {
+		parse("1-2.0 ? 4.5#B : (5.0 / 2.0)#i").flatMap(dollarPart -> {
 			try {
 				return Optional.of(dollarPart.evaluate(null));
 			} catch (DollarException e) {
