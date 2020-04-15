@@ -2,7 +2,7 @@ package de.siphalor.nbtcrafting.dollar;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.nbt.NbtException;
-import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.AbstractNumberTag;
@@ -21,12 +21,12 @@ public class Dollar {
 	}
 
 	public void apply(ItemStack stack, Map<String, Object> references) throws DollarException {
-		Tag value = NbtHelper.asTag(expression.evaluate(references));
+		Tag value = NbtUtil.asTag(expression.evaluate(references));
 		if(path.isEmpty()) {
 			if (!(value instanceof CompoundTag)) {
 				throw new DollarEvaluationException("Couldn't set stacks main tag as given dollar expression evaluates to non-object value.");
 			} else {
-				NbtHelper.mergeInto(stack.getOrCreateTag(), (CompoundTag) value, false);
+				NbtUtil.mergeInto(stack.getOrCreateTag(), (CompoundTag) value, false);
 			}
 		} else if (path.equals(NbtCrafting.MOD_ID + ":count")) {
 			if (!(value instanceof AbstractNumberTag)) {
@@ -36,9 +36,9 @@ public class Dollar {
 			}
 		} else {
 			CompoundTag compoundTag = stack.getOrCreateTag();
-			String[] pathParts = NbtHelper.splitPath(path);
+			String[] pathParts = NbtUtil.splitPath(path);
 			try {
-				CompoundTag parent = NbtHelper.getTagOrCreate(compoundTag, ArrayUtils.subarray(pathParts, 0, pathParts.length - 1));
+				CompoundTag parent = NbtUtil.getTagOrCreate(compoundTag, ArrayUtils.subarray(pathParts, 0, pathParts.length - 1));
 				if (value != null)
 					parent.put(pathParts[pathParts.length - 1], value);
 			} catch (NbtException e) {

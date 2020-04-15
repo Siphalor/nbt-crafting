@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.mixin.cutting;
 
-import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import net.minecraft.container.StonecutterContainer;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -25,7 +25,7 @@ public class MixinStonecutterContainer {
 			int comp = s1.getTranslationKey().compareTo(s2.getTranslationKey());
 			if (comp != 0)
 				return comp;
-			return NbtHelper.getTagOrEmpty(s1).toString().compareTo(NbtHelper.getTagOrEmpty(s2).toString());
+			return NbtUtil.getTagOrEmpty(s1).toString().compareTo(NbtUtil.getTagOrEmpty(s2).toString());
 		});
 	}
 }

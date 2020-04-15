@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.mixin;
 
-import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
 import net.minecraft.inventory.Inventory;
@@ -41,7 +41,7 @@ public interface MixinRecipe {
 	        for (int j = 0; j < ingredientList.size(); j++) {
 		        for (int i = 0; i < stackList.size(); i++) {
 			        if (ingredientList.get(j).test(inventory.getInvStack(i)))
-				        reference.putIfAbsent("i" + j, NbtHelper.getTagOrEmpty(inventory.getInvStack(i)));
+				        reference.putIfAbsent("i" + j, NbtUtil.getTagOrEmpty(inventory.getInvStack(i)));
 		        }
 	        }
         }

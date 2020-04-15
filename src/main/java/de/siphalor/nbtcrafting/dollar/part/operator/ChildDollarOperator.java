@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.dollar.part.operator;
 
-import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
@@ -17,12 +17,12 @@ public class ChildDollarOperator extends BinaryDollarOperator {
 		if(first instanceof CompoundTag) {
 			String key = second.toString();
 			if(((CompoundTag) first).contains(key)) {
-				return NbtHelper.toDollarValue(((CompoundTag) first).get(key));
+				return NbtUtil.toDollarValue(((CompoundTag) first).get(key));
 			}
 		} else if(first instanceof ListTag && second instanceof Number) {
 			int index = ((Number) second).intValue();
 			if(index < ((ListTag) first).size()) {
-				return NbtHelper.toDollarValue(((ListTag) first).get(index));
+				return NbtUtil.toDollarValue(((ListTag) first).get(index));
 			}
 		}
 		return null;

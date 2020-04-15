@@ -3,7 +3,7 @@ package de.siphalor.nbtcrafting.recipe;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
 import de.siphalor.nbtcrafting.api.RecipeUtil;
-import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
@@ -78,8 +78,8 @@ public abstract class IngredientRecipe<I extends Inventory> implements NBTCRecip
 
 	public Map<String, Object> buildDollarReference(I inv) {
 		return ImmutableMap.of(
-				"base", NbtHelper.getTagOrEmpty(inv.getInvStack(0)),
-				"ingredient", NbtHelper.getTagOrEmpty(inv.getInvStack(1))
+				"base", NbtUtil.getTagOrEmpty(inv.getInvStack(0)),
+				"ingredient", NbtUtil.getTagOrEmpty(inv.getInvStack(1))
 		);
 	}
 

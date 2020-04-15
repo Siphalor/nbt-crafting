@@ -3,6 +3,7 @@ package de.siphalor.nbtcrafting.dollar.part.operator;
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.dollar.DollarUtil;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
 
@@ -55,9 +56,12 @@ public class CastDollarOperator implements DollarPart {
 				if(value instanceof Number)
 					return ((Number) value).longValue();
 				return 0L;
+			case 'B':
+				return DollarUtil.asBoolean(value);
 			case '"':
 			case '\'':
 			case 'a':
+			case 'S':
 				return value.toString();
 			default:
 				return null;

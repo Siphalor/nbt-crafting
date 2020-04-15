@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.types.JsonOps;
-import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import net.minecraft.datafixer.NbtOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -31,9 +31,9 @@ public class IngredientEntryCondition {
 		}
 		CompoundTag tag = stack.getTag();
 		//noinspection ConstantConditions
-		if(!deniedElements.isEmpty() && NbtHelper.compoundsOverlap(tag, deniedElements))
+		if(!deniedElements.isEmpty() && NbtUtil.compoundsOverlap(tag, deniedElements))
 			return false;
-		return requiredElements.isEmpty() || NbtHelper.isCompoundContained(requiredElements, tag);
+		return requiredElements.isEmpty() || NbtUtil.isCompoundContained(requiredElements, tag);
 	}
 	
 	public void addToJson(JsonObject json) {

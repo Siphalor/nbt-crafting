@@ -1,6 +1,6 @@
 package de.siphalor.nbtcrafting.api;
 
-import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
@@ -33,7 +33,7 @@ public class RecipeUtil {
 			for (int j = 0; j < ingredients.size(); j++) {
 				for (int i = 0; i < inventory.getInvSize(); i++) {
 					if(ingredients.get(j).test(inventory.getInvStack(i))) {
-						reference.putIfAbsent("i" + j, NbtHelper.getTagOrEmpty(inventory.getInvStack(i)));
+						reference.putIfAbsent("i" + j, NbtUtil.getTagOrEmpty(inventory.getInvStack(i)));
 						continue ingredient;
 					}
 				}
@@ -64,7 +64,7 @@ public class RecipeUtil {
 
 		if(dollars.length > 0) {
 			Map<String, Object> reference = new HashMap<>();
-			reference.put(referenceName, NbtHelper.getTagOrEmpty(inventory.getInvStack(0)));
+			reference.put(referenceName, NbtUtil.getTagOrEmpty(inventory.getInvStack(0)));
 
 			return applyDollars(stack, dollars, reference);
 		}

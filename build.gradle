@@ -32,7 +32,7 @@ dependencies {
 	include "net.fabricmc.fabric-api:fabric-networking-v0:0.1.7+12515ed90c"
 
 	modImplementation("me.shedaniel:RoughlyEnoughItems:3.3.17") {
-		transitive false
+
 	}
 	modImplementation("com.github.Siphalor:ModsOfTheWorld:0999e66163") {
 		transitive false

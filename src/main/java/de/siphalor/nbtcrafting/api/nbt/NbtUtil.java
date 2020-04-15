@@ -6,7 +6,7 @@ import net.minecraft.nbt.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
-public class NbtHelper {
+public class NbtUtil {
 	public static final CompoundTag EMPTY_COMPOUND = new CompoundTag();
 
 	public static CompoundTag getTagOrEmpty(ItemStack itemStack) {
@@ -141,7 +141,7 @@ public class NbtHelper {
 		} else if(tag instanceof StringTag) {
 			return tag.asString();
 		} else if(tag instanceof ListTag) {
-			return ((ListTag) tag).stream().map(NbtHelper::asString).collect(Collectors.joining(", "));
+			return ((ListTag) tag).stream().map(NbtUtil::asString).collect(Collectors.joining(", "));
 		} else {
 			return tag.toString();
 		}

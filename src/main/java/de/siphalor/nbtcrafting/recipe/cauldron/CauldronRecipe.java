@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.RecipeUtil;
 import de.siphalor.nbtcrafting.api.ServerRecipe;
-import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
@@ -95,6 +95,6 @@ public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, S
 
 	@Override
 	public Map<String, Object> buildDollarReference(TemporaryCauldronInventory inv) {
-		return ImmutableMap.of("ingredient", NbtHelper.getTagOrEmpty(inv.getInvStack(0)));
+		return ImmutableMap.of("ingredient", NbtUtil.getTagOrEmpty(inv.getInvStack(0)));
 	}
 }

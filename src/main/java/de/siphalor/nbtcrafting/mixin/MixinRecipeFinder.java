@@ -3,7 +3,7 @@ package de.siphalor.nbtcrafting.mixin;
 import com.google.common.collect.HashBiMap;
 import com.mojang.datafixers.util.Pair;
 import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.api.nbt.NbtHelper;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.util.duck.IItemStack;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -31,7 +31,7 @@ public abstract class MixinRecipeFinder {
 
 	@Unique
 	private static Pair<Integer, CompoundTag> getStackPair(ItemStack stack) {
-		return new Pair<Integer, CompoundTag>(Registry.ITEM.getRawId(stack.getItem()), NbtHelper.getTagOrEmpty(stack));
+		return new Pair<Integer, CompoundTag>(Registry.ITEM.getRawId(stack.getItem()), NbtUtil.getTagOrEmpty(stack));
 	}
 
 	@Inject(method = "findRecipe(Lnet/minecraft/recipe/Recipe;Lit/unimi/dsi/fastutil/ints/IntList;I)Z", at = @At("HEAD"))
