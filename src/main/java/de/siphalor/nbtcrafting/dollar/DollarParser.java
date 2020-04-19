@@ -1,11 +1,13 @@
 package de.siphalor.nbtcrafting.dollar;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import de.siphalor.nbtcrafting.api.nbt.NbtIterator;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.operator.*;
 import de.siphalor.nbtcrafting.dollar.part.unary.*;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -190,10 +192,18 @@ public final class DollarParser {
 		return stringBuilder.toString();
 	}
 
+	// Testing only
 	public static void main(String[] args) {
-		parse("1-2.0 ? 4.5#B : (5.0 / 2.0)#i").flatMap(dollarPart -> {
+		parse("a + b").flatMap(dollarPart -> {
 			try {
-				return Optional.of(dollarPart.evaluate(null));
+				ListTag a = new ListTag();
+				a.add(new ListTag());
+				ListTag b = new ListTag();
+				b.add(new ListTag());
+				return Optional.of(dollarPart.evaluate(ImmutableMap.of(
+						"a", a,
+						"b", b
+				)));
 			} catch (DollarException e) {
 				e.printStackTrace();
 				return Optional.empty();
