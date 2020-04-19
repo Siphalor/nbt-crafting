@@ -19,5 +19,5 @@ public abstract class BinaryDollarOperator implements DollarPart {
 		return apply(first.evaluate(reference), second.evaluate(reference));
 	}
 
-	public abstract Object apply(Object first, Object second);
+	public abstract Object apply(Object first, Object second) throws DollarEvaluationException;
 }
