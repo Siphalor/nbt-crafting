@@ -134,7 +134,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	@Unique
 	private static Ingredient ofAdvancedEntries(Stream<? extends IngredientEntry> entries) {
 		if(entries == null)
-			System.out.println("ERROR");
+			NbtCrafting.logError("Internal error: can't construct ingredient from null entry stream!");
 		try {
 			Ingredient ingredient;
 			//noinspection ConstantConditions

@@ -30,6 +30,7 @@ dependencies {
 	include "net.fabricmc.fabric-api:fabric-api-base:0.1.2+b7f9825d0c"
 	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:0.1.7+12515ed90c"
 	include "net.fabricmc.fabric-api:fabric-networking-v0:0.1.7+12515ed90c"
+	modImplementation "net.fabricmc.fabric-api:fabric-registry-sync-v0:0.2.6+f3d8141b0c"
 
 	modImplementation("me.shedaniel:RoughlyEnoughItems:3.3.17") {
 

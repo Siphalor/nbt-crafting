@@ -19,9 +19,16 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class NbtCrafting implements ModInitializer {
 	public static final String MOD_ID = "nbtcrafting";
+	public static final String MOD_NAME = "Nbt Crafting";
+
+	private static final String LOG_PREFIX = "[" + MOD_NAME + "] ";
+	private static final Logger LOGGER = LogManager.getLogger();
+
 	public static final Identifier PRESENCE_PACKET_ID = new Identifier(MOD_ID, "present");
 	public static final Identifier UPDATE_ANVIL_TEXT_S2C_PACKET_ID = new Identifier(MOD_ID, "update_anvil_text");
 
@@ -41,6 +48,18 @@ public class NbtCrafting implements ModInitializer {
 	
 	public static RecipeFinder lastRecipeFinder;
 	public static ServerPlayerEntity lastServerPlayerEntity;
+
+	public static void logInfo(String message) {
+		LOGGER.info(LOG_PREFIX + message);
+	}
+
+	public static void logWarn(String message) {
+		LOGGER.warn(LOG_PREFIX + message);
+	}
+
+	public static void logError(String message) {
+		LOGGER.error(LOG_PREFIX + message);
+	}
 
 	@SuppressWarnings("unused")
 	public static boolean hasLastReadNbt() {

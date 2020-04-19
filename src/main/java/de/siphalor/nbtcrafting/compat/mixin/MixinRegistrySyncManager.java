@@ -1,5 +1,6 @@
 package de.siphalor.nbtcrafting.compat.mixin;
 
+import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.RecipeTypeHelper;
 import net.fabricmc.fabric.impl.registry.sync.RegistrySyncManager;
 import net.minecraft.nbt.CompoundTag;
@@ -16,8 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.Iterator;
 
 @Mixin(
-		value = RegistrySyncManager.class,
-		remap = false
+		value = RegistrySyncManager.class
 )
 public class MixinRegistrySyncManager {
 	private static boolean isRecipeTypeRegistry = false;
@@ -46,6 +46,7 @@ public class MixinRegistrySyncManager {
 	)
 	private static Identifier cancelSync(Identifier oldId) {
 		if (isRecipeTypeRegistry && RecipeTypeHelper.getSyncBlacklist().contains(oldId)) {
+			NbtCrafting.logInfo("Block " + oldId + " from being synced");
 			return null;
 		}
 		return oldId;
