@@ -26,16 +26,16 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}"
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modCompile "net.fabricmc.fabric-api:fabric-api-base:0.1.3+12a8474c88"
+	modCompile "net.fabricmc.fabric-api:fabric-api-base:0.1.3+12a8474ce8"
 	include "net.fabricmc.fabric-api:fabric-api-base:0.1.3+12a8474c88"
-	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:0.1.9+1a47cd7888"
-	include "net.fabricmc.fabric-api:fabric-networking-v0:0.1.9+1a47cd7888"
+	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:0.1.9+1a47cd78e8"
+	include "net.fabricmc.fabric-api:fabric-networking-v0:0.1.9+1a47cd78e8"
 
-	modImplementation "net.fabricmc.fabric-api:fabric-registry-sync-v0:0.2.9+372d827d88"
+	modImplementation "net.fabricmc.fabric-api:fabric-registry-sync-v0:0.3.1+686e6e57e8"
 
-	modImplementation "net.fabricmc.fabric-api:fabric-tag-extensions-v0:0.2.3+9cd8d66088"
+	modImplementation "net.fabricmc.fabric-api:fabric-tag-extensions-v0:0.2.4+2fd224cae8"
 
-	modImplementation "me.shedaniel:RoughlyEnoughItems:4.1.7-unstable"
+	modCompileOnly "me.shedaniel:RoughlyEnoughItems:4+"
 
 	modImplementation("com.github.Siphalor:ModsOfTheWorld:1.16-SNAPSHOT") {
 		exclude group: "net.fabricmc:fabric-api"

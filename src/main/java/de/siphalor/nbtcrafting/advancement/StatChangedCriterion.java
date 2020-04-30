@@ -1,12 +1,13 @@
 package de.siphalor.nbtcrafting.advancement;
 
-import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import de.siphalor.nbtcrafting.NbtCrafting;
 import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
+import net.minecraft.class_5257;
 import net.minecraft.predicate.NumberRange;
+import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatType;
@@ -26,19 +27,18 @@ public class StatChangedCriterion extends AbstractCriterion<StatChangedCriterion
 		StatType<T> statType = stat.getType();
 		T object = stat.getValue();
 
-		test(player.getAdvancementTracker(), conditions -> conditions.match(statType, object, value));
+		test(player, conditions -> conditions.match(statType, object, value));
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
-	public Conditions conditionsFromJson(JsonObject obj, JsonDeserializationContext context) {
-		Identifier statId = new Identifier(JsonHelper.getString(obj, "stat"));
+	protected Conditions<?> method_27854(JsonObject jsonObject, EntityPredicate.class_5258 arg, class_5257 arg2) {
+		Identifier statId = new Identifier(JsonHelper.getString(jsonObject, "stat"));
 		StatType<?> statType = Registry.STAT_TYPE.getOrEmpty(statId).orElseThrow(() -> new JsonSyntaxException("Unknown stat: " + statId));
 
-		Identifier id = new Identifier(JsonHelper.getString(obj, "id"));
+		Identifier id = new Identifier(JsonHelper.getString(jsonObject, "id"));
 		Object object = statType.getRegistry().get(id);
 
-		return new Conditions(statType, object, NumberRange.IntRange.fromJson(obj.get("range")));
+		return new Conditions(statType, object, NumberRange.IntRange.fromJson(jsonObject.get("range")), arg);
 	}
 
 	static class Conditions<T> extends AbstractCriterionConditions {
@@ -46,8 +46,8 @@ public class StatChangedCriterion extends AbstractCriterion<StatChangedCriterion
 		private T object;
 		private NumberRange.IntRange intRange;
 
-		public Conditions(StatType<T> statType, T object, NumberRange.IntRange intRange) {
-			super(ID);
+		public Conditions(StatType<T> statType, T object, NumberRange.IntRange intRange, EntityPredicate.class_5258 playerPredicate) {
+			super(ID, playerPredicate);
 			this.statType = statType;
 			this.object = object;
 			this.intRange = intRange;

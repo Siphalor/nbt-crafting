@@ -5,7 +5,9 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.recipebook.AnimatedResultButton;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
@@ -18,8 +20,7 @@ import java.util.List;
 @Environment(EnvType.CLIENT)
 @Mixin(AnimatedResultButton.class)
 public abstract class MixinAnimatedResultButton extends AbstractButtonWidget {
-
-	public MixinAnimatedResultButton(int x, int y, int width, int height, String message) {
+	public MixinAnimatedResultButton(int x, int y, int width, int height, Text message) {
 		super(x, y, width, height, message);
 	}
 
@@ -28,7 +29,7 @@ public abstract class MixinAnimatedResultButton extends AbstractButtonWidget {
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderGuiItem(Lnet/minecraft/item/ItemStack;II)V", shift = Shift.AFTER),
 		locals = LocalCapture.CAPTURE_FAILSOFT
 	)
-	private void drawButton(int mouseX, int mouseY, float delta, CallbackInfo ci, MinecraftClient minecraftClient, int int_3, int int_4, boolean boolean_1, @SuppressWarnings("rawtypes") List list_1, ItemStack stack, int int_5) {
+	private void drawButton(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci, MinecraftClient minecraftClient, int int_3, int int_4, boolean boolean_1, @SuppressWarnings("rawtypes") List list_1, ItemStack stack, int int_5) {
 		minecraftClient.getItemRenderer().renderGuiItemOverlay(minecraftClient.textRenderer, stack, this.x + int_5, this.y + int_5);
 	}
 }
