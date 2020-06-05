@@ -5,8 +5,8 @@ import com.google.gson.JsonSyntaxException;
 import de.siphalor.nbtcrafting.NbtCrafting;
 import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
-import net.minecraft.class_5257;
 import net.minecraft.predicate.NumberRange;
+import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stat;
@@ -31,22 +31,22 @@ public class StatChangedCriterion extends AbstractCriterion<StatChangedCriterion
 	}
 
 	@Override
-	protected Conditions<?> method_27854(JsonObject jsonObject, EntityPredicate.class_5258 arg, class_5257 arg2) {
-		Identifier statId = new Identifier(JsonHelper.getString(jsonObject, "stat"));
+	protected Conditions<?> conditionsFromJson(JsonObject obj, EntityPredicate.Extended playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
+		Identifier statId = new Identifier(JsonHelper.getString(obj, "stat"));
 		StatType<?> statType = Registry.STAT_TYPE.getOrEmpty(statId).orElseThrow(() -> new JsonSyntaxException("Unknown stat: " + statId));
 
-		Identifier id = new Identifier(JsonHelper.getString(jsonObject, "id"));
+		Identifier id = new Identifier(JsonHelper.getString(obj, "id"));
 		Object object = statType.getRegistry().get(id);
 
-		return new Conditions(statType, object, NumberRange.IntRange.fromJson(jsonObject.get("range")), arg);
+		return new Conditions(statType, object, NumberRange.IntRange.fromJson(obj.get("range")), playerPredicate);
 	}
 
 	static class Conditions<T> extends AbstractCriterionConditions {
-		private StatType<T> statType;
-		private T object;
-		private NumberRange.IntRange intRange;
+		private final StatType<T> statType;
+		private final T object;
+		private final NumberRange.IntRange intRange;
 
-		public Conditions(StatType<T> statType, T object, NumberRange.IntRange intRange, EntityPredicate.class_5258 playerPredicate) {
+		public Conditions(StatType<T> statType, T object, NumberRange.IntRange intRange, EntityPredicate.Extended playerPredicate) {
 			super(ID, playerPredicate);
 			this.statType = statType;
 			this.object = object;

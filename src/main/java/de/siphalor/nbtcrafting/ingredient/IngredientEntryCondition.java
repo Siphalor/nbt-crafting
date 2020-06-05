@@ -2,8 +2,8 @@ package de.siphalor.nbtcrafting.ingredient;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mojang.datafixers.Dynamic;
-import com.mojang.datafixers.types.JsonOps;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.JsonOps;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import net.minecraft.datafixer.NbtOps;
 import net.minecraft.item.ItemStack;

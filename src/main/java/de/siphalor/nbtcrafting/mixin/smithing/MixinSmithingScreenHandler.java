@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -63,14 +62,6 @@ public abstract class MixinSmithingScreenHandler extends ForgingScreenHandler {
 	protected void onTakeOutput(PlayerEntity playerEntity, ItemStack output, CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
 		Optional<IngredientRecipe<Inventory>> match = player.world.getRecipeManager().getFirstMatch(NbtCrafting.SMITHING_RECIPE_TYPE, input, player.world);
 		remainders = match.map(inventoryIngredientRecipe -> inventoryIngredientRecipe.getRemainingStacks(input)).orElse(null);
-	}
-
-	@Redirect(
-			method = "onTakeOutput",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/Inventory;setStack(ILnet/minecraft/item/ItemStack;)V")
-	)
-	protected void decrementBaseStack(Inventory inputInventory, int slot, ItemStack empty) {
-		input.getStack(0).decrement(1);
 	}
 
 	@Inject(
