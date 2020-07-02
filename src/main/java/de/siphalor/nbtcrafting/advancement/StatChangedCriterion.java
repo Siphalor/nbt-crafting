@@ -42,9 +42,9 @@ public class StatChangedCriterion extends AbstractCriterion<StatChangedCriterion
 	}
 
 	static class Conditions<T> extends AbstractCriterionConditions {
-		private StatType<T> statType;
-		private T object;
-		private NumberRange.IntRange intRange;
+		private final StatType<T> statType;
+		private final T object;
+		private final NumberRange.IntRange intRange;
 
 		public Conditions(StatType<T> statType, T object, NumberRange.IntRange intRange) {
 			super(ID);

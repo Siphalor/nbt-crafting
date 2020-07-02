@@ -86,17 +86,11 @@ public abstract class IngredientRecipe<I extends Inventory> implements NBTCRecip
 	public void readCustomData(JsonObject json) {
 	}
 
-	;
-
 	public void readCustomData(PacketByteBuf buf) {
 	}
 
-	;
-
 	public void writeCustomData(PacketByteBuf buf) {
 	}
-
-	;
 
 	public interface Factory<R extends IngredientRecipe<?>> {
 		R create(Identifier id, Ingredient base, Ingredient ingredient, ItemStack result);
