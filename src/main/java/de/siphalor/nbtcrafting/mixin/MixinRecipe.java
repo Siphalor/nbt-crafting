@@ -23,36 +23,36 @@ public interface MixinRecipe {
 
 	/**
 	 * @reason Returns the recipe remainders. Sadly has to overwrite since this is an interface.
-     * @author Siphalor
+	 * @author Siphalor
 	 */
 	@Overwrite
 	default DefaultedList<ItemStack> getRemainingStacks(Inventory inventory) {
 		final DefaultedList<ItemStack> stackList = DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
 		Map<String, Object> reference;
-        Collection<Ingredient> ingredients;
-        if (this instanceof NBTCRecipe) {
-	        ingredients = ((NBTCRecipe<?>) this).getIngredients();
-	        // noinspection unchecked
-	        reference = ((NBTCRecipe<Inventory>) this).buildDollarReference(inventory);
-        } else {
-        	DefaultedList<Ingredient> ingredientList = getPreviewInputs();
-        	ingredients = ingredientList;
-        	reference = new HashMap<>();
-	        for (int j = 0; j < ingredientList.size(); j++) {
-		        for (int i = 0; i < stackList.size(); i++) {
-			        if (ingredientList.get(j).test(inventory.getStack(i)))
-				        reference.putIfAbsent("i" + j, NbtUtil.getTagOrEmpty(inventory.getStack(i)));
-		        }
-	        }
-        }
+		Collection<Ingredient> ingredients;
+		if (this instanceof NBTCRecipe) {
+			ingredients = ((NBTCRecipe<?>) this).getIngredients();
+			// noinspection unchecked
+			reference = ((NBTCRecipe<Inventory>) this).buildDollarReference(inventory);
+		} else {
+			DefaultedList<Ingredient> ingredientList = getPreviewInputs();
+			ingredients = ingredientList;
+			reference = new HashMap<>();
+			for (int j = 0; j < ingredientList.size(); j++) {
+				for (int i = 0; i < stackList.size(); i++) {
+					if (ingredientList.get(j).test(inventory.getStack(i)))
+						reference.putIfAbsent("i" + j, NbtUtil.getTagOrEmpty(inventory.getStack(i)));
+				}
+			}
+		}
 		main:
-		for(int i = 0; i < stackList.size(); ++i) {
+		for (int i = 0; i < stackList.size(); ++i) {
 			ItemStack itemStack = inventory.getStack(i);
-			for(Ingredient ingredient : ingredients) {
-				if(ingredient.test(itemStack)) {
+			for (Ingredient ingredient : ingredients) {
+				if (ingredient.test(itemStack)) {
 					//noinspection ConstantConditions
-					ItemStack remainder = ((IIngredient)(Object) ingredient).getRecipeRemainder(itemStack, reference);
-					if(remainder != null) {
+					ItemStack remainder = ((IIngredient) (Object) ingredient).getRecipeRemainder(itemStack, reference);
+					if (remainder != null) {
 						stackList.set(i, remainder);
 						continue main;
 					}

@@ -18,7 +18,7 @@ public abstract class IngredientEntry {
 		this.remainder = null;
 		this.remainderDollars = new Dollar[0];
 	}
-	
+
 	public abstract boolean matches(ItemStack stack);
 
 	public abstract JsonElement toJson();
@@ -32,14 +32,14 @@ public abstract class IngredientEntry {
 	public abstract void write(PacketByteBuf buf);
 
 	public ItemStack getRecipeRemainder(ItemStack stack, Map<String, Object> reference) {
-		if(remainder == null)
+		if (remainder == null)
 			return ItemStack.EMPTY;
-        return RecipeUtil.applyDollars(remainder.copy(), remainderDollars, reference);
+		return RecipeUtil.applyDollars(remainder.copy(), remainderDollars, reference);
 	}
 
 	public void setRecipeRemainder(ItemStack stack) {
 		this.remainder = stack;
-		if(stack.hasTag())
+		if (stack.hasTag())
 			this.remainderDollars = DollarParser.extractDollars(stack.getTag(), true);
 	}
 }

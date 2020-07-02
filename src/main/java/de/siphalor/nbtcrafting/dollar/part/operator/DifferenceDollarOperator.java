@@ -14,7 +14,7 @@ public class DifferenceDollarOperator extends BinaryDollarOperator {
 
 	public static DollarPart of(DollarPart first, DollarPart second) throws DollarDeserializationException {
 		DollarPart instance = new DifferenceDollarOperator(first, second);
-		if(first.isConstant() && second.isConstant()) {
+		if (first.isConstant() && second.isConstant()) {
 			try {
 				return ValueDollarPart.of(instance.evaluate(null));
 			} catch (DollarEvaluationException e) {
@@ -26,12 +26,11 @@ public class DifferenceDollarOperator extends BinaryDollarOperator {
 
 	@Override
 	public Object apply(Object first, Object second) {
-		if((first instanceof Number || first == null) && (second instanceof Number || second == null))
+		if ((first instanceof Number || first == null) && (second instanceof Number || second == null))
 			return NumberUtil.difference((Number) first, (Number) second);
-		else
-			if(first == null || second == null)
-				return first;
-			return first.toString().replace(second.toString(), "");
+		else if (first == null || second == null)
+			return first;
+		return first.toString().replace(second.toString(), "");
 	}
 
 	public static class Deserializer implements DollarPart.Deserializer {

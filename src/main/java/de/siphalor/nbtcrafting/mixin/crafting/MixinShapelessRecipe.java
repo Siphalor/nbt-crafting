@@ -15,13 +15,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ShapelessRecipe.class)
 public class MixinShapelessRecipe {
-	@Shadow @Final private ItemStack output;
+	@Shadow
+	@Final
+	private ItemStack output;
 
-	@Shadow @Final private DefaultedList<Ingredient> input;
+	@Shadow
+	@Final
+	private DefaultedList<Ingredient> input;
 
 	@Inject(method = "craft", at = @At("HEAD"), cancellable = true)
 	public void craft(CraftingInventory craftingInventory, CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
-        ItemStack result = RecipeUtil.getDollarAppliedResult(output, input, craftingInventory);
-        if(result != null) callbackInfoReturnable.setReturnValue(result);
+		ItemStack result = RecipeUtil.getDollarAppliedResult(output, input, craftingInventory);
+		if (result != null) callbackInfoReturnable.setReturnValue(result);
 	}
 }

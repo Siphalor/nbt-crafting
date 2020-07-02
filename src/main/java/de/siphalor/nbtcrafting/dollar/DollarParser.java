@@ -2,16 +2,25 @@ package de.siphalor.nbtcrafting.dollar;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.mojang.datafixers.util.Pair;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.api.nbt.MergeMode;
 import de.siphalor.nbtcrafting.api.nbt.NbtIterator;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.operator.*;
 import de.siphalor.nbtcrafting.dollar.part.unary.*;
+import de.siphalor.nbtcrafting.dollar.type.CountDollar;
+import de.siphalor.nbtcrafting.dollar.type.MergeDollar;
+import de.siphalor.nbtcrafting.dollar.type.SimpleDollar;
+import net.minecraft.nbt.AbstractListTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public final class DollarParser {
 	private static final Collection<DollarPart.UnaryDeserializer> UNARY_DESERIALIZERS = ImmutableList.of(
@@ -51,7 +60,7 @@ public final class DollarParser {
 	}
 
 	public int eat() {
-		if(currentIndex++ >= stringLength)
+		if (currentIndex++ >= stringLength)
 			return -1;
 		return string.codePointAt(currentIndex);
 	}
@@ -61,7 +70,7 @@ public final class DollarParser {
 	}
 
 	public int peek() {
-		if(currentIndex + 1 >= stringLength)
+		if (currentIndex + 1 >= stringLength)
 			return -1;
 		return string.codePointAt(currentIndex + 1);
 	}
@@ -69,12 +78,23 @@ public final class DollarParser {
 	public static Dollar[] extractDollars(CompoundTag compoundTag, boolean remove) {
 		LinkedList<Dollar> dollars = new LinkedList<>();
 		NbtIterator.iterateTags(compoundTag, (path, key, tag) -> {
-			if(tag instanceof StringTag && !tag.asString().isEmpty()) {
-				if(tag.asString().charAt(0) == '$') {
-					if(path.isEmpty() && key.equals("$") && tag.asString().charAt(0) == '$') {
-						DollarParser.parse("", tag.asString().substring(1)).ifPresent(dollars::addFirst);
+			if (key.equals("$")) {
+				if (NbtUtil.isList(tag)) {
+					AbstractListTag<Tag> list = NbtUtil.asListTag(tag);
+					for (Tag t : list) {
+						parseMerge(t, path).ifPresent(dollars::addFirst);
+					}
+				} else {
+					parseMerge(tag, path).ifPresent(dollars::addFirst);
+				}
+				return remove;
+			}
+			if (NbtUtil.isString(tag) && !tag.asString().isEmpty()) {
+				if (tag.asString().charAt(0) == '$') {
+					if (key.equals(NbtCrafting.MOD_ID + ":count")) {
+						parse(tag.asString().substring(1)).ifPresent(exp -> dollars.addFirst(new CountDollar(exp)));
 					} else {
-						DollarParser.parse(path + key, tag.asString().substring(1)).ifPresent(dollars::add);
+						parse(tag.asString().substring(1)).ifPresent(exp -> dollars.addFirst(new SimpleDollar(exp, path + key)));
 					}
 					return remove;
 				}
@@ -82,15 +102,45 @@ public final class DollarParser {
 			return false;
 		});
 
+		dollars.sort((a, b) -> {
+			if (a instanceof MergeDollar)
+				return b instanceof MergeDollar ? 0 : 1;
+			return -1;
+		});
 		return dollars.toArray(new Dollar[0]);
 	}
 
-	public static Optional<Dollar> parse(String path, String value) {
-        Dollar dollar = new Dollar(path);
-		return parse(value).map(dollarPart -> {
-			dollar.expression = dollarPart;
-			return dollar;
-		});
+	private static Optional<MergeDollar> parseMerge(Tag tag, String path) {
+		if (NbtUtil.isString(tag)) {
+			String val = tag.asString();
+			if (val.charAt(0) == '$') {
+				val = val.substring(1);
+			}
+			return parse(val).map(exp -> new MergeDollar(exp, path, Collections.emptyList()));
+		} else if (NbtUtil.isCompound(tag)) {
+			CompoundTag compound = NbtUtil.asCompoundTag(tag);
+			if (compound.contains("value", 8)) {
+				Collection<Pair<Pattern, MergeMode>> mergeModes = new LinkedList<>();
+				if (compound.contains("paths", 10)) {
+					CompoundTag paths = compound.getCompound("paths");
+					for (String p : paths.getKeys()) {
+						try {
+							//noinspection ConstantConditions
+							MergeMode mergeMode = MergeMode.valueOf(paths.get(p).asString().toUpperCase(Locale.ENGLISH));
+							mergeModes.add(Pair.of(Pattern.compile(Pattern.quote(path) + "\\.?" + p), mergeMode));
+						} catch (Exception e) {
+							NbtCrafting.logError("Unable to deduce dollar merge mode from tag: " + paths.get(p));
+						}
+					}
+				}
+				return parse(compound.getString("value")).map(exp -> new MergeDollar(exp, path, mergeModes));
+			} else {
+				NbtCrafting.logError("The value field is required on dollar merge objects. Errored on " + tag.asString());
+			}
+		} else {
+			NbtCrafting.logError("Found invalid dollar merge tag: " + tag.asString());
+		}
+		return Optional.empty();
 	}
 
 	public static Optional<DollarPart> parse(String string) {
@@ -121,22 +171,22 @@ public final class DollarParser {
 		int priority;
 
 		parse:
-		while(true) {
-			while(Character.isWhitespace(peek = peek())) {
+		while (true) {
+			while (Character.isWhitespace(peek = peek())) {
 				skip();
 			}
-			if(peek == -1)
+			if (peek == -1)
 				return dollarPart;
-			if(!stopStack.isEmpty() && stopStack.lastElement() == peek) {
+			if (!stopStack.isEmpty() && stopStack.lastElement() == peek) {
 				return dollarPart;
 			}
 
 			priority = 0;
-			for(Collection<DollarPart.Deserializer> deserializers : DESERIALIZERS) {
-				if(++priority > maxPriority)
+			for (Collection<DollarPart.Deserializer> deserializers : DESERIALIZERS) {
+				if (++priority > maxPriority)
 					break;
-				for(DollarPart.Deserializer deserializer : deserializers) {
-					if(deserializer.matches(peek, this)) {
+				for (DollarPart.Deserializer deserializer : deserializers) {
+					if (deserializer.matches(peek, this)) {
 						dollarPart = deserializer.parse(this, dollarPart, priority);
 						continue parse;
 					}
@@ -151,14 +201,14 @@ public final class DollarParser {
 	public DollarPart parseUnary() throws DollarDeserializationException {
 		int peek;
 
-		while(Character.isWhitespace(peek = peek())) {
+		while (Character.isWhitespace(peek = peek())) {
 			skip();
 		}
-		if(peek == -1)
+		if (peek == -1)
 			return null;
 
-		for(DollarPart.UnaryDeserializer deserializer : UNARY_DESERIALIZERS) {
-			if(deserializer.matches(peek, this)) {
+		for (DollarPart.UnaryDeserializer deserializer : UNARY_DESERIALIZERS) {
+			if (deserializer.matches(peek, this)) {
 				return deserializer.parse(this);
 			}
 		}
@@ -177,13 +227,13 @@ public final class DollarParser {
 		int character;
 		boolean escaped = false;
 		StringBuilder stringBuilder = new StringBuilder();
-		while(!ArrayUtils.contains(stops, character = eat())) {
-			if(character == -1)
+		while (!ArrayUtils.contains(stops, character = eat())) {
+			if (character == -1)
 				return null;
-			if(escaped) {
+			if (escaped) {
 				stringBuilder.append(Character.toChars(character));
 				escaped = false;
-			} else if(character == '\\') {
+			} else if (character == '\\') {
 				escaped = true;
 			} else {
 				stringBuilder.append(Character.toChars(character));

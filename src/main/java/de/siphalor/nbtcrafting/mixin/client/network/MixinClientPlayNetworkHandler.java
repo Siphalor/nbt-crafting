@@ -16,8 +16,8 @@ public abstract class MixinClientPlayNetworkHandler {
 
 	@Inject(method = "onSynchronizeRecipes", at = @At("RETURN"))
 	public void onGameJoin(SynchronizeRecipesS2CPacket packet, CallbackInfo callbackInfo) {
-		if(!NbtCraftingClient.sentModPresent) {
-            NbtCraftingClient.sendModPresent();
+		if (!NbtCraftingClient.sentModPresent) {
+			NbtCraftingClient.sendModPresent();
 		}
 	}
 }

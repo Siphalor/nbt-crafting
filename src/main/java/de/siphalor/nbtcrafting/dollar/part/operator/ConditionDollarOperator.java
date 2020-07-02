@@ -9,9 +9,9 @@ import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import java.util.Map;
 
 public class ConditionDollarOperator implements DollarPart {
-	private DollarPart condition;
-	private DollarPart thenPart;
-	private DollarPart elsePart;
+	private final DollarPart condition;
+	private final DollarPart thenPart;
+	private final DollarPart elsePart;
 
 	public ConditionDollarOperator(DollarPart condition, DollarPart thenPart, DollarPart elsePart) {
 		this.condition = condition;

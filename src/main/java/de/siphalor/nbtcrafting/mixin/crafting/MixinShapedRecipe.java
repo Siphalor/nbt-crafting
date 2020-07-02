@@ -32,35 +32,39 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ShapedRecipe.class)
 public abstract class MixinShapedRecipe {
-	@Shadow @Final private ItemStack output;
+	@Shadow
+	@Final
+	private ItemStack output;
 
-	@Shadow @Final private DefaultedList<Ingredient> inputs;
+	@Shadow
+	@Final
+	private DefaultedList<Ingredient> inputs;
 
 	@Inject(method = "getItemStack", at = @At("HEAD"))
 	private static void handlePotions(JsonObject json, CallbackInfoReturnable<ItemStack> ci) {
-		if(json.has("potion")) {
+		if (json.has("potion")) {
 			Identifier identifier = new Identifier(JsonHelper.getString(json, "potion"));
-            if(!Registry.POTION.getOrEmpty(identifier).isPresent())
-            	throw new JsonParseException("The given resulting potion does not exist!");
-            JsonObject dataObject;
-            if(!json.has("data")) {
+			if (!Registry.POTION.getOrEmpty(identifier).isPresent())
+				throw new JsonParseException("The given resulting potion does not exist!");
+			JsonObject dataObject;
+			if (!json.has("data")) {
 				dataObject = new JsonObject();
 				json.add("data", dataObject);
 			} else
 				dataObject = JsonHelper.getObject(json, "data");
-            dataObject.addProperty("Potion", identifier.toString());
-            json.addProperty("item", "minecraft:potion");
+			dataObject.addProperty("Potion", identifier.toString());
+			json.addProperty("item", "minecraft:potion");
 		}
 	}
 
 	@Inject(
-		method = "getItemStack",
-		at = @At(value = "INVOKE", target = "com/google/gson/JsonObject.has(Ljava/lang/String;)Z", remap = false)
+			method = "getItemStack",
+			at = @At(value = "INVOKE", target = "com/google/gson/JsonObject.has(Ljava/lang/String;)Z", remap = false)
 	)
 	private static void deserializeItemStack(JsonObject json, CallbackInfoReturnable<ItemStack> ci) {
 		NbtCrafting.clearLastReadNbt();
-		if(json.has("data")) {
-			if(JsonHelper.hasString(json, "data")) {
+		if (json.has("data")) {
+			if (JsonHelper.hasString(json, "data")) {
 				try {
 					NbtCrafting.setLastReadNbt(new StringNbtReader(new StringReader(json.get("data").getAsString())).parseCompoundTag());
 				} catch (CommandSyntaxException e) {
@@ -72,16 +76,16 @@ public abstract class MixinShapedRecipe {
 			json.remove("data");
 		}
 	}
-	
+
 	@Inject(
-		method = "getItemStack", at = @At("RETURN"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
+			method = "getItemStack", at = @At("RETURN"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void constructDeserializedItemStack(JsonObject json, CallbackInfoReturnable<ItemStack> ci, String id, Item item, int amount) {
 		ItemStack stack = new ItemStack(item, amount);
-		if(NbtCrafting.hasLastReadNbt()) {
+		if (NbtCrafting.hasLastReadNbt()) {
 			CompoundTag lastReadNbt = NbtCrafting.useLastReadNbt();
 
 			//noinspection ConstantConditions
-			((IItemStack)(Object) stack).setRawTag(lastReadNbt);
+			((IItemStack) (Object) stack).setRawTag(lastReadNbt);
 		}
 		ci.setReturnValue(stack);
 	}
@@ -89,6 +93,6 @@ public abstract class MixinShapedRecipe {
 	@Inject(method = "craft", at = @At("HEAD"), cancellable = true)
 	public void craft(CraftingInventory craftingInventory, CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
 		ItemStack result = RecipeUtil.getDollarAppliedResult(output, inputs, craftingInventory);
-		if(result != null) callbackInfoReturnable.setReturnValue(result);
+		if (result != null) callbackInfoReturnable.setReturnValue(result);
 	}
 }

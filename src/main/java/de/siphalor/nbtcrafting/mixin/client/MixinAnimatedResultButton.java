@@ -25,9 +25,9 @@ public abstract class MixinAnimatedResultButton extends AbstractButtonWidget {
 	}
 
 	@Inject(
-		method = "renderButton",
-		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderInGui(Lnet/minecraft/item/ItemStack;II)V", shift = Shift.AFTER),
-		locals = LocalCapture.CAPTURE_FAILSOFT
+			method = "renderButton",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderInGui(Lnet/minecraft/item/ItemStack;II)V", shift = Shift.AFTER),
+			locals = LocalCapture.CAPTURE_FAILSOFT
 	)
 	private void drawButton(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci, MinecraftClient minecraftClient, int int_3, int int_4, boolean boolean_1, @SuppressWarnings("rawtypes") List list_1, ItemStack stack, int int_5) {
 		minecraftClient.getItemRenderer().renderGuiItemOverlay(minecraftClient.textRenderer, stack, this.x + int_5, this.y + int_5);

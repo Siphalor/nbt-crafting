@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class IngredientMultiStackEntry extends IngredientEntry {
-	
+
 	private final IngredientEntryCondition condition;
 	private final IntList itemIds;
 	private String tag;
@@ -26,7 +26,7 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 		this.itemIds = new IntArrayList(items);
 		this.tag = "";
 	}
-	
+
 	@Override
 	public boolean matches(ItemStack stack) {
 		return itemIds.contains(Registry.ITEM.getRawId(stack.getItem())) && condition.matches(stack);
@@ -44,7 +44,7 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 	public Collection<ItemStack> getPreviewStacks(boolean nbt) {
 		CompoundTag tag = condition.getPreviewTag();
 		Collection<ItemStack> stacks = itemIds.stream().map(id -> new ItemStack(Registry.ITEM.get(id))).collect(Collectors.toList());
-		if(nbt) {
+		if (nbt) {
 			for (ItemStack itemStack : stacks) {
 				((IItemStack) (Object) itemStack).setRawTag(tag);
 			}
@@ -55,23 +55,23 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 	@Override
 	public void write(PacketByteBuf buf) {
 		buf.writeVarInt(itemIds.size());
-		for(int i = 0; i < itemIds.size(); i++) {
+		for (int i = 0; i < itemIds.size(); i++) {
 			buf.writeVarInt(itemIds.getInt(i));
 		}
 		this.condition.write(buf);
 		buf.writeBoolean(remainder != null);
-		if(remainder != null)
+		if (remainder != null)
 			buf.writeItemStack(remainder);
 	}
 
 	public static IngredientMultiStackEntry read(PacketByteBuf buf) {
 		int length = buf.readVarInt();
 		ArrayList<Integer> ids = new ArrayList<>(length);
-		for(int i = 0; i < length; i++) {
+		for (int i = 0; i < length; i++) {
 			ids.add(buf.readVarInt());
 		}
 		IngredientMultiStackEntry entry = new IngredientMultiStackEntry(ids, IngredientEntryCondition.read(buf));
-		if(buf.readBoolean())
+		if (buf.readBoolean())
 			entry.setRecipeRemainder(buf.readItemStack());
 		return entry;
 	}

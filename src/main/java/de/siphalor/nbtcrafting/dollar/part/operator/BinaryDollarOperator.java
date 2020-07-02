@@ -6,8 +6,8 @@ import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import java.util.Map;
 
 public abstract class BinaryDollarOperator implements DollarPart {
-	private DollarPart first;
-	private DollarPart second;
+	private final DollarPart first;
+	private final DollarPart second;
 
 	public BinaryDollarOperator(DollarPart first, DollarPart second) {
 		this.first = first;

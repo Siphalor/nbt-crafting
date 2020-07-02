@@ -10,6 +10,7 @@ public class RecipeTypeHelper {
 
 	/**
 	 * Add a recipe type to the synchronization blacklist. These recipe types won't get synced by Fabric
+	 *
 	 * @param recipeTypeIdentifier the registry identifier
 	 */
 	public static void addToSyncBlacklist(Identifier recipeTypeIdentifier) {

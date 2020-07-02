@@ -26,23 +26,23 @@ public abstract class MixinBrewingStandBlockEntity extends LockableContainerBloc
 
 	@Inject(method = "canCraft", at = @At("HEAD"), cancellable = true)
 	private void canCraft(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		Optional<BrewingRecipe> recipe = world.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, (BrewingStandBlockEntity)(Object) this, world);
-		if(recipe.isPresent()) {
+		Optional<BrewingRecipe> recipe = world.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, (BrewingStandBlockEntity) (Object) this, world);
+		if (recipe.isPresent()) {
 			callbackInfoReturnable.setReturnValue(true);
 		}
 	}
 
 	@Inject(method = "craft", at = @At("HEAD"), cancellable = true)
 	private void craft(CallbackInfo callbackInfo) {
-		Optional<BrewingRecipe> recipe = world.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, (BrewingStandBlockEntity)(Object) this, world);
-		if(recipe.isPresent()) {
-			BrewingStandBlockEntity inv = (BrewingStandBlockEntity)(Object) this;
+		Optional<BrewingRecipe> recipe = world.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, (BrewingStandBlockEntity) (Object) this, world);
+		if (recipe.isPresent()) {
+			BrewingStandBlockEntity inv = (BrewingStandBlockEntity) (Object) this;
 			DefaultedList<ItemStack> remainingStacks = recipe.get().getRemainingStacks(inv);
 			ItemStack[] results = recipe.get().craftAll(inv);
 
 			getStack(3).decrement(1);
 			for (int i = 0; i < 3; i++) {
-				if(results[i] != null) {
+				if (results[i] != null) {
 					setStack(i, results[i]);
 				}
 			}

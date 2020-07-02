@@ -15,7 +15,7 @@ public class QuotientDollarOperator extends BinaryDollarOperator {
 
 	public static DollarPart of(DollarPart first, DollarPart second) throws DollarException {
 		DollarPart instance = new QuotientDollarOperator(first, second);
-		if(first.isConstant() && second.isConstant()) {
+		if (first.isConstant() && second.isConstant()) {
 			return ValueDollarPart.of(instance.evaluate(null));
 		}
 		return instance;
@@ -23,7 +23,7 @@ public class QuotientDollarOperator extends BinaryDollarOperator {
 
 	@Override
 	public Object apply(Object first, Object second) {
-		if(first instanceof Number && second instanceof Number) {
+		if (first instanceof Number && second instanceof Number) {
 			return NumberUtil.quotient((Number) first, (Number) second);
 		} else {
 			return StringUtils.countMatches(first.toString(), second.toString());

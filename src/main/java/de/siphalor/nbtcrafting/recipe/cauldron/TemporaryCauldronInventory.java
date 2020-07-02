@@ -43,7 +43,7 @@ public class TemporaryCauldronInventory implements Inventory {
 
 	@Override
 	public boolean isEmpty() {
-        return stackInHand.isEmpty();
+		return stackInHand.isEmpty();
 	}
 
 	@Override

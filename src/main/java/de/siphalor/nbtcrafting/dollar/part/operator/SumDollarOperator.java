@@ -18,7 +18,7 @@ public class SumDollarOperator extends BinaryDollarOperator {
 
 	public static DollarPart of(DollarPart first, DollarPart second) throws DollarDeserializationException {
 		DollarPart instance = new SumDollarOperator(first, second);
-		if(first.isConstant() && second.isConstant()) {
+		if (first.isConstant() && second.isConstant()) {
 			try {
 				return ValueDollarPart.of(instance.evaluate(null));
 			} catch (DollarEvaluationException e) {
@@ -78,7 +78,7 @@ public class SumDollarOperator extends BinaryDollarOperator {
 		@Override
 		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarDeserializationException {
 			dollarParser.skip();
-			if(lastDollarPart == null)
+			if (lastDollarPart == null)
 				throw new DollarDeserializationException("Unexpected plus!");
 			return SumDollarOperator.of(lastDollarPart, dollarParser.parse(priority));
 		}

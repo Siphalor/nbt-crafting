@@ -15,7 +15,8 @@ import java.util.List;
 
 @Mixin(StonecutterScreenHandler.class)
 public class MixinStonecutterContainer {
-	@Shadow private List<StonecuttingRecipe> availableRecipes;
+	@Shadow
+	private List<StonecuttingRecipe> availableRecipes;
 
 	@Inject(method = "updateInput", at = @At("TAIL"))
 	private void onInputUpdated(Inventory inventory, ItemStack input, CallbackInfo callbackInfo) {

@@ -15,15 +15,15 @@ public abstract class MixinInputSlotFiller {
 
 	@Redirect(method = "fillInputSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;method_7371(Lnet/minecraft/item/ItemStack;)I"))
 	private int playerInventoryFindStack(PlayerInventory inventory, ItemStack stack) {
-		for(int i = 0; i < inventory.main.size(); i++) {
+		for (int i = 0; i < inventory.main.size(); i++) {
 			ItemStack stack2 = inventory.main.get(i);
-			if(stack.getItem() == stack2.getItem() && ItemStack.areTagsEqual(stack, stack2))
+			if (stack.getItem() == stack2.getItem() && ItemStack.areTagsEqual(stack, stack2))
 				return i;
 		}
-		if(!stack.hasTag()) {
-			for(int i = 0; i < inventory.main.size(); i++) {
+		if (!stack.hasTag()) {
+			for (int i = 0; i < inventory.main.size(); i++) {
 				ItemStack stack2 = inventory.main.get(i);
-				if(stack2.hasTag() && stack.isItemEqualIgnoreDamage(stack2))
+				if (stack2.hasTag() && stack.isItemEqualIgnoreDamage(stack2))
 					return i;
 			}
 		}

@@ -17,14 +17,16 @@ import java.util.stream.Collectors;
 
 @Mixin(SynchronizeRecipesS2CPacket.class)
 public abstract class MixinSynchronizeRecipesS2CPacket {
-	@Shadow private List<Recipe<?>> recipes;
+	@Shadow
+	private List<Recipe<?>> recipes;
 
 	@Shadow
-	public static <T extends Recipe<?>> void writeRecipe(T recipe, PacketByteBuf buf) {}
+	public static <T extends Recipe<?>> void writeRecipe(T recipe, PacketByteBuf buf) {
+	}
 
 	@Inject(method = "write", at = @At("HEAD"), cancellable = true)
 	public void onWrite(PacketByteBuf buf, CallbackInfo callbackInfo) {
-		if(!((IServerPlayerEntity) NbtCrafting.lastServerPlayerEntity).hasClientMod()) {
+		if (!((IServerPlayerEntity) NbtCrafting.lastServerPlayerEntity).hasClientMod()) {
 			List<Recipe<?>> syncRecipes = recipes.stream().filter(recipe -> !(recipe instanceof ServerRecipe)).collect(Collectors.toList());
 			buf.writeVarInt(syncRecipes.size());
 			syncRecipes.forEach(recipe -> writeRecipe(recipe, buf));
