@@ -1,7 +1,7 @@
 package de.siphalor.nbtcrafting.api.nbt;
 
+import net.minecraft.nbt.AbstractListTag;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 
 import java.util.HashSet;
@@ -24,30 +24,29 @@ public interface NbtIterator {
 				path += ".";
 			Set<String> remove = new HashSet<>();
 			for(String key : compoundTag.getKeys()) {
-				if(compoundTag.get(key) instanceof CompoundTag || compoundTag.get(key) instanceof ListTag)
-					iterateTags(compoundTag.get(key), nbtIterator, path + key);
-				else {
-					if(nbtIterator.process(path, key, compoundTag.get(key)))
-                        remove.add(key);
+				Tag currentTag = compoundTag.get(key);
+				if(nbtIterator.process(path, key, currentTag)) {
+					remove.add(key);
+				} else {
+					if (NbtUtil.isCompound(currentTag) || NbtUtil.isList(currentTag)) {
+						iterateTags(compoundTag.get(key), nbtIterator, path + key);
+					}
 				}
 			}
 			for(String key : remove) {
 				compoundTag.remove(key);
 			}
-		} else if(tag instanceof ListTag) {
-			ListTag listTag = (ListTag) tag;
+		} else if(tag instanceof AbstractListTag) {
+			//noinspection unchecked
+			AbstractListTag<Tag> listTag = (AbstractListTag<Tag>) tag;
 			int i = 0;
 			for(Iterator<Tag> iterator = listTag.iterator(); iterator.hasNext(); ) {
 				Tag currentTag = iterator.next();
-				if(currentTag instanceof CompoundTag || currentTag instanceof ListTag) {
+				if(nbtIterator.process(path, "[" + i + "]", currentTag)) {
+					iterator.remove();
+				} else {
 					iterateTags(currentTag, nbtIterator, path + "[" + i + "]");
 					i++;
-				} else {
-					if(nbtIterator.process(path, "[" + i + "]", currentTag)) {
-						iterator.remove();
-					} else {
-						i++;
-					}
 				}
 			}
 		}

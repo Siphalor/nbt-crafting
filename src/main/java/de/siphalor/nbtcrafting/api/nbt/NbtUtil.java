@@ -1,8 +1,14 @@
 package de.siphalor.nbtcrafting.api.nbt;
 
+import com.mojang.datafixers.util.Pair;
+import de.siphalor.nbtcrafting.NbtCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
+import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.Contract;
 
+import java.util.Collection;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -24,15 +30,17 @@ public class NbtUtil {
 	}
 
 	public static boolean tagsMatch(Tag main, Tag reference) {
-		if(reference instanceof StringTag && reference.asString().equals(""))
+		// Empty reference string is treated as wildcard
+		if(isString(reference) && reference.asString().equals(""))
 			return true;
-		if(main instanceof StringTag && reference instanceof StringTag)
+		if(isString(main) && isString(reference))
 			return main.asString().equals(reference.asString());
-		if(main instanceof AbstractNumberTag) {
-			if(reference instanceof AbstractNumberTag)
-				return ((AbstractNumberTag) main).getDouble() == ((AbstractNumberTag) reference).getDouble();
-			if(reference instanceof StringTag && reference.asString().startsWith("$"))
-				return NbtNumberRange.ofString(reference.asString().substring(1)).matches(((AbstractNumberTag) main).getDouble());
+		if(isNumeric(main)) {
+			if(isNumeric(reference))
+				return asNumberTag(main).getDouble() == asNumberTag(reference).getDouble();
+			// The reference might be a numeric range
+			if(isString(reference) && reference.asString().startsWith("$"))
+				return NbtNumberRange.ofString(reference.asString().substring(1)).matches(asNumberTag(main).getDouble());
 			return false;
 		}
 		return false;
@@ -42,12 +50,14 @@ public class NbtUtil {
 		for(String key : main.getKeys()) {
 			if(!reference.contains(key))
 				continue;
-			if(main.get(key) instanceof CompoundTag && reference.get(key) instanceof CompoundTag) {
+			Tag mainTag = main.get(key);
+			Tag refTag = reference.get(key);
+			if(isCompound(mainTag) && isCompound(refTag)) {
 				if(compoundsOverlap(main.getCompound(key), reference.getCompound(key)))
 					return true;
-			} else if(main.get(key) instanceof ListTag && reference.get(key) instanceof ListTag) {
-				//noinspection ConstantConditions
-				if(listsOverlap((ListTag) main.get(key), (ListTag) reference.get(key)))
+			} else if(isList(mainTag) && isList(refTag)) {
+				// noinspection ConstantConditions
+				if(listsOverlap(asListTag(main.get(key)), asListTag(reference.get(key))))
 					return true;
 			} else if(tagsMatch(main.get(key), reference.get(key))) {
 				return true;
@@ -56,14 +66,14 @@ public class NbtUtil {
 		return false;
 	}
 	
-	public static boolean listsOverlap(ListTag main, ListTag reference) {
+	public static boolean listsOverlap(AbstractListTag<Tag> main, AbstractListTag<Tag> reference) {
 		for(Tag mainTag : main) {
 			for(Tag referenceTag : main) {
-				if(mainTag instanceof CompoundTag && referenceTag instanceof CompoundTag) {
-					if(compoundsOverlap((CompoundTag) mainTag, (CompoundTag) referenceTag))
+				if(isCompound(mainTag) && isCompound(referenceTag)) {
+					if (compoundsOverlap(asCompoundTag(mainTag), asCompoundTag(referenceTag)))
 						return true;
-				} else if(mainTag instanceof ListTag && referenceTag instanceof ListTag) {
-					if (listsOverlap((ListTag) mainTag, (ListTag) referenceTag))
+				} else if(isList(mainTag) && isList(referenceTag)) {
+					if (listsOverlap(asListTag(mainTag), asListTag(referenceTag)))
 						return true;
 				} else if(tagsMatch(mainTag, referenceTag)) {
 					return true;
@@ -79,12 +89,12 @@ public class NbtUtil {
 			if(!outer.contains(key))
 				return false;
 			Tag outerTag = outer.get(key);
-			if(innerTag instanceof CompoundTag && outerTag instanceof CompoundTag) {
-				if(isCompoundContained((CompoundTag) innerTag, (CompoundTag) outerTag))
+			if(isCompound(innerTag) && isCompound(outerTag)) {
+				if(isCompoundContained(asCompoundTag(innerTag), asCompoundTag(outerTag)))
 					continue;
 				return false;
-			} else if(innerTag instanceof ListTag && outerTag instanceof ListTag) {
-				if(isListContained((ListTag) innerTag, (ListTag) outerTag))
+			} else if(isList(innerTag) && isList(outerTag)) {
+				if(isListContained(asListTag(innerTag), asListTag(outerTag)))
 					continue;
 				return false;
 			} else if(tagsMatch(outerTag, innerTag))
@@ -94,14 +104,14 @@ public class NbtUtil {
 		return true;
 	}
 	
-	public static boolean isListContained(ListTag inner, ListTag outer) {
+	public static boolean isListContained(AbstractListTag<Tag> inner, AbstractListTag<Tag> outer) {
 		for(Tag innerTag : inner) {
 			boolean success = false;
 			for(Tag outerTag : outer) {
-				if(innerTag instanceof CompoundTag && outerTag instanceof CompoundTag && isCompoundContained((CompoundTag) innerTag, (CompoundTag) outerTag)) {
+				if(isCompound(innerTag) && isCompound(outerTag) && isCompoundContained(asCompoundTag(innerTag), asCompoundTag(outerTag))) {
 					success = true;
 					break;
-				} else if(innerTag instanceof ListTag && outerTag instanceof ListTag && isListContained((ListTag) innerTag, (ListTag) outerTag)) {
+				} else if(isList(innerTag) && isList(outerTag) && isListContained(asListTag(innerTag), asListTag(outerTag))) {
 					success = true;
 					break;
 				} else if(tagsMatch(innerTag, outerTag)) {
@@ -118,19 +128,23 @@ public class NbtUtil {
 	public static boolean sameType(Tag tag1, Tag tag2) {
 		return tag1.getType() == tag2.getType();
 	}
-	
+
+	@Contract(value = "null -> false", pure = true)
 	public static boolean isString(Tag tag) {
 		return tag instanceof StringTag;
 	}
 
+	@Contract(value = "null -> false", pure = true)
 	public static boolean isCompound(Tag tag) {
 		return tag instanceof CompoundTag;
 	}
 
+	@Contract(value = "null -> false", pure = true)
 	public static boolean isList(Tag tag) {
-		return tag instanceof ListTag;
+		return tag instanceof AbstractListTag;
 	}
 
+	@Contract(value = "null -> false", pure = true)
 	public static boolean isNumeric(Tag tag) {
 		return tag instanceof AbstractNumberTag;
 	}
@@ -147,6 +161,23 @@ public class NbtUtil {
 		}
 	}
 
+	public static StringTag asStringTag(Tag tag) {
+		return (StringTag) tag;
+	}
+
+	public static CompoundTag asCompoundTag(Tag tag) {
+		return (CompoundTag) tag;
+	}
+
+	public static AbstractListTag<Tag> asListTag(Tag tag) {
+		//noinspection unchecked
+		return (AbstractListTag<Tag>) tag;
+	}
+
+	public static AbstractNumberTag asNumberTag(Tag tag) {
+		return (AbstractNumberTag) tag;
+	}
+
 	public static Tag getTag(Tag main, String path) {
 		return getTag(main, splitPath(path));
 	}
@@ -160,8 +191,8 @@ public class NbtUtil {
 				return null;
 			if(pathKey.charAt(0) == '[') {
 				int index = Integer.parseUnsignedInt(pathKey.substring(1, pathKey.length() - 2), 10);
-				if(currentTag instanceof ListTag) {
-					ListTag list = (ListTag) currentTag;
+				if(isList(currentTag)) {
+					AbstractListTag<Tag> list = asListTag(currentTag);
 					if(index >= list.size())
 						return null;
 					else
@@ -170,8 +201,8 @@ public class NbtUtil {
 					return null;
 				}
 			} else {
-				if(currentTag instanceof CompoundTag) {
-					CompoundTag compound = (CompoundTag) currentTag;
+				if(isCompound(currentTag)) {
+					CompoundTag compound = asCompoundTag(currentTag);
 					if(compound.contains(pathKey)) {
 						currentTag = compound.get(pathKey);
 					} else {
@@ -185,47 +216,70 @@ public class NbtUtil {
 		return currentTag;
 	}
 
-	public static CompoundTag getTagOrCreate(Tag main, String path) throws NbtException {
+	public static Tag getTagOrCreate(Tag main, String path) throws NbtException {
 		return getTagOrCreate(main, splitPath(path));
 	}
 
-	public static CompoundTag getTagOrCreate(Tag main, String[] pathParts) throws NbtException {
+	public static Tag getTagOrCreate(Tag main, String[] pathParts) throws NbtException {
 		Tag currentTag = main;
 		for(String pathPart : pathParts) {
 			if("".equals(pathPart))
 				continue;
 			if(pathPart.charAt(0) == '[') {
-				if(!(currentTag instanceof ListTag)) {
+				if(!isList(currentTag)) {
 					throw new NbtException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 				}
-				ListTag currentList = (ListTag) currentTag;
+				AbstractListTag<Tag> currentList = asListTag(currentTag);
 				int index = Integer.parseUnsignedInt(pathPart.substring(1, pathPart.length() - 1));
 				if(currentList.size() <= index) {
 					throw new NbtException(String.join(".", pathParts) + " contains invalid list in " + main.asString());
-				} else if(currentList.get(index) instanceof CompoundTag || currentList.get(index) instanceof ListTag) {
+				} else if(isCompound(currentList.get(index)) || isList(currentList.get(index))) {
 					currentTag = currentList.get(index);
 				} else {
 					throw new NbtException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 				}
 			} else {
-				if(!(currentTag instanceof CompoundTag)) {
+				if(!isCompound(currentTag)) {
 					throw new NbtException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 				}
-				CompoundTag currentCompound = (CompoundTag) currentTag;
+				CompoundTag currentCompound = asCompoundTag(currentTag);
 				if(!currentCompound.contains(pathPart)) {
 					CompoundTag newCompound = new CompoundTag();
 					currentCompound.put(pathPart, newCompound);
 					currentTag = newCompound;
-				} else if(currentCompound.get(pathPart) instanceof CompoundTag || currentCompound.get(pathPart) instanceof ListTag) {
+				} else if(isCompound(currentCompound.get(pathPart)) || isList(currentCompound.get(pathPart))) {
 					currentTag = currentCompound.get(pathPart);
 				} else {
 					throw new NbtException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 				}
 			}
 		}
-		if(!(currentTag instanceof CompoundTag))
-			throw new NbtException(String.join(".", pathParts) + "'s parent does not specify an object in " + main.asString());
-		return (CompoundTag) currentTag;
+		return currentTag;
+	}
+
+	public static void put(Tag main, String[] pathParts, Tag tag) throws NbtException {
+		Tag parent = getTagOrCreate(main, ArrayUtils.subarray(pathParts, 0, pathParts.length - 1));
+
+		String key = pathParts[pathParts.length - 1];
+		if (key.charAt(0) == '[') {
+			int i = Integer.parseUnsignedInt(key.substring(1, key.length() - 1));
+
+			if (isList(parent)) {
+				try {
+					asListTag(parent).add(i, tag);
+				} catch (Exception e) {
+					throw new NbtException("Can't add tag " + tag.asString() + " to list: " + parent.asString());
+				}
+			} else {
+				throw new NbtException(String.join(".", pathParts) + " doesn't match on " + main.asString());
+			}
+		} else {
+			if (isCompound(parent)) {
+				asCompoundTag(parent).put(key, tag);
+			} else {
+				throw new NbtException(String.join(".", pathParts) + " doesn't match on " + main.asString());
+			}
+		}
 	}
 
 	public static String[] splitPath(String path) {
@@ -237,10 +291,10 @@ public class NbtUtil {
 	}
 
 	public static void mergeInto(CompoundTag target, CompoundTag additions, boolean replace) {
-		if(additions == null) return;
+		if (additions == null) return;
 
 		for(String key : additions.getKeys()) {
-			if(!target.contains(key)) {
+			if (!target.contains(key)) {
 				//noinspection ConstantConditions
 				target.put(key, additions.get(key).copy());
 				continue;
@@ -248,15 +302,93 @@ public class NbtUtil {
 
             Tag targetTag = target.get(key);
 			Tag additionsTag = additions.get(key);
-			if(targetTag instanceof CompoundTag && additionsTag instanceof CompoundTag) {
-					mergeInto((CompoundTag) targetTag, (CompoundTag) additionsTag, replace);
-			} else if(targetTag instanceof ListTag && additionsTag instanceof ListTag) {
-				int targetSize = ((ListTag) targetTag).size();
-				((ListTag) targetTag).addAll(((ListTag) additionsTag).stream().map(Tag::copy).collect(Collectors.toList()));
+			if (isCompound(targetTag) && isCompound(additionsTag)) {
+				mergeInto(asCompoundTag(targetTag), asCompoundTag(additionsTag), replace);
+			} else if (isList(targetTag) && isList(additionsTag)) {
+				int targetSize = asListTag(targetTag).size();
+				asListTag(targetTag).addAll(asListTag(additionsTag).stream().map(Tag::copy).collect(Collectors.toList()));
 			} else {
-				if(replace)
+				if (replace)
 					//noinspection ConstantConditions
 					target.put(key, additionsTag.copy());
+			}
+		}
+	}
+
+	public static void mergeInto(CompoundTag target, CompoundTag additions, Collection<Pair<Pattern, MergeMode>> mergeModes, String basePath) {
+		if (additions == null) return;
+
+		if (!basePath.isEmpty()) basePath += '.';
+
+		for (String key : additions.getKeys()) {
+			String path = basePath + key;
+			MergeMode mergeMode = MergeMode.MERGE;
+			for (Pair<Pattern, MergeMode> entry : mergeModes) {
+				if (entry.getFirst().matcher(path).matches()) {
+					mergeMode = entry.getSecond();
+					break;
+				}
+			}
+
+			if (target.contains(key)) {
+				if (mergeMode == MergeMode.UPDATE || mergeMode == MergeMode.OVERWRITE) {
+					//noinspection ConstantConditions
+					target.put(key, additions.get(key).copy());
+				} else if (mergeMode == MergeMode.MERGE) {
+					Tag targetTag = target.get(key);
+					Tag additionsTag = additions.get(key);
+
+					if (isCompound(targetTag) && isCompound(additionsTag)) {
+						mergeInto(asCompoundTag(targetTag), asCompoundTag(additionsTag), mergeModes, path);
+					} else if (isList(targetTag) && isList(additionsTag)) {
+						mergeInto(asListTag(targetTag), asListTag(additionsTag), mergeModes, path);
+					} else {
+						//noinspection ConstantConditions
+						target.put(key, additionsTag.copy());
+					}
+				}
+			} else if (mergeMode != MergeMode.UPDATE) {
+				//noinspection ConstantConditions
+				target.put(key, additions.get(key).copy());
+			}
+		}
+	}
+
+	public static void mergeInto(AbstractListTag<Tag> target, AbstractListTag<Tag> additions, Collection<Pair<Pattern, MergeMode>> mergeModes, String basePath) {
+		if (additions == null) return;
+
+		int targetSize = target.size();
+
+		for (int i = 0; i < additions.size(); i++) {
+			String path = basePath + "[" + i + "]";
+
+			MergeMode mergeMode = MergeMode.MERGE;
+			for (Pair<Pattern, MergeMode> entry : mergeModes) {
+				if (entry.getFirst().matcher(path).matches()) {
+					mergeMode = entry.getSecond();
+					break;
+				}
+			}
+
+			if (mergeMode == MergeMode.OVERWRITE || (mergeMode == MergeMode.UPDATE && i < targetSize)) {
+				target.set(i, additions.get(i).copy());
+			} else if (mergeMode == MergeMode.MERGE) {
+				Tag targetTag = target.get(i);
+				Tag additionsTag = additions.get(i);
+
+				if (isCompound(targetTag) && isCompound(additionsTag)) {
+					mergeInto(asCompoundTag(targetTag), asCompoundTag(additionsTag), mergeModes, path);
+				} else if (isList(targetTag) && isList(additionsTag)) {
+					mergeInto(asListTag(targetTag), asListTag(additionsTag), mergeModes, path);
+				} else {
+					target.set(i, targetTag.copy());
+				}
+			} else if (mergeMode == MergeMode.APPEND) {
+				try {
+					target.add(additions.get(i));
+				} catch (Exception e) {
+					NbtCrafting.logError("Can't append tag " + additions.get(i).asString() + " to list: " + target.asString());
+				}
 			}
 		}
 	}
