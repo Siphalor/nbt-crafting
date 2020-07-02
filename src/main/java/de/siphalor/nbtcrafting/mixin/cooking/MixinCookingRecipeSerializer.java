@@ -2,10 +2,7 @@ package de.siphalor.nbtcrafting.mixin.cooking;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.Dynamic;
-import com.mojang.datafixers.types.JsonOps;
 import de.siphalor.nbtcrafting.util.duck.IItemStack;
-import net.minecraft.datafixer.NbtOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.AbstractCookingRecipe;
@@ -30,8 +27,8 @@ public abstract class MixinCookingRecipeSerializer {
 
 	@Redirect(method = "read(Lnet/minecraft/util/Identifier;Lcom/google/gson/JsonObject;)Lnet/minecraft/recipe/AbstractCookingRecipe;", at = @At(value = "INVOKE", target = "net/minecraft/util/JsonHelper.getString(Lcom/google/gson/JsonObject;Ljava/lang/String;)Ljava/lang/String;", ordinal = 0))
 	public String getItemIdentifier(JsonObject jsonObject, String resultPropertyName) {
-        resultTag = null;
-		if(!jsonObject.has(resultPropertyName) || !jsonObject.get(resultPropertyName).isJsonObject()) {
+		resultTag = null;
+		if (!jsonObject.has(resultPropertyName) || !jsonObject.get(resultPropertyName).isJsonObject()) {
 			return JsonHelper.getString(jsonObject, resultPropertyName);
 		}
 		ItemStack output = ShapedRecipe.getItemStack(jsonObject.getAsJsonObject(resultPropertyName));
@@ -39,9 +36,9 @@ public abstract class MixinCookingRecipeSerializer {
 		return Registry.ITEM.getId(output.getItem()).toString();
 	}
 
-    @Inject(method = "read(Lnet/minecraft/util/Identifier;Lcom/google/gson/JsonObject;)Lnet/minecraft/recipe/AbstractCookingRecipe;", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "read(Lnet/minecraft/util/Identifier;Lcom/google/gson/JsonObject;)Lnet/minecraft/recipe/AbstractCookingRecipe;", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void onRecipeReady(Identifier identifier, JsonObject jsonObject, CallbackInfoReturnable<AbstractCookingRecipe> callbackInfoReturnable, String group, JsonElement ingredientJson, Ingredient ingredient, String itemId, Identifier itemIdentifier, ItemStack stack, float experience, int cookingTime) {
-	    //noinspection ConstantConditions
-	    ((IItemStack)(Object) stack).setRawTag(resultTag);
-    }
+		//noinspection ConstantConditions
+		((IItemStack) (Object) stack).setRawTag(resultTag);
+	}
 }

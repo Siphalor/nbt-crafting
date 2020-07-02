@@ -45,7 +45,7 @@ public class NbtCrafting implements ModInitializer {
 
 	private static boolean lastReadNbtPresent = false;
 	private static CompoundTag lastReadNbt;
-	
+
 	public static RecipeFinder lastRecipeFinder;
 	public static ServerPlayerEntity lastServerPlayerEntity;
 
@@ -71,15 +71,15 @@ public class NbtCrafting implements ModInitializer {
 		lastReadNbt = null;
 		lastReadNbtPresent = false;
 	}
-	
+
 	public static void setLastReadNbt(CompoundTag nbt) {
 		lastReadNbt = nbt;
 		lastReadNbtPresent = true;
 	}
-	
+
 	public static CompoundTag useLastReadNbt() {
 		CompoundTag result = null;
-		if(lastReadNbt != null) {
+		if (lastReadNbt != null) {
 			result = lastReadNbt.copy();
 			lastReadNbt = null;
 		}
@@ -98,7 +98,7 @@ public class NbtCrafting implements ModInitializer {
 	}
 
 	public static boolean hasClientMod(ServerPlayerEntity playerEntity) {
-		if(!(playerEntity instanceof IServerPlayerEntity))
+		if (!(playerEntity instanceof IServerPlayerEntity))
 			return false;
 		return ((IServerPlayerEntity) playerEntity).hasClientMod();
 	}

@@ -60,7 +60,7 @@ public final class DollarParser {
 	}
 
 	public int eat() {
-		if(currentIndex++ >= stringLength)
+		if (currentIndex++ >= stringLength)
 			return -1;
 		return string.codePointAt(currentIndex);
 	}
@@ -70,7 +70,7 @@ public final class DollarParser {
 	}
 
 	public int peek() {
-		if(currentIndex + 1 >= stringLength)
+		if (currentIndex + 1 >= stringLength)
 			return -1;
 		return string.codePointAt(currentIndex + 1);
 	}
@@ -171,22 +171,22 @@ public final class DollarParser {
 		int priority;
 
 		parse:
-		while(true) {
-			while(Character.isWhitespace(peek = peek())) {
+		while (true) {
+			while (Character.isWhitespace(peek = peek())) {
 				skip();
 			}
-			if(peek == -1)
+			if (peek == -1)
 				return dollarPart;
-			if(!stopStack.isEmpty() && stopStack.lastElement() == peek) {
+			if (!stopStack.isEmpty() && stopStack.lastElement() == peek) {
 				return dollarPart;
 			}
 
 			priority = 0;
-			for(Collection<DollarPart.Deserializer> deserializers : DESERIALIZERS) {
-				if(++priority > maxPriority)
+			for (Collection<DollarPart.Deserializer> deserializers : DESERIALIZERS) {
+				if (++priority > maxPriority)
 					break;
-				for(DollarPart.Deserializer deserializer : deserializers) {
-					if(deserializer.matches(peek, this)) {
+				for (DollarPart.Deserializer deserializer : deserializers) {
+					if (deserializer.matches(peek, this)) {
 						dollarPart = deserializer.parse(this, dollarPart, priority);
 						continue parse;
 					}
@@ -201,14 +201,14 @@ public final class DollarParser {
 	public DollarPart parseUnary() throws DollarDeserializationException {
 		int peek;
 
-		while(Character.isWhitespace(peek = peek())) {
+		while (Character.isWhitespace(peek = peek())) {
 			skip();
 		}
-		if(peek == -1)
+		if (peek == -1)
 			return null;
 
-		for(DollarPart.UnaryDeserializer deserializer : UNARY_DESERIALIZERS) {
-			if(deserializer.matches(peek, this)) {
+		for (DollarPart.UnaryDeserializer deserializer : UNARY_DESERIALIZERS) {
+			if (deserializer.matches(peek, this)) {
 				return deserializer.parse(this);
 			}
 		}
@@ -227,13 +227,13 @@ public final class DollarParser {
 		int character;
 		boolean escaped = false;
 		StringBuilder stringBuilder = new StringBuilder();
-		while(!ArrayUtils.contains(stops, character = eat())) {
-			if(character == -1)
+		while (!ArrayUtils.contains(stops, character = eat())) {
+			if (character == -1)
 				return null;
-			if(escaped) {
+			if (escaped) {
 				stringBuilder.append(Character.toChars(character));
 				escaped = false;
-			} else if(character == '\\') {
+			} else if (character == '\\') {
 				escaped = true;
 			} else {
 				stringBuilder.append(Character.toChars(character));

@@ -24,15 +24,15 @@ public class RecipeUtil {
 	}
 
 	public static ItemStack getDollarAppliedResult(ItemStack baseOutput, DefaultedList<Ingredient> ingredients, Inventory inventory) {
-        ItemStack stack = baseOutput.copy();
+		ItemStack stack = baseOutput.copy();
 		Dollar[] dollars = DollarParser.extractDollars(stack.getTag(), true);
 
-		if(dollars.length > 0) {
+		if (dollars.length > 0) {
 			Map<String, Object> reference = new HashMap<>();
 			ingredient:
 			for (int j = 0; j < ingredients.size(); j++) {
 				for (int i = 0; i < inventory.getInvSize(); i++) {
-					if(ingredients.get(j).test(inventory.getInvStack(i))) {
+					if (ingredients.get(j).test(inventory.getInvStack(i))) {
 						reference.putIfAbsent("i" + j, NbtUtil.getTagOrEmpty(inventory.getInvStack(i)));
 						continue ingredient;
 					}
@@ -62,7 +62,7 @@ public class RecipeUtil {
 		ItemStack stack = baseOutput.copy();
 		Dollar[] dollars = DollarParser.extractDollars(stack.getTag(), true);
 
-		if(dollars.length > 0) {
+		if (dollars.length > 0) {
 			Map<String, Object> reference = new HashMap<>();
 			reference.put(referenceName, NbtUtil.getTagOrEmpty(inventory.getInvStack(0)));
 
@@ -72,7 +72,7 @@ public class RecipeUtil {
 	}
 
 	public static ItemStack getRemainder(ItemStack itemStack, Ingredient ingredient, Map<String, Object> reference) {
-		ItemStack result = ((IIngredient)(Object) ingredient).getRecipeRemainder(itemStack, reference);
+		ItemStack result = ((IIngredient) (Object) ingredient).getRecipeRemainder(itemStack, reference);
 		if (result == null) {
 			return new ItemStack(itemStack.getItem().getRecipeRemainder());
 		}
@@ -105,7 +105,7 @@ public class RecipeUtil {
 				e.printStackTrace();
 			}
 		});
-		if(stack.getDamage() > stack.getMaxDamage()) {
+		if (stack.getDamage() > stack.getMaxDamage()) {
 			return ItemStack.EMPTY;
 		}
 		return stack;

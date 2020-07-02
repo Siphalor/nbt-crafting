@@ -16,12 +16,12 @@ public class NumberDollarPartDeserializer implements DollarPart.UnaryDeserialize
 		StringBuilder stringBuilder = new StringBuilder(String.valueOf(Character.toChars(dollarParser.eat())));
 		boolean dot = false;
 		int character;
-		while(true) {
+		while (true) {
 			character = dollarParser.peek();
-			if(Character.isDigit(character)) {
+			if (Character.isDigit(character)) {
 				dollarParser.skip();
 				stringBuilder.append(Character.toChars(character));
-			} else if(!dot && character == '.') {
+			} else if (!dot && character == '.') {
 				dollarParser.skip();
 				stringBuilder.append('.');
 				dot = true;
@@ -31,7 +31,7 @@ public class NumberDollarPartDeserializer implements DollarPart.UnaryDeserialize
 		}
 
 		try {
-			if(dot)
+			if (dot)
 				return ValueDollarPart.of(Double.parseDouble(stringBuilder.toString()));
 			else
 				return ValueDollarPart.of(Integer.parseInt(stringBuilder.toString()));

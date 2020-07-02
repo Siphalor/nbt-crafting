@@ -19,7 +19,7 @@ public class ReferenceDollarPart implements DollarPart {
 
 	@Override
 	public Object evaluate(Map<String, Object> reference) throws DollarEvaluationException {
-		if(!reference.containsKey(key)) {
+		if (!reference.containsKey(key)) {
 			throw new DollarEvaluationException("Could not resolve reference to nbt tag '" + key + "'");
 		}
 		return reference.get(key);
@@ -35,9 +35,9 @@ public class ReferenceDollarPart implements DollarPart {
 		public DollarPart parse(DollarParser dollarParser) {
 			StringBuilder stringBuilder = new StringBuilder(String.valueOf(Character.toChars(dollarParser.eat())));
 			int character;
-			while(true) {
+			while (true) {
 				character = dollarParser.peek();
-				if(Character.isJavaIdentifierPart(character)) {
+				if (Character.isJavaIdentifierPart(character)) {
 					dollarParser.skip();
 					stringBuilder.append(Character.toChars(character));
 				} else {

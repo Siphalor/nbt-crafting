@@ -25,26 +25,26 @@ import java.util.Optional;
 public class MixinCauldronBlock {
 	@Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
 	public void onActivate(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockHitResult blockHitResult, CallbackInfoReturnable<ActionResult> callbackInfoReturnable) {
-		if(!world.isClient()) {
+		if (!world.isClient()) {
 			TemporaryCauldronInventory inventory = new TemporaryCauldronInventory(playerEntity, hand, world, blockPos);
 			Optional<CauldronRecipe> cauldronRecipe = world.getRecipeManager().getFirstMatch(NbtCrafting.CAULDRON_RECIPE_TYPE, inventory, world);
-			if(cauldronRecipe.isPresent()) {
+			if (cauldronRecipe.isPresent()) {
 				DefaultedList<ItemStack> remainingStacks = cauldronRecipe.get().getRemainingStacks(inventory);
 
 				ItemStack itemStack = cauldronRecipe.get().craft(inventory);
 				itemStack.onCraft(world, playerEntity, itemStack.getCount());
 
-				if(!playerEntity.inventory.insertStack(remainingStacks.get(0))) {
+				if (!playerEntity.inventory.insertStack(remainingStacks.get(0))) {
 					ItemEntity itemEntity = playerEntity.dropItem(remainingStacks.get(0), false);
-					if(itemEntity != null) {
+					if (itemEntity != null) {
 						itemEntity.resetPickupDelay();
 						itemEntity.setOwner(playerEntity.getUuid());
 					}
 				}
 
-				if(!playerEntity.inventory.insertStack(itemStack)) {
+				if (!playerEntity.inventory.insertStack(itemStack)) {
 					ItemEntity itemEntity = playerEntity.dropItem(itemStack, false);
-					if(itemEntity != null) {
+					if (itemEntity != null) {
 						itemEntity.resetPickupDelay();
 						itemEntity.setOwner(playerEntity.getUuid());
 					}

@@ -14,14 +14,14 @@ public class ChildDollarOperator extends BinaryDollarOperator {
 
 	@Override
 	public Object apply(Object first, Object second) {
-		if(first instanceof CompoundTag) {
+		if (first instanceof CompoundTag) {
 			String key = second.toString();
-			if(((CompoundTag) first).contains(key)) {
+			if (((CompoundTag) first).contains(key)) {
 				return NbtUtil.toDollarValue(((CompoundTag) first).get(key));
 			}
-		} else if(first instanceof ListTag && second instanceof Number) {
+		} else if (first instanceof ListTag && second instanceof Number) {
 			int index = ((Number) second).intValue();
-			if(index < ((ListTag) first).size()) {
+			if (index < ((ListTag) first).size()) {
 				return NbtUtil.toDollarValue(((ListTag) first).get(index));
 			}
 		}
@@ -38,11 +38,11 @@ public class ChildDollarOperator extends BinaryDollarOperator {
 			dollarParser.skip();
 			StringBuilder stringBuilder = new StringBuilder();
 			int character = dollarParser.eat();
-			if(Character.isJavaIdentifierStart(character)) {
+			if (Character.isJavaIdentifierStart(character)) {
 				stringBuilder.append(Character.toChars(character));
-				while(true) {
+				while (true) {
 					character = dollarParser.peek();
-					if(Character.isJavaIdentifierPart(character)) {
+					if (Character.isJavaIdentifierPart(character)) {
 						dollarParser.skip();
 						stringBuilder.append(Character.toChars(character));
 					} else {

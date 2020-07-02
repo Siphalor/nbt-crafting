@@ -26,15 +26,24 @@ import java.util.Optional;
 
 @Mixin(AnvilContainer.class)
 public abstract class MixinAnvilContainer extends Container {
-	@Shadow @Final private PlayerEntity player;
+	@Shadow
+	@Final
+	private PlayerEntity player;
 
-	@Shadow @Final private Inventory inventory;
+	@Shadow
+	@Final
+	private Inventory inventory;
 
-	@Shadow @Final private Inventory result;
+	@Shadow
+	@Final
+	private Inventory result;
 
-	@Shadow @Final private Property levelCost;
+	@Shadow
+	@Final
+	private Property levelCost;
 
-	@Shadow private String newItemName;
+	@Shadow
+	private String newItemName;
 
 	@Unique
 	private boolean userChangedName = false;
@@ -46,16 +55,16 @@ public abstract class MixinAnvilContainer extends Container {
 	@Inject(method = "updateResult", at = @At("HEAD"), cancellable = true)
 	public void updateResult(CallbackInfo callbackInfo) {
 		Optional<AnvilRecipe> optionalAnvilRecipe = player.world.getRecipeManager().getFirstMatch(NbtCrafting.ANVIL_RECIPE_TYPE, inventory, player.world);
-		if(optionalAnvilRecipe.isPresent()) {
+		if (optionalAnvilRecipe.isPresent()) {
 			ItemStack resultStack = optionalAnvilRecipe.get().craft(inventory);
-			if(userChangedName) {
+			if (userChangedName) {
 				if (!newItemName.equals(resultStack.getName().getString()))
 					resultStack.setCustomName(new LiteralText(newItemName));
 				userChangedName = false;
 			} else {
 				newItemName = resultStack.getName().getString();
-				if(player instanceof ServerPlayerEntity) {
-					if(NbtCrafting.hasClientMod((ServerPlayerEntity) player)) {
+				if (player instanceof ServerPlayerEntity) {
+					if (NbtCrafting.hasClientMod((ServerPlayerEntity) player)) {
 						PacketByteBuf packetByteBuf = new PacketByteBuf(Unpooled.buffer());
 						packetByteBuf.writeString(newItemName);
 						ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, NbtCrafting.UPDATE_ANVIL_TEXT_S2C_PACKET_ID, packetByteBuf);

@@ -13,7 +13,7 @@ public class InverseDollarOperator extends UnaryDollarOperator {
 
 	public static DollarPart of(DollarPart dollarPart) throws DollarDeserializationException {
 		DollarPart instance = new InverseDollarOperator(dollarPart);
-		if(dollarPart.isConstant()) {
+		if (dollarPart.isConstant()) {
 			try {
 				return ValueDollarPart.of(instance.evaluate(null));
 			} catch (DollarEvaluationException e) {
@@ -25,16 +25,16 @@ public class InverseDollarOperator extends UnaryDollarOperator {
 
 	@Override
 	public Object evaluate(Object value) {
-		if(value instanceof Number) {
-			if(value instanceof Double) {
+		if (value instanceof Number) {
+			if (value instanceof Double) {
 				return -(Double) value;
-			} else if(value instanceof Float) {
+			} else if (value instanceof Float) {
 				return -(Float) value;
-			} else if(value instanceof Long) {
+			} else if (value instanceof Long) {
 				return -(Long) value;
-			} else if(value instanceof Integer) {
+			} else if (value instanceof Integer) {
 				return -(Integer) value;
-			} else if(value instanceof Short) {
+			} else if (value instanceof Short) {
 				return -(Short) value;
 			}
 		}

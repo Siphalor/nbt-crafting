@@ -23,7 +23,7 @@ public class NumberUtil {
 	}
 
 	public static Number denullify(Number number) {
-		if(number == null) {
+		if (number == null) {
 			return (byte) 0;
 		}
 		return number;
@@ -32,7 +32,7 @@ public class NumberUtil {
 	public static Number sum(Number a, Number b) {
 		a = denullify(a);
 		b = denullify(b);
-		switch(findSmallestType(a, b)) {
+		switch (findSmallestType(a, b)) {
 			case 0:
 			case 1:
 				return (byte) (a.byteValue() + b.byteValue());
@@ -52,7 +52,7 @@ public class NumberUtil {
 	public static Number difference(Number a, Number b) {
 		a = denullify(a);
 		b = denullify(b);
-		switch(findSmallestType(a, b)) {
+		switch (findSmallestType(a, b)) {
 			case 0:
 			case 1:
 				return (byte) (a.byteValue() - b.byteValue());
@@ -72,7 +72,7 @@ public class NumberUtil {
 	public static Number product(Number a, Number b) {
 		a = denullify(a);
 		b = denullify(b);
-		switch(findSmallestType(a, b)) {
+		switch (findSmallestType(a, b)) {
 			case 0:
 			case 1:
 				return (byte) (a.byteValue() * b.byteValue());
@@ -93,7 +93,7 @@ public class NumberUtil {
 		a = denullify(a);
 		if (b == null || b.doubleValue() == 0.0D)
 			return Math.signum(a.doubleValue()) * Double.POSITIVE_INFINITY;
-		switch(findSmallestType(a, b)) {
+		switch (findSmallestType(a, b)) {
 			case 0:
 			case 1:
 				return (byte) (a.byteValue() / b.byteValue());

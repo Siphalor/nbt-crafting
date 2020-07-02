@@ -21,18 +21,18 @@ public class REIPlugin implements REIPluginV0 {
 	public Identifier getPluginIdentifier() {
 		return IDENTIFIER;
 	}
-	
+
 	@Override
 	public SemanticVersion getMinimumVersion() throws VersionParsingException {
 		return SemanticVersion.parse("3.0-pre");
 	}
-	
+
 	@Override
 	public void registerRecipeDisplays(RecipeHelper recipeHelper) {
 		recipeHelper.getAllSortedRecipes().forEach(recipe -> {
-			if(recipe instanceof BrewingRecipe) {
-                for(ItemStack stack : ((BrewingRecipe) recipe).getBase().getMatchingStacksClient()) {
-                	recipeHelper.registerDisplay(DefaultPlugin.BREWING, new DefaultBrewingDisplay(stack, ((BrewingRecipe) recipe).getIngredient(), recipe.getOutput()));
+			if (recipe instanceof BrewingRecipe) {
+				for (ItemStack stack : ((BrewingRecipe) recipe).getBase().getMatchingStacksClient()) {
+					recipeHelper.registerDisplay(DefaultPlugin.BREWING, new DefaultBrewingDisplay(stack, ((BrewingRecipe) recipe).getIngredient(), recipe.getOutput()));
 				}
 			}
 		});

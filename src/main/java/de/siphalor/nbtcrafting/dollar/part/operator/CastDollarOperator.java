@@ -20,7 +20,7 @@ public class CastDollarOperator implements DollarPart {
 
 	public static DollarPart of(DollarPart dollarPart, int typeId) throws DollarException {
 		DollarPart instance = new CastDollarOperator(dollarPart, typeId);
-		if(dollarPart.isConstant()) {
+		if (dollarPart.isConstant()) {
 			return ValueDollarPart.of(instance.evaluate(null));
 		}
 		return instance;
@@ -29,31 +29,31 @@ public class CastDollarOperator implements DollarPart {
 	@Override
 	public Object evaluate(Map<String, Object> reference) throws DollarEvaluationException {
 		Object value = dollarPart.evaluate(reference);
-		switch(typeId) {
+		switch (typeId) {
 			case 'd':
-				if(value instanceof Number)
+				if (value instanceof Number)
 					return ((Number) value).doubleValue();
 				return 0D;
 			case 'f':
-				if(value instanceof Number)
+				if (value instanceof Number)
 					return ((Number) value).floatValue();
 				return 0F;
 			case 'b':
 			case 'c':
 			case 'C':
-				if(value instanceof Number)
+				if (value instanceof Number)
 					return ((Number) value).byteValue();
 				return (byte) 0;
 			case 's':
-				if(value instanceof Number)
+				if (value instanceof Number)
 					return ((Number) value).shortValue();
 				return (short) 0;
 			case 'i':
-				if(value instanceof Number)
+				if (value instanceof Number)
 					return ((Number) value).intValue();
 				return 0;
 			case 'l':
-				if(value instanceof Number)
+				if (value instanceof Number)
 					return ((Number) value).longValue();
 				return 0L;
 			case 'B':

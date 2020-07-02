@@ -13,7 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public class MixinServerPlayNetworkHandler {
-	@Shadow public ServerPlayerEntity player;
+	@Shadow
+	public ServerPlayerEntity player;
 
 	@Inject(method = "sendPacket(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V", at = @At("HEAD"))
 	public void onSendPacket(Packet<?> packet, GenericFutureListener<?> futureListener, CallbackInfo callbackInfo) {

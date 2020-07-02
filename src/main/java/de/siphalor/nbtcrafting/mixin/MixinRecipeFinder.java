@@ -24,7 +24,9 @@ public abstract class MixinRecipeFinder {
 	@Shadow
 	public abstract void addItem(final ItemStack stack);
 
-	@Shadow @Final public Int2IntMap idToAmountMap;
+	@Shadow
+	@Final
+	public Int2IntMap idToAmountMap;
 
 	@Unique
 	private static HashBiMap<Pair<Integer, CompoundTag>, Integer> itemStackMap = HashBiMap.create();
@@ -36,11 +38,12 @@ public abstract class MixinRecipeFinder {
 
 	@Inject(method = "findRecipe(Lnet/minecraft/recipe/Recipe;Lit/unimi/dsi/fastutil/ints/IntList;I)Z", at = @At("HEAD"))
 	public void onFindRecipe(@SuppressWarnings("rawtypes") Recipe recipe, IntList ints, int int_1, CallbackInfoReturnable<Boolean> ci) {
-		NbtCrafting.lastRecipeFinder = (RecipeFinder)(Object)this;
-	}	
+		NbtCrafting.lastRecipeFinder = (RecipeFinder) (Object) this;
+	}
+
 	@Inject(method = "countRecipeCrafts(Lnet/minecraft/recipe/Recipe;ILit/unimi/dsi/fastutil/ints/IntList;)I", at = @At("HEAD"))
 	public void onCountCrafts(@SuppressWarnings("rawtypes") Recipe recipe, int int_1, IntList ints, CallbackInfoReturnable<Integer> ci) {
-		NbtCrafting.lastRecipeFinder = (RecipeFinder)(Object)this;
+		NbtCrafting.lastRecipeFinder = (RecipeFinder) (Object) this;
 	}
 
 	/**
@@ -54,12 +57,12 @@ public abstract class MixinRecipeFinder {
 
 	/**
 	 * @reason Makes this function nbt dependent
-     * @author Siphalor
+	 * @author Siphalor
 	 */
 	@Overwrite
 	public static int getItemId(ItemStack stack) {
 		Pair<Integer, CompoundTag> stackPair = getStackPair(stack);
-		if(itemStackMap.containsKey(stackPair)) {
+		if (itemStackMap.containsKey(stackPair)) {
 			return itemStackMap.get(stackPair);
 		}
 		itemStackMap.put(stackPair, itemStackMap.size() + 1);
@@ -68,13 +71,13 @@ public abstract class MixinRecipeFinder {
 
 	/**
 	 * @reason Makes this function nbt dependent
-     * @author Siphalor
+	 * @author Siphalor
 	 */
 	@Overwrite
 	public static ItemStack getStackFromId(final int id) {
-		if(itemStackMap.containsValue(id)) {
+		if (itemStackMap.containsValue(id)) {
 			ItemStack result = new ItemStack(Item.byRawId(itemStackMap.inverse().get(id).getFirst()));
-			((IItemStack)(Object) result).setRawTag(itemStackMap.inverse().get(id).getSecond());
+			((IItemStack) (Object) result).setRawTag(itemStackMap.inverse().get(id).getSecond());
 			return result;
 		}
 		return ItemStack.EMPTY;

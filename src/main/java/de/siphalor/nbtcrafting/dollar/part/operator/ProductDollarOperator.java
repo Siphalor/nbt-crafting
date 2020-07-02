@@ -15,7 +15,7 @@ public class ProductDollarOperator extends BinaryDollarOperator {
 
 	public static DollarPart of(DollarPart first, DollarPart second) throws DollarException {
 		DollarPart instance = new ProductDollarOperator(first, second);
-		if(first.isConstant() && second.isConstant()) {
+		if (first.isConstant() && second.isConstant()) {
 			return ValueDollarPart.of(instance.evaluate(null));
 		}
 		return null;
@@ -23,12 +23,12 @@ public class ProductDollarOperator extends BinaryDollarOperator {
 
 	@Override
 	public Object apply(Object first, Object second) {
-		if(first instanceof Number || first == null) {
+		if (first instanceof Number || first == null) {
 			first = NumberUtil.denullify((Number) first);
-			if(second instanceof Number || second == null)
+			if (second instanceof Number || second == null)
 				return NumberUtil.product((Number) first, (Number) second);
 			return StringUtils.repeat(second.toString(), ((Number) first).intValue());
-		} else if(second instanceof Number || second == null) {
+		} else if (second instanceof Number || second == null) {
 			return StringUtils.repeat(first.toString(), NumberUtil.denullify((Number) second).intValue());
 		}
 		return null;
@@ -42,7 +42,7 @@ public class ProductDollarOperator extends BinaryDollarOperator {
 
 		@Override
 		public DollarPart parse(DollarParser dollarParser, DollarPart lastDollarPart, int priority) throws DollarDeserializationException {
-			if(lastDollarPart == null) {
+			if (lastDollarPart == null) {
 				throw new DollarDeserializationException("Unexpected asterisk!");
 			}
 			dollarParser.skip();

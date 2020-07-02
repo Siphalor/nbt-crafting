@@ -21,7 +21,7 @@ public class NbtCraftingClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ClientSidePacketRegistry.INSTANCE.register(NbtCrafting.UPDATE_ANVIL_TEXT_S2C_PACKET_ID, (packetContext, packetByteBuf) -> {
-			if(MinecraftClient.getInstance().currentScreen instanceof AnvilScreen) {
+			if (MinecraftClient.getInstance().currentScreen instanceof AnvilScreen) {
 				((AnvilScreenAccessor) MinecraftClient.getInstance().currentScreen).getNameField().setText(packetByteBuf.readString());
 			} else
 				packetByteBuf.readString();

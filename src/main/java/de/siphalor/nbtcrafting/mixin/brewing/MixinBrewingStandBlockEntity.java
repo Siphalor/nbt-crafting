@@ -20,9 +20,11 @@ import java.util.Optional;
 @SuppressWarnings("ConstantConditions")
 @Mixin(BrewingStandBlockEntity.class)
 public abstract class MixinBrewingStandBlockEntity extends LockableContainerBlockEntity {
-	@Shadow public abstract void setInvStack(int slot, ItemStack stack);
+	@Shadow
+	public abstract void setInvStack(int slot, ItemStack stack);
 
-	@Shadow public abstract ItemStack getInvStack(int slot);
+	@Shadow
+	public abstract ItemStack getInvStack(int slot);
 
 	protected MixinBrewingStandBlockEntity(BlockEntityType<?> blockEntityType_1) {
 		super(blockEntityType_1);
@@ -30,23 +32,23 @@ public abstract class MixinBrewingStandBlockEntity extends LockableContainerBloc
 
 	@Inject(method = "canCraft", at = @At("HEAD"), cancellable = true)
 	private void canCraft(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		Optional<BrewingRecipe> recipe = world.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, (BrewingStandBlockEntity)(Object) this, world);
-		if(recipe.isPresent()) {
+		Optional<BrewingRecipe> recipe = world.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, (BrewingStandBlockEntity) (Object) this, world);
+		if (recipe.isPresent()) {
 			callbackInfoReturnable.setReturnValue(true);
 		}
 	}
 
 	@Inject(method = "craft", at = @At("HEAD"), cancellable = true)
 	private void craft(CallbackInfo callbackInfo) {
-		Optional<BrewingRecipe> recipe = world.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, (BrewingStandBlockEntity)(Object) this, world);
-		if(recipe.isPresent()) {
-			BrewingStandBlockEntity inv = (BrewingStandBlockEntity)(Object) this;
+		Optional<BrewingRecipe> recipe = world.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, (BrewingStandBlockEntity) (Object) this, world);
+		if (recipe.isPresent()) {
+			BrewingStandBlockEntity inv = (BrewingStandBlockEntity) (Object) this;
 			DefaultedList<ItemStack> remainingStacks = recipe.get().getRemainingStacks(inv);
 			ItemStack[] results = recipe.get().craftAll(inv);
 
 			getInvStack(3).decrement(1);
 			for (int i = 0; i < 3; i++) {
-				if(results[i] != null) {
+				if (results[i] != null) {
 					setInvStack(i, results[i]);
 				}
 			}

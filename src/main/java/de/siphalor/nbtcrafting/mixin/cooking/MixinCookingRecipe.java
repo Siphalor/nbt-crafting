@@ -14,13 +14,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractCookingRecipe.class)
 public class MixinCookingRecipe {
-	@Shadow @Final protected ItemStack output;
+	@Shadow
+	@Final
+	protected ItemStack output;
 
-	@Shadow @Final protected Ingredient input;
+	@Shadow
+	@Final
+	protected Ingredient input;
 
 	@Inject(method = "craft", at = @At("HEAD"), cancellable = true)
 	public void craft(Inventory inventory, CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
 		ItemStack result = RecipeUtil.getDollarAppliedResult(output, input, inventory);
-		if(result != null) callbackInfoReturnable.setReturnValue(result);
+		if (result != null) callbackInfoReturnable.setReturnValue(result);
 	}
 }

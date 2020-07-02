@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class IngredientStackEntry extends IngredientEntry {
-	
+
 	private final IngredientEntryCondition condition;
 	private final int id;
 
@@ -21,10 +21,10 @@ public class IngredientStackEntry extends IngredientEntry {
 		this.id = id;
 		this.condition = condition;
 	}
-	
+
 	public IngredientStackEntry(ItemStack stack) {
 		this.id = Registry.ITEM.getRawId(stack.getItem());
-		if(stack.hasTag())
+		if (stack.hasTag())
 			this.condition = new IngredientEntryCondition(stack.getTag(), new CompoundTag());
 		else
 			this.condition = new IngredientEntryCondition();
@@ -46,7 +46,7 @@ public class IngredientStackEntry extends IngredientEntry {
 	@Override
 	public Collection<ItemStack> getPreviewStacks(boolean nbt) {
 		ItemStack stack = new ItemStack(Registry.ITEM.get(id));
-		if(nbt) {
+		if (nbt) {
 			((IItemStack) (Object) stack).setRawTag(condition.getPreviewTag());
 		}
 		return Collections.singleton(stack);
@@ -57,14 +57,14 @@ public class IngredientStackEntry extends IngredientEntry {
 		buf.writeVarInt(id);
 		this.condition.write(buf);
 		buf.writeBoolean(remainder != null);
-		if(remainder != null)
+		if (remainder != null)
 			buf.writeItemStack(remainder);
 	}
 
 	public static IngredientStackEntry read(PacketByteBuf buf) {
 		IngredientStackEntry entry = new IngredientStackEntry(buf.readVarInt(), IngredientEntryCondition.read(buf));
-		if(buf.readBoolean())
-            entry.setRecipeRemainder(buf.readItemStack());
+		if (buf.readBoolean())
+			entry.setRecipeRemainder(buf.readItemStack());
 		return entry;
 	}
 

@@ -17,15 +17,15 @@ public interface NbtIterator {
 	}
 
 	static void iterateTags(Tag tag, NbtIterator nbtIterator, String path) {
-		if(tag == null) return;
-		if(tag instanceof CompoundTag) {
+		if (tag == null) return;
+		if (tag instanceof CompoundTag) {
 			CompoundTag compoundTag = (CompoundTag) tag;
-			if(!path.equals(""))
+			if (!path.equals(""))
 				path += ".";
 			Set<String> remove = new HashSet<>();
-			for(String key : compoundTag.getKeys()) {
+			for (String key : compoundTag.getKeys()) {
 				Tag currentTag = compoundTag.get(key);
-				if(nbtIterator.process(path, key, currentTag)) {
+				if (nbtIterator.process(path, key, currentTag)) {
 					remove.add(key);
 				} else {
 					if (NbtUtil.isCompound(currentTag) || NbtUtil.isList(currentTag)) {
@@ -33,16 +33,16 @@ public interface NbtIterator {
 					}
 				}
 			}
-			for(String key : remove) {
+			for (String key : remove) {
 				compoundTag.remove(key);
 			}
-		} else if(tag instanceof AbstractListTag) {
+		} else if (tag instanceof AbstractListTag) {
 			//noinspection unchecked
 			AbstractListTag<Tag> listTag = (AbstractListTag<Tag>) tag;
 			int i = 0;
-			for(Iterator<Tag> iterator = listTag.iterator(); iterator.hasNext(); ) {
+			for (Iterator<Tag> iterator = listTag.iterator(); iterator.hasNext(); ) {
 				Tag currentTag = iterator.next();
-				if(nbtIterator.process(path, "[" + i + "]", currentTag)) {
+				if (nbtIterator.process(path, "[" + i + "]", currentTag)) {
 					iterator.remove();
 				} else {
 					iterateTags(currentTag, nbtIterator, path + "[" + i + "]");
