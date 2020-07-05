@@ -3,7 +3,6 @@
 	"package": "de.siphalor.nbtcrafting.compat.mixin",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
-		"MixinRegistrySyncManager",
 		"MixinREIRecipeFinder"
 	],
 	"injectors": {
