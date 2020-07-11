@@ -127,7 +127,11 @@ public final class DollarParser {
 						try {
 							//noinspection ConstantConditions
 							MergeMode mergeMode = MergeMode.valueOf(paths.get(p).asString().toUpperCase(Locale.ENGLISH));
-							mergeModes.add(Pair.of(Pattern.compile(Pattern.quote(path) + "\\.?" + p), mergeMode));
+							if (p.startsWith("/") && p.endsWith("/")) {
+								mergeModes.add(Pair.of(Pattern.compile(Pattern.quote(path) + "\\.?" + p.substring(1, p.length() - 1)), mergeMode));
+							} else {
+								mergeModes.add(Pair.of(Pattern.compile(Pattern.quote(path) + "\\.?" + Pattern.quote(p)), mergeMode));
+							}
 						} catch (Exception e) {
 							NbtCrafting.logError("Unable to deduce dollar merge mode from tag: " + paths.get(p));
 						}
