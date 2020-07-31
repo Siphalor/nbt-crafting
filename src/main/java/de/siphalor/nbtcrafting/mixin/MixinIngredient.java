@@ -247,7 +247,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			throw new JsonParseException("An ingredient entry needs either a tag or an item");
 		}
 		final Identifier identifier2 = new Identifier(JsonHelper.getString(jsonObject, "tag"));
-		final Tag<Item> tag = ItemTags.getContainer().get(identifier2);
+		final Tag<Item> tag = ItemTags.getTagGroup().getTag(identifier2);
 		if (tag == null) {
 			throw new JsonSyntaxException("Unknown item tag '" + identifier2 + "'");
 		}
