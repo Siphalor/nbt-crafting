@@ -11,13 +11,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.PacketByteBuf;
 
 public class IngredientEntryCondition {
+	public static final IngredientEntryCondition EMPTY = new IngredientEntryCondition(NbtUtil.EMPTY_COMPOUND, NbtUtil.EMPTY_COMPOUND);
 
 	public CompoundTag requiredElements;
 	public CompoundTag deniedElements;
 
 	public IngredientEntryCondition() {
-		requiredElements = new CompoundTag();
-		deniedElements = new CompoundTag();
+		requiredElements = NbtUtil.EMPTY_COMPOUND;
+		deniedElements = NbtUtil.EMPTY_COMPOUND;
 	}
 
 	public IngredientEntryCondition(CompoundTag requiredElements, CompoundTag deniedElements) {
