@@ -16,6 +16,7 @@ minecraft {
 
 repositories {
 	maven { url "https://maven.fabricmc.net/" }
+	maven { url "https://maven.siphalor.de/" }
 	maven { url "https://minecraft.curseforge.com/api/maven" }
 	maven { url "https://jitpack.io/" }
 }
@@ -50,9 +51,8 @@ dependencies {
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems:4+") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
-
-	modImplementation("com.github.Siphalor:ModsOfTheWorld:1.16-SNAPSHOT") {
-		exclude group: "net.fabricmc.fabric-api"
+	modImplementation("de.siphalor:modsoftheworld-1.16:1+") {
+		transitive false
 	}
 }
 
@@ -109,7 +109,6 @@ publishing {
 		maven {
 			name = "Siphalor"
 			url = "https://maven.siphalor.de/upload.php"
-			//authentication(BasicAuthentication)
 			credentials {
 				username = siphalorMavenUser
 				password = siphalorMavenPassword
