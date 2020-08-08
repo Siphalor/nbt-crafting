@@ -16,6 +16,7 @@ minecraft {
 
 repositories {
 	maven { url "https://maven.fabricmc.net/" }
+	maven { url "https://maven.siphalor.de/" }
 	maven { url "https://minecraft.curseforge.com/api/maven" }
 	maven { url "https://jitpack.io/" }
 }
@@ -26,6 +27,8 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}"
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
+	modCompile "de.siphalor:pushtocraft-1.15:1.0.0+"
+
 	modCompile "net.fabricmc.fabric-api:fabric-api-base:0.1.2+b7f9825d0c"
 	include "net.fabricmc.fabric-api:fabric-api-base:0.1.2+b7f9825d0c"
 	modCompile "net.fabricmc.fabric-api:fabric-networking-v0:0.1.7+12515ed90c"
@@ -35,7 +38,7 @@ dependencies {
 	modImplementation("me.shedaniel:RoughlyEnoughItems:3.3.17") {
 
 	}
-	modImplementation("com.github.Siphalor:ModsOfTheWorld:0999e66163") {
+	modImplementation("de.siphalor:modsoftheworld-1.15:1+") {
 		transitive false
 	}
 }
@@ -91,7 +94,6 @@ publishing {
 		maven {
 			name = "Siphalor"
 			url = "https://maven.siphalor.de/upload.php"
-			//authentication(BasicAuthentication)
 			credentials {
 				username = siphalorMavenUser
 				password = siphalorMavenPassword
