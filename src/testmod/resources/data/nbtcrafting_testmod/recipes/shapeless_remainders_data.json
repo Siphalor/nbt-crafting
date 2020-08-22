@@ -1,0 +1,37 @@
+{
+	"type": "crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "minecraft:diamond_sword",
+			"data": {
+				"require": {
+					"Damage": "$1.."
+				}
+			},
+			"remainder": {
+				"item": "minecraft:diamond_sword",
+				"data": {
+					"Damage": "$i0.Damage+500"
+				}
+			}
+		},
+		{
+			"item": "minecraft:stick",
+			"remainder": { "item": "minecraft:coal" }
+		}
+	],
+	"result": {
+		"item": "minecraft:diamond_axe",
+		"data": {
+			"display": {
+				"Name": "{\"text\":\"Battle Axe\"}"
+			},
+			"Enchantments": [
+				{
+					"id": "minecraft:sharpness",
+					"lvl": 10
+				}
+			]
+		}
+	}
+}

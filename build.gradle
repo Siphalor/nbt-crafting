@@ -21,13 +21,18 @@ repositories {
 	maven { url "https://jitpack.io/" }
 }
 
+sourceSets {
+	testmod {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
+	}
+}
+
 dependencies {
 	//to change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}"
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
-
-	modCompile "de.siphalor:pushtocraft-1.15:1.0.0+"
 
 	modCompile "net.fabricmc.fabric-api:fabric-api-base:0.1.2+b7f9825d0c"
 	include "net.fabricmc.fabric-api:fabric-api-base:0.1.2+b7f9825d0c"
@@ -35,12 +40,14 @@ dependencies {
 	include "net.fabricmc.fabric-api:fabric-networking-v0:0.1.7+12515ed90c"
 	modImplementation "net.fabricmc.fabric-api:fabric-registry-sync-v0:0.2.6+f3d8141b0c"
 
-	modImplementation("me.shedaniel:RoughlyEnoughItems:3.3.17") {
+	modImplementation("me.shedaniel:RoughlyEnoughItems:3.6.21") {
 
 	}
 	modImplementation("de.siphalor:modsoftheworld-1.15:1+") {
 		transitive false
 	}
+
+	testmodCompile sourceSets.main.output
 }
 
 processResources {

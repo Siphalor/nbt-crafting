@@ -1,0 +1,13 @@
+{
+	"type": "minecraft:stonecutting",
+	"ingredient": {
+		"item": "minecraft:andesite"
+	},
+	"result": {
+		"item": "minecraft:player_head",
+		"data": {
+			"SkullOwner": "Siphalor"
+		}
+	},
+	"count": 2
+}
