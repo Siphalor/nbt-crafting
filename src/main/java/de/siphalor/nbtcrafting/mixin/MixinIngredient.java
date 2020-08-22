@@ -5,6 +5,7 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.JsonPreprocessor;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.ingredient.*;
 import de.siphalor.nbtcrafting.util.duck.ICloneable;
 import net.fabricmc.api.EnvType;
@@ -232,6 +233,8 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 					throw new JsonSyntaxException("Unknown potion '" + identifier.toString() + "'");
 				});
 				IngredientEntryCondition condition = loadIngredientEntryCondition(jsonObject);
+				if (condition.requiredElements == NbtUtil.EMPTY_COMPOUND)
+					condition.requiredElements = new CompoundTag();
 				condition.requiredElements.putString("Potion", identifier.toString());
 				IngredientStackEntry entry = new IngredientStackEntry(Registry.ITEM.getRawId(Items.POTION), condition);
 				if (jsonObject.has("remainder")) {

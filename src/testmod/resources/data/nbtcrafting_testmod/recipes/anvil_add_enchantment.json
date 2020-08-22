@@ -22,7 +22,7 @@
 						"/Enchantments\\[\\d+\\]/": "append"
 					}
 				}
-			]
+			],
 			"Enchantments": [
 				{
 					"id": "minecraft:multishot",
