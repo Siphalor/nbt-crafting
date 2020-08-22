@@ -2,10 +2,7 @@ package de.siphalor.nbtcrafting.ingredient;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mojang.datafixers.Dynamic;
-import com.mojang.datafixers.types.JsonOps;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
-import net.minecraft.datafixer.NbtOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.PacketByteBuf;
@@ -39,9 +36,9 @@ public class IngredientEntryCondition {
 
 	public void addToJson(JsonObject json) {
 		if (requiredElements.getSize() > 0)
-			json.add("require", Dynamic.convert(NbtOps.INSTANCE, JsonOps.INSTANCE, requiredElements));
+			json.add("require", NbtUtil.toJson(requiredElements));
 		if (deniedElements.getSize() > 0)
-			json.add("deny", Dynamic.convert(NbtOps.INSTANCE, JsonOps.INSTANCE, deniedElements));
+			json.add("deny", NbtUtil.toJson(deniedElements));
 	}
 
 	public CompoundTag getPreviewTag() {
@@ -56,18 +53,18 @@ public class IngredientEntryCondition {
 		if (json.has("require")) {
 			if (!json.get("require").isJsonObject())
 				throw new JsonParseException("data.require must be an object");
-			condition.requiredElements = (CompoundTag) Dynamic.convert(JsonOps.INSTANCE, NbtOps.INSTANCE, json.getAsJsonObject("require"));
+			condition.requiredElements = (CompoundTag) NbtUtil.asTag(json.getAsJsonObject("require"));
 			flatObject = false;
 		}
 		if (json.has("deny")) {
 			if (!json.get("deny").isJsonObject())
 				throw new JsonParseException("data.deny must be an object");
-			condition.deniedElements = (CompoundTag) Dynamic.convert(JsonOps.INSTANCE, NbtOps.INSTANCE, json.getAsJsonObject("deny"));
+			condition.deniedElements = (CompoundTag) NbtUtil.asTag(json.getAsJsonObject("deny"));
 			flatObject = false;
 		}
 
 		if (flatObject) {
-			condition.requiredElements = (CompoundTag) Dynamic.convert(JsonOps.INSTANCE, NbtOps.INSTANCE, json);
+			condition.requiredElements = (CompoundTag) NbtUtil.asTag(json);
 		}
 
 		return condition;

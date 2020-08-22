@@ -1,11 +1,10 @@
 package de.siphalor.nbtcrafting.util;
 
-import com.google.common.collect.ImmutableList;
-
-import java.util.List;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class NumberUtil {
-	public static final List<Class<?>> NUMBER_TYPES = ImmutableList.of(
+	private static final Class<?>[] NUMBER_TYPES = {
 			Character.class,
 			Byte.class,
 			Short.class,
@@ -13,11 +12,39 @@ public class NumberUtil {
 			Long.class,
 			Float.class,
 			Double.class
-	);
+	};
+	private static final String[] NUMBER_TYPE_IDENTIFIERS = {
+			"",
+			"cCb",
+			"s",
+			"i",
+			"l",
+			"f",
+			"d"
+	};
+	public static final int CHARACTER = 0;
+	public static final int BYTE = 1;
+	public static final int SHORT = 2;
+	public static final int INTEGER = 3;
+	public static final int LONG = 4;
+	public static final int FLOAT = 5;
+	public static final int DOUBlE = 6;
+
+	public static int getType(String type) {
+		for (int i = 0; i < NUMBER_TYPE_IDENTIFIERS.length; i++) {
+			if (StringUtils.containsAny(NUMBER_TYPE_IDENTIFIERS[i], type))
+				return i;
+		}
+		return -1;
+	}
+
+	public static int getType(Number number) {
+		return ArrayUtils.indexOf(NUMBER_TYPES, number.getClass());
+	}
 
 	public static int findSmallestType(Number a, Number b) {
-		int typeA = NUMBER_TYPES.indexOf(a.getClass());
-		int typeB = NUMBER_TYPES.indexOf(b.getClass());
+		int typeA = ArrayUtils.indexOf(NUMBER_TYPES, a.getClass());
+		int typeB = ArrayUtils.indexOf(NUMBER_TYPES, b.getClass());
 
 		return Math.max(typeA, typeB);
 	}
@@ -27,6 +54,27 @@ public class NumberUtil {
 			return (byte) 0;
 		}
 		return number;
+	}
+
+	public static Number cast(Number number, int type) {
+		if (number == null)
+			return null;
+		switch (type) {
+			case BYTE:
+			case CHARACTER:
+				return number.byteValue();
+			case SHORT:
+				return number.shortValue();
+			case INTEGER:
+				return number.intValue();
+			case LONG:
+				return number.longValue();
+			case FLOAT:
+				return number.floatValue();
+			case DOUBlE:
+			default:
+				return number.doubleValue();
+		}
 	}
 
 	public static Number sum(Number a, Number b) {

@@ -1,7 +1,11 @@
 package de.siphalor.nbtcrafting.api.nbt;
 
+import com.google.gson.JsonElement;
+import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.util.Pair;
 import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.util.BetterJsonOps;
+import net.minecraft.datafixer.NbtOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import org.apache.commons.lang3.ArrayUtils;
@@ -437,5 +441,13 @@ public class NbtUtil {
 		} else {
 			return null;
 		}
+	}
+
+	public static Tag asTag(JsonElement jsonElement) {
+		return Dynamic.convert(BetterJsonOps.INSTANCE, NbtOps.INSTANCE, jsonElement);
+	}
+
+	public static JsonElement toJson(Tag tag) {
+		return Dynamic.convert(NbtOps.INSTANCE, BetterJsonOps.INSTANCE, tag);
 	}
 }
