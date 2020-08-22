@@ -17,7 +17,7 @@
 	},
 
 	"license": "Apache-2.0",
-	"icon": "assets/nbtcrafting/logo_variation.png",
+	"icon": "assets/nbtcrafting/logo.png",
 
 	"environment": "*",
 	"mixins": [
@@ -50,6 +50,7 @@
 
 	"custom": {
 		"modmenu:api": true,
-		"modsoftheworld:splashes": "nbtcrafting:splashes.txt"
+		"modsoftheworld:splashes": "nbtcrafting:splashes.txt",
+		"modsoftheworld:logo": "nbtcrafting:title.png"
 	}
 }

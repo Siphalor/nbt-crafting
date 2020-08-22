@@ -3,7 +3,7 @@
 [![curseforge downloads](http://cf.way2muchnoise.eu/full_nbt-crafting_downloads.svg)](https://minecraft.curseforge.com/projects/nbt-crafting)
 [![curseforge mc versions](http://cf.way2muchnoise.eu/versions/nbt-crafting.svg)](https://minecraft.curseforge.com/projects/nbt-crafting)
 
-![logo](images/logo_variation_big.png?raw=true)
+![logo](images/logo_2.0_big.png?raw=true)
 
 ## About
 A fabric mod which allows you to add/change JSON crafting/cooking/etc. recipes to use nbt input and output.
