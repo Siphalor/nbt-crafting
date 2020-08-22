@@ -29,7 +29,9 @@ public abstract class MixinSynchronizeRecipesS2CPacket {
 		if (!((IServerPlayerEntity) NbtCrafting.lastServerPlayerEntity).hasClientMod()) {
 			List<Recipe<?>> syncRecipes = recipes.stream().filter(recipe -> !(recipe instanceof ServerRecipe)).collect(Collectors.toList());
 			buf.writeVarInt(syncRecipes.size());
-			syncRecipes.forEach(recipe -> writeRecipe(recipe, buf));
+			for (Recipe<?> recipe : syncRecipes) {
+				writeRecipe(recipe, buf);
+			}
 			callbackInfo.cancel();
 		}
 	}

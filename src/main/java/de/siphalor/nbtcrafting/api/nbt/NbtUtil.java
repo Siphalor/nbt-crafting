@@ -12,8 +12,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Collection;
+import java.util.StringJoiner;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class NbtUtil {
@@ -159,7 +159,12 @@ public class NbtUtil {
 		} else if (tag instanceof StringTag) {
 			return tag.asString();
 		} else if (tag instanceof ListTag) {
-			return ((ListTag) tag).stream().map(NbtUtil::asString).collect(Collectors.joining(", "));
+			StringJoiner joiner = new StringJoiner(", ");
+			for (Tag entry : ((ListTag) tag)) {
+				String s = asString(entry);
+				joiner.add(s);
+			}
+			return joiner.toString();
 		} else {
 			return tag.toString();
 		}
@@ -310,7 +315,11 @@ public class NbtUtil {
 				mergeInto(asCompoundTag(targetTag), asCompoundTag(additionsTag), replace);
 			} else if (isList(targetTag) && isList(additionsTag)) {
 				int targetSize = asListTag(targetTag).size();
-				asListTag(targetTag).addAll(asListTag(additionsTag).stream().map(Tag::copy).collect(Collectors.toList()));
+				AbstractListTag<Tag> listTag = asListTag(targetTag);
+				for (Tag tag : asListTag(additionsTag)) {
+					Tag copy = tag.copy();
+					listTag.add(tag);
+				}
 			} else {
 				if (replace)
 					//noinspection ConstantConditions

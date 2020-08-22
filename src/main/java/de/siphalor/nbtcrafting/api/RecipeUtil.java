@@ -13,7 +13,6 @@ import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,13 +97,13 @@ public class RecipeUtil {
 	}
 
 	public static ItemStack applyDollars(ItemStack stack, Dollar[] dollars, Map<String, Object> reference) {
-		Arrays.stream(dollars).forEach(dollar -> {
+		for (Dollar dollar : dollars) {
 			try {
 				dollar.apply(stack, reference);
 			} catch (DollarException e) {
 				e.printStackTrace();
 			}
-		});
+		}
 		if (stack.getDamage() > stack.getMaxDamage()) {
 			return ItemStack.EMPTY;
 		}

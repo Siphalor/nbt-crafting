@@ -12,7 +12,6 @@ import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class IngredientMultiStackEntry extends IngredientEntry {
 
@@ -43,7 +42,11 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 	@Override
 	public Collection<ItemStack> getPreviewStacks(boolean nbt) {
 		CompoundTag tag = condition.getPreviewTag();
-		Collection<ItemStack> stacks = itemIds.stream().map(id -> new ItemStack(Registry.ITEM.get(id))).collect(Collectors.toList());
+		Collection<ItemStack> stacks = new ArrayList<>(itemIds.size());
+		for (Integer id : itemIds) {
+			ItemStack stack = new ItemStack(Registry.ITEM.get(id));
+			stacks.add(stack);
+		}
 		if (nbt) {
 			for (ItemStack itemStack : stacks) {
 				((IItemStack) (Object) itemStack).setRawTag(tag);
