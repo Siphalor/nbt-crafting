@@ -1,4 +1,4 @@
-# Nbt Crafting - Dollar Update
+# Nbt Crafting 2.0
 
 [![curseforge downloads](http://cf.way2muchnoise.eu/full_nbt-crafting_downloads.svg)](https://minecraft.curseforge.com/projects/nbt-crafting)
 [![curseforge mc versions](http://cf.way2muchnoise.eu/versions/nbt-crafting.svg)](https://minecraft.curseforge.com/projects/nbt-crafting)
@@ -24,9 +24,9 @@ A simple recipe allowing to craft wooden swords with 20 damage from diamond swor
     {
       "item": "minecraft:diamond_sword",
       "data": {
-      	"require": {
+        "require": {
           "Damage": 2
-	}
+        }
       }
     }
   ],
@@ -43,5 +43,4 @@ A simple recipe allowing to craft wooden swords with 20 damage from diamond swor
 Due to some additions made with this mod the recipe book displays also the output amount of all recipes - yay!
 
 ## License
-
 This mod is available under the Apache 2.0 License.
