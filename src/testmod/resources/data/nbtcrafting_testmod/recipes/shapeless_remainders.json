@@ -1,0 +1,16 @@
+{
+	"type": "crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "minecraft:lava_bucket",
+			"remainder": { "item": "minecraft:milk_bucket" }
+		},
+		{
+			"item": "minecraft:water_bucket",
+			"remainder": { "item": "minecraft:iron_ingot" }
+		}
+	],
+	"result": {
+		"item": "minecraft:obsidian"
+	}
+}

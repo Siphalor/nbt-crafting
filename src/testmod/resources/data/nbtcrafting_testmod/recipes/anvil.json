@@ -1,0 +1,14 @@
+{
+	"type": "nbtcrafting:anvil",
+	"base": {
+		"item": "minecraft:stone_sword"
+	},
+	"ingredient": {
+		"item": "minecraft:cyan_dye"
+	},
+	"result": {
+		"item": "minecraft:diamond_sword"
+	},
+	"levels": 10
+}
+

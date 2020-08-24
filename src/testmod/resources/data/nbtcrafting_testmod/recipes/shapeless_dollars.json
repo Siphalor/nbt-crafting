@@ -1,0 +1,16 @@
+{
+	"type": "crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "minecraft:wooden_sword",
+			"remainder": {
+				"item": "minecraft:wooden_sword",
+				"data": {
+					"Damage": "$ i0.Damage + 2"
+				}
+			}
+		}
+	],
+	"result": { "item": "minecraft:stick" }
+}
+

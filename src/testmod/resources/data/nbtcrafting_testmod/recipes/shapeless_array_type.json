@@ -1,0 +1,22 @@
+{
+	"type": "crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "minecraft:stone_button"
+		}
+	],
+	"result": {
+		"item": "minecraft:stick",
+		"data": {
+			"test": [
+				1,
+				2,
+				3,
+				4,
+				5,
+				"nbtcrafting:array_type=i"
+			]
+		}
+	}
+}
+

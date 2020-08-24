@@ -1,0 +1,26 @@
+{
+	"parent": "minecraft:recipes/root",
+	"rewards": {
+		"recipes": [
+			"nbtcrafting_testmod:saplings_to_stick"
+		]
+	},
+	"criteria": {
+		"has_sapling": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"tag": "minecraft:saplings"
+					}
+				]
+			}
+		},
+		"has_the_recipe": {
+			"trigger": "minecraft:recipe_unlocked",
+			"conditions": {
+				"recipe": "nbtcrafting_testmod:saplings_to_stick"
+			}
+		}
+	}
+}

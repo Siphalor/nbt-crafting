@@ -1,0 +1,19 @@
+{
+	"type": "nbtcrafting:brewing",
+	"base": {
+		"potion": "minecraft:regeneration",
+		"remainder": {
+			"item": "minecraft:cobblestone"
+		}
+	},
+	"ingredient": {
+		"item": "minecraft:stick",
+		"remainder": {
+			"item": "minecraft:diamond"
+		}
+	},
+	"result": {
+		"potion": "minecraft:swiftness"
+	}
+}
+

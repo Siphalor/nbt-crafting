@@ -114,7 +114,7 @@ public class NbtCrafting implements ModInitializer {
 		return Registry.register(Registry.RECIPE_TYPE, recipeTypeId, new RecipeType<T>() {
 			@Override
 			public String toString() {
-				return name;
+				return MOD_ID + ":" + name;
 			}
 		});
 	}

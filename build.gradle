@@ -21,6 +21,13 @@ repositories {
 	maven { url "https://jitpack.io/" }
 }
 
+sourceSets {
+	testmod {
+		compileClasspath += main.compileClasspath
+		runtimeClasspath += main.runtimeClasspath
+	}
+}
+
 dependencies {
 	//to change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -54,6 +61,8 @@ dependencies {
 	modImplementation("de.siphalor:modsoftheworld-1.16:1+") {
 		transitive false
 	}
+
+	testmodCompile sourceSets.main.output
 }
 
 //sourceSets.main.java.exclude("de/siphalor/nbtcrafting/compat/**/*REI*")

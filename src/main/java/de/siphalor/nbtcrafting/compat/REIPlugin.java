@@ -8,6 +8,7 @@ import me.shedaniel.rei.plugin.brewing.DefaultBrewingDisplay;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.Recipe;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)

@@ -4,13 +4,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.serialization.Dynamic;
-import com.mojang.serialization.JsonOps;
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.JsonPreprocessor;
 import de.siphalor.nbtcrafting.api.RecipeUtil;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.util.duck.IItemStack;
-import net.minecraft.datafixer.NbtOps;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -71,7 +69,7 @@ public abstract class MixinShapedRecipe {
 					e.printStackTrace();
 				}
 			} else {
-				NbtCrafting.setLastReadNbt((CompoundTag) Dynamic.convert(JsonOps.INSTANCE, NbtOps.INSTANCE, JsonPreprocessor.process(JsonHelper.getObject(json, "data"))));
+				NbtCrafting.setLastReadNbt((CompoundTag) NbtUtil.asTag(JsonPreprocessor.process(JsonHelper.getObject(json, "data"))));
 			}
 			json.remove("data");
 		}

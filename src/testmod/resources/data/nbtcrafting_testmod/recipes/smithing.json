@@ -1,0 +1,16 @@
+{
+	"type": "nbtcrafting:smithing",
+	"base": {
+		"item": "minecraft:stone_sword"
+	},
+	"ingredient": {
+		"item": "minecraft:cyan_dye"
+	},
+	"result": {
+		"item": "minecraft:diamond_sword",
+		"data": {
+			"$": "$ base"
+		}
+	}
+}
+
