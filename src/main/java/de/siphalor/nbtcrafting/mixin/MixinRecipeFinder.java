@@ -96,7 +96,7 @@ public abstract class MixinRecipeFinder {
 	 */
 	@Overwrite
 	public static ItemStack getStackFromId(final int id) {
-		if (id2StackMap.containsValue(id)) {
+		if (id2StackMap.containsKey(id)) {
 			ItemStack result = new ItemStack(Item.byRawId(id2StackMap.get(id).getFirst()));
 			((IItemStack) (Object) result).setRawTag(id2StackMap.get(id).getSecond());
 			return result;
