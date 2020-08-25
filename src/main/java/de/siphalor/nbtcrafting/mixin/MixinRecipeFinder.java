@@ -41,7 +41,7 @@ public abstract class MixinRecipeFinder {
 	private static Int2ObjectMap<Pair<Integer, CompoundTag>> id2StackMap = new Int2ObjectAVLTreeMap<>();
 	@Unique
 	private static LoadingCache<Pair<Integer, CompoundTag>, Integer> stack2IdMap = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).removalListener(notification ->
-			id2StackMap.remove((Integer) notification.getKey())
+			id2StackMap.remove((Integer) notification.getValue())
 	).build(new CacheLoader<Pair<Integer, CompoundTag>, Integer>() {
 		@Override
 		public Integer load(Pair<Integer, CompoundTag> key) throws Exception {
