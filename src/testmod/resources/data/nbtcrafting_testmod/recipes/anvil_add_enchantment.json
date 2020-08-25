@@ -11,13 +11,13 @@
 		"data": {
 			"$": [
 				{
-					"value": "$ base",
+					"value": "base",
 					"paths": {
 						"/Enchantments\\[\\d+\\]/": "append"
 					}
 				},
 				{
-					"value": "$ ingredient",
+					"value": "ingredient",
 					"paths": {
 						"/Enchantments\\[\\d+\\]/": "append"
 					}

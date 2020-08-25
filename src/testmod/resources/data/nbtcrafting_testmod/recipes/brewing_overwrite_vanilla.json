@@ -9,7 +9,7 @@
 	"result": {
 		"item": "minecraft:splash_potion",
 		"data": {
-			"$": "$ base"
+			"$": "base"
 		}
 	}
 }

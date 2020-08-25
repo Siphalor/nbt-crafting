@@ -16,7 +16,7 @@
 	"result": {
 		"item": "minecraft:shulker_box",
 		"data": {
-			"$": "$ i4",
+			"$": "i4",
 			"display": {
 				"Name": {
 					"text": "Test",
