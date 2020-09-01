@@ -26,3 +26,6 @@ Minecraft_Server.launch
 # fabric
 
 run/
+
+# OSX
+.DS_Store
