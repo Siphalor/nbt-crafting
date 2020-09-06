@@ -36,7 +36,7 @@ public abstract class MixinRecipeFinder {
 	public Int2IntMap idToAmountMap;
 
 	@Unique
-	private static int currentId = 0;
+	private static int currentId = 1;
 	@Unique
 	private static Int2ObjectMap<Pair<Integer, CompoundTag>> id2StackMap = new Int2ObjectAVLTreeMap<>();
 	@Unique
@@ -80,12 +80,16 @@ public abstract class MixinRecipeFinder {
 	 */
 	@Overwrite
 	public static int getItemId(ItemStack stack) {
-		Pair<Integer, CompoundTag> stackPair = getStackPair(stack);
-		int id = 0;
-		try {
-			id = stack2IdMap.get(stackPair);
-		} catch (ExecutionException e) {
-			e.printStackTrace();
+		int id = -1;
+		if (stack.isEmpty()) {
+			id = 0;
+		} else {
+			Pair<Integer, CompoundTag> stackPair = getStackPair(stack);
+			try {
+				id = stack2IdMap.get(stackPair);
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
 		}
 		return id;
 	}
