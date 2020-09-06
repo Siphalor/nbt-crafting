@@ -274,17 +274,25 @@ public class NbtUtil {
 			int i = Integer.parseUnsignedInt(key.substring(1, key.length() - 1));
 
 			if (isList(parent)) {
-				try {
-					asListTag(parent).add(i, tag);
-				} catch (Exception e) {
-					throw new NbtException("Can't add tag " + tag.asString() + " to list: " + parent.asString());
+				if (tag == null) {
+					asListTag(parent).remove(i);
+				} else {
+					try {
+						asListTag(parent).add(i, tag);
+					} catch (Exception e) {
+						throw new NbtException("Can't add tag " + tag.asString() + " to list: " + parent.asString());
+					}
 				}
 			} else {
 				throw new NbtException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 			}
 		} else {
 			if (isCompound(parent)) {
-				asCompoundTag(parent).put(key, tag);
+				if (tag == null) {
+					asCompoundTag(parent).remove(key);
+				} else {
+					asCompoundTag(parent).put(key, tag);
+				}
 			} else {
 				throw new NbtException(String.join(".", pathParts) + " doesn't match on " + main.asString());
 			}
