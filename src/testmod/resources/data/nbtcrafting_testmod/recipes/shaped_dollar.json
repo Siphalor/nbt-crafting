@@ -1,0 +1,29 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		" # ",
+		"#s#",
+		" # "
+	],
+	"key": {
+		"s": {
+			"item": "minecraft:wooden_sword"
+		},
+		"#": {
+			"item": "minecraft:leather"
+		}
+	},
+	"result": {
+		"item": "minecraft:wooden_sword",
+		"data": {
+			"Damage": "$ i4.Damage",
+			"display": {
+				"Name": {
+					"text": "Totally A Leather Sword",
+					"italic": false,
+					"nbtcrafting:stringify": true
+				}
+			}
+		}
+	}
+}
