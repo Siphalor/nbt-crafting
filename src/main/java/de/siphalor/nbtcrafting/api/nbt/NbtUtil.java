@@ -440,6 +440,7 @@ public class NbtUtil {
 		}
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	public static Object toDollarValue(Tag value) {
 		if (value instanceof StringTag) {
 			return value.asString();
@@ -455,6 +456,8 @@ public class NbtUtil {
 			return ((IntTag) value).getInt();
 		} else if (value instanceof LongTag) {
 			return ((LongTag) value).getLong();
+		} else if (value instanceof Tag) {
+			return value;
 		} else {
 			return null;
 		}
