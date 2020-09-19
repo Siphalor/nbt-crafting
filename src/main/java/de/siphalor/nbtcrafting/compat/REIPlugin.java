@@ -7,8 +7,6 @@ import me.shedaniel.rei.api.plugins.REIPluginV0;
 import me.shedaniel.rei.plugin.brewing.DefaultBrewingDisplay;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Recipe;
 import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
@@ -24,9 +22,7 @@ public class REIPlugin implements REIPluginV0 {
 	public void registerRecipeDisplays(RecipeHelper recipeHelper) {
 		recipeHelper.getAllSortedRecipes().forEach(recipe -> {
 			if(recipe instanceof BrewingRecipe) {
-                for(ItemStack stack : ((BrewingRecipe) recipe).getBase().getMatchingStacksClient()) {
-                	recipeHelper.registerDisplay(new DefaultBrewingDisplay(stack, ((BrewingRecipe) recipe).getIngredient(), recipe.getOutput()));
-				}
+				recipeHelper.registerDisplay(new DefaultBrewingDisplay(((BrewingRecipe) recipe).getBase(), ((BrewingRecipe) recipe).getIngredient(), recipe.getOutput()));
 			}
 		});
 	}
