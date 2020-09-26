@@ -30,6 +30,9 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 	@Final
 	private Property levelCost;
 
+	@Shadow
+	private int repairItemUsage;
+
 	@Unique
 	private boolean userChangedName = false;
 
@@ -42,6 +45,7 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 		Optional<AnvilRecipe> optionalAnvilRecipe = player.world.getRecipeManager().getFirstMatch(NbtCrafting.ANVIL_RECIPE_TYPE, input, player.world);
 		if (optionalAnvilRecipe.isPresent()) {
 			ItemStack resultStack = optionalAnvilRecipe.get().craft(input);
+			repairItemUsage = 1;
 			if (userChangedName) {
 				if (!newItemName.equals(resultStack.getName().getString()))
 					resultStack.setCustomName(new LiteralText(newItemName));
