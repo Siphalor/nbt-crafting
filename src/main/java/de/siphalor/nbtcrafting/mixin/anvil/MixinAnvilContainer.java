@@ -57,7 +57,7 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 				}
 			}
 
-			input.setStack(0, resultStack);
+			output.setStack(0, resultStack);
 			resultStack.onCraft(player.world, player, resultStack.getCount());
 
 			levelCost.set(optionalAnvilRecipe.get().getLevels());
