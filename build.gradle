@@ -74,7 +74,7 @@ tasks.withType(JavaCompile) {
 // if it is present.
 // If you remove this task, sources will not be generated.
 task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveClassifier.set("sources")
+	archiveClassifier.set("sources")
 	from sourceSets.main.allSource
 }
 
