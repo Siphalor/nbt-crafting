@@ -98,12 +98,14 @@ publishing {
 		}
 	}
 	repositories {
-		maven {
-			name = "Siphalor"
-			url = "https://maven.siphalor.de/upload.php"
-			credentials {
-				username = siphalorMavenUser
-				password = siphalorMavenPassword
+		if (project.hasProperty("siphalorMavenUser")) {
+			maven {
+				name = "Siphalor"
+				url = "https://maven.siphalor.de/upload.php"
+				credentials {
+					username = siphalorMavenUser
+					password = siphalorMavenPassword
+				}
 			}
 		}
 	}
