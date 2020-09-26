@@ -43,6 +43,9 @@ public abstract class MixinAnvilContainer extends Container {
 	private Property levelCost;
 
 	@Shadow
+	private int repairItemUsage;
+
+	@Shadow
 	private String newItemName;
 
 	@Unique
@@ -57,6 +60,7 @@ public abstract class MixinAnvilContainer extends Container {
 		Optional<AnvilRecipe> optionalAnvilRecipe = player.world.getRecipeManager().getFirstMatch(NbtCrafting.ANVIL_RECIPE_TYPE, inventory, player.world);
 		if (optionalAnvilRecipe.isPresent()) {
 			ItemStack resultStack = optionalAnvilRecipe.get().craft(inventory);
+			repairItemUsage = 1;
 			if (userChangedName) {
 				if (!newItemName.equals(resultStack.getName().getString()))
 					resultStack.setCustomName(new LiteralText(newItemName));
