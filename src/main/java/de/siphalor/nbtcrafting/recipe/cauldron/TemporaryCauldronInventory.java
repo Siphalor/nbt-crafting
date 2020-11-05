@@ -7,6 +7,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class TemporaryCauldronInventory implements Inventory {
@@ -33,7 +34,11 @@ public class TemporaryCauldronInventory implements Inventory {
 
 	public void setLevel(int level) {
 		this.level = level;
-		world.setBlockState(blockPos, world.getBlockState(blockPos).with(CauldronBlock.LEVEL, level));
+		world.setBlockState(blockPos, world.getBlockState(blockPos).with(CauldronBlock.LEVEL, MathHelper.clamp(level, 0, 3)));
+	}
+
+	public int getMaxLevel() {
+		return 3;
 	}
 
 	@Override

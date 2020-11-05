@@ -1,0 +1,10 @@
+{
+	"type": "nbtcrafting:cauldron",
+	"input": {
+		"tag": "minecraft:leaves"
+	},
+	"result": {
+		"item": "minecraft:dead_bush"
+	},
+	"levels": -1
+}
