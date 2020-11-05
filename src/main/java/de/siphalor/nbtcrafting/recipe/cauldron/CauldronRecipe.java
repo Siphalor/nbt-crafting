@@ -23,13 +23,15 @@ public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, S
 	private final Identifier identifier;
 	public final Ingredient input;
 	public final ItemStack output;
+	public final Identifier fluid;
 	public final int levels;
 	private final Dollar[] outputDollars;
 
-	public CauldronRecipe(Identifier id, Ingredient ingredient, ItemStack output, int levels) {
+	public CauldronRecipe(Identifier id, Ingredient ingredient, ItemStack output, Identifier fluid, int levels) {
 		this.identifier = id;
 		this.input = ingredient;
 		this.output = output;
+		this.fluid = fluid;
 		this.levels = levels;
 		this.outputDollars = DollarParser.extractDollars(output.getTag(), false);
 	}
@@ -38,6 +40,7 @@ public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, S
 		packetByteBuf.writeIdentifier(identifier);
 		input.write(packetByteBuf);
 		packetByteBuf.writeItemStack(output);
+		packetByteBuf.writeIdentifier(fluid);
 		packetByteBuf.writeShort(levels);
 	}
 
@@ -45,13 +48,14 @@ public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, S
 		Identifier identifier = packetByteBuf.readIdentifier();
 		Ingredient input = Ingredient.fromPacket(packetByteBuf);
 		ItemStack output = packetByteBuf.readItemStack();
+		Identifier fluid = packetByteBuf.readIdentifier();
 		int levels = packetByteBuf.readShort();
-		return new CauldronRecipe(identifier, input, output, levels);
+		return new CauldronRecipe(identifier, input, output, fluid, levels);
 	}
 
 	@Override
 	public boolean matches(TemporaryCauldronInventory inventory, World world) {
-		return inventory.getLevel() >= levels && input.test(inventory.getStack(0));
+		return (fluid == null || fluid.equals(inventory.getFluid())) && inventory.getLevel() >= levels && input.test(inventory.getStack(0));
 	}
 
 	@Override

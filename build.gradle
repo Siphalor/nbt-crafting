@@ -38,9 +38,9 @@ dependencies {
 	        'fabric-api-base': '0.1.3+12a8474ca7',
 			'fabric-networking-v0': '0.1.10+e00ecb5fa7',
 			'include': false,
-			'fabric-registry-sync-v0': '0.4.1+847665c2a7',
+			//'fabric-registry-sync-v0': '0.4.1+847665c2a7',
 			'fabric-resource-loader-v0': '0.2.8+35e08e33a7',
-			'fabric-tag-extensions-v0': '1.0.1+35e08e33a7'
+			//'fabric-tag-extensions-v0': '1.0.1+35e08e33a7'
 	]
 
 	def inc = true
@@ -58,7 +58,7 @@ dependencies {
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems:5.4+") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
-	modImplementation("de.siphalor:modsoftheworld-1.16:1+") {
+	modImplementation("de.siphalor:modsoftheworld-1.17:1+") {
 		transitive false
 	}
 

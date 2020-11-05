@@ -34,7 +34,7 @@ public class MixinCauldronBlock {
 				ItemStack itemStack = cauldronRecipe.get().craft(inventory);
 				itemStack.onCraft(world, playerEntity, itemStack.getCount());
 
-				if (!playerEntity.inventory.insertStack(remainingStacks.get(0))) {
+				if (!playerEntity.method_31548().insertStack(remainingStacks.get(0))) {
 					ItemEntity itemEntity = playerEntity.dropItem(remainingStacks.get(0), false);
 					if (itemEntity != null) {
 						itemEntity.resetPickupDelay();
@@ -42,7 +42,7 @@ public class MixinCauldronBlock {
 					}
 				}
 
-				if (!playerEntity.inventory.insertStack(itemStack)) {
+				if (!playerEntity.method_31548().insertStack(itemStack)) {
 					ItemEntity itemEntity = playerEntity.dropItem(itemStack, false);
 					if (itemEntity != null) {
 						itemEntity.resetPickupDelay();

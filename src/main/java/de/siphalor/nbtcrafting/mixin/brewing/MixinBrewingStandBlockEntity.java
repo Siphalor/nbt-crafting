@@ -3,12 +3,16 @@ package de.siphalor.nbtcrafting.mixin.brewing;
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.RecipeUtil;
 import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -19,35 +23,47 @@ import java.util.Optional;
 @SuppressWarnings("ConstantConditions")
 @Mixin(BrewingStandBlockEntity.class)
 public abstract class MixinBrewingStandBlockEntity extends LockableContainerBlockEntity {
+	@Unique
+	private static World lastWorld;
+	@Unique
+	private static BrewingStandBlockEntity lastBlockEntity;
+	@Unique
+	private static BlockPos lastBlockPos;
 
-	protected MixinBrewingStandBlockEntity(BlockEntityType<?> blockEntityType_1) {
-		super(blockEntityType_1);
+	protected MixinBrewingStandBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
+		super(blockEntityType, blockPos, blockState);
+	}
+
+	@Inject(method = "method_31665", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/BrewingStandBlockEntity;canCraft(Lnet/minecraft/util/collection/DefaultedList;)Z"))
+	private static void beforeCanCraft(World world, BlockPos blockPos, BlockState blockState, BrewingStandBlockEntity blockEntity, CallbackInfo callbackInfo) {
+		lastWorld = world;
+		lastBlockEntity = blockEntity;
+		lastBlockPos = blockPos;
 	}
 
 	@Inject(method = "canCraft", at = @At("HEAD"), cancellable = true)
-	private void canCraft(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		Optional<BrewingRecipe> recipe = world.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, (BrewingStandBlockEntity) (Object) this, world);
+	private static void canCraft(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+		Optional<BrewingRecipe> recipe = lastWorld.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, lastBlockEntity, lastWorld);
 		if (recipe.isPresent()) {
 			callbackInfoReturnable.setReturnValue(true);
 		}
 	}
 
 	@Inject(method = "craft", at = @At("HEAD"), cancellable = true)
-	private void craft(CallbackInfo callbackInfo) {
-		Optional<BrewingRecipe> recipe = world.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, (BrewingStandBlockEntity) (Object) this, world);
+	private static void craft(CallbackInfo callbackInfo) {
+		Optional<BrewingRecipe> recipe = lastWorld.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, lastBlockEntity, lastWorld);
 		if (recipe.isPresent()) {
-			BrewingStandBlockEntity inv = (BrewingStandBlockEntity) (Object) this;
-			DefaultedList<ItemStack> remainingStacks = recipe.get().getRemainingStacks(inv);
-			ItemStack[] results = recipe.get().craftAll(inv);
+			DefaultedList<ItemStack> remainingStacks = recipe.get().getRemainingStacks(lastBlockEntity);
+			ItemStack[] results = recipe.get().craftAll(lastBlockEntity);
 
-			getStack(3).decrement(1);
+			lastBlockEntity.getStack(3).decrement(1);
 			for (int i = 0; i < 3; i++) {
 				if (results[i] != null) {
-					setStack(i, results[i]);
+					lastBlockEntity.setStack(i, results[i]);
 				}
 			}
 
-			RecipeUtil.putRemainders(remainingStacks, inv, world, pos);
+			RecipeUtil.putRemainders(remainingStacks, lastBlockEntity, lastWorld, lastBlockPos);
 
 			callbackInfo.cancel();
 		}

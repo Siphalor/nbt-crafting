@@ -13,7 +13,17 @@ public class CauldronRecipeSerializer implements RecipeSerializer<CauldronRecipe
 	public CauldronRecipe read(Identifier identifier, JsonObject jsonObject) {
 		JsonObject input = JsonHelper.getObject(jsonObject, "input");
 		JsonObject output = JsonHelper.getObject(jsonObject, "result");
-		return new CauldronRecipe(identifier, Ingredient.fromJson(input), ShapedRecipe.getItemStack(output), JsonHelper.getInt(jsonObject, "levels", 0));
+		int levels = 0;
+		Identifier fluid = null;
+		if (jsonObject.has("levels")) {
+			levels = jsonObject.get("levels").getAsInt();
+			if (jsonObject.has("fluid")) {
+				fluid = new Identifier(jsonObject.get("fluid").getAsString());
+			} else {
+				fluid = TemporaryCauldronInventory.WATER;
+			}
+		}
+		return new CauldronRecipe(identifier, Ingredient.fromJson(input), ShapedRecipe.getItemStack(output), fluid, levels);
 	}
 
 	@Override
