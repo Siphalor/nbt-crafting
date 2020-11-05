@@ -62,14 +62,18 @@ public class TemporaryCauldronInventory implements Inventory {
 		}
 		if (fluid == WATER) {
 			if (this.level <= 0) { // It was an empty cauldron before so we're replacing it
-				world.setBlockState(blockPos, Blocks.WATER_CAULDRON.getDefaultState().with(class_5556.field_27206, level));
+				world.setBlockState(blockPos, Blocks.WATER_CAULDRON.getDefaultState().with(class_5556.field_27206, Math.min(level, 3)));
 			} else { // There was a water cauldron before so we're reusing it (mod compat.)
-				world.setBlockState(blockPos, world.getBlockState(blockPos).with(class_5556.field_27206, level));
+				world.setBlockState(blockPos, world.getBlockState(blockPos).with(class_5556.field_27206, Math.min(level, 3)));
 			}
 		} else if (fluid == LAVA && this.level <= 0) { // There was an empty cauldron before so we're replacing it
 			world.setBlockState(blockPos, Blocks.LAVA_CAULDRON.getDefaultState());
 		}
 		this.level = level;
+	}
+
+	public int getMaxLevel() {
+		return 3;
 	}
 
 	@Override
