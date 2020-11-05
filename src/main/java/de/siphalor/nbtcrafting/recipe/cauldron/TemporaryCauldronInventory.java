@@ -37,6 +37,10 @@ public class TemporaryCauldronInventory implements Inventory {
 		world.setBlockState(blockPos, world.getBlockState(blockPos).with(CauldronBlock.LEVEL, MathHelper.clamp(level, 0, 3)));
 	}
 
+	public int getMaxLevel() {
+		return 3;
+	}
+
 	@Override
 	public int getInvSize() {
 		return 1;

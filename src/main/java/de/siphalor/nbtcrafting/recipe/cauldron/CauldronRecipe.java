@@ -51,7 +51,14 @@ public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, S
 
 	@Override
 	public boolean matches(TemporaryCauldronInventory inventory, World world) {
-		return inventory.getLevel() >= levels && input.test(inventory.getInvStack(0));
+		if (!input.test(inventory.getInvStack(0))) {
+			return false;
+		}
+		if (levels >= 0) {
+			return inventory.getLevel() >= levels;
+		} else {
+			return inventory.getMaxLevel() - inventory.getLevel() >= -levels;
+		}
 	}
 
 	@Override
