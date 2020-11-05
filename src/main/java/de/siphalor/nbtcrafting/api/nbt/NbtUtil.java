@@ -5,7 +5,6 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Dynamic;
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.util.BetterJsonOps;
-import net.minecraft.datafixer.NbtOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import org.apache.commons.lang3.ArrayUtils;
