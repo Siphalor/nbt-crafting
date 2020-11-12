@@ -3,8 +3,8 @@ package de.siphalor.nbtcrafting.mixin.cauldron;
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipe;
 import de.siphalor.nbtcrafting.recipe.cauldron.TemporaryCauldronInventory;
+import net.minecraft.block.AbstractCauldronBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.CauldronBlock;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Optional;
 
-@Mixin(CauldronBlock.class)
+@Mixin(AbstractCauldronBlock.class)
 public class MixinCauldronBlock {
 	@Inject(method = "onUse", at = @At("HEAD"), cancellable = true)
 	public void onActivate(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockHitResult blockHitResult, CallbackInfoReturnable<ActionResult> callbackInfoReturnable) {
@@ -34,7 +34,7 @@ public class MixinCauldronBlock {
 				ItemStack itemStack = cauldronRecipe.get().craft(inventory);
 				itemStack.onCraft(world, playerEntity, itemStack.getCount());
 
-				if (!playerEntity.method_31548().insertStack(remainingStacks.get(0))) {
+				if (!playerEntity.getInventory().insertStack(remainingStacks.get(0))) {
 					ItemEntity itemEntity = playerEntity.dropItem(remainingStacks.get(0), false);
 					if (itemEntity != null) {
 						itemEntity.resetPickupDelay();
@@ -42,7 +42,7 @@ public class MixinCauldronBlock {
 					}
 				}
 
-				if (!playerEntity.method_31548().insertStack(itemStack)) {
+				if (!playerEntity.getInventory().insertStack(itemStack)) {
 					ItemEntity itemEntity = playerEntity.dropItem(itemStack, false);
 					if (itemEntity != null) {
 						itemEntity.resetPickupDelay();
