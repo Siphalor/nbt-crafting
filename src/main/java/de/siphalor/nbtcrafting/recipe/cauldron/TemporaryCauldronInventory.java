@@ -1,5 +1,6 @@
 package de.siphalor.nbtcrafting.recipe.cauldron;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.WaterCauldronBlock;
@@ -15,6 +16,7 @@ public class TemporaryCauldronInventory implements Inventory {
 	public static final Identifier AIR = new Identifier("air");
 	public static final Identifier WATER = new Identifier("water");
 	public static final Identifier LAVA = new Identifier("lava");
+	public static final Identifier POWDER_SNOW = new Identifier("powder_snow");
 
 	private ItemStack stackInHand;
 	private final PlayerEntity playerEntity;
@@ -33,6 +35,9 @@ public class TemporaryCauldronInventory implements Inventory {
 		BlockState blockState = world.getBlockState(blockPos);
 		if (blockState.getBlock() == Blocks.WATER_CAULDRON) {
 			fluid = WATER;
+			level = blockState.get(WaterCauldronBlock.LEVEL);
+		} else if (blockState.getBlock() == Blocks.POWDER_SNOW_CAULDRON) {
+			fluid = POWDER_SNOW;
 			level = blockState.get(WaterCauldronBlock.LEVEL);
 		} else if (blockState.getBlock() == Blocks.LAVA_CAULDRON) {
 			fluid = LAVA;
@@ -60,9 +65,10 @@ public class TemporaryCauldronInventory implements Inventory {
 			world.setBlockState(blockPos, Blocks.CAULDRON.getDefaultState());
 			return;
 		}
-		if (fluid == WATER) {
+		if (fluid == WATER || fluid == POWDER_SNOW) {
 			if (this.level <= 0) { // It was an empty cauldron before so we're replacing it
-				world.setBlockState(blockPos, Blocks.WATER_CAULDRON.getDefaultState().with(WaterCauldronBlock.LEVEL, Math.min(level, 3)));
+				Block block = fluid == WATER ? Blocks.WATER_CAULDRON : Blocks.POWDER_SNOW_CAULDRON;
+				world.setBlockState(blockPos, block.getDefaultState().with(WaterCauldronBlock.LEVEL, Math.min(level, 3)));
 			} else { // There was a water cauldron before so we're reusing it (mod compat.)
 				world.setBlockState(blockPos, world.getBlockState(blockPos).with(WaterCauldronBlock.LEVEL, Math.min(level, 3)));
 			}
