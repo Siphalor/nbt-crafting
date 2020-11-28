@@ -57,12 +57,17 @@ public abstract class MixinRecipeFinder {
 	@Unique
 	private static Int2ObjectMap<Pair<Integer, CompoundTag>> id2StackMap = new Int2ObjectAVLTreeMap<>();
 	@Unique
-	private static LoadingCache<Pair<Integer, CompoundTag>, Integer> stack2IdMap = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).removalListener(notification ->
-			id2StackMap.remove((Integer) notification.getValue())
+	private static LoadingCache<Pair<Integer, CompoundTag>, Integer> stack2IdMap = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).removalListener(notification -> {
+				synchronized (id2StackMap) {
+					id2StackMap.remove((Integer) notification.getValue());
+				}
+			}
 	).build(new CacheLoader<Pair<Integer, CompoundTag>, Integer>() {
 		@Override
 		public Integer load(Pair<Integer, CompoundTag> key) throws Exception {
-			id2StackMap.put(currentId, key);
+			synchronized (id2StackMap) {
+				id2StackMap.put(currentId, key);
+			}
 			return currentId++;
 		}
 	});
@@ -117,10 +122,12 @@ public abstract class MixinRecipeFinder {
 	 */
 	@Overwrite
 	public static ItemStack getStackFromId(final int id) {
-		if (id2StackMap.containsKey(id)) {
-			ItemStack result = new ItemStack(Item.byRawId(id2StackMap.get(id).getFirst()));
-			((IItemStack) (Object) result).setRawTag(id2StackMap.get(id).getSecond());
-			return result;
+		synchronized (id2StackMap) {
+			if (id2StackMap.containsKey(id)) {
+				ItemStack result = new ItemStack(Item.byRawId(id2StackMap.get(id).getFirst()));
+				((IItemStack) (Object) result).setRawTag(id2StackMap.get(id).getSecond());
+				return result;
+			}
 		}
 		return ItemStack.EMPTY;
 	}
