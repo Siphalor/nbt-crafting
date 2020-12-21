@@ -169,9 +169,10 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 			releaseType = "beta"
 			changelogType = "markdown"
 			changelog = getChangelog()
-			for (version in ((String) project.mod_mc_versions).split(";")) {
-				addGameVersion(version)
-			}
+			//for (version in ((String) project.mod_mc_versions).split(";")) {
+			//	addGameVersion(version)
+			//}
+			addGameVersion("1.16-Snapshot")
 			relations {
 				embeddedLibrary "fabric-api"
 				optionalDependency "roughly-enough-items"
