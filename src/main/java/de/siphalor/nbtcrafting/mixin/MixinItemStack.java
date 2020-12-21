@@ -27,14 +27,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ItemStack.class)
+@Mixin(value = ItemStack.class, priority = 2000)
 public class MixinItemStack implements IItemStack {
 	@Shadow
 	private CompoundTag tag;
 
-	@Inject(method = "areTagsEqual", at = @At("HEAD"), cancellable = true)
-	private static void areTagsEqual(ItemStack stack1, ItemStack stack2, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		if (!stack1.hasTag() && !stack2.hasTag())
+	@Inject(method = "areTagsEqual", at = @At(value = "RETURN", ordinal = 1), cancellable = true)
+	private static void areTagsEqualReturn1(ItemStack stack1, ItemStack stack2, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+		if (stack2.getTag().isEmpty())
+			callbackInfoReturnable.setReturnValue(true);
+	}
+
+	@Inject(method = "areTagsEqual", at = @At(value = "RETURN", ordinal = 2), cancellable = true)
+	private static void areTagsEqualReturn2(ItemStack stack1, ItemStack stack2, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+		if (stack1.getTag() == null && stack2.getTag().isEmpty())
 			callbackInfoReturnable.setReturnValue(true);
 	}
 

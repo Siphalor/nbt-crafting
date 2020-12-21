@@ -121,8 +121,8 @@ public final class DollarParser {
 
 		dollars.sort((a, b) -> {
 			if (a instanceof MergeDollar)
-				return b instanceof MergeDollar ? 0 : 1;
-			return -1;
+				return b instanceof MergeDollar ? 0 : -1;
+			return 1;
 		});
 		return dollars.toArray(new Dollar[0]);
 	}
