@@ -122,9 +122,9 @@ publishing {
 
 // Mod sites
 
-static def getChangelog() {
-	var commits = 'git log -20 --format=oneline'.execute().text.readLines()
-	var versionCommit = null
+def getChangelog() {
+	def commits = 'git log -20 --format=oneline'.execute().text.readLines()
+	def versionCommit = null
 	for (commit in commits) {
 		if (commit.contains('Version')) {
 			versionCommit = commit.split(' ')[0]
