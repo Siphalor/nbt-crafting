@@ -153,7 +153,7 @@ def getChangelog() {
 
 No changelog found!"""
 	}
-	return 'git log -1 --format=format:"## %s%n%n%b%nRelease by %an"'.execute().text.trim()
+	return ('git log -1 --format=format:"## %s%n%n%b%nRelease by %an" ' + versionCommit).execute().text.trim()
 }
 
 task uploadToModSites {
