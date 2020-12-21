@@ -166,7 +166,7 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 		apiKey project.siphalorCurseForgeApi
 		project {
 			id = "314633"
-			releaseType = project.mod_release
+			releaseType = "beta"
 			changelogType = "markdown"
 			changelog = getChangelog()
 			for (version in ((String) project.mod_mc_versions).split(";")) {
