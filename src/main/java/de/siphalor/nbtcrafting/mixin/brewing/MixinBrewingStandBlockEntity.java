@@ -51,7 +51,7 @@ public abstract class MixinBrewingStandBlockEntity extends LockableContainerBloc
 		super(blockEntityType, blockPos, blockState);
 	}
 
-	@Inject(method = "method_31665", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/BrewingStandBlockEntity;canCraft(Lnet/minecraft/util/collection/DefaultedList;)Z"))
+	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/BrewingStandBlockEntity;canCraft(Lnet/minecraft/util/collection/DefaultedList;)Z"))
 	private static void beforeCanCraft(World world, BlockPos blockPos, BlockState blockState, BrewingStandBlockEntity blockEntity, CallbackInfo callbackInfo) {
 		lastWorld = world;
 		lastBlockEntity = blockEntity;

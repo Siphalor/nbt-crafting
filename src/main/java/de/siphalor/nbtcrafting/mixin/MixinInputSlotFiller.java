@@ -30,7 +30,7 @@ public abstract class MixinInputSlotFiller {
 	@Shadow
 	protected PlayerInventory inventory;
 
-	@Redirect(method = "fillInputSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;method_7371(Lnet/minecraft/item/ItemStack;)I"))
+	@Redirect(method = "fillInputSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;indexOf(Lnet/minecraft/item/ItemStack;)I"))
 	private int playerInventoryFindStack(PlayerInventory inventory, ItemStack stack) {
 		for (int i = 0; i < inventory.main.size(); i++) {
 			ItemStack stack2 = inventory.main.get(i);
