@@ -25,12 +25,10 @@ import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
 import de.siphalor.nbtcrafting.recipe.IngredientRecipe;
 import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipe;
 import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipeSerializer;
-import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.recipe.RecipeSerializer;
@@ -48,19 +46,21 @@ public class NbtCrafting implements ModInitializer {
 	private static final String LOG_PREFIX = "[" + MOD_NAME + "] ";
 	private static final Logger LOGGER = LogManager.getLogger();
 
-	public static final Identifier PRESENCE_PACKET_ID = new Identifier(MOD_ID, "present");
 	public static final Identifier UPDATE_ANVIL_TEXT_S2C_PACKET_ID = new Identifier(MOD_ID, "update_anvil_text");
 
 	public static final RecipeType<AnvilRecipe> ANVIL_RECIPE_TYPE = registerRecipeType("anvil");
+	@SuppressWarnings("unused")
 	public static final RecipeSerializer<AnvilRecipe> ANVIL_RECIPE_SERIALIZER = registerRecipeSerializer("anvil", AnvilRecipe.SERIALIZER);
 
 	public static final RecipeType<BrewingRecipe> BREWING_RECIPE_TYPE = registerRecipeType("brewing");
+	@SuppressWarnings("unused")
 	public static final RecipeSerializer<BrewingRecipe> BREWING_RECIPE_SERIALIZER = registerRecipeSerializer("brewing", BrewingRecipe.SERIALIZER);
 
 	public static final RecipeType<CauldronRecipe> CAULDRON_RECIPE_TYPE = registerRecipeType("cauldron");
 	public static final CauldronRecipeSerializer CAULDRON_RECIPE_SERIALIZER = registerRecipeSerializer("cauldron", new CauldronRecipeSerializer());
 
 	public static final RecipeType<IngredientRecipe<Inventory>> SMITHING_RECIPE_TYPE = registerRecipeType("smithing");
+	@SuppressWarnings("unused")
 	public static final RecipeSerializer<IngredientRecipe<Inventory>> SMITHING_RECIPE_SERIALIZER = registerRecipeSerializer("smithing", new IngredientRecipe.Serializer<>((id, base, ingredient, result, serializer) -> new IngredientRecipe<>(id, base, ingredient, result, SMITHING_RECIPE_TYPE, serializer)));
 
 	public static final StatChangedCriterion STAT_CHANGED_CRITERION = MixinCriterions.registerCriterion(new StatChangedCriterion());
@@ -111,18 +111,10 @@ public class NbtCrafting implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		ServerSidePacketRegistry.INSTANCE.register(PRESENCE_PACKET_ID, (packetContext, packetByteBuf) -> {
-			ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) packetContext.getPlayer();
-			((IServerPlayerEntity) serverPlayerEntity).setClientModPresent(true);
-			serverPlayerEntity.networkHandler.sendPacket(new SynchronizeRecipesS2CPacket(serverPlayerEntity.server.getRecipeManager().values()));
-			serverPlayerEntity.getRecipeBook().sendInitRecipesPacket(serverPlayerEntity);
-		});
 	}
 
 	public static boolean hasClientMod(ServerPlayerEntity playerEntity) {
-		if (!(playerEntity instanceof IServerPlayerEntity))
-			return false;
-		return ((IServerPlayerEntity) playerEntity).hasClientMod();
+		return ServerPlayNetworking.canSend(playerEntity, UPDATE_ANVIL_TEXT_S2C_PACKET_ID);
 	}
 
 	public static <T extends Recipe<?>> RecipeType<T> registerRecipeType(String name) {

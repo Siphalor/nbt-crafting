@@ -10,7 +10,6 @@
 		"MixinRecipe",
 		"MixinRecipeFinder",
 		"MixinRecipeFinder$Filter",
-		"MixinServerPlayerEntity",
 		"MixinServerStatHandler",
 		"advancement.MixinCriterions",
 		"anvil.MixinAnvilContainer",
@@ -32,9 +31,7 @@
 	"client": [
 		"client.AnvilScreenAccessor",
 		"client.MixinAnimatedResultButton",
-		"client.MixinMinecraftClient",
 		"client.MixinRecipeBookGhostSlots",
-		"client.network.MixinClientPlayNetworkHandler"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -19,7 +19,6 @@ package de.siphalor.nbtcrafting.mixin.network;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.ServerRecipe;
-import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket;
 import net.minecraft.recipe.Recipe;
@@ -39,7 +38,7 @@ public abstract class MixinSynchronizeRecipesS2CPacket {
 
 	@Inject(method = "write", at = @At("HEAD"), cancellable = true)
 	public void onWrite(PacketByteBuf buf, CallbackInfo callbackInfo) {
-		if (!((IServerPlayerEntity) NbtCrafting.lastServerPlayerEntity).hasClientMod()) {
+		if (NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity)) {
 			List<Recipe<?>> syncRecipes = recipes.stream().filter(recipe -> !(recipe instanceof ServerRecipe)).collect(Collectors.toList());
 			buf.writeVarInt(syncRecipes.size());
 			for (Recipe<?> recipe : syncRecipes) {
