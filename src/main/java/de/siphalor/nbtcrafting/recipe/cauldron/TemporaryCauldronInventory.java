@@ -20,7 +20,7 @@ package de.siphalor.nbtcrafting.recipe.cauldron;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.WaterCauldronBlock;
+import net.minecraft.block.LeveledCauldronBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -52,10 +52,10 @@ public class TemporaryCauldronInventory implements Inventory {
 		BlockState blockState = world.getBlockState(blockPos);
 		if (blockState.getBlock() == Blocks.WATER_CAULDRON) {
 			fluid = WATER;
-			level = blockState.get(WaterCauldronBlock.LEVEL);
+			level = blockState.get(LeveledCauldronBlock.LEVEL);
 		} else if (blockState.getBlock() == Blocks.POWDER_SNOW_CAULDRON) {
 			fluid = POWDER_SNOW;
-			level = blockState.get(WaterCauldronBlock.LEVEL);
+			level = blockState.get(LeveledCauldronBlock.LEVEL);
 		} else if (blockState.getBlock() == Blocks.LAVA_CAULDRON) {
 			fluid = LAVA;
 			level = 3;
@@ -85,9 +85,9 @@ public class TemporaryCauldronInventory implements Inventory {
 		if (fluid == WATER || fluid == POWDER_SNOW) {
 			if (this.level <= 0) { // It was an empty cauldron before so we're replacing it
 				Block block = fluid == WATER ? Blocks.WATER_CAULDRON : Blocks.POWDER_SNOW_CAULDRON;
-				world.setBlockState(blockPos, block.getDefaultState().with(WaterCauldronBlock.LEVEL, Math.min(level, 3)));
+				world.setBlockState(blockPos, block.getDefaultState().with(LeveledCauldronBlock.LEVEL, Math.min(level, 3)));
 			} else { // There was a water cauldron before so we're reusing it (mod compat.)
-				world.setBlockState(blockPos, world.getBlockState(blockPos).with(WaterCauldronBlock.LEVEL, Math.min(level, 3)));
+				world.setBlockState(blockPos, world.getBlockState(blockPos).with(LeveledCauldronBlock.LEVEL, Math.min(level, 3)));
 			}
 		} else if (fluid == LAVA && this.level <= 0) { // There was an empty cauldron before so we're replacing it
 			world.setBlockState(blockPos, Blocks.LAVA_CAULDRON.getDefaultState());
