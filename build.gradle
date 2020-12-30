@@ -39,7 +39,7 @@ dependencies {
 
 	def fabric_deps = [
 	        'fabric-api-base': '0.2.0+eaafab808e',
-			'fabric-networking-v0': '0.3.1+96f0bfaa8e',
+			'fabric-networking-api-v1': '1.0.0+fd1187378e',
 			'include': false,
 			'fabric-registry-sync-v0': '0.7.4+836e66a38e',
 			'fabric-resource-loader-v0': '0.4.0+27f445e78e',
