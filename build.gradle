@@ -166,13 +166,13 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 		apiKey project.siphalorCurseForgeApi
 		project {
 			id = "314633"
-			releaseType = "beta"
+			releaseType = "release"
 			changelogType = "markdown"
 			changelog = getChangelog()
 			//for (version in ((String) project.mod_mc_versions).split(";")) {
 			//	addGameVersion(version)
 			//}
-			addGameVersion("1.16-Snapshot")
+			addGameVersion("1.17")
 			relations {
 				embeddedLibrary "fabric-api"
 				optionalDependency "roughly-enough-items"
