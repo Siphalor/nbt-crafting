@@ -38,12 +38,12 @@ dependencies {
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	def fabric_deps = [
-	        'fabric-api-base': '0.1.3+12a8474ca7',
-			'fabric-networking-v0': '0.1.10+e00ecb5fa7',
+	        'fabric-api-base': '0.2.0+eaafab808e',
+			'fabric-networking-v0': '0.3.1+96f0bfaa8e',
 			'include': false,
-			//'fabric-registry-sync-v0': '0.5.0+c1aa8ed895',
-			'fabric-resource-loader-v0': '0.2.8+35e08e33a7',
-			//'fabric-tag-extensions-v0': '1.0.1+35e08e33a7'
+			'fabric-registry-sync-v0': '0.7.4+836e66a38e',
+			'fabric-resource-loader-v0': '0.4.0+27f445e78e',
+			'fabric-tag-extensions-v0': '1.1.1+e1f1abb18e'
 	]
 
 	def inc = true
