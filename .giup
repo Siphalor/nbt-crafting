@@ -1,0 +1,18 @@
+{
+	"merge-paths": [
+		"1.15-2.0",
+		"1.15-2.0->1.16-2.0->1.17-2.0"
+	],
+	"commands": [
+		{
+			"title": "Cleanup",
+			"run": "rmdir /S /Q build & rmdir /S /Q .gradle",
+			"posix": "rm -rf build .gradle"
+		},
+		{
+			"title": "Publish",
+			"run": "gradlew publish uploadToModSites",
+			"posix": "./gradlew publish uploadToModSites"
+		}
+	]
+}
