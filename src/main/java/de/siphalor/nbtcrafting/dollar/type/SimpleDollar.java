@@ -42,9 +42,7 @@ public class SimpleDollar extends Dollar {
 		String[] pathParts = NbtUtil.splitPath(path);
 		try {
 			Tag value = evaluate(references);
-			if (value != null) {
-				NbtUtil.put(compoundTag, pathParts, value);
-			}
+			NbtUtil.put(compoundTag, pathParts, value);
 		} catch (NbtException e) {
 			e.printStackTrace();
 		}

@@ -18,10 +18,9 @@ minecraft {
 }
 
 repositories {
+	jcenter()
 	maven { url "https://maven.fabricmc.net/" }
 	maven { url "https://maven.siphalor.de/" }
-	maven { url "https://minecraft.curseforge.com/api/maven" }
-	maven { url "https://jitpack.io/" }
 }
 
 sourceSets {
