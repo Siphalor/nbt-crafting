@@ -5,14 +5,18 @@
 	],
 	"commands": [
 		{
-			"title": "Cleanup",
+			"title": "Cleanup build dirs",
 			"run": "rmdir /S /Q build & rmdir /S /Q .gradle",
 			"posix": "rm -rf build .gradle"
 		},
 		{
-			"title": "Publish",
+			"title": "Publish & Upload",
 			"run": "gradlew publish uploadToModSites",
 			"posix": "./gradlew publish uploadToModSites"
+		},
+		{
+			"title": "Git push",
+			"run": "git push"
 		}
 	]
 }
