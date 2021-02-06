@@ -52,6 +52,9 @@
 	},
 
 	"custom": {
+		"modmenu": {
+			"badges": [ "library" ]
+		},
 		"modmenu:api": true,
 		"modsoftheworld:splashes": "nbtcrafting:splashes.txt",
 		"modsoftheworld:logo": "nbtcrafting:title.png"
