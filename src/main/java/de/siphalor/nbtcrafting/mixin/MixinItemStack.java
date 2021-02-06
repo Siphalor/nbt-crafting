@@ -32,13 +32,13 @@ public class MixinItemStack implements IItemStack {
 	@Shadow
 	private CompoundTag tag;
 
-	@Inject(method = "areTagsEqual", at = @At(value = "RETURN", ordinal = 1), cancellable = true)
+	@Inject(method = "areTagsEqual", at = @At(value = "RETURN", ordinal = 2), cancellable = true)
 	private static void areTagsEqualReturn1(ItemStack stack1, ItemStack stack2, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (stack2.getTag().isEmpty())
 			callbackInfoReturnable.setReturnValue(true);
 	}
 
-	@Inject(method = "areTagsEqual", at = @At(value = "RETURN", ordinal = 2), cancellable = true)
+	@Inject(method = "areTagsEqual", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/CompoundTag;equals(Ljava/lang/Object;)Z"), cancellable = true)
 	private static void areTagsEqualReturn2(ItemStack stack1, ItemStack stack2, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (stack1.getTag() == null && stack2.getTag().isEmpty())
 			callbackInfoReturnable.setReturnValue(true);

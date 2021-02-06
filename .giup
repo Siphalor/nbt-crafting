@@ -7,7 +7,8 @@
 		{
 			"title": "Cleanup build dirs",
 			"run": "rmdir /S /Q build & rmdir /S /Q .gradle",
-			"posix": "rm -rf build .gradle"
+			"posix": "rm -rf build .gradle",
+			"ignore-errors": true
 		},
 		{
 			"title": "Publish & Upload",
