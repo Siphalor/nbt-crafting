@@ -137,10 +137,10 @@ public class IngredientRecipe<I extends Inventory> implements NBTCRecipe<I> {
 
 		@Override
 		public R read(Identifier id, JsonObject json) {
-			Ingredient base = Ingredient.fromJson(JsonHelper.getObject(json, "base"));
+			Ingredient base = Ingredient.fromJson(json.get("base"));
 			Ingredient ingredient;
 			if (json.has("ingredient")) {
-				ingredient = Ingredient.fromJson(JsonHelper.getObject(json, "ingredient"));
+				ingredient = Ingredient.fromJson(json.get("ingredient"));
 			} else {
 				ingredient = Ingredient.EMPTY;
 			}

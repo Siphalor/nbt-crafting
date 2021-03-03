@@ -28,9 +28,12 @@ import net.minecraft.util.JsonHelper;
 public class CauldronRecipeSerializer implements RecipeSerializer<CauldronRecipe> {
 	@Override
 	public CauldronRecipe read(Identifier identifier, JsonObject jsonObject) {
-		JsonObject input = JsonHelper.getObject(jsonObject, "input");
-		JsonObject output = JsonHelper.getObject(jsonObject, "result");
-		return new CauldronRecipe(identifier, Ingredient.fromJson(input), ShapedRecipe.getItemStack(output), JsonHelper.getInt(jsonObject, "levels", 0));
+		return new CauldronRecipe(
+				identifier,
+				Ingredient.fromJson(jsonObject.get("input")),
+				ShapedRecipe.getItemStack(JsonHelper.getObject(jsonObject, "result")),
+				JsonHelper.getInt(jsonObject, "levels", 0)
+		);
 	}
 
 	@Override
