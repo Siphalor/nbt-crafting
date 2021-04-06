@@ -106,12 +106,14 @@ public class NbtCrafting implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		ServerSidePacketRegistry.INSTANCE.register(PRESENCE_PACKET_ID, (packetContext, packetByteBuf) -> {
-			ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) packetContext.getPlayer();
-			((IServerPlayerEntity) serverPlayerEntity).setClientModPresent(true);
-			serverPlayerEntity.networkHandler.sendPacket(new SynchronizeRecipesS2CPacket(serverPlayerEntity.server.getRecipeManager().values()));
-			serverPlayerEntity.getRecipeBook().sendInitRecipesPacket(serverPlayerEntity);
-		});
+		ServerSidePacketRegistry.INSTANCE.register(PRESENCE_PACKET_ID, (packetContext, packetByteBuf) ->
+			packetContext.getTaskQueue().execute(() -> {
+				ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) packetContext.getPlayer();
+				((IServerPlayerEntity) serverPlayerEntity).setClientModPresent(true);
+				serverPlayerEntity.networkHandler.sendPacket(new SynchronizeRecipesS2CPacket(serverPlayerEntity.server.getRecipeManager().values()));
+				serverPlayerEntity.getRecipeBook().sendInitRecipesPacket(serverPlayerEntity);
+			})
+		);
 	}
 
 	public static boolean hasClientMod(ServerPlayerEntity playerEntity) {
