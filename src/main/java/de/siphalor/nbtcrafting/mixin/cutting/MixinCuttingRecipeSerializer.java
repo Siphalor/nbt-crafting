@@ -42,7 +42,7 @@ public class MixinCuttingRecipeSerializer {
 		if (jsonObject.has(key)) {
 			JsonElement jsonElement = jsonObject.get(key);
 			if (jsonElement instanceof JsonObject) {
-				nbtCrafting_resultStack = ShapedRecipe.getItemStack((JsonObject) jsonElement);
+				nbtCrafting_resultStack = ShapedRecipe.outputFromJson((JsonObject) jsonElement);
 				return Registry.ITEM.getId(nbtCrafting_resultStack.getItem()).toString();
 			}
 		}

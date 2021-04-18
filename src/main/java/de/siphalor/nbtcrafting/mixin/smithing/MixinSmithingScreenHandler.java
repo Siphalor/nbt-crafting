@@ -76,16 +76,16 @@ public abstract class MixinSmithingScreenHandler extends ForgingScreenHandler {
 			method = "onTakeOutput",
 			at = @At("HEAD")
 	)
-	protected void onTakeOutput(PlayerEntity playerEntity, ItemStack output, CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
+	protected void onTakeOutput(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
 		Optional<IngredientRecipe<Inventory>> match = player.world.getRecipeManager().getFirstMatch(NbtCrafting.SMITHING_RECIPE_TYPE, input, player.world);
-		remainders = match.map(inventoryIngredientRecipe -> inventoryIngredientRecipe.getRemainingStacks(input)).orElse(null);
+		remainders = match.map(inventoryIngredientRecipe -> inventoryIngredientRecipe.getRemainder(input)).orElse(null);
 	}
 
 	@Inject(
 			method = "onTakeOutput",
 			at = @At("TAIL")
 	)
-	protected void onOutputTaken(PlayerEntity playerEntity, ItemStack output, CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
+	protected void onOutputTaken(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
 		if (remainders != null) {
 			context.run((world, blockPos) -> {
 				RecipeUtil.putRemainders(remainders, input, world, blockPos);

@@ -20,6 +20,7 @@ package de.siphalor.nbtcrafting.advancement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.advancement.StatChangedCriterion.Conditions;
 import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.predicate.NumberRange;

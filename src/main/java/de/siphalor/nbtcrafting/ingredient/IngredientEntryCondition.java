@@ -21,21 +21,21 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 
 public class IngredientEntryCondition {
 	public static final IngredientEntryCondition EMPTY = new IngredientEntryCondition(NbtUtil.EMPTY_COMPOUND, NbtUtil.EMPTY_COMPOUND);
 
-	public CompoundTag requiredElements;
-	public CompoundTag deniedElements;
+	public NbtCompound requiredElements;
+	public NbtCompound deniedElements;
 
 	public IngredientEntryCondition() {
 		requiredElements = NbtUtil.EMPTY_COMPOUND;
 		deniedElements = NbtUtil.EMPTY_COMPOUND;
 	}
 
-	public IngredientEntryCondition(CompoundTag requiredElements, CompoundTag deniedElements) {
+	public IngredientEntryCondition(NbtCompound requiredElements, NbtCompound deniedElements) {
 		this.requiredElements = requiredElements;
 		this.deniedElements = deniedElements;
 	}
@@ -44,7 +44,7 @@ public class IngredientEntryCondition {
 		if (!stack.hasTag()) {
 			return requiredElements.isEmpty();
 		}
-		CompoundTag tag = stack.getTag();
+		NbtCompound tag = stack.getTag();
 		//noinspection ConstantConditions
 		if (!deniedElements.isEmpty() && NbtUtil.compoundsOverlap(tag, deniedElements))
 			return false;
@@ -58,7 +58,7 @@ public class IngredientEntryCondition {
 			json.add("deny", NbtUtil.toJson(deniedElements));
 	}
 
-	public CompoundTag getPreviewTag() {
+	public NbtCompound getPreviewTag() {
 		return requiredElements;
 	}
 
@@ -70,30 +70,30 @@ public class IngredientEntryCondition {
 		if (json.has("require")) {
 			if (!json.get("require").isJsonObject())
 				throw new JsonParseException("data.require must be an object");
-			condition.requiredElements = (CompoundTag) NbtUtil.asTag(json.getAsJsonObject("require"));
+			condition.requiredElements = (NbtCompound) NbtUtil.asTag(json.getAsJsonObject("require"));
 			flatObject = false;
 		}
 		if (json.has("deny")) {
 			if (!json.get("deny").isJsonObject())
 				throw new JsonParseException("data.deny must be an object");
-			condition.deniedElements = (CompoundTag) NbtUtil.asTag(json.getAsJsonObject("deny"));
+			condition.deniedElements = (NbtCompound) NbtUtil.asTag(json.getAsJsonObject("deny"));
 			flatObject = false;
 		}
 
 		if (flatObject) {
-			condition.requiredElements = (CompoundTag) NbtUtil.asTag(json);
+			condition.requiredElements = (NbtCompound) NbtUtil.asTag(json);
 		}
 
 		return condition;
 	}
 
 	public void write(PacketByteBuf buf) {
-		buf.writeCompoundTag(requiredElements);
-		buf.writeCompoundTag(deniedElements);
+		buf.writeNbt(requiredElements);
+		buf.writeNbt(deniedElements);
 	}
 
 	public static IngredientEntryCondition read(PacketByteBuf buf) {
-		return new IngredientEntryCondition(buf.readCompoundTag(), buf.readCompoundTag());
+		return new IngredientEntryCondition(buf.readNbt(), buf.readNbt());
 	}
 
 }

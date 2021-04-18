@@ -42,7 +42,7 @@ public abstract class MixinSynchronizeRecipesS2CPacket {
 			List<Recipe<?>> syncRecipes = recipes.stream().filter(recipe -> !(recipe instanceof ServerRecipe)).collect(Collectors.toList());
 			buf.writeVarInt(syncRecipes.size());
 			for (Recipe<?> recipe : syncRecipes) {
-				SynchronizeRecipesS2CPacket.writeRecipe(recipe, buf);
+				SynchronizeRecipesS2CPacket.writeRecipe(buf, recipe);
 			}
 			callbackInfo.cancel();
 		}

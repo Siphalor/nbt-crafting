@@ -29,7 +29,7 @@ public class MixinREIRecipeFinder {
 	 */
 	@Overwrite
 	public static int getItemId(ItemStack itemStack) {
-		return net.minecraft.recipe.RecipeFinder.getItemId(itemStack);
+		return net.minecraft.recipe.RecipeMatcher.getItemId(itemStack);
 	}
 
 	/**
@@ -38,6 +38,6 @@ public class MixinREIRecipeFinder {
 	 */
 	@Overwrite
 	public static ItemStack getStackFromId(int itemId) {
-		return net.minecraft.recipe.RecipeFinder.getStackFromId(itemId);
+		return net.minecraft.recipe.RecipeMatcher.getStackFromId(itemId);
 	}
 }

@@ -46,7 +46,7 @@ public class MixinCauldronBlock {
 			TemporaryCauldronInventory inventory = new TemporaryCauldronInventory(playerEntity, hand, world, blockPos);
 			Optional<CauldronRecipe> cauldronRecipe = world.getRecipeManager().getFirstMatch(NbtCrafting.CAULDRON_RECIPE_TYPE, inventory, world);
 			if (cauldronRecipe.isPresent()) {
-				DefaultedList<ItemStack> remainingStacks = cauldronRecipe.get().getRemainingStacks(inventory);
+				DefaultedList<ItemStack> remainingStacks = cauldronRecipe.get().getRemainder(inventory);
 
 				ItemStack itemStack = cauldronRecipe.get().craft(inventory);
 				itemStack.onCraft(world, playerEntity, itemStack.getCount());

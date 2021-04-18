@@ -70,7 +70,7 @@ public abstract class MixinBrewingStandBlockEntity extends LockableContainerBloc
 	private static void craft(CallbackInfo callbackInfo) {
 		Optional<BrewingRecipe> recipe = lastWorld.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, lastBlockEntity, lastWorld);
 		if (recipe.isPresent()) {
-			DefaultedList<ItemStack> remainingStacks = recipe.get().getRemainingStacks(lastBlockEntity);
+			DefaultedList<ItemStack> remainingStacks = recipe.get().getRemainder(lastBlockEntity);
 			ItemStack[] results = recipe.get().craftAll(lastBlockEntity);
 
 			lastBlockEntity.getStack(3).decrement(1);

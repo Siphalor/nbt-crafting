@@ -94,7 +94,7 @@ public class IngredientRecipe<I extends Inventory> implements NBTCRecipe<I> {
 	}
 
 	@Override
-	public DefaultedList<Ingredient> getPreviewInputs() {
+	public DefaultedList<Ingredient> getIngredients() {
 		return DefaultedList.copyOf(Ingredient.EMPTY, base, ingredient);
 	}
 
@@ -144,7 +144,7 @@ public class IngredientRecipe<I extends Inventory> implements NBTCRecipe<I> {
 			} else {
 				ingredient = Ingredient.EMPTY;
 			}
-			ItemStack result = ShapedRecipe.getItemStack(JsonHelper.getObject(json, "result"));
+			ItemStack result = ShapedRecipe.outputFromJson(JsonHelper.getObject(json, "result"));
 			R recipe = factory.create(id, base, ingredient, result, this);
 			recipe.readCustomData(json);
 			return recipe;

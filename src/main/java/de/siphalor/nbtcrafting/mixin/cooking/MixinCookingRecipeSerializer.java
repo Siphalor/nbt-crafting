@@ -21,7 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import de.siphalor.nbtcrafting.util.duck.IItemStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.AbstractCookingRecipe;
 import net.minecraft.recipe.CookingRecipeSerializer;
 import net.minecraft.recipe.Ingredient;
@@ -40,7 +40,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(CookingRecipeSerializer.class)
 public abstract class MixinCookingRecipeSerializer {
 	@Unique
-	private CompoundTag resultTag = null;
+	private NbtCompound resultTag = null;
 
 	@Redirect(method = "read(Lnet/minecraft/util/Identifier;Lcom/google/gson/JsonObject;)Lnet/minecraft/recipe/AbstractCookingRecipe;", at = @At(value = "INVOKE", target = "net/minecraft/util/JsonHelper.getString(Lcom/google/gson/JsonObject;Ljava/lang/String;)Ljava/lang/String;", ordinal = 0))
 	public String getItemIdentifier(JsonObject jsonObject, String resultPropertyName) {
@@ -48,7 +48,7 @@ public abstract class MixinCookingRecipeSerializer {
 		if (!jsonObject.has(resultPropertyName) || !jsonObject.get(resultPropertyName).isJsonObject()) {
 			return JsonHelper.getString(jsonObject, resultPropertyName);
 		}
-		ItemStack output = ShapedRecipe.getItemStack(jsonObject.getAsJsonObject(resultPropertyName));
+		ItemStack output = ShapedRecipe.outputFromJson(jsonObject.getAsJsonObject(resultPropertyName));
 		resultTag = output.getTag();
 		return Registry.ITEM.getId(output.getItem()).toString();
 	}

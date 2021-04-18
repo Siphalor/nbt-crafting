@@ -30,14 +30,14 @@ import de.siphalor.nbtcrafting.dollar.part.unary.*;
 import de.siphalor.nbtcrafting.dollar.type.CountDollar;
 import de.siphalor.nbtcrafting.dollar.type.MergeDollar;
 import de.siphalor.nbtcrafting.dollar.type.SimpleDollar;
-import net.minecraft.nbt.AbstractListTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import net.minecraft.nbt.AbstractNbtList;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 
 public final class DollarParser {
 	private static final Collection<DollarPart.UnaryDeserializer> UNARY_DESERIALIZERS = ImmutableList.of(
@@ -92,13 +92,13 @@ public final class DollarParser {
 		return string.codePointAt(currentIndex + 1);
 	}
 
-	public static Dollar[] extractDollars(CompoundTag compoundTag, boolean remove) {
+	public static Dollar[] extractDollars(NbtCompound compoundTag, boolean remove) {
 		LinkedList<Dollar> dollars = new LinkedList<>();
 		NbtIterator.iterateTags(compoundTag, (path, key, tag) -> {
 			if (key.equals("$")) {
 				if (NbtUtil.isList(tag)) {
-					AbstractListTag<Tag> list = NbtUtil.asListTag(tag);
-					for (Tag t : list) {
+					AbstractNbtList<NbtElement> list = NbtUtil.asListTag(tag);
+					for (NbtElement t : list) {
 						parseMerge(t, path).ifPresent(dollars::addFirst);
 					}
 				} else {
@@ -127,7 +127,7 @@ public final class DollarParser {
 		return dollars.toArray(new Dollar[0]);
 	}
 
-	private static Optional<MergeDollar> parseMerge(Tag tag, String path) {
+	private static Optional<MergeDollar> parseMerge(NbtElement tag, String path) {
 		if (NbtUtil.isString(tag)) {
 			String val = tag.asString();
 			if (val.charAt(0) == '$') {
@@ -135,11 +135,11 @@ public final class DollarParser {
 			}
 			return parse(val).map(exp -> new MergeDollar(exp, path, Collections.emptyList()));
 		} else if (NbtUtil.isCompound(tag)) {
-			CompoundTag compound = NbtUtil.asCompoundTag(tag);
+			NbtCompound compound = NbtUtil.asCompoundTag(tag);
 			if (compound.contains("value", 8)) {
 				Collection<Pair<Pattern, MergeMode>> mergeModes = new LinkedList<>();
 				if (compound.contains("paths", 10)) {
-					CompoundTag paths = compound.getCompound("paths");
+					NbtCompound paths = compound.getCompound("paths");
 					for (String p : paths.getKeys()) {
 						try {
 							//noinspection ConstantConditions
@@ -267,10 +267,10 @@ public final class DollarParser {
 	public static void main(String[] args) {
 		parse("a + b").flatMap(dollarPart -> {
 			try {
-				ListTag a = new ListTag();
-				a.add(new ListTag());
-				ListTag b = new ListTag();
-				b.add(new ListTag());
+				NbtList a = new NbtList();
+				a.add(new NbtList());
+				NbtList b = new NbtList();
+				b.add(new NbtList());
 				return Optional.of(dollarPart.evaluate(ImmutableMap.of(
 						"a", a,
 						"b", b

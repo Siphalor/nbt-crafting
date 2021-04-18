@@ -36,14 +36,14 @@ import java.util.Map;
 @Mixin(Recipe.class)
 public interface MixinRecipe {
 	@Shadow
-	DefaultedList<Ingredient> getPreviewInputs();
+	DefaultedList<Ingredient> getIngredients();
 
 	/**
 	 * @reason Returns the recipe remainders. Sadly has to overwrite since this is an interface.
 	 * @author Siphalor
 	 */
 	@Overwrite
-	default DefaultedList<ItemStack> getRemainingStacks(Inventory inventory) {
+	default DefaultedList<ItemStack> getRemainder(Inventory inventory) {
 		final DefaultedList<ItemStack> stackList = DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
 		Map<String, Object> reference;
 		Collection<Ingredient> ingredients;
@@ -52,7 +52,7 @@ public interface MixinRecipe {
 			// noinspection unchecked
 			reference = ((NBTCRecipe<Inventory>) this).buildDollarReference(inventory);
 		} else {
-			DefaultedList<Ingredient> ingredientList = getPreviewInputs();
+			DefaultedList<Ingredient> ingredientList = getIngredients();
 			ingredients = ingredientList;
 			reference = new HashMap<>();
 			for (int j = 0; j < ingredientList.size(); j++) {

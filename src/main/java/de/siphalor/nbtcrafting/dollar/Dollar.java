@@ -20,8 +20,7 @@ package de.siphalor.nbtcrafting.dollar;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.Tag;
-
+import net.minecraft.nbt.NbtElement;
 import java.util.Map;
 
 public abstract class Dollar {
@@ -31,7 +30,7 @@ public abstract class Dollar {
 		this.expression = expression;
 	}
 
-	protected Tag evaluate(Map<String, Object> references) throws DollarEvaluationException {
+	protected NbtElement evaluate(Map<String, Object> references) throws DollarEvaluationException {
 		return NbtUtil.asTag(expression.evaluate(references));
 	}
 

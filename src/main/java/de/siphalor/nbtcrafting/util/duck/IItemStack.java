@@ -17,8 +17,8 @@
 
 package de.siphalor.nbtcrafting.util.duck;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 
 public interface IItemStack {
-	void setRawTag(CompoundTag tag);
+	void setRawTag(NbtCompound tag);
 }

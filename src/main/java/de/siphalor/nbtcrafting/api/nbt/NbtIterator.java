@@ -17,31 +17,30 @@
 
 package de.siphalor.nbtcrafting.api.nbt;
 
-import net.minecraft.nbt.AbstractListTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import net.minecraft.nbt.AbstractNbtList;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 
 @FunctionalInterface
 public interface NbtIterator {
-	boolean process(String path, String key, Tag tag);
+	boolean process(String path, String key, NbtElement tag);
 
-	static void iterateTags(Tag tag, NbtIterator nbtIterator) {
+	static void iterateTags(NbtElement tag, NbtIterator nbtIterator) {
 		iterateTags(tag, nbtIterator, "");
 	}
 
-	static void iterateTags(Tag tag, NbtIterator nbtIterator, String path) {
+	static void iterateTags(NbtElement tag, NbtIterator nbtIterator, String path) {
 		if (tag == null) return;
-		if (tag instanceof CompoundTag) {
-			CompoundTag compoundTag = (CompoundTag) tag;
+		if (tag instanceof NbtCompound) {
+			NbtCompound compoundTag = (NbtCompound) tag;
 			if (!path.equals(""))
 				path += ".";
 			Set<String> remove = new HashSet<>();
 			for (String key : compoundTag.getKeys()) {
-				Tag currentTag = compoundTag.get(key);
+				NbtElement currentTag = compoundTag.get(key);
 				if (nbtIterator.process(path, key, currentTag)) {
 					remove.add(key);
 				} else {
@@ -53,12 +52,12 @@ public interface NbtIterator {
 			for (String key : remove) {
 				compoundTag.remove(key);
 			}
-		} else if (tag instanceof AbstractListTag) {
+		} else if (tag instanceof AbstractNbtList) {
 			//noinspection unchecked
-			AbstractListTag<Tag> listTag = (AbstractListTag<Tag>) tag;
+			AbstractNbtList<NbtElement> listTag = (AbstractNbtList<NbtElement>) tag;
 			int i = 0;
-			for (Iterator<Tag> iterator = listTag.iterator(); iterator.hasNext(); ) {
-				Tag currentTag = iterator.next();
+			for (Iterator<NbtElement> iterator = listTag.iterator(); iterator.hasNext(); ) {
+				NbtElement currentTag = iterator.next();
 				if (nbtIterator.process(path, "[" + i + "]", currentTag)) {
 					iterator.remove();
 				} else {

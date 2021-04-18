@@ -28,9 +28,9 @@ import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipeSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeFinder;
+import net.minecraft.recipe.RecipeMatcher;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -66,9 +66,9 @@ public class NbtCrafting implements ModInitializer {
 	public static final StatChangedCriterion STAT_CHANGED_CRITERION = MixinCriterions.registerCriterion(new StatChangedCriterion());
 
 	private static boolean lastReadNbtPresent = false;
-	private static CompoundTag lastReadNbt;
+	private static NbtCompound lastReadNbt;
 
-	public static RecipeFinder lastRecipeFinder;
+	public static RecipeMatcher lastRecipeFinder;
 	public static ServerPlayerEntity lastServerPlayerEntity;
 
 	public static void logInfo(String message) {
@@ -94,13 +94,13 @@ public class NbtCrafting implements ModInitializer {
 		lastReadNbtPresent = false;
 	}
 
-	public static void setLastReadNbt(CompoundTag nbt) {
+	public static void setLastReadNbt(NbtCompound nbt) {
 		lastReadNbt = nbt;
 		lastReadNbtPresent = true;
 	}
 
-	public static CompoundTag useLastReadNbt() {
-		CompoundTag result = null;
+	public static NbtCompound useLastReadNbt() {
+		NbtCompound result = null;
 		if (lastReadNbt != null) {
 			result = lastReadNbt.copy();
 			lastReadNbt = null;

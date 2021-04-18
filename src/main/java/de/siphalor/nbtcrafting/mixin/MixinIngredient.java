@@ -30,7 +30,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
@@ -117,13 +117,15 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	public void write(PacketByteBuf buf, CallbackInfo callbackInfo) {
 		if (NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity)) {
 			if (advancedEntries != null) {
-				buf.writeVarInt(Integer.MAX_VALUE);
+				buf.writeBoolean(true);
 				buf.writeVarInt(advancedEntries.length);
 				for (IngredientEntry entry : advancedEntries) {
 					buf.writeBoolean(entry instanceof IngredientMultiStackEntry);
 					entry.write(buf);
 				}
 				callbackInfo.cancel();
+			} else {
+				buf.writeBoolean(false);
 			}
 		}
 	}
@@ -176,9 +178,9 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	}
 	*/
 
-	@Inject(method = "fromPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/recipe/Ingredient;ofEntries(Ljava/util/stream/Stream;)Lnet/minecraft/recipe/Ingredient;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> callbackInfoReturnable, int entryAmount) {
-		if (entryAmount == Integer.MAX_VALUE) {
+	@Inject(method = "fromPacket", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> callbackInfoReturnable) {
+		if (buf.readBoolean()) {
 			int length = buf.readVarInt();
 			ArrayList<IngredientEntry> entries = new ArrayList<>(length);
 			for (int i = 0; i < length; i++) {
@@ -188,6 +190,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 					entries.add(IngredientStackEntry.read(buf));
 			}
 			callbackInfoReturnable.setReturnValue(ofAdvancedEntries(entries.stream()));
+
 		}
 	}
 
@@ -235,7 +238,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 				});
 				IngredientStackEntry entry = new IngredientStackEntry(Registry.ITEM.getRawId(item), loadIngredientEntryCondition(jsonObject));
 				if (jsonObject.has("remainder")) {
-					entry.setRecipeRemainder(ShapedRecipe.getItemStack(JsonHelper.getObject(jsonObject, "remainder")));
+					entry.setRecipeRemainder(ShapedRecipe.outputFromJson(JsonHelper.getObject(jsonObject, "remainder")));
 				}
 				return entry;
 			} catch (Throwable e) {
@@ -251,11 +254,11 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 				});
 				IngredientEntryCondition condition = loadIngredientEntryCondition(jsonObject);
 				if (condition.requiredElements == NbtUtil.EMPTY_COMPOUND)
-					condition.requiredElements = new CompoundTag();
+					condition.requiredElements = new NbtCompound();
 				condition.requiredElements.putString("Potion", identifier.toString());
 				IngredientStackEntry entry = new IngredientStackEntry(Registry.ITEM.getRawId(Items.POTION), condition);
 				if (jsonObject.has("remainder")) {
-					entry.setRecipeRemainder(ShapedRecipe.getItemStack(JsonHelper.getObject(jsonObject, "remainder")));
+					entry.setRecipeRemainder(ShapedRecipe.outputFromJson(JsonHelper.getObject(jsonObject, "remainder")));
 				}
 				return entry;
 			} catch (Throwable e) {
@@ -274,7 +277,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 		IngredientMultiStackEntry entry = new IngredientMultiStackEntry(tag.values().stream().map(Registry.ITEM::getRawId).collect(Collectors.toList()), loadIngredientEntryCondition(jsonObject));
 		entry.setTag(identifier2.toString());
 		if (jsonObject.has("remainder")) {
-			entry.setRecipeRemainder(ShapedRecipe.getItemStack(JsonHelper.getObject(jsonObject, "remainder")));
+			entry.setRecipeRemainder(ShapedRecipe.outputFromJson(JsonHelper.getObject(jsonObject, "remainder")));
 		}
 		return entry;
 	}
@@ -284,7 +287,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 		if (jsonObject.has("data")) {
 			if (JsonHelper.hasString(jsonObject, "data")) {
 				try {
-					CompoundTag compoundTag = new StringNbtReader(new StringReader(jsonObject.get("data").getAsString())).parseCompoundTag();
+					NbtCompound compoundTag = new StringNbtReader(new StringReader(jsonObject.get("data").getAsString())).parseCompound();
 					IngredientEntryCondition condition = new IngredientEntryCondition();
 					if (compoundTag.contains("require") || compoundTag.contains("deny")) {
 						if (compoundTag.contains("require"))

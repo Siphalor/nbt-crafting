@@ -39,7 +39,7 @@ public class CauldronRecipeSerializer implements RecipeSerializer<CauldronRecipe
 				fluid = TemporaryCauldronInventory.WATER;
 			}
 		}
-		return new CauldronRecipe(identifier, Ingredient.fromJson(jsonObject.get("input")), ShapedRecipe.getItemStack(output), fluid, levels);
+		return new CauldronRecipe(identifier, Ingredient.fromJson(jsonObject.get("input")), ShapedRecipe.outputFromJson(output), fluid, levels);
 	}
 
 	@Override

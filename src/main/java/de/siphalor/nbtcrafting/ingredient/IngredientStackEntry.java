@@ -21,7 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import de.siphalor.nbtcrafting.util.duck.IItemStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
 
@@ -42,7 +42,7 @@ public class IngredientStackEntry extends IngredientEntry {
 	public IngredientStackEntry(ItemStack stack) {
 		this.id = Registry.ITEM.getRawId(stack.getItem());
 		if (stack.hasTag())
-			this.condition = new IngredientEntryCondition(stack.getTag(), new CompoundTag());
+			this.condition = new IngredientEntryCondition(stack.getTag(), new NbtCompound());
 		else
 			this.condition = new IngredientEntryCondition();
 	}

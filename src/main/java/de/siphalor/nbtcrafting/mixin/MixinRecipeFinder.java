@@ -30,9 +30,9 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeFinder;
+import net.minecraft.recipe.RecipeMatcher;
 import net.minecraft.util.registry.Registry;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
@@ -43,28 +43,28 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("ALL")
-@Mixin(RecipeFinder.class)
+@Mixin(RecipeMatcher.class)
 public abstract class MixinRecipeFinder {
 	@Shadow
-	public abstract void addItem(final ItemStack stack);
+	public abstract void addInput(final ItemStack stack);
 
 	@Shadow
 	@Final
-	public Int2IntMap idToAmountMap;
+	public Int2IntMap inputs;
 
 	@Unique
 	private static int currentId = 1;
 	@Unique
-	private static Int2ObjectMap<Pair<Integer, CompoundTag>> id2StackMap = new Int2ObjectAVLTreeMap<>();
+	private static Int2ObjectMap<Pair<Integer, NbtCompound>> id2StackMap = new Int2ObjectAVLTreeMap<>();
 	@Unique
-	private static LoadingCache<Pair<Integer, CompoundTag>, Integer> stack2IdMap = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).removalListener(notification -> {
+	private static LoadingCache<Pair<Integer, NbtCompound>, Integer> stack2IdMap = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).removalListener(notification -> {
 				synchronized (id2StackMap) {
 					id2StackMap.remove((Integer) notification.getValue());
 				}
 			}
-	).build(new CacheLoader<Pair<Integer, CompoundTag>, Integer>() {
+	).build(new CacheLoader<Pair<Integer, NbtCompound>, Integer>() {
 		@Override
-		public Integer load(Pair<Integer, CompoundTag> key) throws Exception {
+		public Integer load(Pair<Integer, NbtCompound> key) throws Exception {
 			synchronized (id2StackMap) {
 				id2StackMap.put(currentId, key);
 			}
@@ -73,18 +73,18 @@ public abstract class MixinRecipeFinder {
 	});
 
 	@Unique
-	private static Pair<Integer, CompoundTag> getStackPair(ItemStack stack) {
-		return new Pair<Integer, CompoundTag>(Registry.ITEM.getRawId(stack.getItem()), NbtUtil.getTagOrEmpty(stack));
+	private static Pair<Integer, NbtCompound> getStackPair(ItemStack stack) {
+		return new Pair<Integer, NbtCompound>(Registry.ITEM.getRawId(stack.getItem()), NbtUtil.getTagOrEmpty(stack));
 	}
 
-	@Inject(method = "findRecipe(Lnet/minecraft/recipe/Recipe;Lit/unimi/dsi/fastutil/ints/IntList;I)Z", at = @At("HEAD"))
+	@Inject(method = "match(Lnet/minecraft/recipe/Recipe;Lit/unimi/dsi/fastutil/ints/IntList;I)Z", at = @At("HEAD"))
 	public void onFindRecipe(@SuppressWarnings("rawtypes") Recipe recipe, IntList ints, int int_1, CallbackInfoReturnable<Boolean> ci) {
-		NbtCrafting.lastRecipeFinder = (RecipeFinder) (Object) this;
+		NbtCrafting.lastRecipeFinder = (RecipeMatcher) (Object) this;
 	}
 
-	@Inject(method = "countRecipeCrafts(Lnet/minecraft/recipe/Recipe;ILit/unimi/dsi/fastutil/ints/IntList;)I", at = @At("HEAD"))
+	@Inject(method = "countCrafts(Lnet/minecraft/recipe/Recipe;ILit/unimi/dsi/fastutil/ints/IntList;)I", at = @At("HEAD"))
 	public void onCountCrafts(@SuppressWarnings("rawtypes") Recipe recipe, int int_1, IntList ints, CallbackInfoReturnable<Integer> ci) {
-		NbtCrafting.lastRecipeFinder = (RecipeFinder) (Object) this;
+		NbtCrafting.lastRecipeFinder = (RecipeMatcher) (Object) this;
 	}
 
 	/**
@@ -92,8 +92,8 @@ public abstract class MixinRecipeFinder {
 	 * @author Siphalor
 	 */
 	@Overwrite
-	public void addNormalItem(final ItemStack stack) {
-		addItem(stack);
+	public void addUnenchantedInput(final ItemStack stack) {
+		addInput(stack);
 	}
 
 	/**
@@ -106,7 +106,7 @@ public abstract class MixinRecipeFinder {
 		if (stack.isEmpty()) {
 			id = 0;
 		} else {
-			Pair<Integer, CompoundTag> stackPair = getStackPair(stack);
+			Pair<Integer, NbtCompound> stackPair = getStackPair(stack);
 			try {
 				id = stack2IdMap.get(stackPair);
 			} catch (ExecutionException e) {

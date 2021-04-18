@@ -23,7 +23,7 @@ import de.siphalor.nbtcrafting.util.duck.IItemStack;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
 
@@ -58,7 +58,7 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 
 	@Override
 	public Collection<ItemStack> getPreviewStacks(boolean nbt) {
-		CompoundTag tag = condition.getPreviewTag();
+		NbtCompound tag = condition.getPreviewTag();
 		Collection<ItemStack> stacks = new ArrayList<>(itemIds.size());
 		for (Integer id : itemIds) {
 			ItemStack stack = new ItemStack(Registry.ITEM.get(id));

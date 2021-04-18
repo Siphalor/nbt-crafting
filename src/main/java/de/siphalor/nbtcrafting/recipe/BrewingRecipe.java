@@ -66,7 +66,7 @@ public class BrewingRecipe extends IngredientRecipe<Inventory> implements Server
 	}
 
 	@Override
-	public DefaultedList<ItemStack> getRemainingStacks(Inventory inv) {
+	public DefaultedList<ItemStack> getRemainder(Inventory inv) {
 		DefaultedList<ItemStack> stacks = DefaultedList.ofSize(4, ItemStack.EMPTY);
 		Map<String, Object> reference = new HashMap<>();
 		reference.put("ingredient", inv.getStack(3));

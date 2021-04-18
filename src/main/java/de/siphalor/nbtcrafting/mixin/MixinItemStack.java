@@ -19,7 +19,7 @@ package de.siphalor.nbtcrafting.mixin;
 
 import de.siphalor.nbtcrafting.util.duck.IItemStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = ItemStack.class, priority = 2000)
 public class MixinItemStack implements IItemStack {
 	@Shadow
-	private CompoundTag tag;
+	private NbtCompound tag;
 
 	@Inject(method = "areTagsEqual", at = @At(value = "RETURN", ordinal = 2), cancellable = true)
 	private static void areTagsEqualReturn1(ItemStack stack1, ItemStack stack2, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
@@ -38,7 +38,7 @@ public class MixinItemStack implements IItemStack {
 			callbackInfoReturnable.setReturnValue(true);
 	}
 
-	@Inject(method = "areTagsEqual", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/CompoundTag;equals(Ljava/lang/Object;)Z"), cancellable = true)
+	@Inject(method = "areTagsEqual", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NbtCompound;equals(Ljava/lang/Object;)Z"), cancellable = true)
 	private static void areTagsEqualReturn2(ItemStack stack1, ItemStack stack2, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (stack1.getTag() == null && stack2.getTag().isEmpty())
 			callbackInfoReturnable.setReturnValue(true);
@@ -46,7 +46,7 @@ public class MixinItemStack implements IItemStack {
 
 	@Unique
 	@Override
-	public void setRawTag(CompoundTag tag) {
+	public void setRawTag(NbtCompound tag) {
 		if (tag == null || tag.isEmpty())
 			this.tag = null;
 		else

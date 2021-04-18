@@ -37,12 +37,12 @@ dependencies {
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	def fabric_deps = [
-	        'fabric-api-base': '0.2.0+eaafab808e',
-			'fabric-networking-api-v1': '1.0.0+fd1187378e',
+	        'fabric-api-base': '0.2.2+23b3c92e27',
+			'fabric-networking-api-v1': '1.0.7+413ddf6427',
 			'include': false,
-			'fabric-registry-sync-v0': '0.7.4+836e66a38e',
-			'fabric-resource-loader-v0': '0.4.0+27f445e78e',
-			'fabric-tag-extensions-v0': '1.1.1+e1f1abb18e'
+			'fabric-registry-sync-v0': '0.7.8+413ddf6427',
+			'fabric-resource-loader-v0': '0.4.6+12865e7827',
+			'fabric-tag-extensions-v0': '1.1.3+41a6855227'
 	]
 
 	def inc = true
@@ -60,9 +60,9 @@ dependencies {
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems:5.4+") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
-	modImplementation("de.siphalor:modsoftheworld-1.17:1+") {
+	/*modImplementation("de.siphalor:modsoftheworld-1.17:1+") {
 		transitive false
-	}
+	}*/
 
 	testmodCompile sourceSets.main.output
 }

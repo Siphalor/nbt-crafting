@@ -105,7 +105,7 @@ public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, S
 	}
 
 	@Override
-	public DefaultedList<Ingredient> getPreviewInputs() {
+	public DefaultedList<Ingredient> getIngredients() {
 		return DefaultedList.copyOf(Ingredient.EMPTY, input);
 	}
 

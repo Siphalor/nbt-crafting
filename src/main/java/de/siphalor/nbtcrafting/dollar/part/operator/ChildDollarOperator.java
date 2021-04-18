@@ -21,8 +21,8 @@ import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 
 public class ChildDollarOperator extends BinaryDollarOperator {
 	public ChildDollarOperator(DollarPart first, DollarPart second) {
@@ -31,15 +31,15 @@ public class ChildDollarOperator extends BinaryDollarOperator {
 
 	@Override
 	public Object apply(Object first, Object second) {
-		if (first instanceof CompoundTag) {
+		if (first instanceof NbtCompound) {
 			String key = second.toString();
-			if (((CompoundTag) first).contains(key)) {
-				return NbtUtil.toDollarValue(((CompoundTag) first).get(key));
+			if (((NbtCompound) first).contains(key)) {
+				return NbtUtil.toDollarValue(((NbtCompound) first).get(key));
 			}
-		} else if (first instanceof ListTag && second instanceof Number) {
+		} else if (first instanceof NbtList && second instanceof Number) {
 			int index = ((Number) second).intValue();
-			if (index < ((ListTag) first).size()) {
-				return NbtUtil.toDollarValue(((ListTag) first).get(index));
+			if (index < ((NbtList) first).size()) {
+				return NbtUtil.toDollarValue(((NbtList) first).get(index));
 			}
 		}
 		return null;
