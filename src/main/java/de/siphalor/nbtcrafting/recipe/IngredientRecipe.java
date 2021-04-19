@@ -20,6 +20,7 @@ package de.siphalor.nbtcrafting.recipe;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
 import de.siphalor.nbtcrafting.api.RecipeUtil;
+import de.siphalor.nbtcrafting.api.ServerRecipe;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
 import de.siphalor.nbtcrafting.dollar.Dollar;
@@ -37,7 +38,7 @@ import net.minecraft.world.World;
 
 import java.util.Map;
 
-public abstract class IngredientRecipe<I extends Inventory> implements NBTCRecipe<I> {
+public abstract class IngredientRecipe<I extends Inventory> implements NBTCRecipe<I>, ServerRecipe {
 	private final Identifier identifier;
 	protected final Ingredient base;
 	protected final Ingredient ingredient;
