@@ -54,7 +54,7 @@ public abstract class MixinRecipeFinder$Filter {
 
 	@SuppressWarnings({"UnresolvedMixinReference", "WeakerAccess"})
 	@Inject(
-			method = "<init>(Lnet/minecraft/recipe/RecipeFinder;Lnet/minecraft/recipe/Recipe;)V",
+			method = "<init>(Lnet/minecraft/recipe/RecipeMatcher;Lnet/minecraft/recipe/Recipe;)V",
 			at = @At("RETURN")
 	)
 	public void onConstruct(RecipeMatcher recipeFinder, Recipe<?> recipe, CallbackInfo ci) {
