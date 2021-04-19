@@ -27,7 +27,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 
-public class AnvilRecipe extends IngredientRecipe<Inventory> implements ServerRecipe {
+public class AnvilRecipe extends IngredientRecipe<Inventory> {
 	protected int levels = 0;
 
 	public static final IngredientRecipe.Serializer<AnvilRecipe> SERIALIZER = new IngredientRecipe.Serializer<>(AnvilRecipe::new);

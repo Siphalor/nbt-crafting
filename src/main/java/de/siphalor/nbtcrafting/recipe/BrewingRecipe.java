@@ -32,7 +32,7 @@ import net.minecraft.world.World;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BrewingRecipe extends IngredientRecipe<Inventory> implements ServerRecipe {
+public class BrewingRecipe extends IngredientRecipe<Inventory> {
 	public static final RecipeSerializer<BrewingRecipe> SERIALIZER = new IngredientRecipe.Serializer<>(BrewingRecipe::new);
 
 	public BrewingRecipe(Identifier identifier, Ingredient base, Ingredient ingredient, ItemStack result, Serializer<BrewingRecipe> serializer) {
