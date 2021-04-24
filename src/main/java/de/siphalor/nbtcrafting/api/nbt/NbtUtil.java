@@ -359,13 +359,7 @@ public class NbtUtil {
 
 		for (String key : additions.getKeys()) {
 			String path = basePath + key;
-			MergeMode mergeMode = MergeMode.MERGE;
-			for (Pair<Pattern, MergeMode> entry : mergeModes) {
-				if (entry.getFirst().matcher(path).matches()) {
-					mergeMode = entry.getSecond();
-					break;
-				}
-			}
+			MergeMode mergeMode = getMergeMode(mergeModes, path);
 
 			if (target.contains(key)) {
 				if (mergeMode == MergeMode.UPDATE || mergeMode == MergeMode.OVERWRITE) {
@@ -396,18 +390,12 @@ public class NbtUtil {
 
 		int targetSize = target.size();
 
-		for (int i = 0; i < additions.size(); i++) {
+		for (int i = 0; i < additions.size() && i < targetSize; i++) { // for all elements that exist in both
 			String path = basePath + "[" + i + "]";
 
-			MergeMode mergeMode = MergeMode.MERGE;
-			for (Pair<Pattern, MergeMode> entry : mergeModes) {
-				if (entry.getFirst().matcher(path).matches()) {
-					mergeMode = entry.getSecond();
-					break;
-				}
-			}
+			MergeMode mergeMode = getMergeMode(mergeModes, path);
 
-			if (mergeMode == MergeMode.OVERWRITE || (mergeMode == MergeMode.UPDATE && i < targetSize)) {
+			if (mergeMode == MergeMode.OVERWRITE || mergeMode == MergeMode.UPDATE) {
 				target.set(i, additions.get(i).copy());
 			} else if (mergeMode == MergeMode.MERGE) {
 				Tag targetTag = target.get(i);
@@ -422,12 +410,28 @@ public class NbtUtil {
 				}
 			} else if (mergeMode == MergeMode.APPEND) {
 				try {
-					target.add(additions.get(i));
+					target.add(additions.get(i).copy());
 				} catch (Exception e) {
 					NbtCrafting.logError("Can't append tag " + additions.get(i).asString() + " to list: " + target.asString());
 				}
 			}
 		}
+
+		for (int i = additions.size(); i < targetSize; i++) { // for any additional elements
+			MergeMode mergeMode = getMergeMode(mergeModes, basePath + "[" + i + "]");
+			if (mergeMode != MergeMode.UPDATE) {
+				target.add(additions.get(i));
+			}
+		}
+	}
+
+	public static MergeMode getMergeMode(Collection<Pair<Pattern, MergeMode>> mergeModes, String path) {
+		for (Pair<Pattern, MergeMode> entry : mergeModes) {
+			if (entry.getFirst().matcher(path).matches()) {
+				return entry.getSecond();
+			}
+		}
+		return MergeMode.MERGE;
 	}
 
 	public static Tag asTag(Object value) {
