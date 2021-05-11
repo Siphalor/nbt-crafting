@@ -27,6 +27,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
+import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -64,8 +65,12 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 			ItemStack resultStack = optionalAnvilRecipe.get().craft(input);
 			repairItemUsage = 1;
 			if (userChangedName) {
-				if (!newItemName.equals(resultStack.getName().getString()))
+				if (
+						!StringUtils.isBlank(newItemName) &&
+						!newItemName.equals(resultStack.getName().getString())
+				) {
 					resultStack.setCustomName(new LiteralText(newItemName));
+				}
 				userChangedName = false;
 			} else {
 				newItemName = resultStack.getName().getString();
