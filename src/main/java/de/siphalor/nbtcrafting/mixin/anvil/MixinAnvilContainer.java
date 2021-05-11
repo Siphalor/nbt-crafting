@@ -31,6 +31,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.PacketByteBuf;
+import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -79,8 +80,12 @@ public abstract class MixinAnvilContainer extends Container {
 			ItemStack resultStack = optionalAnvilRecipe.get().craft(inventory);
 			repairItemUsage = 1;
 			if (userChangedName) {
-				if (!newItemName.equals(resultStack.getName().getString()))
+				if (
+						!StringUtils.isBlank(newItemName) &&
+						!newItemName.equals(resultStack.getName().getString())
+				) {
 					resultStack.setCustomName(new LiteralText(newItemName));
+				}
 				userChangedName = false;
 			} else {
 				newItemName = resultStack.getName().getString();
