@@ -48,7 +48,7 @@ public abstract class MixinBrewingSlotPotion extends Slot {
 		super(inventory, invSlot, xPosition, yPosition);
 	}
 
-	@Inject(method = "canInsert", at = @At("RETURN"), cancellable = true)
+	@Inject(method = "canInsert(Lnet/minecraft/item/ItemStack;)Z", at = @At("RETURN"), cancellable = true)
 	public void canInsert(ItemStack stack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (callbackInfoReturnable.getReturnValue() || matches(stack)) {
 			callbackInfoReturnable.setReturnValue(true);

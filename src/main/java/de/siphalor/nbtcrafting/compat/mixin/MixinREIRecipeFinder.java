@@ -22,7 +22,7 @@ import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-@Mixin(RecipeFinder.class)
+@Mixin(value = RecipeFinder.class, remap = false)
 public class MixinREIRecipeFinder {
 	/**
 	 * @author Siphalor
