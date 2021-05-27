@@ -27,6 +27,7 @@ import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AnvilScreen;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.recipe.RecipeManager;
 
 @Environment(EnvType.CLIENT)
 public class NbtCraftingClient implements ClientModInitializer {
@@ -46,5 +47,9 @@ public class NbtCraftingClient implements ClientModInitializer {
 			} else
 				packetByteBuf.readString();
 		});
+	}
+
+	public static RecipeManager getClientRecipeManager() {
+		return MinecraftClient.getInstance().getNetworkHandler().getRecipeManager();
 	}
 }
