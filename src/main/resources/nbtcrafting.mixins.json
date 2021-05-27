@@ -11,6 +11,7 @@
 		"MixinRecipeFinder$Filter",
 		"MixinServerPlayerEntity",
 		"MixinServerStatHandler",
+		"RecipeManagerAccessor",
 		"advancement.MixinCriterions",
 		"anvil.MixinAnvilContainer",
 		"brewing.MixinBrewingSlotIngredient",
