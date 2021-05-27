@@ -17,24 +17,55 @@
 
 package de.siphalor.nbtcrafting.mixin.brewing;
 
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.client.NbtCraftingClient;
+import de.siphalor.nbtcrafting.mixin.RecipeManagerAccessor;
+import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.entity.BrewingStandBlockEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.screen.slot.Slot;
+import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Map;
+
 @Mixin(targets = "net/minecraft/screen/BrewingStandScreenHandler$PotionSlot")
-public class MixinBrewingSlotPotion {
-	@Inject(method = "matches(Lnet/minecraft/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
-	private static void matches(ItemStack stack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		/*RecipeManager recipeManager;
-		if(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-			recipeManager = ClientCore.getRecipeManager();
-		} else {
-			recipeManager = ((MinecraftServer) FabricLoader.getInstance().getGameInstance()).getRecipeManager();
+public abstract class MixinBrewingSlotPotion extends Slot {
+	@Shadow
+	public static boolean matches(ItemStack itemStack) {
+		return false;
+	}
+
+	public MixinBrewingSlotPotion(Inventory inventory, int invSlot, int xPosition, int yPosition) {
+		super(inventory, invSlot, xPosition, yPosition);
+	}
+
+	@Inject(method = "canInsert(Lnet/minecraft/item/ItemStack;)Z", at = @At("RETURN"), cancellable = true)
+	public void canInsert(ItemStack stack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+		if (callbackInfoReturnable.getReturnValue() || matches(stack)) {
+			callbackInfoReturnable.setReturnValue(true);
+			return;
 		}
-        if(BrewingRecipe.existsMatchingBase(stack, recipeManager))
-        	callbackInfoReturnable.setReturnValue(true);*/
-		callbackInfoReturnable.setReturnValue(true);
+		RecipeManagerAccessor recipeManager;
+		if (inventory instanceof BrewingStandBlockEntity) {
+			recipeManager = (RecipeManagerAccessor) ((BrewingStandBlockEntity) inventory).getWorld().getRecipeManager();
+		} else if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+			recipeManager = (RecipeManagerAccessor) NbtCraftingClient.getClientRecipeManager();
+		} else {
+			NbtCrafting.logError("Failed to get recipe manager in brewing stand container class!");
+			return;
+		}
+		Map<Identifier, Recipe<Inventory>> recipes = recipeManager.callGetAllOfType(NbtCrafting.BREWING_RECIPE_TYPE);
+		callbackInfoReturnable.setReturnValue(recipes.values().stream()
+				.anyMatch(recipe -> recipe instanceof BrewingRecipe && ((BrewingRecipe) recipe).getBase().test(stack))
+		);
 	}
 }

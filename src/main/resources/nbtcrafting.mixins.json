@@ -10,6 +10,7 @@
 		"MixinRecipeFinder",
 		"MixinRecipeFinder$Filter",
 		"MixinServerStatHandler",
+		"RecipeManagerAccessor",
 		"advancement.MixinCriterions",
 		"anvil.MixinAnvilContainer",
 		"brewing.MixinBrewingSlotIngredient",
