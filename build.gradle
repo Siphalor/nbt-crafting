@@ -135,7 +135,7 @@ def getChangelog() {
 
 No changelog found!"""
 	}
-	return ('git log -1 --format=format:"## %s%n%n%b%nRelease by %an" ' + versionCommit).execute().text.trim()
+	return ('git log -1 --format=format:"##%x20%s%n%n%b%nRelease%x20by%x20%an" ' + versionCommit).execute().text.trim()
 }
 
 task uploadToModSites {
@@ -146,12 +146,11 @@ task uploadToModSites {
 if (project.hasProperty("siphalorCurseForgeApi")) {
 	curseforge {
 		apiKey project.siphalorCurseForgeApi
-		def changes = getChangelog()
 		project {
 			id = "314633"
 			releaseType = project.mod_release
 			changelogType = "markdown"
-			changelog = changes
+			changelog = getChangelog()
 			for (version in ((String) project.mod_mc_versions).split(";")) {
 				addGameVersion(version)
 			}
