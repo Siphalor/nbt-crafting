@@ -57,7 +57,7 @@ dependencies {
 		}
 	}
 
-	modCompileOnly("me.shedaniel:RoughlyEnoughItems:5.4+") {
+	modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:6.0.247-alpha") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
 	/*modImplementation("de.siphalor:modsoftheworld-1.17:1+") {
