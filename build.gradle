@@ -4,6 +4,7 @@ plugins {
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'com.modrinth.minotaur' version '1.1.0'
 	id 'org.cadixdev.licenser' version '0.5.0'
+	id "com.github.breadmoirai.github-release" version "2.2.12"
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -151,7 +152,7 @@ def getChangelog() {
 
 No changelog found!"""
 	}
-	return ('git log -1 --format=format:"##%x20%s%n%n%b%nRelease%x20by%x20%an" ' + versionCommit).execute().text.trim()
+	return ('git log -1 --format=format:##%x20%s%n%n%b%nRelease%x20by%x20%an ' + versionCommit).execute().text.trim()
 }
 
 task uploadToModSites {
@@ -202,4 +203,16 @@ if (project.hasProperty("siphalorModrinthApi")) {
 		addLoader("fabric")
 	}
 	uploadToModSites.finalizedBy(tasks.modrinth)
+}
+
+if (project.hasProperty("siphalorGitHubToken")) {
+	githubRelease {
+		token siphalorGitHubToken
+		targetCommitish.set("$minecraft_major_version-2.0")
+		releaseName.set("Version $mod_version")
+		body.set(getChangelog())
+		releaseAssets remapJar.getArchiveFile()
+		prerelease.set(mod_release != "release")
+		overwrite.set(true)
+	}
 }
