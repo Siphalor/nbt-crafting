@@ -38,7 +38,7 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	def fabric_deps = [
-	        'fabric-api-base': '0.3.0+a02b4463a0.jar',
+	        'fabric-api-base': '0.3.0+a02b4463a0',
 			'fabric-networking-api-v1': '1.0.11+b7ab6121a0',
 			'include': false,
 			'fabric-registry-sync-v0': '0.7.9+a02b4463a0',
