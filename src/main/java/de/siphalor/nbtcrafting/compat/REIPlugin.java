@@ -17,30 +17,19 @@
 
 package de.siphalor.nbtcrafting.compat;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
-import me.shedaniel.rei.api.RecipeHelper;
-import me.shedaniel.rei.api.plugins.REIPluginV0;
-import me.shedaniel.rei.plugin.brewing.DefaultBrewingDisplay;
+import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
+import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
+import me.shedaniel.rei.plugin.common.displays.brewing.DefaultBrewingDisplay;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
-public class REIPlugin implements REIPluginV0 {
-	public static final Identifier IDENTIFIER = new Identifier(NbtCrafting.MOD_ID, "rei_plugin");
-
-	@Override
-	public Identifier getPluginIdentifier() {
-		return IDENTIFIER;
-	}
-
-	@Override
-	public void registerRecipeDisplays(RecipeHelper recipeHelper) {
-		recipeHelper.getAllSortedRecipes().forEach(recipe -> {
-			if(recipe instanceof BrewingRecipe) {
-				recipeHelper.registerDisplay(new DefaultBrewingDisplay(((BrewingRecipe) recipe).getBase(), ((BrewingRecipe) recipe).getIngredient(), recipe.getOutput()));
-			}
-		});
-	}
+public class REIPlugin implements REIClientPlugin {
+    @Override
+    public void registerDisplays(DisplayRegistry registry) {
+        registry.registerFiller(BrewingRecipe.class, recipe -> {
+            return new DefaultBrewingDisplay(recipe.getBase(), recipe.getIngredient(), recipe.getOutput());
+        });
+    }
 }

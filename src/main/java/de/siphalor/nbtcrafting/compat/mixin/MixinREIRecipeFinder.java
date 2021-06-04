@@ -17,7 +17,7 @@
 
 package de.siphalor.nbtcrafting.compat.mixin;
 
-import me.shedaniel.rei.server.RecipeFinder;
+import me.shedaniel.rei.api.common.transfer.RecipeFinder;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
