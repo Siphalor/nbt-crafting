@@ -215,4 +215,5 @@ if (project.hasProperty("siphalorGitHubToken")) {
 		prerelease.set(mod_release != "release")
 		overwrite.set(true)
 	}
+	uploadToModSites.finalizedBy(tasks.githubRelease)
 }
