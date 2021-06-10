@@ -17,16 +17,11 @@
 
 package de.siphalor.nbtcrafting.mixin;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Pair;
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.util.duck.IItemStack;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -40,7 +35,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("ALL")
 @Mixin(RecipeMatcher.class)
@@ -51,26 +45,6 @@ public abstract class MixinRecipeFinder {
 	@Shadow
 	@Final
 	public Int2IntMap inputs;
-
-	@Unique
-	private static int currentId = 1;
-	@Unique
-	private static Int2ObjectMap<Pair<Integer, NbtCompound>> id2StackMap = new Int2ObjectAVLTreeMap<>();
-	@Unique
-	private static LoadingCache<Pair<Integer, NbtCompound>, Integer> stack2IdMap = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).removalListener(notification -> {
-				synchronized (id2StackMap) {
-					id2StackMap.remove((Integer) notification.getValue());
-				}
-			}
-	).build(new CacheLoader<Pair<Integer, NbtCompound>, Integer>() {
-		@Override
-		public Integer load(Pair<Integer, NbtCompound> key) throws Exception {
-			synchronized (id2StackMap) {
-				id2StackMap.put(currentId, key);
-			}
-			return currentId++;
-		}
-	});
 
 	@Unique
 	private static Pair<Integer, NbtCompound> getStackPair(ItemStack stack) {
@@ -108,7 +82,7 @@ public abstract class MixinRecipeFinder {
 		} else {
 			Pair<Integer, NbtCompound> stackPair = getStackPair(stack);
 			try {
-				id = stack2IdMap.get(stackPair);
+				id = NbtCrafting.stack2IdMap.get(stackPair);
 			} catch (ExecutionException e) {
 				e.printStackTrace();
 			}
@@ -122,10 +96,10 @@ public abstract class MixinRecipeFinder {
 	 */
 	@Overwrite
 	public static ItemStack getStackFromId(final int id) {
-		synchronized (id2StackMap) {
-			if (id2StackMap.containsKey(id)) {
-				ItemStack result = new ItemStack(Item.byRawId(id2StackMap.get(id).getFirst()));
-				((IItemStack) (Object) result).setRawTag(id2StackMap.get(id).getSecond());
+		synchronized (NbtCrafting.id2StackMap) {
+			if (NbtCrafting.id2StackMap.containsKey(id)) {
+				ItemStack result = new ItemStack(Item.byRawId(NbtCrafting.id2StackMap.get(id).getFirst()));
+				((IItemStack) (Object) result).setRawTag(NbtCrafting.id2StackMap.get(id).getSecond());
 				return result;
 			}
 		}
