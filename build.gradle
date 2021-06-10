@@ -151,6 +151,7 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 			releaseType = project.mod_release
 			changelogType = "markdown"
 			changelog = getChangelog()
+			addGameVersion("Fabric")
 			for (version in ((String) project.mod_mc_versions).split(";")) {
 				addGameVersion(version)
 			}
