@@ -19,8 +19,8 @@ package de.siphalor.nbtcrafting.mixin.brewing;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.client.NbtCraftingClient;
-import de.siphalor.nbtcrafting.mixin.RecipeManagerAccessor;
 import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
+import de.siphalor.nbtcrafting.util.duck.IRecipeManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
@@ -49,16 +49,16 @@ public abstract class MixinBrewingSlotIngredient extends Slot {
 			callbackInfoReturnable.setReturnValue(true);
 			return;
 		}
-		RecipeManagerAccessor recipeManager;
+		IRecipeManager recipeManager;
 		if (inventory instanceof BrewingStandBlockEntity) {
-			recipeManager = (RecipeManagerAccessor) ((BrewingStandBlockEntity) inventory).getWorld().getRecipeManager();
+			recipeManager = (IRecipeManager) ((BrewingStandBlockEntity) inventory).getWorld().getRecipeManager();
 		} else if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-			recipeManager = (RecipeManagerAccessor) NbtCraftingClient.getClientRecipeManager();
+			recipeManager = (IRecipeManager) NbtCraftingClient.getClientRecipeManager();
 		} else {
 			NbtCrafting.logError("Failed to get recipe manager in brewing stand container class!");
 			return;
 		}
-		Map<Identifier, Recipe<Inventory>> recipes = recipeManager.callGetAllOfType(NbtCrafting.BREWING_RECIPE_TYPE);
+		Map<Identifier, Recipe<Inventory>> recipes = recipeManager.nbtCrafting$getAllOfType(NbtCrafting.BREWING_RECIPE_TYPE);
 		callbackInfoReturnable.setReturnValue(recipes.values().stream()
 				.anyMatch(recipe -> recipe instanceof BrewingRecipe && ((BrewingRecipe) recipe).getIngredient().test(stack))
 		);
