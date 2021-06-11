@@ -17,6 +17,10 @@
 
 package de.siphalor.nbtcrafting;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.mojang.datafixers.util.Pair;
 import de.siphalor.nbtcrafting.advancement.StatChangedCriterion;
 import de.siphalor.nbtcrafting.api.RecipeTypeHelper;
 import de.siphalor.nbtcrafting.mixin.advancement.MixinCriterions;
@@ -26,6 +30,8 @@ import de.siphalor.nbtcrafting.recipe.IngredientRecipe;
 import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipe;
 import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipeSerializer;
 import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
+import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.inventory.Inventory;
@@ -40,6 +46,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.concurrent.TimeUnit;
 
 public class NbtCrafting implements ModInitializer {
 	public static final String MOD_ID = "nbtcrafting";
@@ -70,6 +78,23 @@ public class NbtCrafting implements ModInitializer {
 
 	public static RecipeFinder lastRecipeFinder;
 	public static ServerPlayerEntity lastServerPlayerEntity;
+
+	private static int currentStackId = 1;
+	public static final Int2ObjectMap<Pair<Integer, CompoundTag>> id2StackMap = new Int2ObjectAVLTreeMap<>();
+	public static final LoadingCache<Pair<Integer, CompoundTag>, Integer> stack2IdMap = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).removalListener(notification -> {
+				synchronized (id2StackMap) {
+					id2StackMap.remove((int) notification.getValue());
+				}
+			}
+	).build(new CacheLoader<Pair<Integer, CompoundTag>, Integer>() {
+		@Override
+		public Integer load(Pair<Integer, CompoundTag> key) {
+			synchronized (id2StackMap) {
+				id2StackMap.put(currentStackId, key);
+			}
+			return currentStackId++;
+		}
+	});
 
 	public static void logInfo(String message) {
 		LOGGER.info(LOG_PREFIX + message);
@@ -114,7 +139,7 @@ public class NbtCrafting implements ModInitializer {
 		ServerSidePacketRegistry.INSTANCE.register(PRESENCE_PACKET_ID, (packetContext, packetByteBuf) ->
 			packetContext.getTaskQueue().execute(() -> {
 				ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) packetContext.getPlayer();
-				((IServerPlayerEntity) serverPlayerEntity).setClientModPresent(true);
+				((IServerPlayerEntity) serverPlayerEntity).nbtCrafting$setClientModPresent(true);
 				serverPlayerEntity.networkHandler.sendPacket(new SynchronizeRecipesS2CPacket(serverPlayerEntity.server.getRecipeManager().values()));
 				serverPlayerEntity.getRecipeBook().sendInitRecipesPacket(serverPlayerEntity);
 			})
@@ -124,7 +149,7 @@ public class NbtCrafting implements ModInitializer {
 	public static boolean hasClientMod(ServerPlayerEntity playerEntity) {
 		if (!(playerEntity instanceof IServerPlayerEntity))
 			return false;
-		return ((IServerPlayerEntity) playerEntity).hasClientMod();
+		return ((IServerPlayerEntity) playerEntity).nbtCrafting$hasClientMod();
 	}
 
 	public static <T extends Recipe<?>> RecipeType<T> registerRecipeType(String name) {

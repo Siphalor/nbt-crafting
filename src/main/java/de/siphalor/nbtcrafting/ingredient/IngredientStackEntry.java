@@ -64,7 +64,7 @@ public class IngredientStackEntry extends IngredientEntry {
 	public Collection<ItemStack> getPreviewStacks(boolean nbt) {
 		ItemStack stack = new ItemStack(Registry.ITEM.get(id));
 		if (nbt) {
-			((IItemStack) (Object) stack).setRawTag(condition.getPreviewTag());
+			((IItemStack) (Object) stack).nbtCrafting$setRawTag(condition.getPreviewTag());
 		}
 		return Collections.singleton(stack);
 	}

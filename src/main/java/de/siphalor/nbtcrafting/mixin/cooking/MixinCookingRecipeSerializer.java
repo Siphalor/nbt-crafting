@@ -56,6 +56,6 @@ public abstract class MixinCookingRecipeSerializer {
 	@Inject(method = "read(Lnet/minecraft/util/Identifier;Lcom/google/gson/JsonObject;)Lnet/minecraft/recipe/AbstractCookingRecipe;", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void onRecipeReady(Identifier identifier, JsonObject jsonObject, CallbackInfoReturnable<AbstractCookingRecipe> callbackInfoReturnable, String group, JsonElement ingredientJson, Ingredient ingredient, String itemId, Identifier itemIdentifier, ItemStack stack, float experience, int cookingTime) {
 		//noinspection ConstantConditions
-		((IItemStack) (Object) stack).setRawTag(resultTag);
+		((IItemStack) (Object) stack).nbtCrafting$setRawTag(resultTag);
 	}
 }

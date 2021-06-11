@@ -46,7 +46,7 @@ public class MixinItemStack implements IItemStack {
 
 	@Unique
 	@Override
-	public void setRawTag(CompoundTag tag) {
+	public void nbtCrafting$setRawTag(CompoundTag tag) {
 		if (tag == null || tag.isEmpty())
 			this.tag = null;
 		else

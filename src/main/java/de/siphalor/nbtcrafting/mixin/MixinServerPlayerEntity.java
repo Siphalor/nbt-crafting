@@ -29,13 +29,13 @@ public class MixinServerPlayerEntity implements IServerPlayerEntity {
 
 	@Unique
 	@Override
-	public boolean hasClientMod() {
+	public boolean nbtCrafting$hasClientMod() {
 		return clientModPresent;
 	}
 
 	@Unique
 	@Override
-	public void setClientModPresent(boolean present) {
+	public void nbtCrafting$setClientModPresent(boolean present) {
 		clientModPresent = present;
 	}
 }
