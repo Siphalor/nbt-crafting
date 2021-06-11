@@ -100,7 +100,7 @@ public abstract class MixinShapedRecipe {
 			NbtCompound lastReadNbt = NbtCrafting.useLastReadNbt();
 
 			//noinspection ConstantConditions
-			((IItemStack) (Object) stack).setRawTag(lastReadNbt);
+			((IItemStack) (Object) stack).nbtCrafting$setRawTag(lastReadNbt);
 		}
 		ci.setReturnValue(stack);
 	}

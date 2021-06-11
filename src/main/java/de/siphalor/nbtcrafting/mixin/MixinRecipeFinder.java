@@ -99,7 +99,7 @@ public abstract class MixinRecipeFinder {
 		synchronized (NbtCrafting.id2StackMap) {
 			if (NbtCrafting.id2StackMap.containsKey(id)) {
 				ItemStack result = new ItemStack(Item.byRawId(NbtCrafting.id2StackMap.get(id).getFirst()));
-				((IItemStack) (Object) result).setRawTag(NbtCrafting.id2StackMap.get(id).getSecond());
+				((IItemStack) (Object) result).nbtCrafting$setRawTag(NbtCrafting.id2StackMap.get(id).getSecond());
 				return result;
 			}
 		}
