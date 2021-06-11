@@ -66,7 +66,7 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 		}
 		if (nbt) {
 			for (ItemStack itemStack : stacks) {
-				((IItemStack) (Object) itemStack).setRawTag(tag);
+				((IItemStack) (Object) itemStack).nbtCrafting$setRawTag(tag);
 			}
 		}
 		return stacks;

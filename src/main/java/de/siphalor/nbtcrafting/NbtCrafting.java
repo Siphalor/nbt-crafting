@@ -109,7 +109,7 @@ public class NbtCrafting implements ModInitializer {
 		ServerSidePacketRegistry.INSTANCE.register(PRESENCE_PACKET_ID, (packetContext, packetByteBuf) ->
 			packetContext.getTaskQueue().execute(() -> {
 				ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) packetContext.getPlayer();
-				((IServerPlayerEntity) serverPlayerEntity).setClientModPresent(true);
+				((IServerPlayerEntity) serverPlayerEntity).nbtCrafting$setClientModPresent(true);
 				serverPlayerEntity.networkHandler.sendPacket(new SynchronizeRecipesS2CPacket(serverPlayerEntity.server.getRecipeManager().values()));
 				serverPlayerEntity.getRecipeBook().sendInitRecipesPacket(serverPlayerEntity);
 			})
@@ -119,7 +119,7 @@ public class NbtCrafting implements ModInitializer {
 	public static boolean hasClientMod(ServerPlayerEntity playerEntity) {
 		if (!(playerEntity instanceof IServerPlayerEntity))
 			return false;
-		return ((IServerPlayerEntity) playerEntity).hasClientMod();
+		return ((IServerPlayerEntity) playerEntity).nbtCrafting$hasClientMod();
 	}
 
 	public static <T extends Recipe<?>> RecipeType<T> registerRecipeType(String name) {

@@ -18,8 +18,8 @@
 package de.siphalor.nbtcrafting.util.duck;
 
 public interface IServerPlayerEntity {
-	boolean hasClientMod();
+	boolean nbtCrafting$hasClientMod();
 
-	void setClientModPresent(boolean present);
+	void nbtCrafting$setClientModPresent(boolean present);
 
 }

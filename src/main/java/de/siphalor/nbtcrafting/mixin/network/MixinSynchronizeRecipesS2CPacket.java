@@ -39,7 +39,7 @@ public abstract class MixinSynchronizeRecipesS2CPacket {
 
 	@Inject(method = "write", at = @At("HEAD"), cancellable = true)
 	public void onWrite(PacketByteBuf buf, CallbackInfo callbackInfo) {
-		if (!((IServerPlayerEntity) NbtCrafting.lastServerPlayerEntity).hasClientMod()) {
+		if (!((IServerPlayerEntity) NbtCrafting.lastServerPlayerEntity).nbtCrafting$hasClientMod()) {
 			List<Recipe<?>> syncRecipes = recipes.stream().filter(recipe -> !(recipe instanceof ServerRecipe)).collect(Collectors.toList());
 			buf.writeVarInt(syncRecipes.size());
 			for (Recipe<?> recipe : syncRecipes) {
