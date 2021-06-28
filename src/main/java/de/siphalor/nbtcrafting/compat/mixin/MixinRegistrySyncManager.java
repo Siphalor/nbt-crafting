@@ -62,7 +62,7 @@ public class MixinRegistrySyncManager {
 			ordinal = 1
 	)
 	private static Identifier cancelSync(Identifier oldId) {
-		if (isRecipeTypeRegistry && RecipeTypeHelper.getSyncBlacklist().contains(oldId)) {
+		if (isRecipeTypeRegistry && RecipeTypeHelper.getSyncBlacklist().contains(oldId) && !NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity.get())) {
 			NbtCrafting.logInfo("Block " + oldId + " from being synced");
 			return null;
 		}

@@ -21,23 +21,30 @@ import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.mixin.client.AnvilScreenAccessor;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AnvilScreen;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.util.PacketByteBuf;
 
+import java.util.concurrent.CompletableFuture;
+
 public class NbtCraftingClient implements ClientModInitializer {
 	public static boolean sentModPresent = false;
 
 	public static void sendModPresent() {
 		PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
-		ClientSidePacketRegistry.INSTANCE.sendToServer(NbtCrafting.PRESENCE_PACKET_ID, buffer);
+		ClientSidePacketRegistry.INSTANCE.sendToServer(NbtCrafting.PRESENCE_CHANNEL, buffer);
 		sentModPresent = true;
 	}
 
 	@Override
 	public void onInitializeClient() {
+		ClientLoginNetworking.registerGlobalReceiver(NbtCrafting.PRESENCE_CHANNEL, (client, handler, buf, listenerAdder) -> {
+			return CompletableFuture.completedFuture(new PacketByteBuf(Unpooled.buffer()));
+		});
+
 		ClientSidePacketRegistry.INSTANCE.register(NbtCrafting.UPDATE_ANVIL_TEXT_S2C_PACKET_ID, (packetContext, packetByteBuf) -> {
 			if (MinecraftClient.getInstance().currentScreen instanceof AnvilScreen) {
 				((AnvilScreenAccessor) MinecraftClient.getInstance().currentScreen).getNameField().setText(packetByteBuf.readString());
