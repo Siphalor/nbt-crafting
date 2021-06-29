@@ -30,13 +30,15 @@ import de.siphalor.nbtcrafting.recipe.IngredientRecipe;
 import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipe;
 import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipeSerializer;
 import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
-import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.ints.*;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.recipe.RecipeSerializer;
@@ -56,7 +58,7 @@ public class NbtCrafting implements ModInitializer {
 	private static final String LOG_PREFIX = "[" + MOD_NAME + "] ";
 	private static final Logger LOGGER = LogManager.getLogger();
 
-	public static final Identifier PRESENCE_PACKET_ID = new Identifier(MOD_ID, "present");
+	public static final Identifier PRESENCE_CHANNEL = new Identifier(MOD_ID, "present");
 	public static final Identifier UPDATE_ANVIL_TEXT_S2C_PACKET_ID = new Identifier(MOD_ID, "update_anvil_text");
 
 	public static final RecipeType<AnvilRecipe> ANVIL_RECIPE_TYPE = registerRecipeType("anvil");
@@ -77,7 +79,8 @@ public class NbtCrafting implements ModInitializer {
 	private static CompoundTag lastReadNbt;
 
 	public static RecipeFinder lastRecipeFinder;
-	public static ServerPlayerEntity lastServerPlayerEntity;
+	public static ThreadLocal<ServerPlayerEntity> lastServerPlayerEntity = new ThreadLocal<>();
+	private static final IntSet hasModClientConnectionHashes = IntSets.synchronize(new IntAVLTreeSet());
 
 	private static int currentStackId = 1;
 	public static final Int2ObjectMap<Pair<Integer, CompoundTag>> id2StackMap = new Int2ObjectAVLTreeMap<>();
@@ -136,20 +139,30 @@ public class NbtCrafting implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		ServerSidePacketRegistry.INSTANCE.register(PRESENCE_PACKET_ID, (packetContext, packetByteBuf) ->
-			packetContext.getTaskQueue().execute(() -> {
-				ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) packetContext.getPlayer();
-				((IServerPlayerEntity) serverPlayerEntity).nbtCrafting$setClientModPresent(true);
-				serverPlayerEntity.networkHandler.sendPacket(new SynchronizeRecipesS2CPacket(serverPlayerEntity.server.getRecipeManager().values()));
-				serverPlayerEntity.getRecipeBook().sendInitRecipesPacket(serverPlayerEntity);
-			})
-		);
+		ServerLoginConnectionEvents.QUERY_START.register((handler, server, sender, synchronizer) -> {
+			sender.sendPacket(PRESENCE_CHANNEL, new PacketByteBuf(Unpooled.buffer()));
+		});
+		ServerLoginConnectionEvents.DISCONNECT.register((handler, server) -> {
+			hasModClientConnectionHashes.remove(handler.getConnection().hashCode());
+		});
+		ServerLoginNetworking.registerGlobalReceiver(PRESENCE_CHANNEL, (server, handler, understood, buf, synchronizer, responseSender) -> {
+			if (understood) {
+				hasModClientConnectionHashes.add(handler.getConnection().hashCode());
+			}
+		});
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			if (hasModClientConnectionHashes.contains(handler.getConnection().hashCode())) {
+				((IServerPlayerEntity) handler.player).nbtCrafting$setClientModPresent(true);
+				hasModClientConnectionHashes.remove(handler.getConnection().hashCode());
+			}
+		});
 	}
 
 	public static boolean hasClientMod(ServerPlayerEntity playerEntity) {
-		if (!(playerEntity instanceof IServerPlayerEntity))
-			return false;
-		return ((IServerPlayerEntity) playerEntity).nbtCrafting$hasClientMod();
+		if (playerEntity instanceof IServerPlayerEntity) {
+			return ((IServerPlayerEntity) playerEntity).nbtCrafting$hasClientMod();
+		}
+		return false;
 	}
 
 	public static <T extends Recipe<?>> RecipeType<T> registerRecipeType(String name) {

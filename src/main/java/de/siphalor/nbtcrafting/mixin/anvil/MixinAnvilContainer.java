@@ -20,7 +20,7 @@ package de.siphalor.nbtcrafting.mixin.anvil;
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
 import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -78,7 +78,7 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 					if (NbtCrafting.hasClientMod((ServerPlayerEntity) player)) {
 						PacketByteBuf packetByteBuf = new PacketByteBuf(Unpooled.buffer());
 						packetByteBuf.writeString(newItemName);
-						ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, NbtCrafting.UPDATE_ANVIL_TEXT_S2C_PACKET_ID, packetByteBuf);
+						ServerPlayNetworking.send((ServerPlayerEntity) player, NbtCrafting.UPDATE_ANVIL_TEXT_S2C_PACKET_ID, packetByteBuf);
 					}
 				}
 			}

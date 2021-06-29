@@ -33,8 +33,7 @@
 		"client.AnvilScreenAccessor",
 		"client.MixinAnimatedResultButton",
 		"client.MixinMinecraftClient",
-		"client.MixinRecipeBookGhostSlots",
-		"client.network.MixinClientPlayNetworkHandler"
+		"client.MixinRecipeBookGhostSlots"
 	],
 	"injectors": {
 		"defaultRequire": 1

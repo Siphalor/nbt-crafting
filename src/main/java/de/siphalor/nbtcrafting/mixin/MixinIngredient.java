@@ -83,7 +83,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 				if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
 					matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(true).stream()).distinct().toArray(ItemStack[]::new);
 				} else {
-					matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity)).stream()).distinct().toArray(ItemStack[]::new);
+					matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity.get())).stream()).distinct().toArray(ItemStack[]::new);
 				}
 				if (matchingStacks.length == 0) {
 					matchingStacks = new ItemStack[]{ItemStack.EMPTY};
@@ -115,7 +115,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 
 	@Inject(method = "write", at = @At("HEAD"), cancellable = true)
 	public void write(PacketByteBuf buf, CallbackInfo callbackInfo) {
-		if (NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity)) {
+		if (NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity.get())) {
 			if (advancedEntries != null) {
 				buf.writeVarInt(Integer.MAX_VALUE);
 				buf.writeVarInt(advancedEntries.length);
