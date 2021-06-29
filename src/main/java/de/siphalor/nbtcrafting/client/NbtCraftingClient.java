@@ -19,20 +19,29 @@ package de.siphalor.nbtcrafting.client;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.mixin.client.AnvilScreenAccessor;
+import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AnvilScreen;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.RecipeManager;
 
+import java.util.concurrent.CompletableFuture;
+
 public class NbtCraftingClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
+		ClientLoginNetworking.registerGlobalReceiver(NbtCrafting.PRESENCE_CHANNEL, (client, handler, buf, listenerAdder) -> {
+			return CompletableFuture.completedFuture(new PacketByteBuf(Unpooled.buffer()));
+		});
+
 		ClientPlayNetworking.registerGlobalReceiver(NbtCrafting.UPDATE_ANVIL_TEXT_S2C_PACKET_ID, (client, handler, buf, responseSender) -> {
 			if (MinecraftClient.getInstance().currentScreen instanceof AnvilScreen) {
 				((AnvilScreenAccessor) MinecraftClient.getInstance().currentScreen).getNameField().setText(buf.readString());
-			}
+			} else
+				buf.readString();
 		});
 	}
 
