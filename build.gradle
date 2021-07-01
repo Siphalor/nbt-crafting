@@ -22,6 +22,7 @@ repositories {
 	maven { url "https://maven.fabricmc.net/" }
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url "https://maven.siphalor.de/" }
+	maven { url "https://jitpack.io/" }
 }
 
 sourceSets {
@@ -64,6 +65,8 @@ dependencies {
 	modImplementation("de.siphalor:modsoftheworld-1.17:1+") {
 		transitive false
 	}
+
+	modRuntime("com.github.astei:lazydfu:master-SNAPSHOT")
 
 	testmodImplementation sourceSets.main.output
 }
