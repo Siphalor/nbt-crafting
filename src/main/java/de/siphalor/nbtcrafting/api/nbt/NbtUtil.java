@@ -390,6 +390,7 @@ public class NbtUtil {
 		if (additions == null) return;
 
 		int targetSize = target.size();
+		int additionsSize = additions.size();
 
 		for (int i = 0; i < additions.size() && i < targetSize; i++) { // for all elements that exist in both
 			String path = basePath + "[" + i + "]";
@@ -418,7 +419,7 @@ public class NbtUtil {
 			}
 		}
 
-		for (int i = additions.size(); i < targetSize; i++) { // for any additional elements
+		for (int i = targetSize; i < additionsSize; i++) { // for any additional elements
 			MergeMode mergeMode = getMergeMode(mergeModes, basePath + "[" + i + "]");
 			if (mergeMode != MergeMode.UPDATE) {
 				target.add(additions.get(i));
