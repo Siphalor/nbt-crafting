@@ -12,8 +12,8 @@
 		},
 		{
 			"title": "Publish & Upload",
-			"run": "gradlew publish uploadToModSites",
-			"posix": "./gradlew publish uploadToModSites"
+			"run": "gradlew build publish uploadToModSites",
+			"posix": "./gradlew build publish uploadToModSites"
 		},
 		{
 			"title": "Git push",

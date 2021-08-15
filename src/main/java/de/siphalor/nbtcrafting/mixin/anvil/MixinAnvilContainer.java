@@ -21,9 +21,11 @@ import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.screen.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
@@ -35,6 +37,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Optional;
 
@@ -53,6 +56,9 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 
 	@Unique
 	private boolean userChangedName = false;
+
+	@Unique
+	private ItemStack originalBaseStack;
 
 	public MixinAnvilContainer(ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
 		super(type, syncId, playerInventory, context);
@@ -96,5 +102,45 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 	@Inject(method = "setNewItemName", at = @At("HEAD"))
 	public void onNewItemNameSet(String newNewItemName, CallbackInfo callbackInfo) {
 		userChangedName = true;
+	}
+
+	@Inject(
+			method = "canTakeOutput",
+			at = @At("HEAD"),
+			cancellable = true
+	)
+	public void canTakeItemsTop(PlayerEntity player, boolean present, CallbackInfoReturnable<Boolean> cir) {
+		if (levelCost.get() <= 0) {
+			ItemStack base = getSlot(0).getStack();
+			if (!ItemStack.areItemsEqual(getSlot(2).getStack(), base) || !ItemStack.areTagsEqual(getSlot(2).getStack(), base)) {
+				cir.setReturnValue(true);
+			}
+		}
+	}
+
+	@Inject(
+			method = "onTakeOutput",
+			at = @At("HEAD")
+	)
+	public void onTakeItemTop(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
+		originalBaseStack = getSlot(0).getStack();
+	}
+
+	@Inject(
+			method = "onTakeOutput",
+			at = @At("RETURN")
+	)
+	public void onItemTaken(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
+		if (originalBaseStack != null) {
+			originalBaseStack.decrement(1);
+			getSlot(0).setStack(originalBaseStack);
+		}
+		if (player instanceof ServerPlayerEntity) {
+			if (!NbtCrafting.hasClientMod((ServerPlayerEntity) player)) {
+				((ServerPlayerEntity) player).networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(
+						-1, nextRevision(), 0, stack
+				));
+			}
+		}
 	}
 }
