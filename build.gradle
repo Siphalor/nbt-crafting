@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.7-SNAPSHOT'
+	id 'fabric-loom' version '0.9-SNAPSHOT'
 	id 'maven-publish'
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'com.modrinth.minotaur' version '1.2.1'
@@ -15,7 +15,6 @@ version = "${project.mod_version}+mc${project.minecraft_version}"
 group = project.maven_group
 
 minecraft {
-	refmapName = "${project.mod_id}-refmap.json"
 }
 
 repositories {
