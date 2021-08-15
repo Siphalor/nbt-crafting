@@ -42,7 +42,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-registry-sync-v0:0.2.6+f3d8141b0c"
 
 	modImplementation("me.shedaniel:RoughlyEnoughItems:3.6.21") {
-
+		exclude module: "modmenu"
 	}
 	modImplementation("de.siphalor:modsoftheworld-1.15:1+") {
 		transitive false
