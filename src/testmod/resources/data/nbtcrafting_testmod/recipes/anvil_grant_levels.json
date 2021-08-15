@@ -1,0 +1,13 @@
+{
+	"type": "nbtcrafting:anvil",
+	"base": {
+		"item": "minecraft:nether_star"
+	},
+	"ingredient": {
+		"item": "minecraft:stone"
+	},
+	"result": {
+		"item": "minecraft:cobblestone"
+	},
+	"levels": -50
+}
