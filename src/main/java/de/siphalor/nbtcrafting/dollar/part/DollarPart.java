@@ -17,11 +17,11 @@
 
 package de.siphalor.nbtcrafting.dollar.part;
 
+import java.util.Map;
+
 import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
-
-import java.util.Map;
 
 public interface DollarPart {
 	Object evaluate(Map<String, Object> reference) throws DollarEvaluationException;

@@ -17,8 +17,11 @@
 
 package de.siphalor.nbtcrafting.client;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.mixin.client.AnvilScreenAccessor;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
+import com.google.common.collect.ImmutableMap;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
@@ -26,9 +29,16 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AnvilScreen;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
+import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.recipe.RecipeType;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
-import java.util.concurrent.CompletableFuture;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.mixin.RecipeManagerAccessor;
+import de.siphalor.nbtcrafting.mixin.client.AnvilScreenAccessor;
 
 public class NbtCraftingClient implements ClientModInitializer {
 	@Override
@@ -42,6 +52,26 @@ public class NbtCraftingClient implements ClientModInitializer {
 				((AnvilScreenAccessor) MinecraftClient.getInstance().currentScreen).getNameField().setText(buf.readString());
 			} else
 				buf.readString();
+		});
+
+		ClientPlayNetworking.registerGlobalReceiver(NbtCrafting.UPDATE_ADVANCED_RECIPES_PACKET_ID, (client, handler, buf, responseSender) -> {
+			RecipeManager recipeManager = handler.getRecipeManager();
+			Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipeMap = ((RecipeManagerAccessor) recipeManager).getRecipes();
+			recipeMap = new HashMap<>(recipeMap);
+
+			int recipeCount = buf.readVarInt();
+			NbtCrafting.advancedIngredientSerializationEnabled.set(true);
+			for (int i = 0; i < recipeCount; i++) {
+				RecipeSerializer<?> serializer = Registry.RECIPE_SERIALIZER.get(buf.readIdentifier());
+				Identifier id = buf.readIdentifier();
+
+				Recipe<?> recipe = serializer.read(id, buf);
+				Map<Identifier, Recipe<?>> recipeType = recipeMap.computeIfAbsent(recipe.getType(), rt -> new HashMap<>());
+				recipeType.put(id, recipe);
+			}
+			NbtCrafting.advancedIngredientSerializationEnabled.set(false);
+
+			((RecipeManagerAccessor) recipeManager).setRecipes(ImmutableMap.copyOf(recipeMap));
 		});
 	}
 

@@ -17,19 +17,21 @@
 
 package de.siphalor.nbtcrafting.dollar.type;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.regex.Pattern;
+
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+
 import de.siphalor.nbtcrafting.api.nbt.MergeMode;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import java.util.Collection;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 public class MergeDollar extends Dollar {
 	protected final String path;

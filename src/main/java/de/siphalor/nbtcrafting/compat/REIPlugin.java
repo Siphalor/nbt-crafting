@@ -17,19 +17,20 @@
 
 package de.siphalor.nbtcrafting.compat;
 
-import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.plugin.common.displays.brewing.DefaultBrewingDisplay;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
+
 @Environment(EnvType.CLIENT)
 public class REIPlugin implements REIClientPlugin {
-    @Override
-    public void registerDisplays(DisplayRegistry registry) {
-        registry.registerFiller(BrewingRecipe.class, recipe -> {
-            return new DefaultBrewingDisplay(recipe.getBase(), recipe.getIngredient(), recipe.getOutput());
-        });
-    }
+	@Override
+	public void registerDisplays(DisplayRegistry registry) {
+		registry.registerFiller(BrewingRecipe.class, recipe -> {
+			return new DefaultBrewingDisplay(recipe.getBase(), recipe.getIngredient(), recipe.getOutput());
+		});
+	}
 }

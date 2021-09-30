@@ -17,14 +17,10 @@
 
 package de.siphalor.nbtcrafting.recipe;
 
+import java.util.Map;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
-import de.siphalor.nbtcrafting.api.RecipeUtil;
-import de.siphalor.nbtcrafting.api.ServerRecipe;
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
-import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
-import de.siphalor.nbtcrafting.dollar.Dollar;
-import de.siphalor.nbtcrafting.dollar.DollarParser;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -37,7 +33,12 @@ import net.minecraft.util.JsonHelper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
-import java.util.Map;
+import de.siphalor.nbtcrafting.api.RecipeUtil;
+import de.siphalor.nbtcrafting.api.ServerRecipe;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
+import de.siphalor.nbtcrafting.dollar.Dollar;
+import de.siphalor.nbtcrafting.dollar.DollarParser;
 
 public class IngredientRecipe<I extends Inventory> implements NBTCRecipe<I>, ServerRecipe {
 	private final Identifier identifier;

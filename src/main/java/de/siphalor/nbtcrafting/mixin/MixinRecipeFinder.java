@@ -17,10 +17,9 @@
 
 package de.siphalor.nbtcrafting.mixin;
 
+import java.util.concurrent.ExecutionException;
+
 import com.mojang.datafixers.util.Pair;
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
-import de.siphalor.nbtcrafting.util.duck.IItemStack;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.Item;
@@ -34,7 +33,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.concurrent.ExecutionException;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.util.duck.IItemStack;
 
 @SuppressWarnings("ALL")
 @Mixin(RecipeMatcher.class)

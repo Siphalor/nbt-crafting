@@ -17,9 +17,8 @@
 
 package de.siphalor.nbtcrafting.mixin.smithing;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.api.RecipeUtil;
-import de.siphalor.nbtcrafting.recipe.IngredientRecipe;
+import java.util.Optional;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -36,7 +35,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Optional;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.api.RecipeUtil;
+import de.siphalor.nbtcrafting.recipe.IngredientRecipe;
 
 @Mixin(SmithingScreenHandler.class)
 public abstract class MixinSmithingScreenHandler extends ForgingScreenHandler {

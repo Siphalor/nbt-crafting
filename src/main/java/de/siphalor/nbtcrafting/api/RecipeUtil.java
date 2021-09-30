@@ -17,11 +17,9 @@
 
 package de.siphalor.nbtcrafting.api;
 
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
-import de.siphalor.nbtcrafting.dollar.Dollar;
-import de.siphalor.nbtcrafting.dollar.DollarException;
-import de.siphalor.nbtcrafting.dollar.DollarParser;
-import de.siphalor.nbtcrafting.ingredient.IIngredient;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
@@ -30,8 +28,11 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.HashMap;
-import java.util.Map;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.dollar.Dollar;
+import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.ingredient.IIngredient;
 
 public class RecipeUtil {
 	@Deprecated
@@ -88,7 +89,7 @@ public class RecipeUtil {
 	}
 
 	public static ItemStack getRemainder(ItemStack itemStack, Ingredient ingredient, Map<String, Object> reference) {
-		ItemStack result = ((IIngredient) (Object) ingredient).getRecipeRemainder(itemStack, reference);
+		ItemStack result = ((IIngredient) (Object) ingredient).nbtCrafting$getRecipeRemainder(itemStack, reference);
 		if (result == null) {
 			return new ItemStack(itemStack.getItem().getRecipeRemainder());
 		}

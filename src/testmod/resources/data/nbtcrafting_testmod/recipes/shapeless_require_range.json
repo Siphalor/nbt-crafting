@@ -9,7 +9,9 @@
 				}
 			}
 		},
-		{ "item": "minecraft:diamond" }
+		{
+			"item": "minecraft:diamond"
+		}
 	],
 	"result": {
 		"item": "minecraft:diamond_axe",

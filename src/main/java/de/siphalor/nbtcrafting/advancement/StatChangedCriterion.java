@@ -19,8 +19,6 @@ package de.siphalor.nbtcrafting.advancement;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.advancement.StatChangedCriterion.Conditions;
 import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.predicate.NumberRange;
@@ -32,6 +30,8 @@ import net.minecraft.stat.StatType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
+
+import de.siphalor.nbtcrafting.NbtCrafting;
 
 public class StatChangedCriterion extends AbstractCriterion<StatChangedCriterion.Conditions<?>> {
 	private static final Identifier ID = new Identifier(NbtCrafting.MOD_ID, "stat_changed");

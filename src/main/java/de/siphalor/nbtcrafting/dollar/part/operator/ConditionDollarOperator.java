@@ -17,13 +17,13 @@
 
 package de.siphalor.nbtcrafting.dollar.part.operator;
 
+import java.util.Map;
+
 import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-
-import java.util.Map;
 
 public class ConditionDollarOperator implements DollarPart {
 	private final DollarPart condition;

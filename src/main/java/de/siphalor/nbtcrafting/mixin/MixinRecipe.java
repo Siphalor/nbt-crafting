@@ -17,9 +17,10 @@
 
 package de.siphalor.nbtcrafting.mixin;
 
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
-import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
-import de.siphalor.nbtcrafting.ingredient.IIngredient;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
@@ -29,9 +30,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
+import de.siphalor.nbtcrafting.ingredient.IIngredient;
 
 @Mixin(Recipe.class)
 public interface MixinRecipe {
@@ -68,7 +69,7 @@ public interface MixinRecipe {
 			for (Ingredient ingredient : ingredients) {
 				if (ingredient.test(itemStack)) {
 					//noinspection ConstantConditions
-					ItemStack remainder = ((IIngredient) (Object) ingredient).getRecipeRemainder(itemStack, reference);
+					ItemStack remainder = ((IIngredient) (Object) ingredient).nbtCrafting$getRecipeRemainder(itemStack, reference);
 					if (remainder != null) {
 						stackList.set(i, remainder);
 						continue main;

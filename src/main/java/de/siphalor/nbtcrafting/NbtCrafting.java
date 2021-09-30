@@ -17,19 +17,14 @@
 
 package de.siphalor.nbtcrafting;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Pair;
-import de.siphalor.nbtcrafting.advancement.StatChangedCriterion;
-import de.siphalor.nbtcrafting.api.RecipeTypeHelper;
-import de.siphalor.nbtcrafting.mixin.advancement.MixinCriterions;
-import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
-import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
-import de.siphalor.nbtcrafting.recipe.IngredientRecipe;
-import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipe;
-import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipeSerializer;
-import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.*;
 import net.fabricmc.api.ModInitializer;
@@ -39,17 +34,23 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeMatcher;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.concurrent.TimeUnit;
+import de.siphalor.nbtcrafting.advancement.StatChangedCriterion;
+import de.siphalor.nbtcrafting.api.RecipeTypeHelper;
+import de.siphalor.nbtcrafting.ingredient.IIngredient;
+import de.siphalor.nbtcrafting.mixin.advancement.MixinCriterions;
+import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
+import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
+import de.siphalor.nbtcrafting.recipe.IngredientRecipe;
+import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipe;
+import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipeSerializer;
+import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
 
 public class NbtCrafting implements ModInitializer {
 	public static final String MOD_ID = "nbtcrafting";
@@ -60,6 +61,7 @@ public class NbtCrafting implements ModInitializer {
 
 	public static final Identifier PRESENCE_CHANNEL = new Identifier(MOD_ID, "present");
 	public static final Identifier UPDATE_ANVIL_TEXT_S2C_PACKET_ID = new Identifier(MOD_ID, "update_anvil_text");
+	public static final Identifier UPDATE_ADVANCED_RECIPES_PACKET_ID = new Identifier(MOD_ID, "update_advanced_recipes");
 
 	public static final RecipeType<AnvilRecipe> ANVIL_RECIPE_TYPE = registerRecipeType("anvil");
 	@SuppressWarnings("unused")
@@ -83,6 +85,7 @@ public class NbtCrafting implements ModInitializer {
 
 	public static RecipeMatcher lastRecipeFinder;
 	public static ThreadLocal<ServerPlayerEntity> lastServerPlayerEntity = new ThreadLocal<>();
+	public static ThreadLocal<Boolean> advancedIngredientSerializationEnabled = new ThreadLocal<>();
 	private static final IntSet hasModClientConnectionHashes = IntSets.synchronize(new IntAVLTreeSet());
 
 	private static int currentStackId = 1;
@@ -181,5 +184,34 @@ public class NbtCrafting implements ModInitializer {
 
 	public static <S extends RecipeSerializer<T>, T extends Recipe<?>> S registerRecipeSerializer(String name, S recipeSerializer) {
 		return Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(MOD_ID, name), recipeSerializer);
+	}
+
+	public static PacketByteBuf createAdvancedRecipeSyncPacket(RecipeManager recipeManager) {
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		advancedIngredientSerializationEnabled.set(true);
+		List<Recipe<?>> recipes = recipeManager.values().stream().filter(recipe -> {
+			for (Ingredient ingredient : recipe.getIngredients()) {
+				if (((IIngredient) (Object) ingredient).nbtCrafting$isAdvanced()) {
+					return true;
+				}
+			}
+			return false;
+		}).collect(Collectors.toList());
+		buf.writeVarInt(recipes.size());
+		for (Recipe<?> recipe : recipes) {
+			@SuppressWarnings("rawtypes")
+			RecipeSerializer serializer = recipe.getSerializer();
+			buf.writeIdentifier(Registry.RECIPE_SERIALIZER.getId(serializer));
+			buf.writeIdentifier(recipe.getId());
+			//noinspection unchecked
+			serializer.write(buf, recipe);
+		}
+		advancedIngredientSerializationEnabled.set(false);
+		return buf;
+	}
+
+	public static boolean isAdvancedIngredientSerializationEnabled() {
+		return advancedIngredientSerializationEnabled.get() != null
+				&& advancedIngredientSerializationEnabled.get();
 	}
 }

@@ -17,15 +17,16 @@
 
 package de.siphalor.nbtcrafting.ingredient;
 
+import java.util.Collection;
+import java.util.Map;
+
 import com.google.gson.JsonElement;
-import de.siphalor.nbtcrafting.api.RecipeUtil;
-import de.siphalor.nbtcrafting.dollar.Dollar;
-import de.siphalor.nbtcrafting.dollar.DollarParser;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 
-import java.util.Collection;
-import java.util.Map;
+import de.siphalor.nbtcrafting.api.RecipeUtil;
+import de.siphalor.nbtcrafting.dollar.Dollar;
+import de.siphalor.nbtcrafting.dollar.DollarParser;
 
 public abstract class IngredientEntry {
 	protected ItemStack remainder;

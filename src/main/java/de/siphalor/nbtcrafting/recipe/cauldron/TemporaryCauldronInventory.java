@@ -100,7 +100,7 @@ public class TemporaryCauldronInventory implements Inventory {
 	}
 
 	@Override
-	public int size () {
+	public int size() {
 		return 1;
 	}
 

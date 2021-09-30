@@ -9,9 +9,9 @@
 		"MixinRecipe",
 		"MixinRecipeFinder",
 		"MixinRecipeFinder$Filter",
-		"MixinRecipeManager",
 		"MixinServerPlayerEntity",
 		"MixinServerStatHandler",
+		"RecipeManagerAccessor",
 		"advancement.MixinCriterions",
 		"anvil.MixinAnvilContainer",
 		"brewing.MixinBrewingSlotIngredient",
@@ -25,14 +25,14 @@
 		"cutting.MixinCuttingRecipe",
 		"cutting.MixinCuttingRecipeSerializer",
 		"cutting.MixinStonecutterContainer",
-		"network.MixinServerPlayNetworkHandler",
+		"network.MixinPlayerManager",
 		"network.MixinSynchronizeRecipesS2CPacket",
 		"smithing.MixinSmithingScreenHandler"
 	],
 	"client": [
 		"client.AnvilScreenAccessor",
 		"client.MixinAnimatedResultButton",
-		"client.MixinRecipeBookGhostSlots",
+		"client.MixinRecipeBookGhostSlots"
 	],
 	"injectors": {
 		"defaultRequire": 1

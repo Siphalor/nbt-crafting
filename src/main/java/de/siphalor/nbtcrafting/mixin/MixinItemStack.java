@@ -17,7 +17,6 @@
 
 package de.siphalor.nbtcrafting.mixin;
 
-import de.siphalor.nbtcrafting.util.duck.IItemStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,6 +25,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import de.siphalor.nbtcrafting.util.duck.IItemStack;
 
 @Mixin(value = ItemStack.class, priority = 2000)
 public class MixinItemStack implements IItemStack {

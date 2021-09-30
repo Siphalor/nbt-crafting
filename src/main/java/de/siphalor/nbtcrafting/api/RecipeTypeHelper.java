@@ -17,10 +17,10 @@
 
 package de.siphalor.nbtcrafting.api;
 
-import net.minecraft.util.Identifier;
-
 import java.util.Collection;
 import java.util.HashSet;
+
+import net.minecraft.util.Identifier;
 
 public class RecipeTypeHelper {
 	private static final Collection<Identifier> SYNC_BLACKLIST = new HashSet<>();

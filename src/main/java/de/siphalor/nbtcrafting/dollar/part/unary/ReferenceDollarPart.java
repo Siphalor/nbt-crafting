@@ -17,11 +17,11 @@
 
 package de.siphalor.nbtcrafting.dollar.part.unary;
 
+import java.util.Map;
+
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-
-import java.util.Map;
 
 public class ReferenceDollarPart implements DollarPart {
 	private final String key;

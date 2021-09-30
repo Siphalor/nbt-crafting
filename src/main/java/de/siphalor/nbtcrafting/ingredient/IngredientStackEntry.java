@@ -17,16 +17,17 @@
 
 package de.siphalor.nbtcrafting.ingredient;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import de.siphalor.nbtcrafting.util.duck.IItemStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
 
-import java.util.Collection;
-import java.util.Collections;
+import de.siphalor.nbtcrafting.util.duck.IItemStack;
 
 public class IngredientStackEntry extends IngredientEntry {
 

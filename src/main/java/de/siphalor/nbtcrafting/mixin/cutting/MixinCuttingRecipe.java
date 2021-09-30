@@ -17,7 +17,6 @@
 
 package de.siphalor.nbtcrafting.mixin.cutting;
 
-import de.siphalor.nbtcrafting.api.RecipeUtil;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.CuttingRecipe;
@@ -28,6 +27,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import de.siphalor.nbtcrafting.api.RecipeUtil;
 
 @Mixin(CuttingRecipe.class)
 public class MixinCuttingRecipe {
