@@ -17,13 +17,13 @@
 
 package de.siphalor.nbtcrafting.api.nbt;
 
-import net.minecraft.nbt.AbstractListTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import net.minecraft.nbt.AbstractListTag;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 
 @FunctionalInterface
 public interface NbtIterator {

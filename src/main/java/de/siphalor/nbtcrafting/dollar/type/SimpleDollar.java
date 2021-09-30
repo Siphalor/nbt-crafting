@@ -17,16 +17,17 @@
 
 package de.siphalor.nbtcrafting.dollar.type;
 
+import java.util.Map;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+
 import de.siphalor.nbtcrafting.api.nbt.NbtException;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-
-import java.util.Map;
 
 public class SimpleDollar extends Dollar {
 	protected final String path;

@@ -17,15 +17,16 @@
 
 package de.siphalor.nbtcrafting.api;
 
+import java.util.Map;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.util.NumberUtil;
 import net.minecraft.util.JsonHelper;
 
-import java.util.Map;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.util.NumberUtil;
 
 public class JsonPreprocessor {
 	private static final String STRINGIFY_KEY = NbtCrafting.MOD_ID + ":stringify";

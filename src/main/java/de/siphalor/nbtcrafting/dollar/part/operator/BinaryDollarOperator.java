@@ -17,10 +17,10 @@
 
 package de.siphalor.nbtcrafting.dollar.part.operator;
 
+import java.util.Map;
+
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-
-import java.util.Map;
 
 public abstract class BinaryDollarOperator implements DollarPart {
 	private final DollarPart first;

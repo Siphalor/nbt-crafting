@@ -17,23 +17,25 @@
 
 package de.siphalor.nbtcrafting.mixin;
 
-import de.siphalor.nbtcrafting.util.duck.IRecipeManager;
+import java.util.Map;
+
 import net.minecraft.inventory.Inventory;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-
-import java.util.Map;
+import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(RecipeManager.class)
-public abstract class MixinRecipeManager implements IRecipeManager {
-	@Shadow protected abstract <C extends Inventory, T extends Recipe<C>> Map<Identifier, Recipe<C>> getAllOfType(RecipeType<T> type);
+public interface RecipeManagerAccessor {
+	@Accessor
+	Map<RecipeType<?>, Map<Identifier, Recipe<?>>> getRecipes();
 
-	@Override
-	public <C extends Inventory, T extends Recipe<C>> Map<Identifier, Recipe<C>> nbtCrafting$getAllOfType(RecipeType<T> type) {
-		return getAllOfType(type);
-	}
+	@Accessor
+	void setRecipes(Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipeMap);
+
+	@Invoker
+	<C extends Inventory, T extends Recipe<C>> Map<Identifier, Recipe<C>> callGetAllOfType(RecipeType<T> type);
 }

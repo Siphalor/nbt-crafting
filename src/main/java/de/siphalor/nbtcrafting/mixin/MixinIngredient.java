@@ -17,14 +17,17 @@
 
 package de.siphalor.nbtcrafting.mixin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 import com.google.gson.*;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.api.JsonPreprocessor;
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
-import de.siphalor.nbtcrafting.ingredient.*;
-import de.siphalor.nbtcrafting.util.duck.ICloneable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
@@ -47,15 +50,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.api.JsonPreprocessor;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.ingredient.*;
+import de.siphalor.nbtcrafting.util.duck.ICloneable;
 
 @Mixin(Ingredient.class)
 public abstract class MixinIngredient implements IIngredient, ICloneable {
@@ -83,7 +83,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 				if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
 					matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(true).stream()).distinct().toArray(ItemStack[]::new);
 				} else {
-					matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity.get())).stream()).distinct().toArray(ItemStack[]::new);
+					matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(false).stream()).distinct().toArray(ItemStack[]::new);
 				}
 				if (matchingStacks.length == 0) {
 					matchingStacks = new ItemStack[]{ItemStack.EMPTY};
@@ -115,16 +115,17 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 
 	@Inject(method = "write", at = @At("HEAD"), cancellable = true)
 	public void write(PacketByteBuf buf, CallbackInfo callbackInfo) {
-		if (NbtCrafting.hasClientMod(NbtCrafting.lastServerPlayerEntity.get())) {
+		if (NbtCrafting.isAdvancedIngredientSerializationEnabled()) {
 			if (advancedEntries != null) {
-				buf.writeVarInt(Integer.MAX_VALUE);
 				buf.writeVarInt(advancedEntries.length);
 				for (IngredientEntry entry : advancedEntries) {
 					buf.writeBoolean(entry instanceof IngredientMultiStackEntry);
 					entry.write(buf);
 				}
-				callbackInfo.cancel();
+			} else {
+				buf.writeVarInt(0);
 			}
+			callbackInfo.cancel();
 		}
 	}
 
@@ -158,7 +159,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			Ingredient ingredient;
 			//noinspection ConstantConditions
 			ingredient = (Ingredient) ((ICloneable) (Object) Ingredient.EMPTY).clone();
-			((IIngredient) (Object) ingredient).setAdvancedEntries(entries);
+			((IIngredient) (Object) ingredient).nbtCrafting$setAdvancedEntries(entries);
 			return ingredient;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
@@ -176,18 +177,19 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	}
 	*/
 
-	@Inject(method = "fromPacket", at = @At(value = "INVOKE", target = "Lnet/minecraft/recipe/Ingredient;ofEntries(Ljava/util/stream/Stream;)Lnet/minecraft/recipe/Ingredient;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> callbackInfoReturnable, int entryAmount) {
-		if (entryAmount == Integer.MAX_VALUE) {
+	@Inject(method = "fromPacket", at = @At("HEAD"), cancellable = true)
+	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> cir) {
+		if (NbtCrafting.isAdvancedIngredientSerializationEnabled()) {
 			int length = buf.readVarInt();
 			ArrayList<IngredientEntry> entries = new ArrayList<>(length);
 			for (int i = 0; i < length; i++) {
-				if (buf.readBoolean())
+				if (buf.readBoolean()) {
 					entries.add(IngredientMultiStackEntry.read(buf));
-				else
+				} else {
 					entries.add(IngredientStackEntry.read(buf));
+				}
 			}
-			callbackInfoReturnable.setReturnValue(ofAdvancedEntries(entries.stream()));
+			cir.setReturnValue(ofAdvancedEntries(entries.stream()));
 		}
 	}
 
@@ -305,12 +307,17 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	}
 
 	@Override
-	public void setAdvancedEntries(Stream<? extends IngredientEntry> entries) {
+	public boolean nbtCrafting$isAdvanced() {
+		return advancedEntries != null;
+	}
+
+	@Override
+	public void nbtCrafting$setAdvancedEntries(Stream<? extends IngredientEntry> entries) {
 		advancedEntries = entries.filter(Objects::nonNull).toArray(IngredientEntry[]::new);
 	}
 
 	@Override
-	public ItemStack getRecipeRemainder(ItemStack stack, Map<String, Object> reference) {
+	public ItemStack nbtCrafting$getRecipeRemainder(ItemStack stack, Map<String, Object> reference) {
 		if (advancedEntries != null) {
 			for (IngredientEntry entry : advancedEntries) {
 				if (entry.matches(stack)) {

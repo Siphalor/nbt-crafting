@@ -17,7 +17,8 @@
 
 package de.siphalor.nbtcrafting.mixin.cutting;
 
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import java.util.List;
+
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.StonecuttingRecipe;
@@ -28,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 
 @Mixin(StonecutterScreenHandler.class)
 public class MixinStonecutterContainer {

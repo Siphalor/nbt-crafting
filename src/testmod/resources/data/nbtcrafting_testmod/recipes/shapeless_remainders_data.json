@@ -17,7 +17,9 @@
 		},
 		{
 			"item": "minecraft:stick",
-			"remainder": { "item": "minecraft:coal" }
+			"remainder": {
+				"item": "minecraft:coal"
+			}
 		}
 	],
 	"result": {

@@ -17,12 +17,12 @@
 
 package de.siphalor.nbtcrafting.api.recipe;
 
+import java.util.Collection;
+import java.util.Map;
+
 import net.minecraft.inventory.Inventory;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
-
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * An interface to use in exchange of {@link Recipe} which provides base functions used for remainder computation.

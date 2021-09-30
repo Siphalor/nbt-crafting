@@ -17,14 +17,14 @@
 
 package de.siphalor.nbtcrafting.dollar.part.operator;
 
+import java.util.Map;
+
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
-
-import java.util.Map;
 
 public class CastDollarOperator implements DollarPart {
 	private final DollarPart dollarPart;

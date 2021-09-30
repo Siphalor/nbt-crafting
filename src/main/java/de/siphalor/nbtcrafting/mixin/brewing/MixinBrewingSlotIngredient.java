@@ -17,10 +17,8 @@
 
 package de.siphalor.nbtcrafting.mixin.brewing;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.client.NbtCraftingClient;
-import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
-import de.siphalor.nbtcrafting.util.duck.IRecipeManager;
+import java.util.Map;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
@@ -35,7 +33,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Map;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.client.NbtCraftingClient;
+import de.siphalor.nbtcrafting.mixin.RecipeManagerAccessor;
+import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
 
 @Mixin(targets = "net/minecraft/screen/BrewingStandScreenHandler$IngredientSlot")
 public abstract class MixinBrewingSlotIngredient extends Slot {
@@ -49,16 +50,16 @@ public abstract class MixinBrewingSlotIngredient extends Slot {
 			callbackInfoReturnable.setReturnValue(true);
 			return;
 		}
-		IRecipeManager recipeManager;
+		RecipeManagerAccessor recipeManager;
 		if (inventory instanceof BrewingStandBlockEntity) {
-			recipeManager = (IRecipeManager) ((BrewingStandBlockEntity) inventory).getWorld().getRecipeManager();
+			recipeManager = (RecipeManagerAccessor) ((BrewingStandBlockEntity) inventory).getWorld().getRecipeManager();
 		} else if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-			recipeManager = (IRecipeManager) NbtCraftingClient.getClientRecipeManager();
+			recipeManager = (RecipeManagerAccessor) NbtCraftingClient.getClientRecipeManager();
 		} else {
 			NbtCrafting.logError("Failed to get recipe manager in brewing stand container class!");
 			return;
 		}
-		Map<Identifier, Recipe<Inventory>> recipes = recipeManager.nbtCrafting$getAllOfType(NbtCrafting.BREWING_RECIPE_TYPE);
+		Map<Identifier, Recipe<Inventory>> recipes = recipeManager.callGetAllOfType(NbtCrafting.BREWING_RECIPE_TYPE);
 		callbackInfoReturnable.setReturnValue(recipes.values().stream()
 				.anyMatch(recipe -> recipe instanceof BrewingRecipe && ((BrewingRecipe) recipe).getIngredient().test(stack))
 		);

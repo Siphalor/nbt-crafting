@@ -17,7 +17,6 @@
 
 package de.siphalor.nbtcrafting.mixin.client;
 
-import de.siphalor.nbtcrafting.client.NbtCraftingClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -26,6 +25,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import de.siphalor.nbtcrafting.client.NbtCraftingClient;
 
 @Environment(EnvType.CLIENT)
 @Mixin(MinecraftClient.class)

@@ -17,9 +17,8 @@
 
 package de.siphalor.nbtcrafting.mixin.cauldron;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipe;
-import de.siphalor.nbtcrafting.recipe.cauldron.TemporaryCauldronInventory;
+import java.util.Optional;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CauldronBlock;
 import net.minecraft.entity.ItemEntity;
@@ -36,7 +35,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Optional;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipe;
+import de.siphalor.nbtcrafting.recipe.cauldron.TemporaryCauldronInventory;
 
 @Mixin(CauldronBlock.class)
 public class MixinCauldronBlock {

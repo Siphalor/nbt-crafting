@@ -17,7 +17,9 @@
 
 package de.siphalor.nbtcrafting.mixin;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
+import java.util.BitSet;
+import java.util.List;
+
 import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
 import it.unimi.dsi.fastutil.ints.IntCollection;
 import net.minecraft.recipe.Ingredient;
@@ -28,8 +30,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.BitSet;
-import java.util.List;
+import de.siphalor.nbtcrafting.NbtCrafting;
 
 @Mixin(targets = "net/minecraft/recipe/RecipeFinder$Filter")
 public abstract class MixinRecipeFinder$Filter {

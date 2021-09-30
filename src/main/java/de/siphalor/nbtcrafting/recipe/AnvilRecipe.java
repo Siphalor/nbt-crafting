@@ -18,14 +18,14 @@
 package de.siphalor.nbtcrafting.recipe;
 
 import com.google.gson.JsonObject;
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.api.ServerRecipe;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
+
+import de.siphalor.nbtcrafting.NbtCrafting;
 
 public class AnvilRecipe extends IngredientRecipe<Inventory> {
 	protected int levels = 0;
