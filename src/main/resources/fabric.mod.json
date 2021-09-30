@@ -2,10 +2,8 @@
 	"schemaVersion": 1,
 	"id": "nbtcrafting",
 	"version": "${version}",
-
 	"name": "NBT Crafting",
 	"description": "Offers data tags in recipe, dollars, anvil and brewing recipes, dollars, ingredient nbt conditions and a lot of dollars to you. Do you like dollars - this is the thing!",
-
 	"authors": [
 		"Siphalor"
 	],
@@ -18,10 +16,8 @@
 		"issues": "https://github.com/Siphalor/nbt-crafting/issues",
 		"sources": "https://github.com/Siphalor/nbt-crafting"
 	},
-
 	"license": "Apache-2.0",
 	"icon": "assets/nbtcrafting/logo.png",
-
 	"environment": "*",
 	"mixins": [
 		{
@@ -46,14 +42,14 @@
 			"de.siphalor.nbtcrafting.compat.REIPlugin"
 		]
 	},
-
 	"depends": {
 		"fabricloader": ">=0.4.0"
 	},
-
 	"custom": {
 		"modmenu": {
-			"badges": [ "library" ]
+			"badges": [
+				"library"
+			]
 		},
 		"modmenu:api": true,
 		"modsoftheworld:splashes": "nbtcrafting:splashes.txt",

@@ -2,17 +2,13 @@
 	"schemaVersion": 1,
 	"id": "nbtcrafting_testmod",
 	"version": "0.0.0",
-
 	"name": "NBT Crafting Test Mod",
 	"description": "Test mod for Nbt Crafting",
-
 	"authors": [
 		"Siphalor"
 	],
 	"license": "Apache-2.0",
-
 	"environment": "*",
-
 	"depends": {
 		"fabricloader": ">=0.4.0"
 	}

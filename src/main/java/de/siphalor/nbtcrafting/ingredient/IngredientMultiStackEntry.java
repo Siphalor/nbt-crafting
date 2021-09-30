@@ -17,9 +17,11 @@
 
 package de.siphalor.nbtcrafting.ingredient;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import de.siphalor.nbtcrafting.util.duck.IItemStack;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.ItemStack;
@@ -27,8 +29,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import de.siphalor.nbtcrafting.util.duck.IItemStack;
 
 public class IngredientMultiStackEntry extends IngredientEntry {
 

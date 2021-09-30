@@ -17,7 +17,6 @@
 
 package de.siphalor.nbtcrafting.mixin.anvil;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
 import net.minecraft.client.network.packet.ContainerSlotUpdateS2CPacket;
 import net.minecraft.container.AnvilContainer;
 import net.minecraft.container.Slot;
@@ -31,6 +30,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import de.siphalor.nbtcrafting.NbtCrafting;
 
 @Mixin(targets = "net/minecraft/container/AnvilContainer$2")
 public abstract class MixinAnvilContainerResultSlot extends Slot {
@@ -66,7 +67,7 @@ public abstract class MixinAnvilContainerResultSlot extends Slot {
 	public void onTakeItemTop(CallbackInfoReturnable<ItemStack> cir) {
 		originalBaseStack = container.getSlot(0).getStack();
 	}
-	
+
 	@Inject(
 			method = "onTakeItem(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)" +
 					"Lnet/minecraft/item/ItemStack;",

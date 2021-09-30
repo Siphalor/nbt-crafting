@@ -17,7 +17,9 @@
 
 package de.siphalor.nbtcrafting.mixin.network;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;
@@ -31,14 +33,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import de.siphalor.nbtcrafting.NbtCrafting;
 
 @Mixin(PlayerManager.class)
 public class MixinPlayerManager {
-	@Shadow @Final private MinecraftServer server;
+	@Shadow
+	@Final
+	private MinecraftServer server;
 
-	@Shadow @Final private List<ServerPlayerEntity> players;
+	@Shadow
+	@Final
+	private List<ServerPlayerEntity> players;
 
 	@Inject(
 			method = "onPlayerConnect",

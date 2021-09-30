@@ -17,12 +17,13 @@
 
 package de.siphalor.nbtcrafting.dollar.part.operator;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 
 public class ChildDollarOperator extends BinaryDollarOperator {
 	public ChildDollarOperator(DollarPart first, DollarPart second) {

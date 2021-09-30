@@ -17,6 +17,8 @@
 
 package de.siphalor.nbtcrafting.mixin.client;
 
+import java.util.List;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.recipebook.AnimatedResultButton;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
@@ -27,8 +29,6 @@ import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-
-import java.util.List;
 
 @Mixin(AnimatedResultButton.class)
 public abstract class MixinAnimatedResultButton extends AbstractButtonWidget {

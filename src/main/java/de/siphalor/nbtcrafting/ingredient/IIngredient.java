@@ -17,13 +17,14 @@
 
 package de.siphalor.nbtcrafting.ingredient;
 
-import net.minecraft.item.ItemStack;
-
 import java.util.Map;
 import java.util.stream.Stream;
 
+import net.minecraft.item.ItemStack;
+
 public interface IIngredient {
 	void nbtCrafting$setAdvancedEntries(Stream<? extends IngredientEntry> entries);
+
 	boolean nbtCrafting$isAdvanced();
 
 	ItemStack nbtCrafting$getRecipeRemainder(ItemStack stack, Map<String, Object> reference);

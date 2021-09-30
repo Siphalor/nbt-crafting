@@ -17,10 +17,11 @@
 
 package de.siphalor.nbtcrafting.client;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
 import com.google.common.collect.ImmutableMap;
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.mixin.RecipeManagerAccessor;
-import de.siphalor.nbtcrafting.mixin.client.AnvilScreenAccessor;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
@@ -36,9 +37,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.mixin.RecipeManagerAccessor;
+import de.siphalor.nbtcrafting.mixin.client.AnvilScreenAccessor;
 
 public class NbtCraftingClient implements ClientModInitializer {
 	public static boolean sentModPresent = false;

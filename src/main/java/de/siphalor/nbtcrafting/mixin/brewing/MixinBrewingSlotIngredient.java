@@ -17,10 +17,8 @@
 
 package de.siphalor.nbtcrafting.mixin.brewing;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.client.NbtCraftingClient;
-import de.siphalor.nbtcrafting.mixin.RecipeManagerAccessor;
-import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
+import java.util.Map;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
@@ -35,7 +33,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Map;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.client.NbtCraftingClient;
+import de.siphalor.nbtcrafting.mixin.RecipeManagerAccessor;
+import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
 
 @Mixin(targets = "net/minecraft/container/BrewingStandContainer$SlotIngredient")
 public abstract class MixinBrewingSlotIngredient extends Slot {

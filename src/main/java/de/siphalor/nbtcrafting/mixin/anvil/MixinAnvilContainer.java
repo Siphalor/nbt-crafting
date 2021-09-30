@@ -17,8 +17,8 @@
 
 package de.siphalor.nbtcrafting.mixin.anvil;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
+import java.util.Optional;
+
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.container.AnvilContainer;
@@ -40,7 +40,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Optional;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
 
 @Mixin(AnvilContainer.class)
 public abstract class MixinAnvilContainer extends Container {
@@ -82,7 +83,7 @@ public abstract class MixinAnvilContainer extends Container {
 			if (userChangedName) {
 				if (
 						!StringUtils.isBlank(newItemName) &&
-						!newItemName.equals(resultStack.getName().getString())
+								!newItemName.equals(resultStack.getName().getString())
 				) {
 					resultStack.setCustomName(new LiteralText(newItemName));
 				}

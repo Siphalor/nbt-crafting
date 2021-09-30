@@ -17,12 +17,13 @@
 
 package de.siphalor.nbtcrafting.dollar;
 
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
-import de.siphalor.nbtcrafting.dollar.part.DollarPart;
+import java.util.Map;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.Tag;
 
-import java.util.Map;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 
 public abstract class Dollar {
 	protected DollarPart expression;

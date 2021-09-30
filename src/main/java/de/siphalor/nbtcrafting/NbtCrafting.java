@@ -17,19 +17,14 @@
 
 package de.siphalor.nbtcrafting;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Pair;
-import de.siphalor.nbtcrafting.advancement.StatChangedCriterion;
-import de.siphalor.nbtcrafting.api.RecipeTypeHelper;
-import de.siphalor.nbtcrafting.ingredient.IIngredient;
-import de.siphalor.nbtcrafting.mixin.advancement.MixinCriterions;
-import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
-import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
-import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipe;
-import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipeSerializer;
-import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.*;
 import net.fabricmc.api.ModInitializer;
@@ -45,9 +40,15 @@ import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import de.siphalor.nbtcrafting.advancement.StatChangedCriterion;
+import de.siphalor.nbtcrafting.api.RecipeTypeHelper;
+import de.siphalor.nbtcrafting.ingredient.IIngredient;
+import de.siphalor.nbtcrafting.mixin.advancement.MixinCriterions;
+import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
+import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
+import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipe;
+import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipeSerializer;
+import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
 
 public class NbtCrafting implements ModInitializer {
 	public static final String MOD_ID = "nbtcrafting";
@@ -203,6 +204,6 @@ public class NbtCrafting implements ModInitializer {
 
 	public static boolean isAdvancedIngredientSerializationEnabled() {
 		return advancedIngredientSerializationEnabled.get() != null
-			&& advancedIngredientSerializationEnabled.get();
+				&& advancedIngredientSerializationEnabled.get();
 	}
 }

@@ -17,8 +17,8 @@
 
 package de.siphalor.nbtcrafting.compat.mixin;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.api.RecipeTypeHelper;
+import java.util.Iterator;
+
 import net.fabricmc.fabric.impl.registry.sync.RegistrySyncManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Identifier;
@@ -31,7 +31,8 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.Iterator;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.api.RecipeTypeHelper;
 
 @Mixin(
 		value = RegistrySyncManager.class

@@ -17,20 +17,21 @@
 
 package de.siphalor.nbtcrafting.api.nbt;
 
+import java.util.Collection;
+import java.util.StringJoiner;
+import java.util.regex.Pattern;
+
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.util.Pair;
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.util.BetterJsonOps;
 import net.minecraft.datafixer.NbtOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Contract;
 
-import java.util.Collection;
-import java.util.StringJoiner;
-import java.util.regex.Pattern;
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.util.BetterJsonOps;
 
 @SuppressWarnings("unused")
 public class NbtUtil {

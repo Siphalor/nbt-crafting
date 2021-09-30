@@ -17,13 +17,14 @@
 
 package de.siphalor.nbtcrafting.mixin.client.network;
 
-import de.siphalor.nbtcrafting.client.NbtCraftingClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.packet.SynchronizeRecipesS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import de.siphalor.nbtcrafting.client.NbtCraftingClient;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class MixinClientPlayNetworkHandler {

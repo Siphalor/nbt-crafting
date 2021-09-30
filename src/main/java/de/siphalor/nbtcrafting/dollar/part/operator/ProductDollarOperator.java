@@ -17,13 +17,14 @@
 
 package de.siphalor.nbtcrafting.dollar.part.operator;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.ValueDollarPart;
 import de.siphalor.nbtcrafting.util.NumberUtil;
-import org.apache.commons.lang3.StringUtils;
 
 public class ProductDollarOperator extends BinaryDollarOperator {
 	public ProductDollarOperator(DollarPart first, DollarPart second) {

@@ -19,10 +19,11 @@ package de.siphalor.nbtcrafting.ingredient;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.PacketByteBuf;
+
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 
 public class IngredientEntryCondition {
 	public static final IngredientEntryCondition EMPTY = new IngredientEntryCondition(NbtUtil.EMPTY_COMPOUND, NbtUtil.EMPTY_COMPOUND);

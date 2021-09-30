@@ -17,8 +17,6 @@
 
 package de.siphalor.nbtcrafting.compat;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
 import me.shedaniel.rei.api.RecipeHelper;
 import me.shedaniel.rei.api.plugins.REIPluginV0;
 import me.shedaniel.rei.plugin.brewing.DefaultBrewingDisplay;
@@ -29,6 +27,9 @@ import net.fabricmc.loader.util.version.VersionParsingException;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.util.Identifier;
+
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
 
 @Environment(EnvType.CLIENT)
 public class REIPlugin implements REIPluginV0 {

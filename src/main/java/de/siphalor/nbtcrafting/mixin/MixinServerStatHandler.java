@@ -17,7 +17,6 @@
 
 package de.siphalor.nbtcrafting.mixin;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.ServerStatHandler;
@@ -26,6 +25,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import de.siphalor.nbtcrafting.NbtCrafting;
 
 @Mixin(ServerStatHandler.class)
 public class MixinServerStatHandler {
