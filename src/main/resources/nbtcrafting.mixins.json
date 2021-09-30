@@ -9,9 +9,9 @@
 		"MixinRecipe",
 		"MixinRecipeFinder",
 		"MixinRecipeFinder$Filter",
-		"MixinRecipeManager",
 		"MixinServerPlayerEntity",
 		"MixinServerStatHandler",
+		"RecipeManagerAccessor",
 		"advancement.MixinCriterions",
 		"anvil.AnvilContainerAccessor",
 		"anvil.MixinAnvilContainer",
@@ -27,7 +27,7 @@
 		"cutting.MixinCuttingRecipe",
 		"cutting.MixinCuttingRecipeSerializer",
 		"cutting.MixinStonecutterContainer",
-		"network.MixinServerPlayNetworkHandler",
+		"network.MixinPlayerManager",
 		"network.MixinSynchronizeRecipesS2CPacket"
 	],
 	"client": [

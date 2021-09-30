@@ -68,7 +68,7 @@ public interface MixinRecipe {
 			for (Ingredient ingredient : ingredients) {
 				if (ingredient.test(itemStack)) {
 					//noinspection ConstantConditions
-					ItemStack remainder = ((IIngredient) (Object) ingredient).getRecipeRemainder(itemStack, reference);
+					ItemStack remainder = ((IIngredient) (Object) ingredient).nbtCrafting$getRecipeRemainder(itemStack, reference);
 					if (remainder != null) {
 						stackList.set(i, remainder);
 						continue main;

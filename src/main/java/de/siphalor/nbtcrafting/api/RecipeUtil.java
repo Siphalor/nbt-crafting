@@ -88,7 +88,7 @@ public class RecipeUtil {
 	}
 
 	public static ItemStack getRemainder(ItemStack itemStack, Ingredient ingredient, Map<String, Object> reference) {
-		ItemStack result = ((IIngredient) (Object) ingredient).getRecipeRemainder(itemStack, reference);
+		ItemStack result = ((IIngredient) (Object) ingredient).nbtCrafting$getRecipeRemainder(itemStack, reference);
 		if (result == null) {
 			return new ItemStack(itemStack.getItem().getRecipeRemainder());
 		}
