@@ -61,11 +61,11 @@ dependencies {
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:6.0.247-alpha") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
-	modImplementation("de.siphalor:modsoftheworld-$minecraft_major_version:1.0.9+") {
+	modImplementation("de.siphalor:modsoftheworld-$minecraft_major_version:1.0.9+mc1.18-pre1") {
 		transitive false
 	}
 
-	modRuntime("com.github.astei:lazydfu:master-SNAPSHOT")
+	modRuntimeOnly("com.github.astei:lazydfu:master-SNAPSHOT")
 
 	testmodImplementation sourceSets.main.output
 }
@@ -81,12 +81,10 @@ license {
 processResources {
 	inputs.property "version", version
 
-	afterEvaluate {
-		from(sourceSets.main.resources.srcDirs) {
-			include "fabric.mod.json"
-			expand "version": version
-			duplicatesStrategy DuplicatesStrategy.INCLUDE
-		}
+	from(sourceSets.main.resources.srcDirs) {
+		include "fabric.mod.json"
+		expand "version": version
+		duplicatesStrategy DuplicatesStrategy.INCLUDE
 	}
 }
 
@@ -107,7 +105,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
 	from "LICENSE"
-	archiveClassifier.set("")
 }
 
 // configure the maven publication
