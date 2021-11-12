@@ -42,7 +42,7 @@ public class RecipeUtil {
 
 	public static ItemStack getDollarAppliedResult(ItemStack baseOutput, DefaultedList<Ingredient> ingredients, Inventory inventory) {
 		ItemStack stack = baseOutput.copy();
-		Dollar[] dollars = DollarParser.extractDollars(stack.getTag(), true);
+		Dollar[] dollars = DollarParser.extractDollars(stack.getNbt(), true);
 
 		if (dollars.length > 0) {
 			Map<String, Object> reference = new HashMap<>();
@@ -77,7 +77,7 @@ public class RecipeUtil {
 
 	public static ItemStack getDollarAppliedResult(ItemStack baseOutput, Ingredient ingredient, String referenceName, Inventory inventory) {
 		ItemStack stack = baseOutput.copy();
-		Dollar[] dollars = DollarParser.extractDollars(stack.getTag(), true);
+		Dollar[] dollars = DollarParser.extractDollars(stack.getNbt(), true);
 
 		if (dollars.length > 0) {
 			Map<String, Object> reference = new HashMap<>();

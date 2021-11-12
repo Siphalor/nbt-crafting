@@ -113,7 +113,7 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 	public void canTakeItemsTop(PlayerEntity player, boolean present, CallbackInfoReturnable<Boolean> cir) {
 		if (levelCost.get() <= 0) {
 			ItemStack base = getSlot(0).getStack();
-			if (!ItemStack.areItemsEqual(getSlot(2).getStack(), base) || !ItemStack.areTagsEqual(getSlot(2).getStack(), base)) {
+			if (!ItemStack.areItemsEqual(getSlot(2).getStack(), base) || !ItemStack.areNbtEqual(getSlot(2).getStack(), base)) {
 				cir.setReturnValue(true);
 			}
 		}

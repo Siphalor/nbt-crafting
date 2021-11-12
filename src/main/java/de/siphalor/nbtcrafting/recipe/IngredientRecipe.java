@@ -54,7 +54,7 @@ public class IngredientRecipe<I extends Inventory> implements NBTCRecipe<I>, Ser
 		this.base = base;
 		this.ingredient = ingredient;
 		this.result = result;
-		this.resultDollars = DollarParser.extractDollars(result.getTag(), false);
+		this.resultDollars = DollarParser.extractDollars(result.getNbt(), false);
 		this.recipeType = recipeType;
 		this.serializer = serializer;
 	}

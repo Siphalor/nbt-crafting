@@ -42,10 +42,10 @@ public class IngredientEntryCondition {
 	}
 
 	public boolean matches(ItemStack stack) {
-		if (!stack.hasTag()) {
+		if (!stack.hasNbt()) {
 			return requiredElements.isEmpty();
 		}
-		NbtCompound tag = stack.getTag();
+		NbtCompound tag = stack.getNbt();
 		//noinspection ConstantConditions
 		if (!deniedElements.isEmpty() && NbtUtil.compoundsOverlap(tag, deniedElements))
 			return false;

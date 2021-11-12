@@ -51,7 +51,7 @@ public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, S
 		this.output = output;
 		this.fluid = fluid;
 		this.levels = levels;
-		this.outputDollars = DollarParser.extractDollars(output.getTag(), false);
+		this.outputDollars = DollarParser.extractDollars(output.getNbt(), false);
 	}
 
 	public void write(PacketByteBuf packetByteBuf) {

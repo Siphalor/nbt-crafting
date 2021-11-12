@@ -50,7 +50,7 @@ public abstract class MixinCookingRecipeSerializer {
 			return JsonHelper.getString(jsonObject, resultPropertyName);
 		}
 		ItemStack output = ShapedRecipe.outputFromJson(jsonObject.getAsJsonObject(resultPropertyName));
-		resultTag = output.getTag();
+		resultTag = output.getNbt();
 		return Registry.ITEM.getId(output.getItem()).toString();
 	}
 

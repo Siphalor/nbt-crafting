@@ -42,8 +42,8 @@ public class IngredientStackEntry extends IngredientEntry {
 
 	public IngredientStackEntry(ItemStack stack) {
 		this.id = Registry.ITEM.getRawId(stack.getItem());
-		if (stack.hasTag())
-			this.condition = new IngredientEntryCondition(stack.getTag(), new NbtCompound());
+		if (stack.hasNbt())
+			this.condition = new IngredientEntryCondition(stack.getNbt(), new NbtCompound());
 		else
 			this.condition = new IngredientEntryCondition();
 	}

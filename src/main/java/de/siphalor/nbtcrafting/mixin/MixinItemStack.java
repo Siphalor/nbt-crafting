@@ -31,17 +31,17 @@ import de.siphalor.nbtcrafting.util.duck.IItemStack;
 @Mixin(value = ItemStack.class, priority = 2000)
 public class MixinItemStack implements IItemStack {
 	@Shadow
-	private NbtCompound tag;
+	private NbtCompound nbt;
 
-	@Inject(method = "areTagsEqual", at = @At(value = "RETURN", ordinal = 2), cancellable = true)
+	@Inject(method = "areNbtEqual", at = @At(value = "RETURN", ordinal = 2), cancellable = true)
 	private static void areTagsEqualReturn1(ItemStack stack1, ItemStack stack2, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		if (stack2.getTag().isEmpty())
+		if (stack2.getNbt().isEmpty())
 			callbackInfoReturnable.setReturnValue(true);
 	}
 
-	@Inject(method = "areTagsEqual", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NbtCompound;equals(Ljava/lang/Object;)Z"), cancellable = true)
+	@Inject(method = "areNbtEqual", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NbtCompound;equals(Ljava/lang/Object;)Z"), cancellable = true)
 	private static void areTagsEqualReturn2(ItemStack stack1, ItemStack stack2, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		if (stack1.getTag() == null && stack2.getTag().isEmpty())
+		if (stack1.getNbt() == null && stack2.getNbt().isEmpty())
 			callbackInfoReturnable.setReturnValue(true);
 	}
 
@@ -49,8 +49,8 @@ public class MixinItemStack implements IItemStack {
 	@Override
 	public void nbtCrafting$setRawTag(NbtCompound tag) {
 		if (tag == null || tag.isEmpty())
-			this.tag = null;
+			this.nbt = null;
 		else
-			this.tag = tag;
+			this.nbt = tag;
 	}
 }

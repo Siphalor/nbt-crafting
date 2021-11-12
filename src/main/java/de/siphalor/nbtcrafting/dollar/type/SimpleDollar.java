@@ -39,7 +39,7 @@ public class SimpleDollar extends Dollar {
 
 	@Override
 	public void apply(ItemStack stack, Map<String, Object> references) throws DollarException {
-		NbtCompound compoundTag = stack.getOrCreateTag();
+		NbtCompound compoundTag = stack.getOrCreateNbt();
 		String[] pathParts = NbtUtil.splitPath(path);
 		try {
 			NbtElement value = evaluate(references);

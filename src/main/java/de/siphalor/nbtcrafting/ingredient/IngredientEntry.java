@@ -57,7 +57,7 @@ public abstract class IngredientEntry {
 
 	public void setRecipeRemainder(ItemStack stack) {
 		this.remainder = stack;
-		if (stack.hasTag())
-			this.remainderDollars = DollarParser.extractDollars(stack.getTag(), true);
+		if (stack.hasNbt())
+			this.remainderDollars = DollarParser.extractDollars(stack.getNbt(), true);
 	}
 }

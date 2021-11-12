@@ -37,8 +37,8 @@ public class NbtUtil {
 	public static final NbtCompound EMPTY_COMPOUND = new NbtCompound();
 
 	public static NbtCompound getTagOrEmpty(ItemStack itemStack) {
-		if (itemStack.hasTag())
-			return itemStack.getTag();
+		if (itemStack.hasNbt())
+			return itemStack.getNbt();
 		else
 			return EMPTY_COMPOUND;
 	}

@@ -49,7 +49,7 @@ public class MergeDollar extends Dollar {
 		if (!(value instanceof NbtCompound)) {
 			throw new DollarEvaluationException("Couldn't set stacks main tag as given dollar expression evaluates to non-object value.");
 		} else {
-			NbtUtil.mergeInto(stack.getOrCreateTag(), (NbtCompound) value, mergeModes, "");
+			NbtUtil.mergeInto(stack.getOrCreateNbt(), (NbtCompound) value, mergeModes, "");
 		}
 	}
 }

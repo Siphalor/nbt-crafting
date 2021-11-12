@@ -45,7 +45,7 @@ public class StatChangedCriterion extends AbstractCriterion<StatChangedCriterion
 		StatType<T> statType = stat.getType();
 		T object = stat.getValue();
 
-		test(player, conditions -> conditions.match(statType, object, value));
+		trigger(player, conditions -> conditions.match(statType, object, value));
 	}
 
 	@Override
