@@ -17,8 +17,6 @@
 
 package de.siphalor.nbtcrafting.mixin.anvil;
 
-import java.util.Optional;
-
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
@@ -30,6 +28,7 @@ import net.minecraft.screen.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -44,7 +43,6 @@ import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
 
 @Mixin(AnvilScreenHandler.class)
 public abstract class MixinAnvilContainer extends ForgingScreenHandler {
-
 	@Shadow
 	private String newItemName;
 
@@ -61,15 +59,18 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 	@Unique
 	private ItemStack originalBaseStack;
 
-	public MixinAnvilContainer(ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
+	@Unique
+	private AnvilRecipe recipe = null;
+
+	public MixinAnvilContainer(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
 		super(type, syncId, playerInventory, context);
 	}
 
 	@Inject(method = "updateResult", at = @At("HEAD"), cancellable = true)
 	public void updateResult(CallbackInfo callbackInfo) {
-		Optional<AnvilRecipe> optionalAnvilRecipe = player.world.getRecipeManager().getFirstMatch(NbtCrafting.ANVIL_RECIPE_TYPE, input, player.world);
-		if (optionalAnvilRecipe.isPresent()) {
-			ItemStack resultStack = optionalAnvilRecipe.get().craft(input);
+		recipe = player.world.getRecipeManager().getFirstMatch(NbtCrafting.ANVIL_RECIPE_TYPE, input, player.world).orElse(null);
+		if (recipe != null) {
+			ItemStack resultStack = recipe.craft(input);
 			repairItemUsage = 1;
 			if (userChangedName) {
 				if (
@@ -93,7 +94,7 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 			output.setStack(0, resultStack);
 			resultStack.onCraft(player.world, player, resultStack.getCount());
 
-			levelCost.set(optionalAnvilRecipe.get().getLevels());
+			levelCost.set(recipe.getLevels());
 			sendContentUpdates();
 
 			callbackInfo.cancel();
@@ -132,9 +133,11 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 			at = @At("RETURN")
 	)
 	public void onItemTaken(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
-		if (originalBaseStack != null) {
-			originalBaseStack.decrement(1);
-			getSlot(0).setStack(originalBaseStack);
+		if (recipe != null && originalBaseStack != null) {
+			if (!recipe.getBase().isEmpty()) {
+				originalBaseStack.decrement(1);
+				this.setStackInSlot(0, originalBaseStack);
+			}
 		}
 		if (player instanceof ServerPlayerEntity) {
 			if (!NbtCrafting.hasClientMod((ServerPlayerEntity) player)) {
