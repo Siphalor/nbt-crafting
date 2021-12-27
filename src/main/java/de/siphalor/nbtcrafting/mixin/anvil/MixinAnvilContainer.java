@@ -136,7 +136,7 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 		if (recipe != null && originalBaseStack != null) {
 			if (!recipe.getBase().isEmpty()) {
 				originalBaseStack.decrement(1);
-				this.setStackInSlot(0, originalBaseStack);
+				getSlot(0).setStack(originalBaseStack);
 			}
 		}
 		if (player instanceof ServerPlayerEntity) {
