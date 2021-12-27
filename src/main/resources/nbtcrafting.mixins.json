@@ -13,7 +13,6 @@
 		"MixinServerStatHandler",
 		"RecipeManagerAccessor",
 		"advancement.MixinCriterions",
-		"anvil.AnvilContainerAccessor",
 		"anvil.MixinAnvilContainer",
 		"anvil.MixinAnvilContainerResultSlot",
 		"brewing.MixinBrewingSlotIngredient",

@@ -17,6 +17,10 @@
 
 package de.siphalor.nbtcrafting.mixin.anvil;
 
+import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
+
+import de.siphalor.nbtcrafting.util.IAnvilContainer;
+
 import net.minecraft.client.network.packet.ContainerSlotUpdateS2CPacket;
 import net.minecraft.container.AnvilContainer;
 import net.minecraft.container.Slot;
@@ -51,7 +55,7 @@ public abstract class MixinAnvilContainerResultSlot extends Slot {
 			cancellable = true
 	)
 	public void canTakeItemsTop(PlayerEntity player, CallbackInfoReturnable<Boolean> cir) {
-		if (((AnvilContainerAccessor) container).getLevelCost().get() <= 0) {
+		if (((IAnvilContainer) container).getLevelCost().get() <= 0) {
 			ItemStack base = container.getSlot(0).getStack();
 			if (!ItemStack.areItemsEqual(getStack(), base) || !ItemStack.areTagsEqual(getStack(), base)) {
 				cir.setReturnValue(true);
@@ -74,9 +78,12 @@ public abstract class MixinAnvilContainerResultSlot extends Slot {
 			at = @At("RETURN")
 	)
 	public void onItemTaken(PlayerEntity player, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
-		if (originalBaseStack != null) {
-			originalBaseStack.decrement(1);
-			container.setStackInSlot(0, originalBaseStack);
+		AnvilRecipe recipe = ((IAnvilContainer) container).nbtcrafting$getRecipe();
+		if (recipe != null && originalBaseStack != null) {
+			if (!recipe.getBase().isEmpty()) {
+				originalBaseStack.decrement(1);
+				container.setStackInSlot(0, originalBaseStack);
+			}
 		}
 		if (player instanceof ServerPlayerEntity) {
 			if (!NbtCrafting.hasClientMod((ServerPlayerEntity) player)) {

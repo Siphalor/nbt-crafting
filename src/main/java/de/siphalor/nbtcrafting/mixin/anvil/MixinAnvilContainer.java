@@ -17,7 +17,7 @@
 
 package de.siphalor.nbtcrafting.mixin.anvil;
 
-import java.util.Optional;
+import de.siphalor.nbtcrafting.util.IAnvilContainer;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
@@ -44,7 +44,7 @@ import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
 
 @Mixin(AnvilContainer.class)
-public abstract class MixinAnvilContainer extends Container {
+public abstract class MixinAnvilContainer extends Container implements IAnvilContainer {
 	@Shadow
 	@Final
 	private PlayerEntity player;
@@ -70,15 +70,27 @@ public abstract class MixinAnvilContainer extends Container {
 	@Unique
 	private boolean userChangedName = false;
 
+	private AnvilRecipe nbtcrafting$recipe = null;
+
 	protected MixinAnvilContainer(ContainerType<?> containerType_1, int int_1) {
 		super(containerType_1, int_1);
 	}
 
+	@Override
+	public Property getLevelCost() {
+		return levelCost;
+	}
+
+	@Override
+	public AnvilRecipe nbtcrafting$getRecipe() {
+		return null;
+	}
+
 	@Inject(method = "updateResult", at = @At("HEAD"), cancellable = true)
 	public void updateResult(CallbackInfo callbackInfo) {
-		Optional<AnvilRecipe> optionalAnvilRecipe = player.world.getRecipeManager().getFirstMatch(NbtCrafting.ANVIL_RECIPE_TYPE, inventory, player.world);
-		if (optionalAnvilRecipe.isPresent()) {
-			ItemStack resultStack = optionalAnvilRecipe.get().craft(inventory);
+		nbtcrafting$recipe = player.world.getRecipeManager().getFirstMatch(NbtCrafting.ANVIL_RECIPE_TYPE, inventory, player.world).orElse(null);
+		if (nbtcrafting$recipe != null) {
+			ItemStack resultStack = nbtcrafting$recipe.craft(inventory);
 			repairItemUsage = 1;
 			if (userChangedName) {
 				if (
@@ -102,7 +114,7 @@ public abstract class MixinAnvilContainer extends Container {
 			result.setInvStack(0, resultStack);
 			resultStack.onCraft(player.world, player, resultStack.getCount());
 
-			levelCost.set(optionalAnvilRecipe.get().getLevels());
+			levelCost.set(nbtcrafting$recipe.getLevels());
 			sendContentUpdates();
 
 			callbackInfo.cancel();
