@@ -17,16 +17,21 @@
 
 package de.siphalor.nbtcrafting.mixin.anvil;
 
+import de.siphalor.nbtcrafting.api.RecipeUtil;
+import de.siphalor.nbtcrafting.recipe.IngredientRecipe;
+
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.screen.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.collection.DefaultedList;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -40,6 +45,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
+
+import java.util.Optional;
 
 @Mixin(AnvilScreenHandler.class)
 public abstract class MixinAnvilContainer extends ForgingScreenHandler {
@@ -61,6 +68,9 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 
 	@Unique
 	private AnvilRecipe recipe = null;
+
+	@Unique
+	private static DefaultedList<ItemStack> remainders = null;
 
 	public MixinAnvilContainer(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
 		super(type, syncId, playerInventory, context);
@@ -126,6 +136,9 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 	)
 	public void onTakeItemTop(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
 		originalBaseStack = getSlot(0).getStack();
+
+		Optional<AnvilRecipe> match = player.world.getRecipeManager().getFirstMatch(NbtCrafting.ANVIL_RECIPE_TYPE, input, player.world);
+		remainders = match.map(anvilRecipe -> anvilRecipe.getRemainder(input)).orElse(null);
 	}
 
 	@Inject(
@@ -139,6 +152,13 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 				getSlot(0).setStack(originalBaseStack);
 			}
 		}
+
+		if (remainders != null && !remainders.isEmpty()) {
+			context.run(((world, pos) -> {
+				RecipeUtil.putRemainders(remainders, input, world, pos);
+			}));
+		}
+
 		if (player instanceof ServerPlayerEntity) {
 			if (!NbtCrafting.hasClientMod((ServerPlayerEntity) player)) {
 				((ServerPlayerEntity) player).networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(
