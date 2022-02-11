@@ -70,8 +70,6 @@ public abstract class MixinAnvilContainer extends Container implements IAnvilCon
 	@Unique
 	private boolean userChangedName = false;
 
-	private AnvilRecipe nbtcrafting$recipe = null;
-
 	protected MixinAnvilContainer(ContainerType<?> containerType_1, int int_1) {
 		super(containerType_1, int_1);
 	}
@@ -88,9 +86,9 @@ public abstract class MixinAnvilContainer extends Container implements IAnvilCon
 
 	@Inject(method = "updateResult", at = @At("HEAD"), cancellable = true)
 	public void updateResult(CallbackInfo callbackInfo) {
-		nbtcrafting$recipe = player.world.getRecipeManager().getFirstMatch(NbtCrafting.ANVIL_RECIPE_TYPE, inventory, player.world).orElse(null);
-		if (nbtcrafting$recipe != null) {
-			ItemStack resultStack = nbtcrafting$recipe.craft(inventory);
+		AnvilRecipe recipe = player.world.getRecipeManager().getFirstMatch(NbtCrafting.ANVIL_RECIPE_TYPE, inventory, player.world).orElse(null);
+		if (recipe != null) {
+			ItemStack resultStack = recipe.craft(inventory);
 			repairItemUsage = 1;
 			if (userChangedName) {
 				if (
@@ -112,9 +110,8 @@ public abstract class MixinAnvilContainer extends Container implements IAnvilCon
 			}
 
 			result.setInvStack(0, resultStack);
-			resultStack.onCraft(player.world, player, resultStack.getCount());
 
-			levelCost.set(nbtcrafting$recipe.getLevels());
+			levelCost.set(recipe.getLevels());
 			sendContentUpdates();
 
 			callbackInfo.cancel();

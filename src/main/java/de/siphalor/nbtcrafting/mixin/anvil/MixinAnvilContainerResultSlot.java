@@ -80,6 +80,7 @@ public abstract class MixinAnvilContainerResultSlot extends Slot {
 	public void onItemTaken(PlayerEntity player, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
 		AnvilRecipe recipe = ((IAnvilContainer) container).nbtcrafting$getRecipe();
 		if (recipe != null && originalBaseStack != null) {
+			stack.onCraft(player.world, player, stack.getCount());
 			if (!recipe.getBase().isEmpty()) {
 				originalBaseStack.decrement(1);
 				container.setStackInSlot(0, originalBaseStack);
