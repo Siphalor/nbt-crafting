@@ -25,10 +25,22 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.ApiStatus;
 
+import de.siphalor.nbtcrafting.NbtCrafting;
+
+@ApiStatus.Experimental
 public class WrappedRecipeSerializer implements RecipeSerializer<Recipe<?>> {
+	private static long lastWarnTime = 0;
+
 	@Override
 	public Recipe<?> read(Identifier id, JsonObject json) {
+		long time = System.currentTimeMillis();
+		if (time > lastWarnTime + 30000) {
+			NbtCrafting.logWarn("Some recipes are using the nbtcrafting:wrapped recipe type. This type is experimental and likely to change.");
+		}
+		lastWarnTime = time;
+
 		JsonObject innerJson = JsonHelper.getObject(json, "recipe");
 		String innerType = JsonHelper.getString(innerJson, "type");
 		RecipeSerializer<?> innerSerializer = Registry.RECIPE_SERIALIZER.get(new Identifier(innerType));
