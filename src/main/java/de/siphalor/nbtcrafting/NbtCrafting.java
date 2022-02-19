@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 Siphalor
+ * Copyright 2020-2022 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Pair;
+
+import de.siphalor.nbtcrafting.recipe.WrappedRecipeSerializer;
+
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.*;
 import net.fabricmc.api.ModInitializer;
@@ -77,6 +80,8 @@ public class NbtCrafting implements ModInitializer {
 	public static final RecipeType<IngredientRecipe<Inventory>> SMITHING_RECIPE_TYPE = registerRecipeType("smithing");
 	@SuppressWarnings("unused")
 	public static final RecipeSerializer<IngredientRecipe<Inventory>> SMITHING_RECIPE_SERIALIZER = registerRecipeSerializer("smithing", new IngredientRecipe.Serializer<>((id, base, ingredient, result, serializer) -> new IngredientRecipe<>(id, base, ingredient, result, SMITHING_RECIPE_TYPE, serializer)));
+
+	public static final RecipeSerializer<Recipe<?>> WRAPPED_RECIPE_SERIALIZER = registerRecipeSerializer("wrapped", new WrappedRecipeSerializer());
 
 	public static final StatChangedCriterion STAT_CHANGED_CRITERION = MixinCriterions.registerCriterion(new StatChangedCriterion());
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 Siphalor
+ * Copyright 2020-2022 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,6 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 			}
 
 			output.setStack(0, resultStack);
-			resultStack.onCraft(player.world, player, resultStack.getCount());
 
 			levelCost.set(recipe.getLevels());
 			sendContentUpdates();
@@ -137,6 +136,7 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 			if (!recipe.getBase().isEmpty()) {
 				originalBaseStack.decrement(1);
 				getSlot(0).setStack(originalBaseStack);
+				stack.onCraft(player.world, player, stack.getCount());
 			}
 		}
 		if (player instanceof ServerPlayerEntity) {

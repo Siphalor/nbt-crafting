@@ -1,0 +1,17 @@
+{
+	"type": "nbtcrafting:anvil",
+	"base": {
+		"item": "minecraft:elytra"
+	},
+	"ingredient": [
+		{
+			"item": "minecraft:phantom_membrane"
+		},
+		{
+			"item": "minecraft:elytra"
+		}
+	],
+	"result": {
+		"item": "minecraft:air"
+	}
+}
