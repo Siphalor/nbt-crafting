@@ -24,9 +24,11 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -68,7 +70,7 @@ public abstract class MixinBrewingStandBlockEntity extends LockableContainerBloc
 	}
 
 	@Inject(method = "craft", at = @At("HEAD"), cancellable = true)
-	private static void craft(CallbackInfo callbackInfo) {
+	private static void craft(World world, BlockPos pos, DefaultedList<ItemStack> invList, CallbackInfo callbackInfo) {
 		Optional<BrewingRecipe> recipe = lastWorld.getRecipeManager().getFirstMatch(NbtCrafting.BREWING_RECIPE_TYPE, lastBlockEntity, lastWorld);
 		if (recipe.isPresent()) {
 			DefaultedList<ItemStack> remainingStacks = recipe.get().getRemainder(lastBlockEntity);
@@ -83,13 +85,18 @@ public abstract class MixinBrewingStandBlockEntity extends LockableContainerBloc
 
 			RecipeUtil.putRemainders(remainingStacks, lastBlockEntity, lastWorld, lastBlockPos);
 
+			world.syncWorldEvent(WorldEvents.BREWING_STAND_BREWS, pos, 0);
+
 			callbackInfo.cancel();
 		}
 	}
 
 	@Inject(method = "isValid", at = @At("HEAD"), cancellable = true)
 	public void isValidInvStack(int slotId, ItemStack stack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		if (slotId < 4 && getStack(slotId).isEmpty())
-			callbackInfoReturnable.setReturnValue(true);
+		if (slotId < 4 && getStack(slotId).isEmpty()) {
+			if (stack.getItem() != Items.BLAZE_POWDER) {
+				callbackInfoReturnable.setReturnValue(true);
+			}
+		}
 	}
 }
