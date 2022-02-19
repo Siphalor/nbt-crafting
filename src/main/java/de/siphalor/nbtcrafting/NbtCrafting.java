@@ -188,7 +188,9 @@ public class NbtCrafting implements ModInitializer {
 	}
 
 	public static <S extends RecipeSerializer<T>, T extends Recipe<?>> S registerRecipeSerializer(String name, S recipeSerializer) {
-		return Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(MOD_ID, name), recipeSerializer);
+		Identifier serializerId = new Identifier(MOD_ID, name);
+		RecipeTypeHelper.addToSyncBlacklist(serializerId);
+		return Registry.register(Registry.RECIPE_SERIALIZER, serializerId, recipeSerializer);
 	}
 
 	public static PacketByteBuf createAdvancedRecipeSyncPacket(RecipeManager recipeManager) {
