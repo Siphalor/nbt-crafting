@@ -23,6 +23,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.DefaultedList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -81,7 +82,10 @@ public abstract class MixinBrewingStandBlockEntity extends LockableContainerBloc
 
 	@Inject(method = "isValidInvStack", at = @At("HEAD"), cancellable = true)
 	public void isValidInvStack(int slotId, ItemStack stack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-		if (slotId < 4 && getInvStack(slotId).isEmpty())
-			callbackInfoReturnable.setReturnValue(true);
+		if (slotId < 4 && getInvStack(slotId).isEmpty()) {
+			if (stack.getItem() != Items.BLAZE_POWDER) {
+				callbackInfoReturnable.setReturnValue(true);
+			}
+		}
 	}
 }
