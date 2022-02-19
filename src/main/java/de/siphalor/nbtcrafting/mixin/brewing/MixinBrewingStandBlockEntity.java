@@ -73,6 +73,8 @@ public abstract class MixinBrewingStandBlockEntity extends LockableContainerBloc
 
 			RecipeUtil.putRemainders(remainingStacks, inv, world, pos);
 
+			world.playLevelEvent(1035, pos, 0);
+
 			callbackInfo.cancel();
 		}
 	}
