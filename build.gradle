@@ -37,9 +37,9 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	include(modApi("net.fabricmc.fabric-api:fabric-api-base:0.1.2+b7f9825d0c"))
-	include(modApi("net.fabricmc.fabric-api:fabric-networking-api-v1:1.0.1+c1455e800c"))
-	modImplementation "net.fabricmc.fabric-api:fabric-registry-sync-v0:0.2.6+f3d8141b0c"
+	include(modApi(fabricApi.module("fabric-api-base", fabric_api_version)))
+	include(modApi(fabricApi.module("fabric-networking-api-v1", fabric_api_version)))
+	modImplementation(fabricApi.module("fabric-registry-sync-v0", fabric_api_version))
 
 	modImplementation("me.shedaniel:RoughlyEnoughItems:3.6.21") {
 		exclude module: "modmenu"
