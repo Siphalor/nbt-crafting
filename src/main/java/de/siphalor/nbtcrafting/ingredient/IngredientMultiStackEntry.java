@@ -24,9 +24,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.tag.TagKey;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import de.siphalor.nbtcrafting.util.duck.IItemStack;
@@ -35,13 +38,13 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 
 	private final IngredientEntryCondition condition;
 	private final IntList itemIds;
-	private String tag;
+	private TagKey<Item> tag;
 
 	public IngredientMultiStackEntry(Collection<Integer> items, IngredientEntryCondition condition) {
 		super();
 		this.condition = condition;
 		this.itemIds = new IntArrayList(items);
-		this.tag = "";
+		this.tag = null;
 	}
 
 	@Override
@@ -52,7 +55,7 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 	@Override
 	public JsonElement toJson() {
 		JsonObject json = new JsonObject();
-		json.addProperty("tag", tag);
+		json.addProperty("tag", tag.id().toString());
 		condition.addToJson(json);
 		return json;
 	}
@@ -98,7 +101,7 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 	}
 
 	public void setTag(String tag) {
-		this.tag = tag;
+		this.tag = TagKey.of(Registry.ITEM_KEY, new Identifier(tag));
 	}
 
 }

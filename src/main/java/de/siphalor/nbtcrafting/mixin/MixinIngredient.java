@@ -17,17 +17,14 @@
 
 package de.siphalor.nbtcrafting.mixin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.google.gson.*;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
@@ -38,11 +35,11 @@ import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
-import net.minecraft.tag.ItemTags;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -269,11 +266,15 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			throw new JsonParseException("An ingredient entry needs either a tag or an item");
 		}
 		final Identifier identifier2 = new Identifier(JsonHelper.getString(jsonObject, "tag"));
-		final Tag<Item> tag = ItemTags.getTagGroup().getTag(identifier2);
+		final TagKey<Item> tag = TagKey.of(Registry.ITEM_KEY, identifier2);
 		if (tag == null) {
 			throw new JsonSyntaxException("Unknown item tag '" + identifier2 + "'");
 		}
-		IngredientMultiStackEntry entry = new IngredientMultiStackEntry(tag.values().stream().map(Registry.ITEM::getRawId).collect(Collectors.toList()), loadIngredientEntryCondition(jsonObject));
+		Collection<Integer> itemIds = new IntArrayList();
+		for (RegistryEntry<Item> entry : Registry.ITEM.iterateEntries(tag)) {
+			itemIds.add(Registry.ITEM.getRawId(entry.value()));
+		}
+		IngredientMultiStackEntry entry = new IngredientMultiStackEntry(itemIds, loadIngredientEntryCondition(jsonObject));
 		entry.setTag(identifier2.toString());
 		if (jsonObject.has("remainder")) {
 			entry.setRecipeRemainder(ShapedRecipe.outputFromJson(JsonHelper.getObject(jsonObject, "remainder")));
