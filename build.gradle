@@ -37,26 +37,10 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	def fabric_deps = [
-	        'fabric-api-base': '0.4.0+65d505fc9c',
-			'fabric-networking-api-v1': '1.0.16+65d505fc9c',
-			'include': false,
-			'fabric-registry-sync-v0': '0.8.3+2e160e0f9c',
-			'fabric-resource-loader-v0': '0.4.9+65d505fc9c',
-			'fabric-tag-extensions-v0': '1.2.3+65d505fc9c'
-	]
-
-	def inc = true
-	for (entry in fabric_deps.entrySet()) {
-		if (entry.getKey() == "include") {
-			inc = entry.getValue()
-			continue
-		}
-        modImplementation 'net.fabricmc.fabric-api:' + entry.getKey() + ':' + entry.getValue()
-		if (inc) {
-			include 'net.fabricmc.fabric-api:' + entry.getKey() + ':' + entry.getValue()
-		}
-	}
+	include(modApi(fabricApi.module("fabric-api-base", fabric_api_version)))
+	include(modApi(fabricApi.module("fabric-networking-api-v1", fabric_api_version)))
+	modImplementation(fabricApi.module("fabric-registry-sync-v0", fabric_api_version))
+	modImplementation(fabricApi.module("fabric-resource-loader-v0", fabric_api_version))
 
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:6.0.247-alpha") {
 		exclude group: "net.fabricmc.fabric-api"
@@ -145,7 +129,7 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 		apiKey project.siphalorCurseForgeApi
 		project {
 			id = "314633"
-			releaseType = "release"
+			releaseType = project.mod_release
 			changelogType = "markdown"
 			changelog = project.getChangelog()
 			addGameVersion("Fabric")
