@@ -37,26 +37,11 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	def fabric_deps = [
-	        'fabric-api-base': '0.1.3+12a8474ca7',
-			'fabric-networking-api-v1': '1.0.1+ca58154a7d',
-			'include': false,
-			'fabric-registry-sync-v0': '0.7.4+ca58154a7d',
-			'fabric-resource-loader-v0': '0.2.8+35e08e33a7',
-			'fabric-tag-extensions-v0': '1.0.1+35e08e33a7'
-	]
-
-	def inc = true
-	for (entry in fabric_deps.entrySet()) {
-		if (entry.getKey() == "include") {
-			inc = entry.getValue()
-			continue
-		}
-        modImplementation 'net.fabricmc.fabric-api:' + entry.getKey() + ':' + entry.getValue()
-		if (inc) {
-			include 'net.fabricmc.fabric-api:' + entry.getKey() + ':' + entry.getValue()
-		}
-	}
+	include(modApi(fabricApi.module("fabric-api-base", fabric_api_version)))
+	include(modApi(fabricApi.module("fabric-networking-api-v1", fabric_api_version)))
+	modImplementation(fabricApi.module("fabric-registry-sync-v0", fabric_api_version))
+	modImplementation(fabricApi.module("fabric-resource-loader-v0", fabric_api_version))
+	modImplementation(fabricApi.module("fabric-tag-extensions-v0", fabric_api_version))
 
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems:5.4+") {
 		exclude group: "net.fabricmc.fabric-api"
