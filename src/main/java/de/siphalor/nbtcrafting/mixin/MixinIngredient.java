@@ -124,7 +124,9 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 				}
 				callbackInfo.cancel();
 			} else {
-				buf.writeVarInt(0);
+				// -1 is used to keep network compatibility with lower versions of Nbt Crafting,
+				// that used 0 to just indicate no advanced ingredients
+				buf.writeVarInt(-1);
 			}
 		}
 	}
@@ -181,7 +183,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	private static void fromPacket(PacketByteBuf buf, CallbackInfoReturnable<Ingredient> cir) {
 		if (NbtCrafting.isAdvancedIngredientSerializationEnabled()) {
 			int length = buf.readVarInt();
-			if (length != 0) {
+			if (length >= 0) {
 				ArrayList<IngredientEntry> entries = new ArrayList<>(length);
 				for (int i = 0; i < length; i++) {
 					if (buf.readBoolean()) {
