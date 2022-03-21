@@ -1,8 +1,8 @@
 plugins {
-	id 'fabric-loom' version '0.10-SNAPSHOT'
+	id 'fabric-loom' version '0.11-SNAPSHOT'
 	id 'maven-publish'
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
-	id 'com.modrinth.minotaur' version '1.2.1'
+	id 'com.modrinth.minotaur' version '2.1.1'
 	id 'org.cadixdev.licenser' version '0.6.1'
 	id "com.github.breadmoirai.github-release" version "2.2.12"
 }
@@ -14,7 +14,7 @@ archivesBaseName = project.archives_base_name
 version = "${project.mod_version}+mc${project.minecraft_version}"
 group = project.maven_group
 
-minecraft {
+loom {
 }
 
 repositories {
@@ -37,26 +37,11 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_mappings}"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	def fabric_deps = [
-	        'fabric-api-base': '0.4.0+65d505fc9c',
-			'fabric-networking-api-v1': '1.0.16+65d505fc9c',
-			'include': false,
-			'fabric-registry-sync-v0': '0.8.3+2e160e0f9c',
-			'fabric-resource-loader-v0': '0.4.9+65d505fc9c',
-			'fabric-tag-extensions-v0': '1.2.3+65d505fc9c'
-	]
-
-	def inc = true
-	for (entry in fabric_deps.entrySet()) {
-		if (entry.getKey() == "include") {
-			inc = entry.getValue()
-			continue
-		}
-        modImplementation 'net.fabricmc.fabric-api:' + entry.getKey() + ':' + entry.getValue()
-		if (inc) {
-			include 'net.fabricmc.fabric-api:' + entry.getKey() + ':' + entry.getValue()
-		}
-	}
+	include(modApi(fabricApi.module("fabric-api-base", fabric_api_version)))
+	include(modApi(fabricApi.module("fabric-networking-api-v1", fabric_api_version)))
+	modImplementation(fabricApi.module("fabric-registry-sync-v0", fabric_api_version))
+	modImplementation(fabricApi.module("fabric-resource-loader-v0", fabric_api_version))
+	modImplementation(fabricApi.module("fabric-tag-extensions-v0", fabric_api_version))
 
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:6.0.247-alpha") {
 		exclude group: "net.fabricmc.fabric-api"
@@ -112,7 +97,9 @@ publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			artifactId = "${project.archives_base_name}-${project.minecraft_major_version}"
+
 			from components.java
+			java.withSourcesJar()
 		}
 	}
 	repositories {
@@ -140,12 +127,12 @@ task uploadToModSites {
 	group = "upload"
 }
 
-if (project.hasProperty("siphalorCurseForgeApi")) {
+if (project.hasProperty("curseforgeToken")) {
 	curseforge {
-		apiKey project.siphalorCurseForgeApi
+		apiKey project.curseforgeToken
 		project {
 			id = "314633"
-			releaseType = "release"
+			releaseType = project.mod_release
 			changelogType = "markdown"
 			changelog = project.getChangelog()
 			addGameVersion("Fabric")
@@ -164,36 +151,31 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 	uploadToModSites.finalizedBy(tasks.curseforge)
 }
 
-import com.modrinth.minotaur.TaskModrinthUpload
-if (project.hasProperty("siphalorModrinthApi")) {
-	task modrinth (type: TaskModrinthUpload) {
-		group = "upload"
-		dependsOn(build)
-
-		token = project.siphalorModrinthApi
-		projectId = "18ztUZP5"
-		versionNumber = version
-		versionName = "[${project.mod_mc_version_specifier}] ${project.mod_version}"
-		changelog = getChangelog()
-		uploadFile = remapJar
-		versionType = project.mod_release
-		for (version in ((String) project.mod_mc_versions).split(";")) {
-			addGameVersion(version)
-		}
-		addLoader("fabric")
+modrinth {
+	if (project.hasProperty("modrinthToken")) {
+		token = project.modrinthToken
+		uploadToModSites.finalizedBy(tasks.modrinth)
 	}
-	uploadToModSites.finalizedBy(tasks.modrinth)
-}
 
-if (project.hasProperty("siphalorGitHubToken")) {
+	projectId = "18ztUZP5"
+	versionName = "[$project.mod_mc_version_specifier] $project.mod_version"
+	versionType = project.mod_release
+	changelog = project.getChangelog()
+	uploadFile = remapJar
+	gameVersions = project.mod_mc_versions.split(";") as List<String>
+	loaders = ["fabric"]
+}
+tasks.modrinth.group = "upload"
+
+if (project.hasProperty("githubToken")) {
 	githubRelease {
-		token siphalorGitHubToken
-		targetCommitish.set("$minecraft_major_version-2.0")
-		releaseName.set("Version $mod_version")
-		body.set(getChangelog())
+		token githubToken
+		targetCommitish = "$minecraft_major_version-2.0"
+		releaseName = "Version $mod_version"
+		body = getChangelog()
 		releaseAssets remapJar.getArchiveFile()
-		prerelease.set(mod_release != "release")
-		overwrite.set(true)
+		prerelease = mod_release != "release"
+		overwrite = true
 	}
 	uploadToModSites.finalizedBy(tasks.githubRelease)
 }
