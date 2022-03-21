@@ -88,7 +88,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
 	from "LICENSE"
-	archiveClassifier.set("")
 }
 
 // configure the maven publication
