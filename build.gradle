@@ -42,12 +42,12 @@ dependencies {
 	modImplementation(fabricApi.module("fabric-registry-sync-v0", fabric_api_version))
 	modImplementation(fabricApi.module("fabric-resource-loader-v0", fabric_api_version))
 
-	modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:6.0.247-alpha") {
+	modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:9.0.491") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
-	modImplementation("de.siphalor:modsoftheworld-$minecraft_major_version:1.0.9+mc1.18-pre1") {
-		transitive false
-	}
+	//modImplementation("de.siphalor:modsoftheworld-$minecraft_major_version:1.0.9+mc1.18-pre1") {
+	//	transitive false
+	//}
 
 	modRuntimeOnly("com.github.astei:lazydfu:master-SNAPSHOT")
 

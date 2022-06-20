@@ -26,7 +26,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.screen.*;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -77,7 +77,7 @@ public abstract class MixinAnvilContainer extends ForgingScreenHandler {
 						!StringUtils.isBlank(newItemName) &&
 								!newItemName.equals(resultStack.getName().getString())
 				) {
-					resultStack.setCustomName(new LiteralText(newItemName));
+					resultStack.setCustomName(Text.literal(newItemName));
 				}
 				userChangedName = false;
 			} else {
