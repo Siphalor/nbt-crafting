@@ -4,6 +4,7 @@ on:
     push:
         paths:
             - src/testmod/resources/**
+            - .github/workflows/update-readme.yaml
     workflow_dispatch:
 
 jobs:
