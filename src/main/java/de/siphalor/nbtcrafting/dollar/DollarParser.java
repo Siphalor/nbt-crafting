@@ -36,7 +36,6 @@ import de.siphalor.nbtcrafting.dollar.token.DollarToken;
 import de.siphalor.nbtcrafting.dollar.type.CountDollar;
 import de.siphalor.nbtcrafting.dollar.type.MergeDollar;
 import de.siphalor.nbtcrafting.dollar.type.SimpleDollar;
-import de.siphalor.nbtcrafting.util.NumberUtil;
 import de.siphalor.nbtcrafting.util.StringCodepointIterator;
 
 public final class DollarParser {
@@ -49,10 +48,10 @@ public final class DollarParser {
 	static {
 		OPERATORS.put(".", new ChildOperator(0, DollarToken.Type.INFIX_OPERATOR));
 		OPERATORS.put("#", new CastOperator());
-		OPERATORS.put("*", new BinaryNumericOperator(NumberUtil::product, 30));
-		OPERATORS.put("/", new BinaryNumericOperator(NumberUtil::quotient, 40));
-		OPERATORS.put("+", new BinaryNumericOperator(NumberUtil::sum, 50));
-		OPERATORS.put("-", new BinaryNumericOperator(NumberUtil::difference, 60));
+		OPERATORS.put("*", new MultiplyOperator());
+		OPERATORS.put("/", new DivideOperator());
+		OPERATORS.put("+", new AddOperator());
+		OPERATORS.put("-", new SubtractOperator());
 		OPERATORS.put("!", new NotOperator());
 
 		OPERATOR_CHARACTERS = OPERATORS.keySet().stream().flatMapToInt(String::chars).boxed()

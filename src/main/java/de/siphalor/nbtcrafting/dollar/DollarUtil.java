@@ -33,6 +33,13 @@ public class DollarUtil {
 		return false;
 	}
 
+	public static String asString(Object o) {
+		if (o == null) {
+			return "<null>";
+		}
+		return o.toString();
+	}
+
 	public static Object evaluate(Object[] expression, Function<String, Object> referenceResolver) throws DollarEvaluationException {
 		Stack<Object> stack = new Stack<>();
 		for (Object instruction : expression) {

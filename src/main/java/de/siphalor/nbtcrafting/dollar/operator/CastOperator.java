@@ -22,7 +22,7 @@ public class CastOperator implements BinaryOperator {
 			case "string":
 			case "S":
 			case "a":
-				return assertNotNull(left, 0).toString();
+				return DollarUtil.asString(assertNotNull(left, 0));
 			case "b":
 			case "byte":
 			case "c":
