@@ -2,11 +2,9 @@ package de.siphalor.nbtcrafting.dollar.jump;
 
 import java.util.Stack;
 
-public class UnconditionalJump implements Jump {
-	public int offset;
-
+public class UnconditionalJump extends Jump {
 	public UnconditionalJump(int offset) {
-		this.offset = offset;
+		super(offset);
 	}
 
 	@Override

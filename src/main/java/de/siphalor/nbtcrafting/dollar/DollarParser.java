@@ -32,6 +32,7 @@ import de.siphalor.nbtcrafting.api.nbt.MergeMode;
 import de.siphalor.nbtcrafting.api.nbt.NbtIterator;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.jump.ConditionalJump;
+import de.siphalor.nbtcrafting.dollar.jump.Jump;
 import de.siphalor.nbtcrafting.dollar.jump.UnconditionalJump;
 import de.siphalor.nbtcrafting.dollar.operator.*;
 import de.siphalor.nbtcrafting.dollar.token.DollarToken;
@@ -45,6 +46,8 @@ public final class DollarParser {
 	private static final int[] BRACKET_CHARACTERS = new int[] {'(', ')', '[', ']'};
 
 	private static final Operator BRACKET_CHILD_OPERATOR = new ChildOperator(5, DollarToken.Type.POSTFIX_OPERATOR);
+	private static final Operator SUBTRACT_OPERATOR = new SubtractOperator();
+	private static final Operator NEGATE_OPERATOR = new NegateOperator();
 	private static final Operator NOT_OPERATOR = new NotOperator();
 	private static final Map<String, Operator> OPERATORS = new TreeMap<>();
 
@@ -54,13 +57,19 @@ public final class DollarParser {
 		OPERATORS.put("*", new MultiplyOperator());
 		OPERATORS.put("/", new DivideOperator());
 		OPERATORS.put("+", new AddOperator());
-		OPERATORS.put("-", new SubtractOperator());
+		OPERATORS.put("-", SUBTRACT_OPERATOR);
+		OPERATORS.put(">", new ComparisonOperator(value -> value > 0));
+		OPERATORS.put("<", new ComparisonOperator(value -> value < 0));
+		OPERATORS.put(">=", new ComparisonOperator(value -> value >= 0));
+		OPERATORS.put("<=", new ComparisonOperator(value -> value <= 0));
 		OPERATORS.put("!", NOT_OPERATOR);
 
 		Set<Integer> operators = OPERATORS.keySet().stream().flatMapToInt(String::chars).boxed()
 				.collect(Collectors.toSet());
 		operators.add((int) '?');
 		operators.add((int) ':');
+		operators.add((int) '&');
+		operators.add((int) '|');
 		OPERATOR_CHARACTERS = operators
 				.stream().mapToInt(Integer::intValue)
 				.toArray();
@@ -307,6 +316,18 @@ public final class DollarParser {
 					}
 					operator = o;
 				}
+				if (operatorText != null && tokenCount == 2) {
+					switch (operatorText) {
+						case "&&":
+							tokens.add(new DollarToken(DollarToken.Type.AND_OPERATOR, operator, begin));
+							token = codepoints.next();
+							continue;
+						case "||":
+							tokens.add(new DollarToken(DollarToken.Type.OR_OPERATOR, operator, begin));
+							token = codepoints.next();
+							continue;
+					}
+				}
 				if (tokenCount == 3) {
 					token = codepoints.next();
 				}
@@ -349,6 +370,7 @@ public final class DollarParser {
 
 	private DollarToken parseGroup(Collection<Object> instructions) throws DollarDeserializationException {
 		Stack<Operator> operators = new Stack<>();
+		List<Jump> jumpsToEnd = new ArrayList<>();
 		DollarToken token = eat();
 		while (token != null) {
 			switch (token.type) {
@@ -395,6 +417,10 @@ public final class DollarParser {
 						while (!operators.isEmpty()) {
 							instructions.add(operators.pop());
 						}
+						int instructionCount = instructions.size();
+						for (Jump jump : jumpsToEnd) {
+							jump.offset += instructionCount;
+						}
 						return null;
 					}
 					if (token.type == DollarToken.Type.INFIX_OPERATOR) {
@@ -413,7 +439,28 @@ public final class DollarParser {
 						while (!operators.isEmpty()) {
 							instructions.add(operators.pop());
 						}
+						int instructionCount = instructions.size();
+						for (Jump jump : jumpsToEnd) {
+							jump.offset += instructionCount;
+						}
 						return token;
+					} else if (token.type == DollarToken.Type.AND_OPERATOR) {
+						while (!operators.isEmpty()) {
+							instructions.add(operators.pop());
+						}
+						instructions.add(NOT_OPERATOR);
+						Jump jump = new ConditionalJump(-instructions.size());
+						jumpsToEnd.add(jump);
+						instructions.add(jump);
+						token = eat();
+					} else if (token.type == DollarToken.Type.OR_OPERATOR) {
+						while (!operators.isEmpty()) {
+							instructions.add(operators.pop());
+						}
+						Jump jump = new ConditionalJump(-instructions.size());
+						jumpsToEnd.add(jump);
+						instructions.add(jump);
+						token = eat();
 					} else if (token.type == DollarToken.Type.CONDITION_THEN) {
 						while (!operators.isEmpty()) {
 							instructions.add(operators.pop());
@@ -427,9 +474,14 @@ public final class DollarParser {
 						}
 						UnconditionalJump jumpToEnd = new UnconditionalJump(-instructions.size());
 						instructions.add(jumpToEnd);
+						jumpsToEnd.add(jumpToEnd);
 						jumpToElse.offset += instructions.size();
 						endToken = parseGroup(instructions);
-						jumpToEnd.offset += instructions.size();
+
+						int instructionCount = instructions.size();
+						for (Jump jump : jumpsToEnd) {
+							jump.offset += instructionCount;
+						}
 						return endToken;
 					} else {
 						throw new DollarDeserializationException("Unexpected token " + token);
@@ -440,6 +492,12 @@ public final class DollarParser {
 					operators.push(operator);
 					token = eat();
 					break;
+				case INFIX_OPERATOR: // special case for minus
+					if (token.value == SUBTRACT_OPERATOR) {
+						operators.push(NEGATE_OPERATOR);
+						token = eat();
+						break;
+					} // otherwise fallthrough to error
 				default:
 					throw new DollarDeserializationException("Unexpected token " + token);
 			}
@@ -454,9 +512,10 @@ public final class DollarParser {
 			listTag.add(IntTag.of(5));
 			listTag.add(IntTag.of(3));
 			listTag.add(IntTag.of(1));
-			DollarParser parser = tokenize("(1 + 2 * 3 / (4 - 2.5)) + list[1+2-1/1]");
+			//DollarParser parser = tokenize("(1-2.0 ? -4.5#B : (5.0 / 2.0)#i) ? test + '' : 'cd'");
+			DollarParser parser = tokenize("1 || 1/0");
 			Object[] instructions = parser.parse();
-			System.out.println(DollarUtil.evaluate(instructions, ImmutableMap.of("list", listTag)::get));
+			System.out.println(DollarUtil.evaluate(instructions, ImmutableMap.of("test", "Hello World")::get));
 		} catch (DollarDeserializationException | DollarEvaluationException e) {
 			throw new RuntimeException(e);
 		}

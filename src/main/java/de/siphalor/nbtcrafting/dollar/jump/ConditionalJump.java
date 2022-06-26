@@ -4,11 +4,9 @@ import java.util.Stack;
 
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
 
-public class ConditionalJump implements Jump {
-	public int offset;
-
+public class ConditionalJump extends Jump {
 	public ConditionalJump(int offset) {
-		this.offset = offset;
+		super(offset);
 	}
 
 	@Override
