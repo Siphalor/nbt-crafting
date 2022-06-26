@@ -340,7 +340,10 @@ public final class DollarParser {
 
 	public Object[] parse() throws DollarDeserializationException {
 		Collection<Object> instructions = new ArrayList<>();
-		parseGroup(instructions);
+		DollarToken endToken = parseGroup(instructions);
+		if (endToken != null) {
+			throw new DollarDeserializationException("Unexpected token " + endToken);
+		}
 		return instructions.toArray();
 	}
 
@@ -356,7 +359,7 @@ public final class DollarParser {
 					if (token.type == DollarToken.Type.PARENTHESIS_OPEN) {
 						DollarToken closeToken = parseGroup(instructions);
 						if (closeToken == null || closeToken.type != DollarToken.Type.PARENTHESIS_CLOSE || (int) closeToken.value != ')') {
-							throw new DollarDeserializationException("Unmatched parenthesis");
+							throw new DollarDeserializationException("Unmatched parenthesis, got " + closeToken);
 						}
 					} else {
 						if (token.type == DollarToken.Type.LITERAL) {
@@ -420,7 +423,7 @@ public final class DollarParser {
 						instructions.add(jumpToElse);
 						DollarToken endToken = parseGroup(instructions);
 						if (endToken == null || endToken.type != DollarToken.Type.CONDITION_ELSE) {
-							throw new DollarDeserializationException("Unmatched parenthesis");
+							throw new DollarDeserializationException("Unexpected token " + endToken + ", expected :");
 						}
 						jumpToElse.offset += instructions.size();
 						UnconditionalJump jumpToEnd = new UnconditionalJump(-instructions.size());

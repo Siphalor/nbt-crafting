@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 public class DollarToken {
 	public final @Nullable Object value;
 	public final @NotNull Type type;
-	private final int begin;
+	public final int begin;
 
 	public DollarToken(@NotNull Type type, @Nullable Object value, int begin) {
 		this.type = type;
