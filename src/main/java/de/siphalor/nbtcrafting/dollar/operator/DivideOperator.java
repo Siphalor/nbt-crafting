@@ -12,6 +12,10 @@ import de.siphalor.nbtcrafting.util.NumberUtil;
 public class DivideOperator implements BinaryOperator {
 	@Override
 	public @Nullable Object apply(@Nullable Object left, @Nullable Object right, @NotNull Function<String, Object> referenceResolver) throws DollarEvaluationException {
+		left = assertNotNull(left, 0);
+		left = tryResolveReference(left, referenceResolver);
+		right = assertNotNull(right, 1);
+		right = tryResolveReference(right, referenceResolver);
 		return NumberUtil.quotient(
 				assertParameterType(left, 0, Number.class),
 				assertParameterType(right, 1, Number.class)

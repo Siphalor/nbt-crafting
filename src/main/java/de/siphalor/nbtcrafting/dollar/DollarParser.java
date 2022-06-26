@@ -425,9 +425,9 @@ public final class DollarParser {
 						if (endToken == null || endToken.type != DollarToken.Type.CONDITION_ELSE) {
 							throw new DollarDeserializationException("Unexpected token " + endToken + ", expected :");
 						}
-						jumpToElse.offset += instructions.size();
 						UnconditionalJump jumpToEnd = new UnconditionalJump(-instructions.size());
 						instructions.add(jumpToEnd);
+						jumpToElse.offset += instructions.size();
 						endToken = parseGroup(instructions);
 						jumpToEnd.offset += instructions.size();
 						return endToken;

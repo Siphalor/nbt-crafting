@@ -11,6 +11,6 @@ public class UnconditionalJump implements Jump {
 
 	@Override
 	public int apply(int position, Stack<Object> stack) {
-		return position + offset;
+		return position + offset - 1;
 	}
 }

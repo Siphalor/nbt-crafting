@@ -14,6 +14,9 @@ public class SubtractOperator implements BinaryOperator {
 	@Override
 	public @Nullable Object apply(@Nullable Object left, @Nullable Object right, @NotNull Function<String, Object> referenceResolver) throws DollarEvaluationException {
 		left = assertNotNull(left, 0);
+		left = tryResolveReference(left, referenceResolver);
+		right = assertNotNull(right, 1);
+		right = tryResolveReference(right, referenceResolver);
 		if (left instanceof Number) {
 			return NumberUtil.difference((Number) left, assertParameterType(right, 1, Number.class));
 		} else if (left instanceof String) {

@@ -14,7 +14,9 @@ public class MultiplyOperator implements BinaryOperator {
 	@Override
 	public @Nullable Object apply(@Nullable Object left, @Nullable Object right, @NotNull Function<String, Object> referenceResolver) throws DollarEvaluationException {
 		left = assertNotNull(left, 0);
-		right = assertNotNull(right, 0);
+		left = tryResolveReference(left, referenceResolver);
+		right = assertNotNull(right, 1);
+		right = tryResolveReference(right, referenceResolver);
 		if (left instanceof Number) {
 			if (right instanceof Number) {
 				return NumberUtil.product((Number) left, (Number) right);

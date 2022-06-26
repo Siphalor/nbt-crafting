@@ -14,7 +14,7 @@ public class ConditionalJump implements Jump {
 	@Override
 	public int apply(int position, Stack<Object> stack) {
 		if (DollarUtil.asBoolean(stack.pop())) {
-			return position + offset;
+			return position + offset - 1;
 		}
 		return position;
 	}
