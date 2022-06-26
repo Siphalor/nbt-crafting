@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
+import de.siphalor.nbtcrafting.dollar.token.DollarToken;
 
 public class CastOperator implements BinaryOperator {
 	@Override
@@ -60,5 +61,10 @@ public class CastOperator implements BinaryOperator {
 		} else {
 			throw new IllegalArgumentException("Parameter 0 to " + this.getClass().getSimpleName() + " is not a number or a string");
 		}
+	}
+
+	@Override
+	public DollarToken.Type getTokenType() {
+		return DollarToken.Type.INFIX_OPERATOR;
 	}
 }

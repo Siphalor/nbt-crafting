@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.token.DollarToken;
 
 public class BinaryNumericOperator implements BinaryOperator {
 	private final BiFunction<Number, Number, Number> function;
@@ -25,5 +26,10 @@ public class BinaryNumericOperator implements BinaryOperator {
 	@Override
 	public @Nullable Object apply(@Nullable Object left, @Nullable Object right, @NotNull Function<String, Object> referenceResolver) throws DollarEvaluationException {
 		return function.apply(assertParameterType(left, 0, Number.class), assertParameterType(right, 1, Number.class));
+	}
+
+	@Override
+	public DollarToken.Type getTokenType() {
+		return DollarToken.Type.INFIX_OPERATOR;
 	}
 }

@@ -9,12 +9,14 @@ import org.jetbrains.annotations.Nullable;
 
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.Literal;
+import de.siphalor.nbtcrafting.dollar.token.DollarToken;
 
 public interface Operator {
 	int getPrecedence();
 
 	void apply(Stack<Object> stack, Function<String, Object> referenceResolver) throws DollarEvaluationException;
 
+	DollarToken.Type getTokenType();
 	default @NotNull Object tryResolveReference(@NotNull Object parameter, Function<String, Object> referenceResolver) throws DollarEvaluationException {
 		if (parameter instanceof Literal) {
 			Object value = referenceResolver.apply(((Literal) parameter).value);

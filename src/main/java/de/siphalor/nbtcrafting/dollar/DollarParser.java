@@ -19,11 +19,10 @@ package de.siphalor.nbtcrafting.dollar;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
-import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.nbt.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
@@ -41,25 +40,25 @@ import de.siphalor.nbtcrafting.util.NumberUtil;
 import de.siphalor.nbtcrafting.util.StringCodepointIterator;
 
 public final class DollarParser {
-	private static final int[] OPERATORS = {
-			'#', '.', '[', ']', '*', '/', '+', '-', '?', ':', '(', ')', '!'
-	};
+	private static final int[] OPERATOR_CHARACTERS;
+	private static final int[] BRACKET_CHARACTERS = new int[] {'(', ')', '[', ']'};
 
-	private static final Int2ObjectMap<Operator> INFIX_OPERATORS = new Int2ObjectAVLTreeMap<>();
-	private static final Int2ObjectMap<UnaryOperator> PREFIX_OPERATORS = new Int2ObjectAVLTreeMap<>();
-	private static final Int2ObjectMap<Operator> POSTFIX_OPERATORS = new Int2ObjectAVLTreeMap<>();
+	private static final Operator BRACKET_CHILD_OPERATOR = new ChildOperator(5, DollarToken.Type.POSTFIX_OPERATOR);
+	private static final Map<String, Operator> OPERATORS = new TreeMap<>();
 
 	static {
-		INFIX_OPERATORS.put('.', new ChildOperator(0));
-		INFIX_OPERATORS.put('#', new CastOperator());
-		INFIX_OPERATORS.put('*', new BinaryNumericOperator(NumberUtil::product, 30));
-		INFIX_OPERATORS.put('/', new BinaryNumericOperator(NumberUtil::quotient, 40));
-		INFIX_OPERATORS.put('+', new BinaryNumericOperator(NumberUtil::sum, 50));
-		INFIX_OPERATORS.put('-', new BinaryNumericOperator(NumberUtil::difference, 60));
+		OPERATORS.put(".", new ChildOperator(0, DollarToken.Type.INFIX_OPERATOR));
+		OPERATORS.put("#", new CastOperator());
+		OPERATORS.put("*", new BinaryNumericOperator(NumberUtil::product, 30));
+		OPERATORS.put("/", new BinaryNumericOperator(NumberUtil::quotient, 40));
+		OPERATORS.put("+", new BinaryNumericOperator(NumberUtil::sum, 50));
+		OPERATORS.put("-", new BinaryNumericOperator(NumberUtil::difference, 60));
+		OPERATORS.put("!", new NotOperator());
 
-		PREFIX_OPERATORS.put('!', new NotOperator());
-
-		POSTFIX_OPERATORS.put('[', new ChildOperator(5));
+		OPERATOR_CHARACTERS = OPERATORS.keySet().stream().flatMapToInt(String::chars).boxed()
+				.collect(Collectors.toSet())
+				.stream().mapToInt(Integer::intValue)
+				.toArray();
 	}
 
 	private final DollarToken[] tokens;
@@ -70,7 +69,7 @@ public final class DollarParser {
 	}
 
 	private static String codepointToString(int codepoint) {
-		return new String(new int[] { codepoint }, 0, 1);
+		return new String(new int[]{codepoint}, 0, 1);
 	}
 
 	public static Dollar[] extractDollars(CompoundTag compoundTag, boolean remove) {
@@ -116,8 +115,7 @@ public final class DollarParser {
 		});
 
 		dollars.sort((a, b) -> {
-			if (a instanceof MergeDollar)
-				return b instanceof MergeDollar ? 0 : -1;
+			if (a instanceof MergeDollar) return b instanceof MergeDollar ? 0 : -1;
 			return 1;
 		});
 		return dollars.toArray(new Dollar[0]);
@@ -232,7 +230,7 @@ public final class DollarParser {
 							tokens.add(new DollarToken(DollarToken.Type.NUMBER, Double.parseDouble(numberText.toString()), codepoints.getIndex()));
 							break;
 						default:
-							if (ArrayUtils.contains(OPERATORS, token) || token == ' ' || token == -1) {
+							if (ArrayUtils.contains(OPERATOR_CHARACTERS, token) || token == ' ' || ArrayUtils.contains(BRACKET_CHARACTERS, token) || token == -1) {
 								if (floating) {
 									tokens.add(new DollarToken(DollarToken.Type.NUMBER, Double.parseDouble(numberText.toString()), codepoints.getIndex()));
 								} else {
@@ -279,14 +277,45 @@ public final class DollarParser {
 				tokens.add(new DollarToken(DollarToken.Type.STRING, stringBuilder.toString(), codepoints.getIndex()));
 			} else if (token == '(') {
 				tokens.add(new DollarToken(DollarToken.Type.PARENTHESIS_OPEN, null, codepoints.getIndex()));
-			} else if (token == ')' || token == ']') {
+			} else if (token == ')') {
 				tokens.add(new DollarToken(DollarToken.Type.PARENTHESIS_CLOSE, token, codepoints.getIndex()));
-			} else if (INFIX_OPERATORS.containsKey(token)) {
-				tokens.add(new DollarToken(DollarToken.Type.INFIX_OPERATOR, token, codepoints.getIndex()));
-			} else if (PREFIX_OPERATORS.containsKey(token)) {
-				tokens.add(new DollarToken(DollarToken.Type.PREFIX_OPERATOR, token, codepoints.getIndex()));
-			} else if (POSTFIX_OPERATORS.containsKey(token)) {
-				tokens.add(new DollarToken(DollarToken.Type.POSTFIX_OPERATOR, token, codepoints.getIndex()));
+			} else if (token == '[') {
+				tokens.add(new DollarToken(DollarToken.Type.BRACKET_OPEN, null, codepoints.getIndex()));
+			} else if (token == ']') {
+				tokens.add(new DollarToken(DollarToken.Type.BRACKET_CLOSE, null, codepoints.getIndex()));
+			} else if (ArrayUtils.contains(OPERATOR_CHARACTERS, token)) {
+				int[] operatorTokens = new int[]{token, 0, 0};
+				int begin = codepoints.getIndex();
+				int tokenCount = 1;
+				String operatorText = null;
+				Operator operator = null;
+				while (tokenCount < 3) {
+					token = codepoints.next();
+					if (!ArrayUtils.contains(OPERATOR_CHARACTERS, token)) {
+						break;
+					}
+					operatorTokens[tokenCount++] = token;
+					operatorText = new String(operatorTokens, 0, tokenCount);
+					Operator o = OPERATORS.get(operatorText);
+					if (o == null) {
+						break;
+					}
+					operator = o;
+				}
+				if (tokenCount == 3) {
+					token = codepoints.next();
+				}
+
+				if (operator == null) {
+					operatorText = new String(operatorTokens, 0, 1);
+					operator = OPERATORS.get(operatorText);
+				}
+				if (operator == null) {
+					throw new DollarDeserializationException("Unknown operator " + operatorText + " at position " + begin);
+				}
+
+				tokens.add(new DollarToken(operator.getTokenType(), operator, begin));
+				continue;
 			} else if (token != ' ') {
 				throw new DollarDeserializationException("Unexpected character " + codepointToString(token) + " at position " + codepoints.getIndex());
 			}
@@ -305,7 +334,6 @@ public final class DollarParser {
 		Stack<Operator> operators = new Stack<>();
 		DollarToken token = eat();
 		while (token != null) {
-			boolean isLiteral = token.type == DollarToken.Type.LITERAL;
 			switch (token.type) {
 				case LITERAL:
 				case NUMBER:
@@ -317,25 +345,32 @@ public final class DollarParser {
 							throw new DollarDeserializationException("Unmatched parenthesis");
 						}
 					} else {
-						instructions.add(token.value);
+						if (token.type == DollarToken.Type.LITERAL) {
+							instructions.add(new Literal((String) token.value));
+						} else {
+							instructions.add(token.value);
+						}
 					}
 
 					token = eat();
-					while (token != null && token.type == DollarToken.Type.POSTFIX_OPERATOR) {
-						Operator operator = POSTFIX_OPERATORS.get((int) token.value);
-						if ((Integer) token.value == '[') {
+					while (token != null) {
+						Operator operator;
+						if (token.type == DollarToken.Type.POSTFIX_OPERATOR) {
+							operator = (Operator) token.value;
+						} else if (token.type == DollarToken.Type.BRACKET_OPEN) {
 							DollarToken closeToken = parseGroup(instructions);
-							if (closeToken == null || closeToken.type != DollarToken.Type.PARENTHESIS_CLOSE || (int) closeToken.value != ']') {
+							if (closeToken == null || closeToken.type != DollarToken.Type.BRACKET_CLOSE) {
 								throw new DollarDeserializationException("Unmatched parenthesis");
 							}
-							int precedence = operator.getPrecedence();
-							while (!operators.isEmpty() && operators.peek().getPrecedence() < precedence) {
-								instructions.add(operators.pop());
-							}
-							instructions.add(operator);
+							operator = BRACKET_CHILD_OPERATOR;
 						} else {
-							throw new DollarDeserializationException("Unknown postfix operator " + token);
+							break;
 						}
+						int precedence = operator.getPrecedence();
+						while (!operators.isEmpty() && operators.peek().getPrecedence() < precedence) {
+							instructions.add(operators.pop());
+						}
+						instructions.add(operator);
 						token = eat();
 					}
 
@@ -346,20 +381,16 @@ public final class DollarParser {
 						return null;
 					}
 					if (token.type == DollarToken.Type.INFIX_OPERATOR) {
-						Operator operator = INFIX_OPERATORS.get((int) token.value);
-						if (operator != null) {
-							token = eat();
-							int precedence = operator.getPrecedence();
-							while (!operators.isEmpty() && operators.peek().getPrecedence() < precedence) {
-								instructions.add(operators.pop());
-							}
-							operators.push(operator);
-						} else {
-							throw new DollarDeserializationException("Unknown infix operator " + token);
+						Operator operator = (Operator) token.value;
+						token = eat();
+						int precedence = operator.getPrecedence();
+						while (!operators.isEmpty() && operators.peek().getPrecedence() < precedence) {
+							instructions.add(operators.pop());
 						}
+						operators.push(operator);
 					//} else if (isLiteral && token.type == DollarToken.Type.PARENTHESIS_OPEN) {
-						// TODO: Function calls
-					} else if (token.type == DollarToken.Type.PARENTHESIS_CLOSE) {
+					// TODO: Function calls
+					} else if (token.type == DollarToken.Type.PARENTHESIS_CLOSE || token.type == DollarToken.Type.BRACKET_CLOSE) {
 						while (!operators.isEmpty()) {
 							instructions.add(operators.pop());
 						}
@@ -369,12 +400,8 @@ public final class DollarParser {
 					}
 					break;
 				case PREFIX_OPERATOR:
-					Operator operator = PREFIX_OPERATORS.get((int) token.value);
-					if (operator != null) {
-						operators.push(operator);
-					} else {
-						throw new DollarDeserializationException("Unknown prefix operator " + token);
-					}
+					Operator operator = ((Operator) token.value);
+					operators.push(operator);
 					token = eat();
 					break;
 				default:
@@ -391,7 +418,7 @@ public final class DollarParser {
 			listTag.add(IntTag.of(5));
 			listTag.add(IntTag.of(3));
 			listTag.add(IntTag.of(1));
-			DollarParser parser = tokenize("!(1 + 2 * 3 / (4 - 2.5))");
+			DollarParser parser = tokenize("(1 + 2 * 3 / (4 - 2.5)) + list[1+2-1/1]");
 			Object[] instructions = parser.parse();
 			System.out.println(DollarUtil.evaluate(instructions, ImmutableMap.of("list", listTag)::get));
 		} catch (DollarDeserializationException | DollarEvaluationException e) {
