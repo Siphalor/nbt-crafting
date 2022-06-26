@@ -27,12 +27,11 @@ import de.siphalor.nbtcrafting.api.nbt.NbtException;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarException;
-import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 
 public class SimpleDollar extends Dollar {
 	protected final String path;
 
-	public SimpleDollar(DollarPart expression, String path) {
+	public SimpleDollar(Object[] expression, String path) {
 		super(expression);
 		this.path = path;
 	}

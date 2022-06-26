@@ -31,13 +31,12 @@ import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarException;
-import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 
 public class MergeDollar extends Dollar {
 	protected final String path;
 	protected final Collection<Pair<Pattern, MergeMode>> mergeModes;
 
-	public MergeDollar(DollarPart expression, String path, Collection<Pair<Pattern, MergeMode>> mergeModes) {
+	public MergeDollar(Object[] expression, String path, Collection<Pair<Pattern, MergeMode>> mergeModes) {
 		super(expression);
 		this.path = path;
 		this.mergeModes = mergeModes;

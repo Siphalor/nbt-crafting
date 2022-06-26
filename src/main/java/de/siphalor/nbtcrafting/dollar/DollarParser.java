@@ -20,77 +20,57 @@ package de.siphalor.nbtcrafting.dollar;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.nbt.AbstractListTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.nbt.*;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.Nullable;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.nbt.MergeMode;
 import de.siphalor.nbtcrafting.api.nbt.NbtIterator;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
-import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-import de.siphalor.nbtcrafting.dollar.part.operator.*;
-import de.siphalor.nbtcrafting.dollar.part.unary.*;
+import de.siphalor.nbtcrafting.dollar.operator.*;
+import de.siphalor.nbtcrafting.dollar.token.DollarToken;
 import de.siphalor.nbtcrafting.dollar.type.CountDollar;
 import de.siphalor.nbtcrafting.dollar.type.MergeDollar;
 import de.siphalor.nbtcrafting.dollar.type.SimpleDollar;
+import de.siphalor.nbtcrafting.util.NumberUtil;
+import de.siphalor.nbtcrafting.util.StringCodepointIterator;
 
 public final class DollarParser {
-	private static final Collection<DollarPart.UnaryDeserializer> UNARY_DESERIALIZERS = ImmutableList.of(
-			new CombinationDollarPartDeserializer(),
-			new InverseDollarOperator.Deserializer(),
-			new NumberDollarPartDeserializer(),
-			new ReferenceDollarPart.Deserializer(),
-			new StringDollarPartDeserializer()
-	);
-	private static final List<Collection<DollarPart.Deserializer>> DESERIALIZERS = ImmutableList.of(
-			ImmutableList.of(
-					new CastDollarOperator.Deserializer(),
-					new ChildDollarOperator.DotDeserializer(),
-					new ChildDollarOperator.BracketDeserializer()
-			),
-			ImmutableList.of(
-					new ProductDollarOperator.Deserializer(),
-					new QuotientDollarOperator.Deserializer()
-			),
-			ImmutableList.of(
-					new SumDollarOperator.Deserializer(),
-					new DifferenceDollarOperator.Deserializer()
-			),
-			ImmutableList.of(
-					new ConditionDollarOperator.Deserializer()
-			)
-	);
-	private final Stack<Integer> stopStack = new Stack<>();
-	private final String string;
-	private final int stringLength;
+	private static final int[] OPERATORS = {
+			'#', '.', '[', ']', '*', '/', '+', '-', '?', ':', '(', ')', '!'
+	};
+
+	private static final Int2ObjectMap<Operator> INFIX_OPERATORS = new Int2ObjectAVLTreeMap<>();
+	private static final Int2ObjectMap<UnaryOperator> PREFIX_OPERATORS = new Int2ObjectAVLTreeMap<>();
+	private static final Int2ObjectMap<Operator> POSTFIX_OPERATORS = new Int2ObjectAVLTreeMap<>();
+
+	static {
+		INFIX_OPERATORS.put('.', new ChildOperator(0));
+		INFIX_OPERATORS.put('#', new CastOperator());
+		INFIX_OPERATORS.put('*', new BinaryNumericOperator(NumberUtil::product, 30));
+		INFIX_OPERATORS.put('/', new BinaryNumericOperator(NumberUtil::quotient, 40));
+		INFIX_OPERATORS.put('+', new BinaryNumericOperator(NumberUtil::sum, 50));
+		INFIX_OPERATORS.put('-', new BinaryNumericOperator(NumberUtil::difference, 60));
+
+		PREFIX_OPERATORS.put('!', new NotOperator());
+
+		POSTFIX_OPERATORS.put('[', new ChildOperator(5));
+	}
+
+	private final DollarToken[] tokens;
 	private int currentIndex;
 
-	public DollarParser(String string) {
-		this.string = string;
-		this.stringLength = string.length();
-		this.currentIndex = -1;
+	private DollarParser(DollarToken[] tokens) {
+		this.tokens = tokens;
 	}
 
-	public int eat() {
-		if (currentIndex++ >= stringLength)
-			return -1;
-		return string.codePointAt(currentIndex);
-	}
-
-	public void skip() {
-		currentIndex++;
-	}
-
-	public int peek() {
-		if (currentIndex + 1 >= stringLength)
-			return -1;
-		return string.codePointAt(currentIndex + 1);
+	private static String codepointToString(int codepoint) {
+		return new String(new int[] { codepoint }, 0, 1);
 	}
 
 	public static Dollar[] extractDollars(CompoundTag compoundTag, boolean remove) {
@@ -100,19 +80,34 @@ public final class DollarParser {
 				if (NbtUtil.isList(tag)) {
 					AbstractListTag<Tag> list = NbtUtil.asListTag(tag);
 					for (Tag t : list) {
-						parseMerge(t, path).ifPresent(dollars::addFirst);
+						try {
+							dollars.addFirst(parseMerge(t, path));
+						} catch (DollarDeserializationException e) {
+							NbtCrafting.logError("Failed to parse dollar at " + path + ": ");
+							e.printStackTrace();
+						}
 					}
 				} else {
-					parseMerge(tag, path).ifPresent(dollars::addFirst);
+					try {
+						dollars.addFirst(parseMerge(tag, path));
+					} catch (DollarDeserializationException e) {
+						NbtCrafting.logError("Failed to parse dollar at " + path + ": ");
+						e.printStackTrace();
+					}
 				}
 				return remove;
 			}
 			if (NbtUtil.isString(tag) && !tag.asString().isEmpty()) {
 				if (tag.asString().charAt(0) == '$') {
-					if (key.equals(NbtCrafting.MOD_ID + ":count")) {
-						parse(tag.asString().substring(1)).ifPresent(exp -> dollars.addFirst(new CountDollar(exp)));
-					} else {
-						parse(tag.asString().substring(1)).ifPresent(exp -> dollars.addFirst(new SimpleDollar(exp, path + key)));
+					try {
+						if (key.equals(NbtCrafting.MOD_ID + ":count")) {
+							dollars.addFirst(new CountDollar(tokenize(tag.asString().substring(1)).parse()));
+						} else {
+							dollars.addFirst(new SimpleDollar(tokenize(tag.asString().substring(1)).parse(), path));
+						}
+					} catch (DollarDeserializationException e) {
+						NbtCrafting.logError("Error parsing dollar: " + tag.asString());
+						e.printStackTrace();
 					}
 					return remove;
 				}
@@ -128,13 +123,13 @@ public final class DollarParser {
 		return dollars.toArray(new Dollar[0]);
 	}
 
-	private static Optional<MergeDollar> parseMerge(Tag tag, String path) {
+	private static MergeDollar parseMerge(Tag tag, String path) throws DollarDeserializationException {
 		if (NbtUtil.isString(tag)) {
 			String val = tag.asString();
 			if (val.charAt(0) == '$') {
 				val = val.substring(1);
 			}
-			return parse(val).map(exp -> new MergeDollar(exp, path, Collections.emptyList()));
+			return new MergeDollar(tokenize(val).parse(), path, Collections.emptyList());
 		} else if (NbtUtil.isCompound(tag)) {
 			CompoundTag compound = NbtUtil.asCompoundTag(tag);
 			if (compound.contains("value", 8)) {
@@ -155,131 +150,252 @@ public final class DollarParser {
 						}
 					}
 				}
-				return parse(compound.getString("value")).map(exp -> new MergeDollar(exp, path, mergeModes));
+				return new MergeDollar(tokenize(compound.getString("value")).parse(), path, mergeModes);
 			} else {
 				NbtCrafting.logError("The value field is required on dollar merge objects. Errored on " + tag.asString());
 			}
 		} else {
 			NbtCrafting.logError("Found invalid dollar merge tag: " + tag.asString());
 		}
-		return Optional.empty();
-	}
-
-	public static Optional<DollarPart> parse(String string) {
-		return Optional.ofNullable(new DollarParser(string).parse());
-	}
-
-	public DollarPart parse() {
-		try {
-			return parse(DESERIALIZERS.size());
-		} catch (DollarException e) {
-			e.printStackTrace();
-		}
 		return null;
 	}
 
-	public void pushStopStack(int stop) {
-		stopStack.push(stop);
+	public @Nullable DollarToken eat() {
+		if (currentIndex >= tokens.length) {
+			return null;
+		}
+		return tokens[currentIndex++];
 	}
 
-	public void popStopStack() {
-		stopStack.pop();
+	public void skip() {
+		currentIndex++;
 	}
 
-	public DollarPart parse(int maxPriority) throws DollarDeserializationException {
-		int peek;
+	public @Nullable DollarToken peek() {
+		if (currentIndex >= tokens.length) {
+			return null;
+		}
+		return tokens[currentIndex];
+	}
 
-		DollarPart dollarPart = parseUnary();
-		int priority;
+	public static DollarParser tokenize(String text) throws DollarDeserializationException {
+		ArrayList<DollarToken> tokens = new ArrayList<>();
+		StringCodepointIterator codepoints = new StringCodepointIterator(text);
+		int token = codepoints.next();
+		while (token != -1) {
+			if (token >= '0' && token <= '9') {
+				StringBuilder numberText = new StringBuilder();
+				numberText.appendCodePoint(token);
+				token = codepoints.next();
+				boolean floating = false;
+				boolean exponentBegin = false;
+				while (true) {
+					if (token == '.') {
+						if (floating) {
+							throw new DollarDeserializationException("Invalid number (multiple points) " + numberText + " at position " + codepoints.getIndex());
+						}
+						floating = true;
+					} else if (token == 'e' || token == 'E') {
+						if (exponentBegin) {
+							throw new DollarDeserializationException("Invalid number (multiple exponents) " + numberText + " at position " + codepoints.getIndex());
+						}
+						exponentBegin = true;
+					} else if (exponentBegin && token == '-') {
+						exponentBegin = false;
+					} else if (token < '0' || token > '9') {
+						break;
+					}
+					numberText.appendCodePoint(token);
+					token = codepoints.next();
+				}
 
-		parse:
-		while (true) {
-			while (Character.isWhitespace(peek = peek())) {
-				skip();
-			}
-			if (peek == -1)
-				return dollarPart;
-			if (!stopStack.isEmpty() && stopStack.lastElement() == peek) {
-				return dollarPart;
-			}
-
-			priority = 0;
-			for (Collection<DollarPart.Deserializer> deserializers : DESERIALIZERS) {
-				if (++priority > maxPriority)
-					break;
-				for (DollarPart.Deserializer deserializer : deserializers) {
-					if (deserializer.matches(peek, this)) {
-						dollarPart = deserializer.parse(this, dollarPart, priority);
-						continue parse;
+				try {
+					switch (token) {
+						case 'b':
+						case 'B':
+							tokens.add(new DollarToken(DollarToken.Type.NUMBER, Byte.parseByte(numberText.toString()), codepoints.getIndex()));
+							break;
+						case 's':
+						case 'S':
+							tokens.add(new DollarToken(DollarToken.Type.NUMBER, Short.parseShort(numberText.toString()), codepoints.getIndex()));
+							break;
+						case 'l':
+						case 'L':
+							tokens.add(new DollarToken(DollarToken.Type.NUMBER, Long.parseLong(numberText.toString()), codepoints.getIndex()));
+							break;
+						case 'f':
+						case 'F':
+							tokens.add(new DollarToken(DollarToken.Type.NUMBER, Float.parseFloat(numberText.toString()), codepoints.getIndex()));
+							break;
+						case 'd':
+						case 'D':
+							tokens.add(new DollarToken(DollarToken.Type.NUMBER, Double.parseDouble(numberText.toString()), codepoints.getIndex()));
+							break;
+						default:
+							if (ArrayUtils.contains(OPERATORS, token) || token == ' ' || token == -1) {
+								if (floating) {
+									tokens.add(new DollarToken(DollarToken.Type.NUMBER, Double.parseDouble(numberText.toString()), codepoints.getIndex()));
+								} else {
+									tokens.add(new DollarToken(DollarToken.Type.NUMBER, Integer.parseInt(numberText.toString()), codepoints.getIndex()));
+								}
+							} else {
+								throw new DollarDeserializationException("Unexpected character " + codepointToString(token) + " at position " + codepoints.getIndex());
+							}
+					}
+				} catch (NumberFormatException e) {
+					throw new DollarDeserializationException("Unable to parse number " + numberText + " at position " + codepoints.getIndex());
+				}
+				continue;
+			} else if (Character.isAlphabetic(token)) {
+				StringBuilder stringBuilder = new StringBuilder();
+				while (token != -1 && (Character.isAlphabetic(token) || Character.isDigit(token) || token == '_')) {
+					stringBuilder.appendCodePoint(token);
+					token = codepoints.next();
+				}
+				tokens.add(new DollarToken(DollarToken.Type.LITERAL, stringBuilder.toString(), codepoints.getIndex()));
+				continue;
+			} else if (token == '"' || token == '\'') {
+				int quoteToken = token;
+				StringBuilder stringBuilder = new StringBuilder();
+				while (true) {
+					token = codepoints.next();
+					if (token == -1) {
+						throw new DollarDeserializationException("Unterminated string literal");
+					} else if (token == '\\') {
+						token = codepoints.next();
+						if (token == -1) {
+							throw new DollarDeserializationException("Unterminated string literal");
+						} else if (token == '\\') {
+							stringBuilder.append('\\');
+						} else {
+							throw new DollarDeserializationException("Invalid escape sequence in string literal at position " + codepoints.getIndex());
+						}
+					} else if (token == quoteToken) {
+						break;
+					} else {
+						stringBuilder.appendCodePoint(token);
 					}
 				}
+				tokens.add(new DollarToken(DollarToken.Type.STRING, stringBuilder.toString(), codepoints.getIndex()));
+			} else if (token == '(') {
+				tokens.add(new DollarToken(DollarToken.Type.PARENTHESIS_OPEN, null, codepoints.getIndex()));
+			} else if (token == ')' || token == ']') {
+				tokens.add(new DollarToken(DollarToken.Type.PARENTHESIS_CLOSE, token, codepoints.getIndex()));
+			} else if (INFIX_OPERATORS.containsKey(token)) {
+				tokens.add(new DollarToken(DollarToken.Type.INFIX_OPERATOR, token, codepoints.getIndex()));
+			} else if (PREFIX_OPERATORS.containsKey(token)) {
+				tokens.add(new DollarToken(DollarToken.Type.PREFIX_OPERATOR, token, codepoints.getIndex()));
+			} else if (POSTFIX_OPERATORS.containsKey(token)) {
+				tokens.add(new DollarToken(DollarToken.Type.POSTFIX_OPERATOR, token, codepoints.getIndex()));
+			} else if (token != ' ') {
+				throw new DollarDeserializationException("Unexpected character " + codepointToString(token) + " at position " + codepoints.getIndex());
 			}
-			if (maxPriority < DESERIALIZERS.size())
-				return dollarPart;
-			throw new DollarDeserializationException("Unable to resolve token in dollar expression: \"" + String.valueOf(Character.toChars(peek)) + "\"");
+			token = codepoints.next();
 		}
+		return new DollarParser(tokens.toArray(new DollarToken[0]));
 	}
 
-	public DollarPart parseUnary() throws DollarDeserializationException {
-		int peek;
-
-		while (Character.isWhitespace(peek = peek())) {
-			skip();
-		}
-		if (peek == -1)
-			return null;
-
-		for (DollarPart.UnaryDeserializer deserializer : UNARY_DESERIALIZERS) {
-			if (deserializer.matches(peek, this)) {
-				return deserializer.parse(this);
-			}
-		}
-		return null;
+	public Object[] parse() throws DollarDeserializationException {
+		Collection<Object> instructions = new ArrayList<>();
+		parseGroup(instructions);
+		return instructions.toArray();
 	}
 
-	public DollarPart parseTo(int stop) {
-		pushStopStack(stop);
-		DollarPart dollarPart = parse();
-		popStopStack();
-		skip();
-		return dollarPart;
-	}
+	private DollarToken parseGroup(Collection<Object> instructions) throws DollarDeserializationException {
+		Stack<Operator> operators = new Stack<>();
+		DollarToken token = eat();
+		while (token != null) {
+			boolean isLiteral = token.type == DollarToken.Type.LITERAL;
+			switch (token.type) {
+				case LITERAL:
+				case NUMBER:
+				case STRING:
+				case PARENTHESIS_OPEN:
+					if (token.type == DollarToken.Type.PARENTHESIS_OPEN) {
+						DollarToken closeToken = parseGroup(instructions);
+						if (closeToken == null || closeToken.type != DollarToken.Type.PARENTHESIS_CLOSE || (int) closeToken.value != ')') {
+							throw new DollarDeserializationException("Unmatched parenthesis");
+						}
+					} else {
+						instructions.add(token.value);
+					}
 
-	public String readTo(int... stops) {
-		int character;
-		boolean escaped = false;
-		StringBuilder stringBuilder = new StringBuilder();
-		while (!ArrayUtils.contains(stops, character = eat())) {
-			if (character == -1)
-				return null;
-			if (escaped) {
-				stringBuilder.append(Character.toChars(character));
-				escaped = false;
-			} else if (character == '\\') {
-				escaped = true;
-			} else {
-				stringBuilder.append(Character.toChars(character));
+					token = eat();
+					while (token != null && token.type == DollarToken.Type.POSTFIX_OPERATOR) {
+						Operator operator = POSTFIX_OPERATORS.get((int) token.value);
+						if ((Integer) token.value == '[') {
+							DollarToken closeToken = parseGroup(instructions);
+							if (closeToken == null || closeToken.type != DollarToken.Type.PARENTHESIS_CLOSE || (int) closeToken.value != ']') {
+								throw new DollarDeserializationException("Unmatched parenthesis");
+							}
+							int precedence = operator.getPrecedence();
+							while (!operators.isEmpty() && operators.peek().getPrecedence() < precedence) {
+								instructions.add(operators.pop());
+							}
+							instructions.add(operator);
+						} else {
+							throw new DollarDeserializationException("Unknown postfix operator " + token);
+						}
+						token = eat();
+					}
+
+					if (token == null) {
+						while (!operators.isEmpty()) {
+							instructions.add(operators.pop());
+						}
+						return null;
+					}
+					if (token.type == DollarToken.Type.INFIX_OPERATOR) {
+						Operator operator = INFIX_OPERATORS.get((int) token.value);
+						if (operator != null) {
+							token = eat();
+							int precedence = operator.getPrecedence();
+							while (!operators.isEmpty() && operators.peek().getPrecedence() < precedence) {
+								instructions.add(operators.pop());
+							}
+							operators.push(operator);
+						} else {
+							throw new DollarDeserializationException("Unknown infix operator " + token);
+						}
+					//} else if (isLiteral && token.type == DollarToken.Type.PARENTHESIS_OPEN) {
+						// TODO: Function calls
+					} else if (token.type == DollarToken.Type.PARENTHESIS_CLOSE) {
+						while (!operators.isEmpty()) {
+							instructions.add(operators.pop());
+						}
+						return token;
+					} else {
+						throw new DollarDeserializationException("Unexpected token " + token);
+					}
+					break;
+				case PREFIX_OPERATOR:
+					Operator operator = PREFIX_OPERATORS.get((int) token.value);
+					if (operator != null) {
+						operators.push(operator);
+					} else {
+						throw new DollarDeserializationException("Unknown prefix operator " + token);
+					}
+					token = eat();
+					break;
+				default:
+					throw new DollarDeserializationException("Unexpected token " + token);
 			}
 		}
-		return stringBuilder.toString();
+		throw new DollarDeserializationException("Unexpected end of string");
 	}
 
 	// Testing only
 	public static void main(String[] args) {
-		parse("a + b").flatMap(dollarPart -> {
-			try {
-				ListTag a = new ListTag();
-				a.add(new ListTag());
-				ListTag b = new ListTag();
-				b.add(new ListTag());
-				return Optional.of(dollarPart.evaluate(ImmutableMap.of(
-						"a", a,
-						"b", b
-				)));
-			} catch (DollarException e) {
-				e.printStackTrace();
-				return Optional.empty();
-			}
-		}).ifPresent(System.out::println);
+		try {
+			ListTag listTag = new ListTag();
+			listTag.add(IntTag.of(5));
+			listTag.add(IntTag.of(3));
+			listTag.add(IntTag.of(1));
+			DollarParser parser = tokenize("!(1 + 2 * 3 / (4 - 2.5))");
+			Object[] instructions = parser.parse();
+			System.out.println(DollarUtil.evaluate(instructions, ImmutableMap.of("list", listTag)::get));
+		} catch (DollarDeserializationException | DollarEvaluationException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

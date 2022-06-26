@@ -17,6 +17,11 @@
 
 package de.siphalor.nbtcrafting.dollar;
 
+import java.util.Stack;
+import java.util.function.Function;
+
+import de.siphalor.nbtcrafting.dollar.operator.Operator;
+
 public class DollarUtil {
 	public static boolean asBoolean(Object o) {
 		if (o instanceof Number) {
@@ -26,5 +31,17 @@ public class DollarUtil {
 			return !o.equals("");
 		}
 		return false;
+	}
+
+	public static Object evaluate(Object[] expression, Function<String, Object> referenceResolver) throws DollarEvaluationException {
+		Stack<Object> stack = new Stack<>();
+		for (Object instruction : expression) {
+			if (instruction instanceof Operator) {
+				((Operator) instruction).apply(stack, referenceResolver);
+			} else {
+				stack.push(instruction);
+			}
+		}
+		return stack.pop();
 	}
 }
