@@ -31,6 +31,8 @@ import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.nbt.MergeMode;
 import de.siphalor.nbtcrafting.api.nbt.NbtIterator;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.dollar.jump.ConditionalJump;
+import de.siphalor.nbtcrafting.dollar.jump.UnconditionalJump;
 import de.siphalor.nbtcrafting.dollar.operator.*;
 import de.siphalor.nbtcrafting.dollar.token.DollarToken;
 import de.siphalor.nbtcrafting.dollar.type.CountDollar;
@@ -43,6 +45,7 @@ public final class DollarParser {
 	private static final int[] BRACKET_CHARACTERS = new int[] {'(', ')', '[', ']'};
 
 	private static final Operator BRACKET_CHILD_OPERATOR = new ChildOperator(5, DollarToken.Type.POSTFIX_OPERATOR);
+	private static final Operator NOT_OPERATOR = new NotOperator();
 	private static final Map<String, Operator> OPERATORS = new TreeMap<>();
 
 	static {
@@ -52,10 +55,13 @@ public final class DollarParser {
 		OPERATORS.put("/", new DivideOperator());
 		OPERATORS.put("+", new AddOperator());
 		OPERATORS.put("-", new SubtractOperator());
-		OPERATORS.put("!", new NotOperator());
+		OPERATORS.put("!", NOT_OPERATOR);
 
-		OPERATOR_CHARACTERS = OPERATORS.keySet().stream().flatMapToInt(String::chars).boxed()
-				.collect(Collectors.toSet())
+		Set<Integer> operators = OPERATORS.keySet().stream().flatMapToInt(String::chars).boxed()
+				.collect(Collectors.toSet());
+		operators.add((int) '?');
+		operators.add((int) ':');
+		OPERATOR_CHARACTERS = operators
 				.stream().mapToInt(Integer::intValue)
 				.toArray();
 	}
@@ -306,8 +312,17 @@ public final class DollarParser {
 				}
 
 				if (operator == null) {
-					operatorText = new String(operatorTokens, 0, 1);
-					operator = OPERATORS.get(operatorText);
+					switch (operatorTokens[0]) {
+						case '?':
+							tokens.add(new DollarToken(DollarToken.Type.CONDITION_THEN, null, begin));
+							continue;
+						case ':':
+							tokens.add(new DollarToken(DollarToken.Type.CONDITION_ELSE, null, begin));
+							continue;
+						default:
+							operatorText = new String(operatorTokens, 0, 1);
+							operator = OPERATORS.get(operatorText);
+					}
 				}
 				if (operator == null) {
 					throw new DollarDeserializationException("Unknown operator " + operatorText + " at position " + begin);
@@ -389,11 +404,30 @@ public final class DollarParser {
 						operators.push(operator);
 					//} else if (isLiteral && token.type == DollarToken.Type.PARENTHESIS_OPEN) {
 					// TODO: Function calls
-					} else if (token.type == DollarToken.Type.PARENTHESIS_CLOSE || token.type == DollarToken.Type.BRACKET_CLOSE) {
+					} else if (token.type == DollarToken.Type.PARENTHESIS_CLOSE
+							|| token.type == DollarToken.Type.BRACKET_CLOSE
+							|| token.type == DollarToken.Type.CONDITION_ELSE) {
 						while (!operators.isEmpty()) {
 							instructions.add(operators.pop());
 						}
 						return token;
+					} else if (token.type == DollarToken.Type.CONDITION_THEN) {
+						while (!operators.isEmpty()) {
+							instructions.add(operators.pop());
+						}
+						instructions.add(NOT_OPERATOR);
+						ConditionalJump jumpToElse = new ConditionalJump(-instructions.size());
+						instructions.add(jumpToElse);
+						DollarToken endToken = parseGroup(instructions);
+						if (endToken == null || endToken.type != DollarToken.Type.CONDITION_ELSE) {
+							throw new DollarDeserializationException("Unmatched parenthesis");
+						}
+						jumpToElse.offset += instructions.size();
+						UnconditionalJump jumpToEnd = new UnconditionalJump(-instructions.size());
+						instructions.add(jumpToEnd);
+						endToken = parseGroup(instructions);
+						jumpToEnd.offset += instructions.size();
+						return endToken;
 					} else {
 						throw new DollarDeserializationException("Unexpected token " + token);
 					}

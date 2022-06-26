@@ -1,14 +1,14 @@
 package de.siphalor.nbtcrafting.dollar.operator;
 
-import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
-import de.siphalor.nbtcrafting.dollar.DollarUtil;
-import de.siphalor.nbtcrafting.dollar.token.DollarToken;
-import de.siphalor.nbtcrafting.util.NumberUtil;
+import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
+import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.DollarUtil;
+import de.siphalor.nbtcrafting.dollar.token.DollarToken;
+import de.siphalor.nbtcrafting.util.NumberUtil;
 
 public class AddOperator implements BinaryOperator {
 	@Override
@@ -29,7 +29,7 @@ public class AddOperator implements BinaryOperator {
 	}
 
 	@Override
-	public DollarToken.Type getTokenType() {
+	public DollarToken.@NotNull Type getTokenType() {
 		return DollarToken.Type.INFIX_OPERATOR;
 	}
 }

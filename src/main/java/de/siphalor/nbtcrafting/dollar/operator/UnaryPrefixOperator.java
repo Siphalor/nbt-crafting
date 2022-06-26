@@ -3,6 +3,8 @@ package de.siphalor.nbtcrafting.dollar.operator;
 import java.util.Stack;
 import java.util.function.Function;
 
+import org.jetbrains.annotations.NotNull;
+
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.token.DollarToken;
 
@@ -14,7 +16,7 @@ public interface UnaryPrefixOperator extends Operator {
 	}
 
 	@Override
-	default DollarToken.Type getTokenType() {
+	default DollarToken.@NotNull Type getTokenType() {
 		return DollarToken.Type.PREFIX_OPERATOR;
 	}
 }

@@ -1,11 +1,14 @@
 package de.siphalor.nbtcrafting.dollar.token;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 public class DollarToken {
-	public final Object value;
-	public final Type type;
+	public final @Nullable Object value;
+	public final @NotNull Type type;
 	private final int begin;
 
-	public DollarToken(Type type, Object value, int begin) {
+	public DollarToken(@NotNull Type type, @Nullable Object value, int begin) {
 		this.type = type;
 		this.value = value;
 		this.begin = begin;
@@ -21,5 +24,7 @@ public class DollarToken {
 		INFIX_OPERATOR, PREFIX_OPERATOR, POSTFIX_OPERATOR,
 		PARENTHESIS_OPEN, PARENTHESIS_CLOSE,
 		BRACKET_OPEN, BRACKET_CLOSE,
+		COMMAND_DELIMITER,
+		CONDITION_THEN, CONDITION_ELSE,
 	}
 }

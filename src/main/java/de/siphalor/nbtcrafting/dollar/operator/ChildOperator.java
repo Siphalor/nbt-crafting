@@ -26,7 +26,7 @@ public class ChildOperator implements BinaryOperator {
 	}
 
 	@Override
-	public DollarToken.Type getTokenType() {
+	public DollarToken.@NotNull Type getTokenType() {
 		return tokenType;
 	}
 

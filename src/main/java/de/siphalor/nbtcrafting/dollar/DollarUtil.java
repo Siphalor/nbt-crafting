@@ -20,10 +20,14 @@ package de.siphalor.nbtcrafting.dollar;
 import java.util.Stack;
 import java.util.function.Function;
 
+import de.siphalor.nbtcrafting.dollar.jump.Jump;
 import de.siphalor.nbtcrafting.dollar.operator.Operator;
 
 public class DollarUtil {
 	public static boolean asBoolean(Object o) {
+		if (o instanceof Boolean) {
+			return (boolean) o;
+		}
 		if (o instanceof Number) {
 			return ((Number) o).intValue() != 0;
 		}
@@ -42,9 +46,12 @@ public class DollarUtil {
 
 	public static Object evaluate(Object[] expression, Function<String, Object> referenceResolver) throws DollarEvaluationException {
 		Stack<Object> stack = new Stack<>();
-		for (Object instruction : expression) {
+		for (int index = 0; index < expression.length; index++) {
+			Object instruction = expression[index];
 			if (instruction instanceof Operator) {
 				((Operator) instruction).apply(stack, referenceResolver);
+			} else if (instruction instanceof Jump) {
+				index = ((Jump) instruction).apply(index, stack);
 			} else {
 				stack.push(instruction);
 			}

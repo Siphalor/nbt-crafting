@@ -54,7 +54,7 @@ public class MultiplyOperator implements BinaryOperator {
 	}
 
 	@Override
-	public DollarToken.Type getTokenType() {
-		return null;
+	public DollarToken.@NotNull Type getTokenType() {
+		return DollarToken.Type.INFIX_OPERATOR;
 	}
 }

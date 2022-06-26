@@ -64,7 +64,7 @@ public class CastOperator implements BinaryOperator {
 	}
 
 	@Override
-	public DollarToken.Type getTokenType() {
+	public DollarToken.@NotNull Type getTokenType() {
 		return DollarToken.Type.INFIX_OPERATOR;
 	}
 }

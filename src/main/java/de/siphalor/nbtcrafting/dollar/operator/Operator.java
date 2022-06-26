@@ -16,7 +16,7 @@ public interface Operator {
 
 	void apply(Stack<Object> stack, Function<String, Object> referenceResolver) throws DollarEvaluationException;
 
-	DollarToken.Type getTokenType();
+	@NotNull DollarToken.Type getTokenType();
 	default @NotNull Object tryResolveReference(@NotNull Object parameter, Function<String, Object> referenceResolver) throws DollarEvaluationException {
 		if (parameter instanceof Literal) {
 			Object value = referenceResolver.apply(((Literal) parameter).value);
