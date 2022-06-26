@@ -17,7 +17,7 @@ public class CastOperator implements BinaryOperator {
 	@Override
 	public Object apply(Object left, Object right, @NotNull Function<String, Object> referenceResolver) throws DollarEvaluationException {
 		left = tryResolveReference(left, referenceResolver);
-		String typeId = assertParameterType(right, 1, String.class);
+		String typeId = assertStringOrLiteral(right, 1);
 		switch (typeId) {
 			case "string":
 			case "S":
