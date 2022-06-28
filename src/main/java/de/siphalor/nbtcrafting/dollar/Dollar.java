@@ -23,16 +23,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.Tag;
 
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.dollar.instruction.Instruction;
 
 public abstract class Dollar {
-	protected Object[] expression;
+	protected Instruction[] expression;
 
-	protected Dollar(Object[] expression) {
+	protected Dollar(Instruction[] expression) {
 		this.expression = expression;
 	}
 
 	protected Tag evaluate(Map<String, Object> references) throws DollarEvaluationException {
-		return NbtUtil.asTag(DollarUtil.evaluate(expression, references::get));
+		DollarRuntime dollarRuntime = new DollarRuntime(references::get);
+		return NbtUtil.asTag(dollarRuntime.run(expression));
 	}
 
 	public abstract void apply(ItemStack stack, Map<String, Object> references) throws DollarException;

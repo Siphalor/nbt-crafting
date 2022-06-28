@@ -27,16 +27,18 @@ import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarException;
-import de.siphalor.nbtcrafting.dollar.DollarUtil;
+import de.siphalor.nbtcrafting.dollar.DollarRuntime;
+import de.siphalor.nbtcrafting.dollar.instruction.Instruction;
 
 public class CountDollar extends Dollar {
-	public CountDollar(Object[] expression) {
+	public CountDollar(Instruction[] expression) {
 		super(expression);
 	}
 
 	@Override
 	public void apply(ItemStack stack, Map<String, Object> references) throws DollarException {
-		Tag value = NbtUtil.asTag(DollarUtil.evaluate(expression, references::get));
+		DollarRuntime dollarRuntime = new DollarRuntime(references::get);
+		Tag value = NbtUtil.asTag(dollarRuntime.run(expression));
 		if (!(value instanceof AbstractNumberTag)) {
 			throw new DollarEvaluationException("Couldn't set dollar computed count of stack as it's not a number");
 		} else {

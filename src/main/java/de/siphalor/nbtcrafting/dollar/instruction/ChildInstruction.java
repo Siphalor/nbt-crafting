@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.dollar.operator;
+package de.siphalor.nbtcrafting.dollar.instruction;
 
 import java.util.function.Function;
 
@@ -9,25 +9,17 @@ import org.jetbrains.annotations.Nullable;
 
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
-import de.siphalor.nbtcrafting.dollar.token.DollarToken;
 
-public class ChildOperator implements BinaryOperator {
+public class ChildInstruction implements BinaryInstruction {
 	private final int precedence;
-	private final DollarToken.Type tokenType;
 
-	public ChildOperator(int precedence, DollarToken.Type tokenType) {
+	public ChildInstruction(int precedence) {
 		this.precedence = precedence;
-		this.tokenType = tokenType;
 	}
 
 	@Override
 	public int getPrecedence() {
 		return precedence;
-	}
-
-	@Override
-	public DollarToken.@NotNull Type getTokenType() {
-		return tokenType;
 	}
 
 	@Override

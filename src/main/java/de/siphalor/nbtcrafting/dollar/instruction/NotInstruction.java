@@ -1,20 +1,22 @@
-package de.siphalor.nbtcrafting.dollar.operator;
+package de.siphalor.nbtcrafting.dollar.instruction;
 
 import java.util.function.Function;
 
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
-import de.siphalor.nbtcrafting.util.NumberUtil;
+import de.siphalor.nbtcrafting.dollar.DollarUtil;
 
-public class NegateOperator implements UnaryPrefixOperator {
+public class NotInstruction implements UnaryPrefixInstruction {
 	@Override
 	public int getPrecedence() {
-		return 10;
+		return 20;
 	}
 
 	@Override
 	public Object apply(Object value, Function<String, Object> referenceResolver) throws DollarEvaluationException {
-		assertNotNull(value, 0);
+		if (value == null) {
+			return false;
+		}
 		value = tryResolveReference(value, referenceResolver);
-		return NumberUtil.product(assertParameterType(value, 0, Number.class), -1);
+		return !DollarUtil.asBoolean(value);
 	}
 }

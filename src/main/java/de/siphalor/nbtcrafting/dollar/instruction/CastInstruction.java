@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.dollar.operator;
+package de.siphalor.nbtcrafting.dollar.instruction;
 
 import java.util.function.Function;
 
@@ -6,12 +6,11 @@ import org.jetbrains.annotations.NotNull;
 
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
-import de.siphalor.nbtcrafting.dollar.token.DollarToken;
 
-public class CastOperator implements BinaryOperator {
+public class CastInstruction implements BinaryInstruction {
 	@Override
 	public int getPrecedence() {
-		return 20;
+		return 15;
 	}
 
 	@Override
@@ -63,8 +62,4 @@ public class CastOperator implements BinaryOperator {
 		}
 	}
 
-	@Override
-	public DollarToken.@NotNull Type getTokenType() {
-		return DollarToken.Type.INFIX_OPERATOR;
-	}
 }

@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.dollar.operator;
+package de.siphalor.nbtcrafting.dollar.instruction;
 
 import java.util.function.Function;
 
@@ -7,10 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
-import de.siphalor.nbtcrafting.dollar.token.DollarToken;
 import de.siphalor.nbtcrafting.util.NumberUtil;
 
-public class MultiplyOperator implements BinaryOperator {
+public class MultiplyInstruction implements BinaryInstruction {
 	@Override
 	public @Nullable Object apply(@Nullable Object left, @Nullable Object right, @NotNull Function<String, Object> referenceResolver) throws DollarEvaluationException {
 		left = assertNotNull(left, 0);
@@ -55,8 +54,4 @@ public class MultiplyOperator implements BinaryOperator {
 		return 30;
 	}
 
-	@Override
-	public DollarToken.@NotNull Type getTokenType() {
-		return DollarToken.Type.INFIX_OPERATOR;
-	}
 }

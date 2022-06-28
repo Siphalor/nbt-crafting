@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.dollar.operator;
+package de.siphalor.nbtcrafting.dollar.instruction;
 
 import java.util.Stack;
 import java.util.function.Function;
@@ -8,15 +8,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.DollarRuntime;
 import de.siphalor.nbtcrafting.dollar.Literal;
-import de.siphalor.nbtcrafting.dollar.token.DollarToken;
 
-public interface Operator {
+public interface Instruction {
 	int getPrecedence();
 
-	void apply(Stack<Object> stack, Function<String, Object> referenceResolver) throws DollarEvaluationException;
+	void apply(Stack<Object> stack, DollarRuntime.Context context) throws DollarEvaluationException;
 
-	@NotNull DollarToken.Type getTokenType();
 	default @NotNull Object tryResolveReference(@NotNull Object parameter, Function<String, Object> referenceResolver) throws DollarEvaluationException {
 		if (parameter instanceof Literal) {
 			Object value = referenceResolver.apply(((Literal) parameter).value);

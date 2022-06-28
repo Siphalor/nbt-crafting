@@ -1,19 +1,18 @@
-package de.siphalor.nbtcrafting.dollar.operator;
-
-import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
-import de.siphalor.nbtcrafting.dollar.DollarUtil;
-import de.siphalor.nbtcrafting.dollar.token.DollarToken;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+package de.siphalor.nbtcrafting.dollar.instruction;
 
 import java.util.function.Function;
 import java.util.function.IntPredicate;
 
-public class ComparisonOperator implements BinaryOperator {
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.DollarUtil;
+
+public class ComparisonInstruction implements BinaryInstruction {
 	private final IntPredicate predicate;
 
-	public ComparisonOperator(IntPredicate predicate) {
+	public ComparisonInstruction(IntPredicate predicate) {
 		this.predicate = predicate;
 	}
 
@@ -51,8 +50,4 @@ public class ComparisonOperator implements BinaryOperator {
 		return 100;
 	}
 
-	@Override
-	public @NotNull DollarToken.Type getTokenType() {
-		return DollarToken.Type.INFIX_OPERATOR;
-	}
 }
