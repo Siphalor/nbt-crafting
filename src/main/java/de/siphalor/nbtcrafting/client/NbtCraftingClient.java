@@ -27,8 +27,10 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AnvilScreen;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeSerializer;
@@ -63,25 +65,41 @@ public class NbtCraftingClient implements ClientModInitializer {
 				packetByteBuf.readString();
 		});
 
-		ClientPlayNetworking.registerGlobalReceiver(NbtCrafting.UPDATE_ADVANCED_RECIPES_PACKET_ID, (client, handler, buf, responseSender) -> {
-			RecipeManager recipeManager = handler.getRecipeManager();
-			Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipeMap = ((RecipeManagerAccessor) recipeManager).getRecipes();
-			recipeMap = new HashMap<>(recipeMap);
+		ClientPlayNetworking.registerGlobalReceiver(NbtCrafting.UPDATE_ADVANCED_RECIPES_PACKET_ID, NbtCraftingClient::receiveAdvancedRecipePacket);
+	}
 
-			int recipeCount = buf.readVarInt();
-			NbtCrafting.advancedIngredientSerializationEnabled.set(true);
-			for (int i = 0; i < recipeCount; i++) {
-				RecipeSerializer<?> serializer = Registry.RECIPE_SERIALIZER.get(buf.readIdentifier());
-				Identifier id = buf.readIdentifier();
+	private static synchronized void receiveAdvancedRecipePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+		RecipeManager recipeManager = handler.getRecipeManager();
+		Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipeMap = ((RecipeManagerAccessor) recipeManager).getRecipes();
+		recipeMap = new HashMap<>(recipeMap);
 
-				Recipe<?> recipe = serializer.read(id, buf);
-				Map<Identifier, Recipe<?>> recipeType = recipeMap.computeIfAbsent(recipe.getType(), rt -> new HashMap<>());
-				recipeType.put(id, recipe);
+		NbtCrafting.advancedIngredientSerializationEnabled.set(true);
+		int recipeCount = buf.readVarInt();
+		if (recipeCount == 0) {
+			while (buf.isReadable()) {
+				readRecipe(buf, recipeMap);
 			}
-			NbtCrafting.advancedIngredientSerializationEnabled.set(false);
+		} else { // Legacy support
+			for (int i = 0; i < recipeCount; i++) {
+				readRecipe(buf, recipeMap);
+			}
+		}
+		NbtCrafting.advancedIngredientSerializationEnabled.set(false);
 
-			((RecipeManagerAccessor) recipeManager).setRecipes(ImmutableMap.copyOf(recipeMap));
-		});
+		((RecipeManagerAccessor) recipeManager).setRecipes(ImmutableMap.copyOf(recipeMap));
+	}
+
+	private static void readRecipe(PacketByteBuf buf, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes) {
+		RecipeSerializer<?> serializer = Registry.RECIPE_SERIALIZER.get(buf.readIdentifier());
+		if (serializer == null) {
+			throw new IllegalStateException("Unknown recipe serializer on advanced recipe sync: " + buf.readIdentifier());
+		}
+
+		Identifier id = buf.readIdentifier();
+
+		Recipe<?> recipe = serializer.read(id, buf);
+		Map<Identifier, Recipe<?>> recipeType = recipes.computeIfAbsent(recipe.getType(), rt -> new HashMap<>());
+		recipeType.put(id, recipe);
 	}
 
 	public static RecipeManager getClientRecipeManager() {
