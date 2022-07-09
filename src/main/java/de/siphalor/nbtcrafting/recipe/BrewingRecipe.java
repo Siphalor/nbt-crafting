@@ -69,12 +69,12 @@ public class BrewingRecipe extends IngredientRecipe<Inventory> {
 	public DefaultedList<ItemStack> getRemainingStacks(Inventory inv) {
 		DefaultedList<ItemStack> stacks = DefaultedList.ofSize(4, ItemStack.EMPTY);
 		Map<String, Object> reference = new HashMap<>();
-		reference.put("ingredient", inv.getStack(3));
+		reference.put("ingredient", NbtUtil.getTagOrEmpty(inv.getStack(3)));
 		stacks.set(3, RecipeUtil.getRemainder(inv.getStack(3), ingredient, reference));
 
 		for (int i = 0; i < 3; i++) {
 			if (base.test(inv.getStack(i))) {
-				reference.put("base", inv.getStack(i));
+				reference.put("base", NbtUtil.getTagOrEmpty(inv.getStack(i)));
 				stacks.set(i, RecipeUtil.getRemainder(inv.getStack(i), base, reference));
 			}
 		}
