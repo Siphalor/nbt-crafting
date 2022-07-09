@@ -1,0 +1,34 @@
+---
+name: Update Readme
+on:
+    workflow_run:
+        types:
+            - completed
+        workflows:
+            - Update example datapack
+
+jobs:
+    update-example-datapack:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Fetch artifact links
+              uses: michpohl/expose-artifacts@5e82c4b92a1005dc88b8aa4922211426392a55c9
+              with:
+                  github-token: "${{ secrets.GITHUB_TOKEN }}"
+                  output-var-name: ARTIFACT_URL
+                  contains-string: example-datapack
+
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                  ref: ${{ github.event.workflow_run.head_branch }}
+
+            - name: Update README
+              run: |
+                  sed -i -e "s/\[Example Datapack\](.*)/[Example Datapack]($(echo ${{ env.ARTIFACT_URL_0 }} | sed -e s/\\//\\\\\\//g))/" README.md
+
+            - name: Auto-Commit
+              uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                  commit_message: Update link to example datapack
+                  file_pattern: README.md
