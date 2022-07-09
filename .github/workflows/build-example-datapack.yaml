@@ -1,0 +1,21 @@
+---
+name: Update example datapack
+on:
+    push:
+        paths:
+            - src/testmod/resources/**
+            - .github/workflows/update-readme.yaml
+    workflow_dispatch:
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+              
+            - name: Upload artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: example-datapack
+                  path: src/testmod/resources/**

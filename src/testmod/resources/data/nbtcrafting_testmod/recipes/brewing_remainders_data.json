@@ -1,0 +1,18 @@
+{
+	"type": "nbtcrafting:brewing",
+	"base": {
+		"potion": "minecraft:awkward"
+	},
+	"ingredient": {
+		"item": "minecraft:pufferfish_bucket",
+		"remainder": {
+			"item": "minecraft:pufferfish_bucket",
+			"data": {
+				"$": "ingredient"
+			}
+		}
+	},
+	"result": {
+		"potion": "minecraft:water_breathing"
+	}
+}
