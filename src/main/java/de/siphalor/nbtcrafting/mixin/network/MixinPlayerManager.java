@@ -17,8 +17,7 @@
 
 package de.siphalor.nbtcrafting.mixin.network;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import de.siphalor.nbtcrafting.NbtCrafting;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.ClientConnection;
@@ -33,7 +32,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Mixin(PlayerManager.class)
 public class MixinPlayerManager {
@@ -65,8 +65,10 @@ public class MixinPlayerManager {
 	public void afterRecipeSync(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
 		if (NbtCrafting.hasClientMod(player)) {
 			NbtCrafting.logInfo("Syncing advanced recipe data to player " + player.getEntityName());
-			PacketByteBuf buf = NbtCrafting.createAdvancedRecipeSyncPacket(server.getRecipeManager());
-			ServerPlayNetworking.send(player, NbtCrafting.UPDATE_ADVANCED_RECIPES_PACKET_ID, buf);
+			List<PacketByteBuf> packets = NbtCrafting.createAdvancedRecipeSyncPackets(server.getRecipeManager());
+			for (PacketByteBuf packet : packets) {
+				ServerPlayNetworking.send(player, NbtCrafting.UPDATE_ADVANCED_RECIPES_PACKET_ID, packet);
+			}
 		} else {
 			NbtCrafting.logInfo("Skipping advanced recipe data synchronization for vanillish player " + player.getEntityName());
 		}
@@ -80,10 +82,11 @@ public class MixinPlayerManager {
 		List<ServerPlayerEntity> nbtcPlayers = players.stream().filter(NbtCrafting::hasClientMod).collect(Collectors.toList());
 		if (!nbtcPlayers.isEmpty()) {
 			NbtCrafting.logInfo("Syncing advanced recipe data to " + nbtcPlayers.size() + " players");
-			PacketByteBuf buf = NbtCrafting.createAdvancedRecipeSyncPacket(server.getRecipeManager());
-			for (ServerPlayerEntity player : nbtcPlayers) {
-				NbtCrafting.logInfo("Syncing to player " + player.getEntityName());
-				ServerPlayNetworking.send(player, NbtCrafting.UPDATE_ADVANCED_RECIPES_PACKET_ID, buf);
+			List<PacketByteBuf> packets = NbtCrafting.createAdvancedRecipeSyncPackets(server.getRecipeManager());
+			for (PacketByteBuf packet : packets) {
+				for (ServerPlayerEntity player : nbtcPlayers) {
+					ServerPlayNetworking.send(player, NbtCrafting.UPDATE_ADVANCED_RECIPES_PACKET_ID, packet);
+				}
 			}
 		} else {
 			NbtCrafting.logInfo("No advanced recipe data needs to be synced!");
