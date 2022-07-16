@@ -20,6 +20,7 @@ package de.siphalor.nbtcrafting.mixin.cooking;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
+import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -39,7 +40,7 @@ public class MixinAbstractFurnaceBlockEntity {
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	protected void canAcceptRecipeOutputNBTCheck(@Nullable Recipe<?> recipe, CallbackInfoReturnable<Boolean> cir, ItemStack recipeResult, ItemStack outputStack) {
+	protected static void canAcceptRecipeOutputNBTCheck(@Nullable Recipe<?> recipe, DefaultedList<ItemStack> slots, int count, CallbackInfoReturnable<Boolean> cir, ItemStack recipeResult, ItemStack outputStack) {
 		if (!ItemStack.areTagsEqual(recipeResult, outputStack)) {
 			cir.setReturnValue(false);
 		}
