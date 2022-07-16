@@ -1,0 +1,16 @@
+{
+	"type": "minecraft:smelting",
+	"ingredient": {
+		"item": "minecraft:beef",
+		"data": {
+			"deny": {
+				"CustomModelData": 1
+			}
+		}
+	},
+	"result": {
+		"item": "minecraft:cooked_beef"
+	},
+	"experience": 0.35,
+	"cookingtime": 200
+}
