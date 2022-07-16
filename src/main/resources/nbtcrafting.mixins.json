@@ -19,6 +19,7 @@
 		"brewing.MixinBrewingSlotPotion",
 		"brewing.MixinBrewingStandBlockEntity",
 		"cauldron.MixinCauldronBlock",
+		"cooking.MixinAbstractFurnaceBlockEntity",
 		"cooking.MixinCookingRecipe",
 		"cooking.MixinCookingRecipeSerializer",
 		"crafting.MixinShapedRecipe",
