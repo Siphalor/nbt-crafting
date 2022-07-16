@@ -32,6 +32,8 @@ import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.nbt.MergeMode;
 import de.siphalor.nbtcrafting.api.nbt.NbtIterator;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.dollar.function.DollarFunction;
+import de.siphalor.nbtcrafting.dollar.function.DollarFunctions;
 import de.siphalor.nbtcrafting.dollar.instruction.*;
 import de.siphalor.nbtcrafting.dollar.type.CountDollar;
 import de.siphalor.nbtcrafting.dollar.type.MergeDollar;
@@ -296,9 +298,6 @@ public final class DollarParser {
 							new String(new int[]{token + 1}, 0, 1)
 					);
 					token = codepoints.next();
-					if (token == -1) {
-						break;
-					}
 					if (matchingOperators.isEmpty()) {
 						break;
 					}
@@ -308,6 +307,9 @@ public final class DollarParser {
 						if (matchingOperators.size() == 1) {
 							break;
 						}
+					}
+					if (token == -1) {
+						break;
 					}
 					tokenList.add(token);
 				}
@@ -338,7 +340,7 @@ public final class DollarParser {
 		List<JumpInstruction> jumpsToEnd = new ArrayList<>();
 		DollarToken token = eat();
 		while (token != null) {
-			if (token.type == DollarToken.Type.LITERAL || token.type == DollarToken.Type.NUMBER || token.type == DollarToken.Type.STRING || token.type == DollarToken.Type.PARENTHESIS_OPEN) {
+			if (token.type.isValue() || token.type == DollarToken.Type.PARENTHESIS_OPEN) {
 				if (token.type == DollarToken.Type.PARENTHESIS_OPEN) {
 					DollarToken closeToken = parseGroup(instructions);
 					if (closeToken == null || closeToken.type != DollarToken.Type.PARENTHESIS_CLOSE) {
@@ -346,7 +348,38 @@ public final class DollarParser {
 					}
 				} else {
 					if (token.type == DollarToken.Type.LITERAL) {
-						instructions.add(new PushInstruction(new Literal((String) token.value)));
+						String literalValue = ((String) token.value);
+						token = peek();
+						if (token != null && token.type == DollarToken.Type.PARENTHESIS_OPEN) {
+							skip();
+							int parameterCount = 0;
+							while (true) {
+								DollarToken stopToken = parseGroup(instructions);
+								parameterCount++;
+								if (stopToken == null) {
+									throw new DollarDeserializationException("Unexpected end of input, expected end of parameter list");
+								}
+								if (stopToken.type == DollarToken.Type.PARENTHESIS_CLOSE) {
+									break;
+								}
+								if (stopToken.type != DollarToken.Type.COMMA) {
+									throw new DollarDeserializationException("Unexpected token " + stopToken + ", expected end of parameter list");
+								}
+							}
+
+							DollarFunction function = DollarFunctions.get(literalValue);
+							if (function == null) {
+								throw new DollarDeserializationException("Could not resolve function \"" + literalValue + "\"");
+							}
+							if (!function.isParameterCountCorrect(parameterCount)) {
+								throw new DollarDeserializationException("Invalid parameter count " + parameterCount + " to function \"" + literalValue + "\"");
+							}
+							instructions.add(new StaticCallInstruction(parameterCount, function));
+						} else {
+							instructions.add(new PushInstruction(new Literal(literalValue)));
+						}
+					} else if (token.type == DollarToken.Type.NULL) {
+						instructions.add(new PushInstruction(null));
 					} else {
 						instructions.add(new PushInstruction(token.value));
 					}
@@ -468,8 +501,6 @@ public final class DollarParser {
 						instructions.add(operators.pop());
 					}
 					operators.push(operator);
-				//} else if (isLiteral && token.type == DollarToken.Type.PARENTHESIS_OPEN) {
-				// TODO: Function calls
 				} else if (token.type.isStop()) {
 					while (!operators.isEmpty()) {
 						instructions.add(operators.pop());
@@ -509,10 +540,11 @@ public final class DollarParser {
 			listTag.add(IntTag.of(3));
 			listTag.add(IntTag.of(1));
 			//DollarParser parser = tokenize("(1-2.0 ? -4.5#B : (5.0 / 2.0)#i) ? test + '' : 'cd'");
-			DollarParser parser = tokenize("1 || 1/0");
+			//DollarParser parser = tokenize("1 || 1/0");
+			DollarParser parser = tokenize("min(ifNull(null, 45),78) + min(9,n)");
 			Instruction[] instructions = parser.parse();
 
-			DollarRuntime dollarRuntime = new DollarRuntime(ImmutableMap.of("test", "Hello World", "list", listTag)::get);
+			DollarRuntime dollarRuntime = new DollarRuntime(ImmutableMap.of("test", "Hello World", "n", 2, "list", listTag)::get);
 			System.out.println(dollarRuntime.run(instructions));
 		} catch (DollarDeserializationException | DollarEvaluationException e) {
 			throw new RuntimeException(e);

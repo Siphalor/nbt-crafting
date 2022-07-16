@@ -29,7 +29,7 @@ public class DollarToken {
 	}
 
 	public enum Type {
-		LITERAL, STRING, NUMBER,
+		LITERAL, STRING, NUMBER, NULL("null", "NULL"),
 		DOT("."), OCTOTHORPE("#"),
 		ASTERISK("*"), SLASH("/"),
 		PLUS("+"), MINUS("-"),
@@ -40,7 +40,8 @@ public class DollarToken {
 		AND("&&"), OR("||"), // special, because they short-circuit
 		QUESTION("?"), COLON(":"),
 		PARENTHESIS_OPEN("("), PARENTHESIS_CLOSE(")"),
-		BRACKET_OPEN("["), BRACKET_CLOSE("]");
+		BRACKET_OPEN("["), BRACKET_CLOSE("]"),
+		COMMA(",");
 
 		Type() {}
 
@@ -48,6 +49,17 @@ public class DollarToken {
 			for (String sequence : sequences) {
 				SEQUENCES.put(sequence, this);
 			}
+		}
+
+		public boolean isValue() {
+			switch (this) {
+				case LITERAL:
+				case STRING:
+				case NUMBER:
+				case NULL:
+					return true;
+			}
+			return false;
 		}
 
 		public boolean isPrefixOperator() {
@@ -90,6 +102,7 @@ public class DollarToken {
 				case PARENTHESIS_CLOSE:
 				case BRACKET_CLOSE:
 				case COLON:
+				case COMMA:
 					return true;
 			}
 			return false;
