@@ -40,7 +40,7 @@ public class MixinAbstractFurnaceBlockEntity {
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
-	protected static void canAcceptRecipeOutputNBTCheck(@Nullable Recipe<?> recipe, DefaultedList<ItemStack> slots, int count, CallbackInfoReturnable<Boolean> cir, ItemStack recipeResult, ItemStack outputStack) {
+	private static void canAcceptRecipeOutputNBTCheck(@Nullable Recipe<?> recipe, DefaultedList<ItemStack> slots, int count, CallbackInfoReturnable<Boolean> cir, ItemStack recipeResult, ItemStack outputStack) {
 		if (!ItemStack.areNbtEqual(recipeResult, outputStack)) {
 			cir.setReturnValue(false);
 		}
