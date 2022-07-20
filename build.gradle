@@ -169,7 +169,7 @@ if (project.hasProperty("githubToken")) {
 	githubRelease {
 		token githubToken
 		targetCommitish = "$minecraft_major_version-2.0"
-		releaseName = "Version $mod_version"
+		releaseName = "Version $mod_version for $project.mod_mc_version_specifier"
 		body = getChangelog()
 		releaseAssets remapJar.getArchiveFile()
 		prerelease = mod_release != "release"
