@@ -276,7 +276,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 		}
 		Collection<Integer> itemIds = new IntArrayList();
 		for (RegistryEntry<Item> entry : Registry.ITEM.iterateEntries(tag)) {
-			itemIds.add(Registry.ITEM.getRawId(entry.value()));
+			itemIds.add(Registry.ITEM.getRawId(entry.comp_349()));
 		}
 		IngredientMultiStackEntry entry = new IngredientMultiStackEntry(itemIds, loadIngredientEntryCondition(jsonObject));
 		entry.setTag(identifier2.toString());

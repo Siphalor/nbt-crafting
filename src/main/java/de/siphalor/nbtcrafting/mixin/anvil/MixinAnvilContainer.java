@@ -17,16 +17,6 @@
 
 package de.siphalor.nbtcrafting.mixin.anvil;
 
-import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
-import net.minecraft.screen.*;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -40,6 +30,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
+import net.minecraft.screen.AnvilScreenHandler;
+import net.minecraft.screen.ForgingScreenHandler;
+import net.minecraft.screen.Property;
+import net.minecraft.screen.ScreenHandlerContext;
+import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 
 @Mixin(AnvilScreenHandler.class)
 public abstract class MixinAnvilContainer extends ForgingScreenHandler {
