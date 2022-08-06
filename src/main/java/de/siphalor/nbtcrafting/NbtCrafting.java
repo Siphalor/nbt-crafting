@@ -25,9 +25,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Pair;
-
-import de.siphalor.nbtcrafting.recipe.WrappedRecipeSerializer;
-
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.*;
 import net.fabricmc.api.ModInitializer;
@@ -42,6 +39,7 @@ import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import de.siphalor.nbtcrafting.advancement.StatChangedCriterion;
 import de.siphalor.nbtcrafting.api.RecipeTypeHelper;
@@ -49,6 +47,7 @@ import de.siphalor.nbtcrafting.ingredient.IIngredient;
 import de.siphalor.nbtcrafting.mixin.advancement.MixinCriterions;
 import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
 import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
+import de.siphalor.nbtcrafting.recipe.WrappedRecipeSerializer;
 import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipe;
 import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipeSerializer;
 import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
@@ -81,8 +80,8 @@ public class NbtCrafting implements ModInitializer {
 	private static CompoundTag lastReadNbt;
 
 	public static RecipeFinder lastRecipeFinder;
-	public static ThreadLocal<ServerPlayerEntity> lastServerPlayerEntity = new ThreadLocal<>();
-	public static ThreadLocal<Boolean> advancedIngredientSerializationEnabled = new ThreadLocal<>();
+	public static final ThreadLocal<ServerPlayerEntity> lastServerPlayerEntity = new ThreadLocal<>();
+	public static final ThreadLocal<Boolean> advancedIngredientSerializationEnabled = new ThreadLocal<>();
 	private static final IntSet hasModClientConnectionHashes = IntSets.synchronize(new IntAVLTreeSet());
 
 	private static int currentStackId = 1;
@@ -94,7 +93,7 @@ public class NbtCrafting implements ModInitializer {
 			}
 	).build(new CacheLoader<Pair<Integer, CompoundTag>, Integer>() {
 		@Override
-		public Integer load(Pair<Integer, CompoundTag> key) {
+		public Integer load(@NotNull Pair<Integer, CompoundTag> key) {
 			synchronized (id2StackMap) {
 				id2StackMap.put(currentStackId, key);
 			}

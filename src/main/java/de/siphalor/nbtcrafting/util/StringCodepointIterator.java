@@ -6,7 +6,10 @@ public class StringCodepointIterator {
 	private int index;
 
 	public StringCodepointIterator(String string) {
-		this.codepoints = string.codePoints().toArray();
+		this.codepoints = new int[string.length()];
+		for (int i = 0; i < codepoints.length; i++) {
+			codepoints[i] = string.codePointAt(i);
+		}
 		this.length = codepoints.length;
 	}
 

@@ -23,7 +23,7 @@ import me.shedaniel.rei.plugin.brewing.DefaultBrewingDisplay;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.util.version.VersionParsingException;
+import net.fabricmc.loader.api.VersionParsingException;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.util.Identifier;
