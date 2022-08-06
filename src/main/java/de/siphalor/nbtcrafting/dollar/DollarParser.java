@@ -22,8 +22,10 @@ import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.nbt.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
@@ -59,10 +61,13 @@ public final class DollarParser {
 	private static final Instruction LESS_THAN_EQUAL_INSTRUCTION = new ComparisonInstruction(value -> value <= 0); // 50
 
 	static {
-		OPERATOR_CHARACTERS = DollarToken.SEQUENCES.keySet().stream()
-				.flatMapToInt(String::chars)
-				.filter(ch -> !Character.isAlphabetic(ch))
-				.distinct().toArray();
+		IntSet characters = new IntAVLTreeSet();
+		for (String operator : DollarToken.SEQUENCES.keySet()) {
+			for (int i = 0; i < operator.length(); i++) {
+				characters.add(operator.codePointAt(i));
+			}
+		}
+		OPERATOR_CHARACTERS = characters.toIntArray();
 	}
 
 	private final DollarToken[] tokens;
@@ -106,7 +111,7 @@ public final class DollarParser {
 						if (key.equals(NbtCrafting.MOD_ID + ":count")) {
 							dollars.addFirst(new CountDollar(tokenize(tag.asString().substring(1)).parse()));
 						} else {
-							dollars.addFirst(new SimpleDollar(tokenize(tag.asString().substring(1)).parse(), path));
+							dollars.addFirst(new SimpleDollar(tokenize(tag.asString().substring(1)).parse(), path.isEmpty() ? key : path + "." + key));
 						}
 					} catch (DollarDeserializationException e) {
 						NbtCrafting.logError("Error parsing dollar: " + tag.asString());

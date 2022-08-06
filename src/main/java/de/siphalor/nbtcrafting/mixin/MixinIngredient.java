@@ -19,7 +19,6 @@ package de.siphalor.nbtcrafting.mixin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,6 +53,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.JsonPreprocessor;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.dollar.DollarRuntime;
 import de.siphalor.nbtcrafting.ingredient.*;
 import de.siphalor.nbtcrafting.util.duck.ICloneable;
 
@@ -237,7 +237,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			final Identifier identifier = new Identifier(JsonHelper.getString(jsonObject, "item"));
 			try {
 				final Item item = Registry.ITEM.getOrEmpty(identifier).orElseThrow(() -> {
-					throw new JsonSyntaxException("Unknown item '" + identifier.toString() + "'");
+					throw new JsonSyntaxException("Unknown item '" + identifier + "'");
 				});
 				IngredientStackEntry entry = new IngredientStackEntry(Registry.ITEM.getRawId(item), loadIngredientEntryCondition(jsonObject));
 				if (jsonObject.has("remainder")) {
@@ -253,7 +253,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			final Identifier identifier = new Identifier(JsonHelper.getString(jsonObject, "potion"));
 			try {
 				Registry.POTION.getOrEmpty(identifier).orElseThrow(() -> {
-					throw new JsonSyntaxException("Unknown potion '" + identifier.toString() + "'");
+					throw new JsonSyntaxException("Unknown potion '" + identifier + "'");
 				});
 				IngredientEntryCondition condition = loadIngredientEntryCondition(jsonObject);
 				if (condition.requiredElements == NbtUtil.EMPTY_COMPOUND)
@@ -321,11 +321,11 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	}
 
 	@Override
-	public ItemStack nbtCrafting$getRecipeRemainder(ItemStack stack, Map<String, Object> reference) {
+	public ItemStack nbtCrafting$getRecipeRemainder(ItemStack stack, DollarRuntime runtime) {
 		if (advancedEntries != null) {
 			for (IngredientEntry entry : advancedEntries) {
 				if (entry.matches(stack)) {
-					ItemStack remainder = entry.getRecipeRemainder(stack, reference);
+					ItemStack remainder = entry.getRecipeRemainder(stack, runtime);
 					if (remainder != null) {
 						return remainder;
 					}

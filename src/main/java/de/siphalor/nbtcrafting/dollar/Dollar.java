@@ -26,16 +26,29 @@ import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.instruction.Instruction;
 
 public abstract class Dollar {
-	protected Instruction[] expression;
+	protected final Instruction[] expression;
 
 	protected Dollar(Instruction[] expression) {
 		this.expression = expression;
 	}
 
+	@Deprecated
 	protected Tag evaluate(Map<String, Object> references) throws DollarEvaluationException {
-		DollarRuntime dollarRuntime = new DollarRuntime(references::get);
-		return NbtUtil.asTag(dollarRuntime.run(expression));
+		return evaluate(new DollarRuntime(references::get));
 	}
 
-	public abstract void apply(ItemStack stack, Map<String, Object> references) throws DollarException;
+	protected Tag evaluate(DollarRuntime runtime) throws DollarEvaluationException {
+		Object result = runtime.run(expression);
+		if (result instanceof Literal) {
+			result = runtime.resolve((Literal) result);
+		}
+		return NbtUtil.asTag(result);
+	}
+
+	@Deprecated
+	public void apply(ItemStack stack, Map<String, Object> references) throws DollarException {
+		apply(stack, new DollarRuntime(references::get));
+	}
+
+	public abstract void apply(ItemStack stack, DollarRuntime runtime) throws DollarException;
 }

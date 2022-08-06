@@ -3,6 +3,8 @@ package de.siphalor.nbtcrafting.dollar;
 import java.util.Stack;
 import java.util.function.Function;
 
+import org.jetbrains.annotations.NotNull;
+
 import de.siphalor.nbtcrafting.dollar.instruction.Instruction;
 
 public class DollarRuntime {
@@ -30,6 +32,10 @@ public class DollarRuntime {
 			throw new DollarEvaluationException("Stack is not empty after evaluation");
 		}
 		return result;
+	}
+
+	public Object resolve(@NotNull Literal literal) {
+		return referenceResolver.apply(literal.value);
 	}
 
 	public class Context {

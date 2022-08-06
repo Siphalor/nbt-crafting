@@ -44,6 +44,25 @@ public interface NBTCRecipe<I extends Inventory> extends Recipe<I> {
 	 *
 	 * @param inv the inventory for that this method is being called
 	 * @return A map consisting of keys and belonging {@link net.minecraft.nbt.CompoundTag}s, {@link Number}s or {@link String}s
+	 * @deprecated Use and override {@link #resolveDollarReference(Inventory, String)} instead.
 	 */
-	Map<String, Object> buildDollarReference(I inv);
+	@Deprecated
+	default Map<String, Object> buildDollarReference(I inv) {
+		return null;
+	}
+
+	/**
+	 * Resolves a dollar reference with the given inventory.
+	 *
+	 * @param inv the inventory
+	 * @param reference the reference
+	 * @return some dollar value or <code>null</code>, if not resolvable
+	 */
+	default Object resolveDollarReference(I inv, String reference) {
+		Map<String, Object> references = buildDollarReference(inv);
+		if (references == null) {
+			return null;
+		}
+		return references.get(reference);
+	}
 }

@@ -17,9 +17,6 @@
 
 package de.siphalor.nbtcrafting.recipe;
 
-import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -34,10 +31,10 @@ import net.minecraft.world.World;
 
 import de.siphalor.nbtcrafting.api.RecipeUtil;
 import de.siphalor.nbtcrafting.api.ServerRecipe;
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.dollar.DollarRuntime;
 
 public abstract class IngredientRecipe<I extends Inventory> implements NBTCRecipe<I>, ServerRecipe {
 	private final Identifier identifier;
@@ -69,7 +66,7 @@ public abstract class IngredientRecipe<I extends Inventory> implements NBTCRecip
 
 	@Override
 	public ItemStack craft(I inv) {
-		return RecipeUtil.applyDollars(result.copy(), resultDollars, buildDollarReference(inv));
+		return RecipeUtil.applyDollars(result.copy(), resultDollars, new DollarRuntime(key -> resolveDollarReference(inv, key)));
 	}
 
 	@Override
@@ -95,11 +92,16 @@ public abstract class IngredientRecipe<I extends Inventory> implements NBTCRecip
 		return DefaultedList.copyOf(Ingredient.EMPTY, base, ingredient);
 	}
 
-	public Map<String, Object> buildDollarReference(I inv) {
-		return ImmutableMap.of(
-				"base", NbtUtil.getTagOrEmpty(inv.getInvStack(0)),
-				"ingredient", NbtUtil.getTagOrEmpty(inv.getInvStack(1))
-		);
+	@Override
+	public Object resolveDollarReference(I inv, String reference) {
+		switch (reference) {
+			case "base":
+				return inv.getInvStack(0);
+			case "ingredient":
+				return inv.getInvStack(1);
+			default:
+				return null;
+		}
 	}
 
 	public void readCustomData(JsonObject json) {

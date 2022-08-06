@@ -17,8 +17,6 @@
 
 package de.siphalor.nbtcrafting.dollar.type;
 
-import java.util.Map;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.AbstractNumberTag;
 import net.minecraft.nbt.Tag;
@@ -36,9 +34,8 @@ public class CountDollar extends Dollar {
 	}
 
 	@Override
-	public void apply(ItemStack stack, Map<String, Object> references) throws DollarException {
-		DollarRuntime dollarRuntime = new DollarRuntime(references::get);
-		Tag value = NbtUtil.asTag(dollarRuntime.run(expression));
+	public void apply(ItemStack stack, DollarRuntime runtime) throws DollarException {
+		Tag value = NbtUtil.asTag(runtime.run(expression));
 		if (!(value instanceof AbstractNumberTag)) {
 			throw new DollarEvaluationException("Couldn't set dollar computed count of stack as it's not a number");
 		} else {

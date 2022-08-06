@@ -17,8 +17,7 @@
 
 package de.siphalor.nbtcrafting.recipe;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Function;
 
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -31,7 +30,7 @@ import net.minecraft.world.World;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.RecipeUtil;
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.dollar.DollarRuntime;
 
 public class BrewingRecipe extends IngredientRecipe<Inventory> {
 	public static final RecipeSerializer<BrewingRecipe> SERIALIZER = new IngredientRecipe.Serializer<>(BrewingRecipe::new);
@@ -51,16 +50,27 @@ public class BrewingRecipe extends IngredientRecipe<Inventory> {
 		return false;
 	}
 
+	private Function<String, Object> getBaseReferenceResolver(ItemStack ingredient, ItemStack base) {
+		return key -> {
+			switch (key) {
+				case "ingredient":
+					return ingredient;
+				case "base":
+					return base;
+				default:
+					return null;
+			}
+		};
+	}
+
 	public ItemStack[] craftAll(Inventory inv) {
 		ItemStack[] stacks = new ItemStack[3];
 
-		Map<String, Object> reference = new HashMap<>();
-		reference.put("ingredient", NbtUtil.getTagOrEmpty(inv.getInvStack(3)));
-
+		ItemStack ingredientStack = inv.getInvStack(3);
 		for (int i = 0; i < 3; i++) {
-			if (base.test(inv.getInvStack(i))) {
-				reference.put("base", NbtUtil.getTagOrEmpty(inv.getInvStack(i)));
-				stacks[i] = RecipeUtil.applyDollars(result.copy(), resultDollars, reference);
+			ItemStack baseStack = inv.getInvStack(i);
+			if (base.test(baseStack)) {
+				stacks[i] = RecipeUtil.applyDollars(result.copy(), resultDollars, new DollarRuntime(getBaseReferenceResolver(ingredientStack, baseStack)));
 			}
 		}
 		return stacks;
@@ -69,14 +79,18 @@ public class BrewingRecipe extends IngredientRecipe<Inventory> {
 	@Override
 	public DefaultedList<ItemStack> getRemainingStacks(Inventory inv) {
 		DefaultedList<ItemStack> stacks = DefaultedList.ofSize(4, ItemStack.EMPTY);
-		Map<String, Object> reference = new HashMap<>();
-		reference.put("ingredient", NbtUtil.getTagOrEmpty(inv.getInvStack(3)));
-		stacks.set(3, RecipeUtil.getRemainder(inv.getInvStack(3), ingredient, reference));
+		ItemStack ingredientStack = inv.getInvStack(3);
+		stacks.set(3, RecipeUtil.getRemainder(inv.getInvStack(3), ingredient, new DollarRuntime(key -> {
+			if ("ingredient".equals(key)) {
+				return ingredientStack;
+			}
+			return null;
+		})));
 
 		for (int i = 0; i < 3; i++) {
-			if (base.test(inv.getInvStack(i))) {
-				reference.put("base", NbtUtil.getTagOrEmpty(inv.getInvStack(i)));
-				stacks.set(i, RecipeUtil.getRemainder(inv.getInvStack(i), base, reference));
+			ItemStack baseStack = inv.getInvStack(i);
+			if (base.test(baseStack)) {
+				stacks.set(i, RecipeUtil.getRemainder(baseStack, base, new DollarRuntime(getBaseReferenceResolver(ingredientStack, baseStack))));
 			}
 		}
 		return stacks;

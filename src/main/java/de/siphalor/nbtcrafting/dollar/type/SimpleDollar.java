@@ -17,8 +17,6 @@
 
 package de.siphalor.nbtcrafting.dollar.type;
 
-import java.util.Map;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -27,6 +25,7 @@ import de.siphalor.nbtcrafting.api.nbt.NbtException;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarRuntime;
 import de.siphalor.nbtcrafting.dollar.instruction.Instruction;
 
 public class SimpleDollar extends Dollar {
@@ -38,11 +37,11 @@ public class SimpleDollar extends Dollar {
 	}
 
 	@Override
-	public void apply(ItemStack stack, Map<String, Object> references) throws DollarException {
+	public void apply(ItemStack stack, DollarRuntime runtime) throws DollarException {
 		CompoundTag compoundTag = stack.getOrCreateTag();
 		String[] pathParts = NbtUtil.splitPath(path);
 		try {
-			Tag value = evaluate(references);
+			Tag value = evaluate(runtime);
 			NbtUtil.put(compoundTag, pathParts, value);
 		} catch (NbtException e) {
 			e.printStackTrace();

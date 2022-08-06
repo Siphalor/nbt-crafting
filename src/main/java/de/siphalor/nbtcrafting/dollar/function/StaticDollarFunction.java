@@ -1,7 +1,10 @@
 package de.siphalor.nbtcrafting.dollar.function;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import org.apache.commons.lang3.ArrayUtils;
 
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarRuntime;
 import de.siphalor.nbtcrafting.dollar.Literal;
@@ -42,6 +45,14 @@ public abstract class StaticDollarFunction extends DollarFunction {
 			if (parameter.getClass() == Literal.class) {
 				if (!ArrayUtils.contains(classes, null)) {
 					parameter = tryResolveReference(parameter, context::resolveReference);
+				}
+			}
+			if (parameter.getClass() == ItemStack.class) {
+				if (
+						!ArrayUtils.contains(classes, ItemStack.class)
+						&& ArrayUtils.contains(classes, CompoundTag.class)
+				) {
+					parameter = NbtUtil.getTagOrEmpty((ItemStack) parameter);
 				}
 			}
 			boolean matching = false;

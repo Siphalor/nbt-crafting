@@ -2,6 +2,7 @@ package de.siphalor.nbtcrafting.dollar.instruction;
 
 import java.util.function.Function;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,9 @@ public class ChildInstruction implements BinaryInstruction {
 	public @Nullable Object apply(@Nullable Object left, @Nullable Object right, @NotNull Function<String, Object> referenceResolver) throws DollarEvaluationException {
 		assertNotNull(left, 0);
 		left = tryResolveReference(left, referenceResolver);
+		if (left instanceof ItemStack) {
+			left = NbtUtil.getTagOrEmpty(((ItemStack) left));
+		}
 		if (left instanceof CompoundTag) {
 			String key = assertStringOrLiteral(right, 1);
 			return NbtUtil.toDollarValue(((CompoundTag) left).get(key));

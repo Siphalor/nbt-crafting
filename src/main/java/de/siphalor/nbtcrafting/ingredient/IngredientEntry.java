@@ -27,6 +27,7 @@ import net.minecraft.util.PacketByteBuf;
 import de.siphalor.nbtcrafting.api.RecipeUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.dollar.DollarRuntime;
 
 public abstract class IngredientEntry {
 	protected ItemStack remainder;
@@ -49,10 +50,15 @@ public abstract class IngredientEntry {
 
 	public abstract void write(PacketByteBuf buf);
 
-	public ItemStack getRecipeRemainder(ItemStack stack, Map<String, Object> reference) {
+	@Deprecated
+	public ItemStack getRecipeRemainder(ItemStack stack, Map<String, Object> references) {
+		return getRecipeRemainder(stack, new DollarRuntime(references::get));
+	}
+
+	public ItemStack getRecipeRemainder(ItemStack stack, DollarRuntime runtime) {
 		if (remainder == null)
 			return ItemStack.EMPTY;
-		return RecipeUtil.applyDollars(remainder.copy(), remainderDollars, reference);
+		return RecipeUtil.applyDollars(remainder.copy(), remainderDollars, runtime);
 	}
 
 	public void setRecipeRemainder(ItemStack stack) {
