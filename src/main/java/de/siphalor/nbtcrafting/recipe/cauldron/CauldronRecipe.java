@@ -35,7 +35,7 @@ import de.siphalor.nbtcrafting.api.ServerRecipe;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
 import de.siphalor.nbtcrafting.dollar.Dollar;
-import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.dollar.DollarExtractor;
 
 public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, ServerRecipe {
 	private final Identifier identifier;
@@ -49,7 +49,7 @@ public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, S
 		this.input = ingredient;
 		this.output = output;
 		this.levels = levels;
-		this.outputDollars = DollarParser.extractDollars(output.getTag(), false);
+		this.outputDollars = DollarExtractor.extractDollars(output.getTag(), false);
 	}
 
 	public void write(PacketByteBuf packetByteBuf) {

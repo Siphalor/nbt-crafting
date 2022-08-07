@@ -59,6 +59,18 @@ public class NumberUtil {
 		return ArrayUtils.indexOf(NUMBER_TYPES, number.getClass());
 	}
 
+	public static Number toSmallestInteger(long number) {
+		if (number > Integer.MAX_VALUE || number < Integer.MIN_VALUE) {
+			return number;
+		} else if (number > Short.MAX_VALUE || number < Short.MIN_VALUE) {
+			return (int) number;
+		} else if (number > Byte.MAX_VALUE || number < Byte.MIN_VALUE) {
+			return (short) number;
+		} else {
+			return (byte) number;
+		}
+	}
+
 	public static int findSmallestType(Number a, Number b) {
 		int typeA = ArrayUtils.indexOf(NUMBER_TYPES, a.getClass());
 		int typeB = ArrayUtils.indexOf(NUMBER_TYPES, b.getClass());

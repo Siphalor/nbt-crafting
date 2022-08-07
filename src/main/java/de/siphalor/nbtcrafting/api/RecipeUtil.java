@@ -31,7 +31,7 @@ import net.minecraft.world.World;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarException;
-import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.dollar.DollarExtractor;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
 
 public class RecipeUtil {
@@ -42,7 +42,7 @@ public class RecipeUtil {
 
 	public static ItemStack getDollarAppliedResult(ItemStack baseOutput, DefaultedList<Ingredient> ingredients, Inventory inventory) {
 		ItemStack stack = baseOutput.copy();
-		Dollar[] dollars = DollarParser.extractDollars(stack.getTag(), true);
+		Dollar[] dollars = DollarExtractor.extractDollars(stack.getTag(), true);
 
 		if (dollars.length > 0) {
 			Map<String, Object> reference = new HashMap<>();
@@ -77,7 +77,7 @@ public class RecipeUtil {
 
 	public static ItemStack getDollarAppliedResult(ItemStack baseOutput, Ingredient ingredient, String referenceName, Inventory inventory) {
 		ItemStack stack = baseOutput.copy();
-		Dollar[] dollars = DollarParser.extractDollars(stack.getTag(), true);
+		Dollar[] dollars = DollarExtractor.extractDollars(stack.getTag(), true);
 
 		if (dollars.length > 0) {
 			Map<String, Object> reference = new HashMap<>();

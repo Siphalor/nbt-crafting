@@ -27,5 +27,8 @@ Minecraft_Server.launch
 
 run/
 
+# antlr
+*.tokens
+
 # OSX
 .DS_Store

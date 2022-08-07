@@ -26,7 +26,7 @@ import net.minecraft.util.PacketByteBuf;
 
 import de.siphalor.nbtcrafting.api.RecipeUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
-import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.dollar.DollarExtractor;
 
 public abstract class IngredientEntry {
 	protected ItemStack remainder;
@@ -58,6 +58,6 @@ public abstract class IngredientEntry {
 	public void setRecipeRemainder(ItemStack stack) {
 		this.remainder = stack;
 		if (stack.hasTag())
-			this.remainderDollars = DollarParser.extractDollars(stack.getTag(), true);
+			this.remainderDollars = DollarExtractor.extractDollars(stack.getTag(), true);
 	}
 }

@@ -37,7 +37,7 @@ import de.siphalor.nbtcrafting.api.ServerRecipe;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
 import de.siphalor.nbtcrafting.dollar.Dollar;
-import de.siphalor.nbtcrafting.dollar.DollarParser;
+import de.siphalor.nbtcrafting.dollar.DollarExtractor;
 
 public abstract class IngredientRecipe<I extends Inventory> implements NBTCRecipe<I>, ServerRecipe {
 	private final Identifier identifier;
@@ -51,7 +51,7 @@ public abstract class IngredientRecipe<I extends Inventory> implements NBTCRecip
 		this.base = base;
 		this.ingredient = ingredient;
 		this.result = result;
-		this.resultDollars = DollarParser.extractDollars(result.getTag(), false);
+		this.resultDollars = DollarExtractor.extractDollars(result.getTag(), false);
 	}
 
 	@Override
