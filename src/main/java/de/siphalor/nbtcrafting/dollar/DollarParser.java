@@ -17,18 +17,8 @@
 
 package de.siphalor.nbtcrafting.dollar;
 
-import java.util.*;
-import java.util.regex.Pattern;
-
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
-import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.ints.IntSet;
-import net.minecraft.nbt.*;
-import org.apache.commons.lang3.ArrayUtils;
-import org.jetbrains.annotations.Nullable;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.nbt.MergeMode;
@@ -41,6 +31,15 @@ import de.siphalor.nbtcrafting.dollar.type.CountDollar;
 import de.siphalor.nbtcrafting.dollar.type.MergeDollar;
 import de.siphalor.nbtcrafting.dollar.type.SimpleDollar;
 import de.siphalor.nbtcrafting.util.StringCodepointIterator;
+
+import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
+import net.minecraft.nbt.*;
+import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.regex.Pattern;
 
 public final class DollarParser {
 	private static final int[] OPERATOR_CHARACTERS;
@@ -186,7 +185,7 @@ public final class DollarParser {
 	}
 
 	public static DollarParser tokenize(String text) throws DollarDeserializationException {
-		ArrayList<DollarToken> tokens = new ArrayList<>();
+		List<DollarToken> tokens = new ArrayList<>(text.length() / 2);
 		StringCodepointIterator codepoints = new StringCodepointIterator(text);
 		int token = codepoints.next();
 		while (token != -1) {
@@ -291,39 +290,32 @@ public final class DollarParser {
 				}
 				tokens.add(new DollarToken(DollarToken.Type.STRING, stringBuilder.toString(), codepoints.getIndex()));
 			} else if (token != ' ') {
-				IntList tokenList = new IntArrayList(10);
-				tokenList.add(token);
-				DollarToken.Type lastExactMatch = null;
-
-				SortedMap<String, DollarToken.Type> matchingOperators;
+				int beginIndex = codepoints.getIndex();
+				StringBuilder str = new StringBuilder();
+				str.appendCodePoint(token);
+				String lastString = str.toString();
+				DollarToken.Type lastMatch = DollarToken.SEQUENCES.get(lastString);
 
 				while (true) {
-					matchingOperators = DollarToken.SEQUENCES.subMap(
-							new String(new int[]{token}, 0, 1),
-							new String(new int[]{token + 1}, 0, 1)
-					);
 					token = codepoints.next();
-					if (matchingOperators.isEmpty()) {
-						break;
-					}
-					String firstKey = matchingOperators.firstKey();
-					if (firstKey.length() == tokenList.size() && firstKey.equals(new String(tokenList.toIntArray(), 0, tokenList.size()))) {
-						lastExactMatch = matchingOperators.get(firstKey);
-						if (matchingOperators.size() == 1) {
-							break;
-						}
-					}
 					if (token == -1) {
 						break;
 					}
-					tokenList.add(token);
+					str.appendCodePoint(token);
+					String curString = str.toString();
+					DollarToken.Type match = DollarToken.SEQUENCES.get(curString);
+					if (match == null) {
+						break;
+					}
+					lastString = curString;
+					lastMatch = match;
 				}
 
-				if (lastExactMatch != null) {
-					tokens.add(new DollarToken(lastExactMatch, new String(tokenList.toIntArray(), 0, tokenList.size()), codepoints.getIndex()));
+				if (lastMatch != null) {
+					tokens.add(new DollarToken(lastMatch, lastString, beginIndex));
 					continue;
 				} else {
-					throw new DollarDeserializationException("Unrecognized character sequence \"" + new String(tokenList.toIntArray(), 0, tokenList.size()) + "\" at position " + codepoints.getIndex());
+					throw new DollarDeserializationException("Unrecognized character sequence \"" + lastString + "\" at position " + beginIndex);
 				}
 			}
 			token = codepoints.next();
@@ -354,6 +346,10 @@ public final class DollarParser {
 				} else {
 					if (token.type == DollarToken.Type.LITERAL) {
 						String literalValue = ((String) token.value);
+						if ("null".equals(literalValue)) {
+							instructions.add(new PushInstruction(null));
+						}
+
 						token = peek();
 						if (token != null && token.type == DollarToken.Type.PARENTHESIS_OPEN) {
 							skip();
@@ -383,8 +379,6 @@ public final class DollarParser {
 						} else {
 							instructions.add(new PushInstruction(new Literal(literalValue)));
 						}
-					} else if (token.type == DollarToken.Type.NULL) {
-						instructions.add(new PushInstruction(null));
 					} else {
 						instructions.add(new PushInstruction(token.value));
 					}

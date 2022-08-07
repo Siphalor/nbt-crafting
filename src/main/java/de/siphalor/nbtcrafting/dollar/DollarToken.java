@@ -1,13 +1,13 @@
 package de.siphalor.nbtcrafting.dollar;
 
-import java.util.SortedMap;
+import java.util.Map;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectAVLTreeMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DollarToken {
-	public static final SortedMap<String, Type> SEQUENCES = new Object2ObjectAVLTreeMap<>();
+	public static final Map<String, Type> SEQUENCES = new Object2ObjectAVLTreeMap<>();
 	static {
 		//noinspection ResultOfMethodCallIgnored
 		DollarToken.Type.values();
@@ -29,7 +29,7 @@ public class DollarToken {
 	}
 
 	public enum Type {
-		LITERAL, STRING, NUMBER, NULL("null", "NULL"),
+		LITERAL, STRING, NUMBER,
 		DOT("."), OCTOTHORPE("#"),
 		ASTERISK("*"), SLASH("/"),
 		PLUS("+"), MINUS("-"),
@@ -56,7 +56,6 @@ public class DollarToken {
 				case LITERAL:
 				case STRING:
 				case NUMBER:
-				case NULL:
 					return true;
 			}
 			return false;
