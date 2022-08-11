@@ -69,7 +69,7 @@ public class NbtNumberRange {
 			}
 		} else {
 			try {
-				return NbtNumberRange.between(Double.parseDouble(string.substring(0, position - 1)), Double.parseDouble(string.substring(position + 2)));
+				return NbtNumberRange.between(Double.parseDouble(string.substring(0, position)), Double.parseDouble(string.substring(position + 2)));
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
