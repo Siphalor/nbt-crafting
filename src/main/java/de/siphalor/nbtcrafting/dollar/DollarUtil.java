@@ -17,6 +17,9 @@
 
 package de.siphalor.nbtcrafting.dollar;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+
 public class DollarUtil {
 	public static boolean asBoolean(Object o) {
 		if (o instanceof Boolean) {
@@ -27,6 +30,12 @@ public class DollarUtil {
 		}
 		if (o instanceof String) {
 			return !o.equals("");
+		}
+		if (o instanceof ListTag) {
+			return !((ListTag) o).isEmpty();
+		}
+		if (o instanceof CompoundTag) {
+			return !((CompoundTag) o).isEmpty();
 		}
 		return o != null;
 	}

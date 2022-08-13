@@ -24,6 +24,7 @@ import net.minecraft.nbt.Tag;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.DollarUtil;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.util.NumberUtil;
 
@@ -72,7 +73,7 @@ public class SumDollarOperator extends BinaryDollarOperator {
 				result.add(secondTag);
 				return result;
 			}
-			throw new DollarEvaluationException("Couldn't sum up list " + first.toString() + " with " + second.toString());
+			throw new DollarEvaluationException("Couldn't sum up list " + DollarUtil.asString(first) + " with " + DollarUtil.asString(second));
 		}
 		return first == null && second instanceof ListTag ? second : null;
 	}

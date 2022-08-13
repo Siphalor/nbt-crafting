@@ -17,14 +17,14 @@
 
 package de.siphalor.nbtcrafting.dollar.part.binary;
 
-import java.util.Map;
-
 import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ConstantDollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ValueDollarPart;
+
+import java.util.Map;
 
 public class CastDollarOperator implements DollarPart {
 	private final DollarPart dollarPart;
@@ -41,7 +41,7 @@ public class CastDollarOperator implements DollarPart {
 			try {
 				return ValueDollarPart.of(instance.evaluate(null));
 			} catch (DollarEvaluationException e) {
-				throw new DollarDeserializationException("Failed to short-circuit cast operator", e);
+				throw new DollarDeserializationException("Failed to short-circuit cast operator: " + e.getMessage(), e);
 			}
 		}
 		return instance;
@@ -54,39 +54,63 @@ public class CastDollarOperator implements DollarPart {
 			case 'd':
 				if (value instanceof Number)
 					return ((Number) value).doubleValue();
-				return 0D;
+				if (value instanceof String)
+					return Double.parseDouble((String) value);
+				if (value instanceof Boolean)
+					return ((Boolean) value) ? 1.0d : 0.0d;
+				throw new DollarEvaluationException("Failed to cast " + value + " to double");
 			case 'f':
 				if (value instanceof Number)
 					return ((Number) value).floatValue();
-				return 0F;
+				if (value instanceof String)
+					return Float.parseFloat((String) value);
+				if (value instanceof Boolean)
+					return ((Boolean) value) ? 1.0f : 0.0f;
+				throw new DollarEvaluationException("Failed to cast " + value + " to float");
 			case 'b':
 			case 'c':
 			case 'C':
 				if (value instanceof Number)
 					return ((Number) value).byteValue();
-				return (byte) 0;
+				if (value instanceof String)
+					return Byte.parseByte((String) value);
+				if (value instanceof Boolean)
+					return ((Boolean) value) ? (byte) 1 : (byte) 0;
+				throw new DollarEvaluationException("Failed to cast " + value + " to byte");
 			case 's':
 				if (value instanceof Number)
 					return ((Number) value).shortValue();
-				return (short) 0;
+				if (value instanceof String)
+					return Short.parseShort((String) value);
+				if (value instanceof Boolean)
+					return ((Boolean) value) ? (short) 1 : (short) 0;
+				throw new DollarEvaluationException("Failed to cast " + value + " to short");
 			case 'i':
 				if (value instanceof Number)
 					return ((Number) value).intValue();
-				return 0;
+				if (value instanceof String)
+					return Integer.parseInt((String) value);
+				if (value instanceof Boolean)
+					return ((Boolean) value) ? 1 : 0;
+				throw new DollarEvaluationException("Failed to cast " + value + " to int");
 			case 'l':
 				if (value instanceof Number)
 					return ((Number) value).longValue();
-				return 0L;
+				if (value instanceof String)
+					return Long.parseLong((String) value);
+				if (value instanceof Boolean)
+					return ((Boolean) value) ? 1L : 0L;
+				throw new DollarEvaluationException("Failed to cast " + value + " to long");
 			case 'B':
 				return DollarUtil.asBoolean(value);
-			case '"':
-			case '\'':
 			case 'a':
 			case 'S':
 				return value.toString();
 			case 'n':
 				if (value instanceof Number)
 					return value;
+				if (value instanceof Boolean)
+					return ((Boolean) value) ? (byte) 1 : (byte) 0;
 				if (value == null)
 					return 0;
 				throw new DollarEvaluationException("Failed to cast " + DollarUtil.asString(value) + " to generic number");

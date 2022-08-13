@@ -54,11 +54,19 @@ dependencies {
 	modRuntimeOnly("com.github.astei:lazydfu:master-SNAPSHOT")
 
 	testmodImplementation sourceSets.main.output
+
+	testImplementation "org.junit.jupiter:junit-jupiter-api:5.9.0"
+	testImplementation "org.junit.jupiter:junit-jupiter-params:5.9.0"
+	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.0"
 }
 
 generateGrammarSource {
 	outputDirectory = outputDirectory.toPath().resolve("de/siphalor/nbtcrafting/dollar/antlr").toFile()
 	arguments = [ "-no-listener", "-visitor" ]
+}
+
+test {
+	useJUnitPlatform()
 }
 
 license {

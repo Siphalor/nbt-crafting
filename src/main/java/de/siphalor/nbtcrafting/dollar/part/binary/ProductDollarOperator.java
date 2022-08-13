@@ -19,7 +19,9 @@ package de.siphalor.nbtcrafting.dollar.part.binary;
 
 import org.apache.commons.lang3.StringUtils;
 
+import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.DollarUtil;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.util.NumberUtil;
 
@@ -33,15 +35,17 @@ public class ProductDollarOperator extends BinaryDollarOperator {
 	}
 
 	@Override
-	public Object apply(Object first, Object second) {
+	public Object apply(Object first, Object second) throws DollarEvaluationException {
 		if (first instanceof Number || first == null) {
 			first = NumberUtil.denullify((Number) first);
-			if (second instanceof Number || second == null)
+			if (second instanceof Number || second == null) {
 				return NumberUtil.product((Number) first, (Number) second);
-			return StringUtils.repeat(second.toString(), ((Number) first).intValue());
-		} else if (second instanceof Number || second == null) {
+			} else if (second instanceof String) {
+				return StringUtils.repeat(second.toString(), ((Number) first).intValue());
+			}
+		} else if (first instanceof String && (second instanceof Number || second == null)) {
 			return StringUtils.repeat(first.toString(), NumberUtil.denullify((Number) second).intValue());
 		}
-		return null;
+		throw new DollarEvaluationException("Invalid types for product: " + DollarUtil.asString(first) + " and " + DollarUtil.asString(second));
 	}
 }

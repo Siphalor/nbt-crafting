@@ -165,7 +165,7 @@ public final class DollarExtractor {
 
 	// Testing only
 	public static void main(String[] args) {
-		DollarPart dollarPart = parse("a + b) + c");
+		DollarPart dollarPart = parse("'hi'");
 		try {
 			System.out.println(dollarPart.evaluate(ImmutableMap.of(
 					"a", 2,
