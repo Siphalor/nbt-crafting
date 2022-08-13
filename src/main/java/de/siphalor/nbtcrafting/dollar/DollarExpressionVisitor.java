@@ -45,8 +45,8 @@ public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<D
 
 	@Override
 	public DollarPart visitLiteral(DollarExpressionParser.LiteralContext ctx) {
-		// TODO: Remove quotes?
-		return ValueDollarPart.of(ctx.getText());
+		String text = ctx.getText();
+		return ValueDollarPart.of(text.substring(1, text.length() - 1));
 	}
 
 	@Override
@@ -72,6 +72,10 @@ public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<D
 	@Override
 	public DollarPart visitExpr(DollarExpressionParser.ExprContext ctx) {
 		if (ctx.op == null) {
+			if (ctx.getChildCount() == 0) {
+				return defaultResult();
+			}
+
 			return this.visit(ctx.getChild(0));
 		}
 
@@ -119,5 +123,10 @@ public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<D
 			throw new RuntimeException("Failed to read dollar expression at " + ctx.op.getCharPositionInLine() + ":" + ctx.op.getLine(), e);
 		}
 		return null;
+	}
+
+	@Override
+	public DollarPart visitStatement(DollarExpressionParser.StatementContext ctx) {
+		return this.visit(ctx.expr());
 	}
 }
