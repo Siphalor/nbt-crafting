@@ -17,6 +17,10 @@
 
 package de.siphalor.nbtcrafting.dollar.part.value;
 
+import java.util.Objects;
+
+import de.siphalor.nbtcrafting.dollar.DollarUtil;
+
 public class ValueDollarPart implements ConstantDollarPart {
 	private final Object value;
 
@@ -31,5 +35,23 @@ public class ValueDollarPart implements ConstantDollarPart {
 	@Override
 	public Object getConstantValue() {
 		return value;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ValueDollarPart that = (ValueDollarPart) o;
+		return Objects.equals(value, that.value);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(value);
+	}
+
+	@Override
+	public String toString() {
+		return "Value{" + DollarUtil.asString(value) + "}";
 	}
 }

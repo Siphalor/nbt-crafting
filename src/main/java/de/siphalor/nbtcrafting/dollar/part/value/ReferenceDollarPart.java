@@ -18,6 +18,7 @@
 package de.siphalor.nbtcrafting.dollar.part.value;
 
 import java.util.Map;
+import java.util.Objects;
 
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
@@ -39,5 +40,23 @@ public class ReferenceDollarPart implements DollarPart {
 			throw new DollarEvaluationException("Could not resolve reference to '" + key + "'");
 		}
 		return reference.get(key);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ReferenceDollarPart that = (ReferenceDollarPart) o;
+		return key.equals(that.key);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(key);
+	}
+
+	@Override
+	public String toString() {
+		return "Reference{" + key + "}";
 	}
 }
