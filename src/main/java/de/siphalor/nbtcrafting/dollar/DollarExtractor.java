@@ -133,8 +133,10 @@ public final class DollarExtractor {
 		try {
 			DollarExpressionLexer lexer = new DollarExpressionLexer(CharStreams.fromString(string));
 			DollarExpressionParser parser = new DollarExpressionParser(new CommonTokenStream(lexer));
+			lexer.removeErrorListeners();
 			parser.removeErrorListeners();
 			DollarExpressionParserErrorListener errorListener = new DollarExpressionParserErrorListener(Collections.singletonList(string));
+			lexer.addErrorListener(errorListener);
 			parser.addErrorListener(errorListener);
 
 			DollarExpressionParser.StatementContext parseTree = parser.statement();
