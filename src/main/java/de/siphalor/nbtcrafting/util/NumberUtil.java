@@ -106,6 +106,23 @@ public class NumberUtil {
 		}
 	}
 
+	public static Number negate(Number number) {
+		Class<? extends Number> clazz = number.getClass();
+		if (clazz == Byte.class) {
+			return (byte) -number.intValue();
+		} else if (clazz == Short.class) {
+			return (short) -number.intValue();
+		} else if (clazz == Integer.class) {
+			return -number.intValue();
+		} else if (clazz == Long.class) {
+			return -number.longValue();
+		} else if (clazz == Float.class) {
+			return -number.floatValue();
+		} else {
+			return -number.doubleValue();
+		}
+	}
+
 	public static Number sum(Number a, Number b) {
 		a = denullify(a);
 		b = denullify(b);

@@ -25,4 +25,8 @@ public class DollarDeserializationException extends DollarException {
 	public DollarDeserializationException(Exception e) {
 		super(e);
 	}
+
+	public DollarDeserializationException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

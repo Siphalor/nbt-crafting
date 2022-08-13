@@ -15,20 +15,17 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.nbtcrafting.dollar.part.unary;
+package de.siphalor.nbtcrafting.dollar.part.value;
 
-import de.siphalor.nbtcrafting.dollar.DollarParser;
+import java.util.Map;
+
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 
-public class CombinationDollarPartDeserializer implements DollarPart.UnaryDeserializer {
+public interface ConstantDollarPart extends DollarPart {
 	@Override
-	public boolean matches(int character, DollarParser dollarParser) {
-		return character == '(';
+	default Object evaluate(Map<String, Object> reference) {
+		return getConstantValue();
 	}
 
-	@Override
-	public DollarPart parse(DollarParser dollarParser) {
-		dollarParser.skip();
-		return dollarParser.parseTo(')');
-	}
+	Object getConstantValue();
 }

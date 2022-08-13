@@ -65,6 +65,19 @@ license {
 	header = project.file('LICENSE_HEADER')
 
 	include '**/*.java'
+	exclude 'de/siphalor/nbtcrafting/dollar/antlr'
+
+	include '**/*.g4'
+
+	style {
+		g4 = 'BLOCK_COMMENT'
+	}
+
+	tasks {
+		antlr {
+			files.from(file("src/main/antlr"))
+		}
+	}
 }
 
 processResources {

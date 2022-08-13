@@ -19,12 +19,31 @@ package de.siphalor.nbtcrafting.dollar;
 
 public class DollarUtil {
 	public static boolean asBoolean(Object o) {
+		if (o instanceof Boolean) {
+			return (boolean) o;
+		}
 		if (o instanceof Number) {
 			return ((Number) o).intValue() != 0;
 		}
 		if (o instanceof String) {
 			return !o.equals("");
 		}
-		return false;
+		return o != null;
+	}
+
+	public static String asString(Object o) {
+		if (o == null) {
+			return "<null>";
+		}
+		return o.toString();
+	}
+
+	public static Number expectNumber(Object o) throws DollarException {
+		if (o == null) {
+			return (byte) 0;
+		} else if (o instanceof Number) {
+			return (Number) o;
+		}
+		throw new DollarException("Cannot implicitly cast " + asString(o) + " to a number");
 	}
 }

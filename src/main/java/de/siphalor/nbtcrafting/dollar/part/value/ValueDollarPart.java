@@ -15,20 +15,21 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.nbtcrafting.dollar.part;
+package de.siphalor.nbtcrafting.dollar.part.value;
 
-import java.util.Map;
+public class ValueDollarPart implements ConstantDollarPart {
+	private final Object value;
 
-public abstract class ConstantDollarPart implements DollarPart {
-	@Override
-	public Object evaluate(Map<String, Object> reference) {
-		return getValue();
+	private ValueDollarPart(Object value) {
+		this.value = value;
+	}
+
+	public static ValueDollarPart of(Object value) {
+		return new ValueDollarPart(value);
 	}
 
 	@Override
-	public boolean isConstant() {
-		return true;
+	public Object getConstantValue() {
+		return value;
 	}
-
-	public abstract Object getValue();
 }

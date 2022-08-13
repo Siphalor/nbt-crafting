@@ -1,3 +1,7 @@
+# generated
+
+src/main/gen/
+
 # gradle
 
 .gradle/

@@ -25,4 +25,8 @@ public class DollarException extends Exception {
 	public DollarException(Exception e) {
 		super(e);
 	}
+
+	public DollarException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

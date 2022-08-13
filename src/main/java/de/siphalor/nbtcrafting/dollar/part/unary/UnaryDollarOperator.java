@@ -19,8 +19,11 @@ package de.siphalor.nbtcrafting.dollar.part.unary;
 
 import java.util.Map;
 
+import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
+import de.siphalor.nbtcrafting.dollar.part.value.ConstantDollarPart;
+import de.siphalor.nbtcrafting.dollar.part.value.ValueDollarPart;
 
 public abstract class UnaryDollarOperator implements DollarPart {
 	DollarPart dollarPart;
@@ -31,8 +34,19 @@ public abstract class UnaryDollarOperator implements DollarPart {
 
 	@Override
 	public final Object evaluate(Map<String, Object> reference) throws DollarEvaluationException {
-		return evaluate(dollarPart.evaluate(reference));
+		return apply(dollarPart.evaluate(reference));
 	}
 
-	public abstract Object evaluate(Object value) throws DollarEvaluationException;
+	public abstract Object apply(Object value) throws DollarEvaluationException;
+
+	protected static DollarPart shortCircuitConstant(UnaryDollarOperator operator) throws DollarDeserializationException {
+		if (operator.dollarPart instanceof ConstantDollarPart) {
+			try {
+				return ValueDollarPart.of(operator.apply(((ConstantDollarPart) operator.dollarPart).getConstantValue()));
+			} catch (DollarEvaluationException e) {
+				throw new DollarDeserializationException("Failed to short-circuit dollar operator " + operator.getClass().getSimpleName(), e);
+			}
+		}
+		return operator;
+	}
 }
