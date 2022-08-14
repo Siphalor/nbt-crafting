@@ -100,9 +100,9 @@ STRING_LITERAL:
   ;
 EMPTY_EXP: LPAREN RPAREN
   ;
-fragment ID_START: [a-z_]
+fragment ID_START: [a-zA-Z_$]
   ;
-fragment ID_CONTINUE: [a-z0-9_]
+fragment ID_CONTINUE: [a-zA-Z0-9_]
   ;
 ID: ID_START ID_CONTINUE*
   ;
