@@ -5,7 +5,7 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Assertions;
 
-import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 
 public class ReferenceDollarPartTests {
 	void evaluate() {

@@ -23,6 +23,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.Tag;
 
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.exception.DollarException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 
 public abstract class Dollar {

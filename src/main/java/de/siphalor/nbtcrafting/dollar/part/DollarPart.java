@@ -19,7 +19,7 @@ package de.siphalor.nbtcrafting.dollar.part;
 
 import java.util.Map;
 
-import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 
 public interface DollarPart {
 	Object evaluate(Map<String, Object> reference) throws DollarEvaluationException;

@@ -19,8 +19,8 @@ package de.siphalor.nbtcrafting.dollar.part.ternary;
 
 import java.util.Map;
 
-import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
+import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ConstantDollarPart;
 

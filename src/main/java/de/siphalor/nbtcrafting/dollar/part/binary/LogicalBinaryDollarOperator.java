@@ -19,9 +19,9 @@ package de.siphalor.nbtcrafting.dollar.part.binary;
 
 import java.util.function.BiFunction;
 
-import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
-import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
+import de.siphalor.nbtcrafting.dollar.exception.DollarDeserializationException;
+import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 
 public class LogicalBinaryDollarOperator extends BinaryDollarOperator {

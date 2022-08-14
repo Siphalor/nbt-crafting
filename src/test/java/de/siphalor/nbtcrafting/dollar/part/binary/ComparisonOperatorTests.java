@@ -8,7 +8,7 @@ import net.minecraft.nbt.StringTag;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
+import de.siphalor.nbtcrafting.dollar.exception.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ValueDollarPart;
 

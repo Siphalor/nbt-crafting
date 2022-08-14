@@ -15,7 +15,7 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.nbtcrafting.dollar;
+package de.siphalor.nbtcrafting.dollar.exception;
 
 public class DollarEvaluationException extends DollarException {
 	public DollarEvaluationException(String message) {

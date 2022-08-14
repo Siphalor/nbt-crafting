@@ -26,7 +26,7 @@ import net.minecraft.nbt.Tag;
 import de.siphalor.nbtcrafting.api.nbt.NbtException;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
-import de.siphalor.nbtcrafting.dollar.DollarException;
+import de.siphalor.nbtcrafting.dollar.exception.DollarException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 
 public class SimpleDollar extends Dollar {

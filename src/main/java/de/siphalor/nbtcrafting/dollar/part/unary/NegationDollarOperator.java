@@ -17,10 +17,10 @@
 
 package de.siphalor.nbtcrafting.dollar.part.unary;
 
-import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
-import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
-import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
+import de.siphalor.nbtcrafting.dollar.exception.DollarDeserializationException;
+import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.exception.DollarException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.util.NumberUtil;
 

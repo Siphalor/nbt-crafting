@@ -19,9 +19,9 @@ package de.siphalor.nbtcrafting.dollar.part.binary;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
-import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
+import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.exception.DollarException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.util.NumberUtil;
 

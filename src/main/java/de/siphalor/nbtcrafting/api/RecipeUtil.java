@@ -30,8 +30,8 @@ import net.minecraft.world.World;
 
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
-import de.siphalor.nbtcrafting.dollar.DollarException;
 import de.siphalor.nbtcrafting.dollar.DollarExtractor;
+import de.siphalor.nbtcrafting.dollar.exception.DollarException;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
 
 public class RecipeUtil {

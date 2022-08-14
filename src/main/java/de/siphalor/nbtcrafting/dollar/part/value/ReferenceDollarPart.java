@@ -20,7 +20,7 @@ package de.siphalor.nbtcrafting.dollar.part.value;
 import java.util.Map;
 import java.util.Objects;
 
-import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 
 public class ReferenceDollarPart implements DollarPart {

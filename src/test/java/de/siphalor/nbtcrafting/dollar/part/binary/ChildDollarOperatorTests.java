@@ -6,7 +6,7 @@ import net.minecraft.nbt.StringTag;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.value.ReferenceDollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ValueDollarPart;
 

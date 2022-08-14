@@ -17,14 +17,14 @@
 
 package de.siphalor.nbtcrafting.dollar.part.binary;
 
-import de.siphalor.nbtcrafting.dollar.DollarDeserializationException;
-import de.siphalor.nbtcrafting.dollar.DollarEvaluationException;
+import java.util.Map;
+
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
+import de.siphalor.nbtcrafting.dollar.exception.DollarDeserializationException;
+import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ConstantDollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ValueDollarPart;
-
-import java.util.Map;
 
 public class CastDollarOperator implements DollarPart {
 	private final DollarPart dollarPart;

@@ -6,6 +6,8 @@ import net.minecraft.nbt.ListTag;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import de.siphalor.nbtcrafting.dollar.exception.DollarException;
+
 public class DollarUtilTests {
 	@Test
 	void asBoolean_truthy() {

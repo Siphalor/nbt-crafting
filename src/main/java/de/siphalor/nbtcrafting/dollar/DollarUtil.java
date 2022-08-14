@@ -20,6 +20,8 @@ package de.siphalor.nbtcrafting.dollar;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 
+import de.siphalor.nbtcrafting.dollar.exception.DollarException;
+
 public class DollarUtil {
 	public static boolean asBoolean(Object o) {
 		if (o instanceof Boolean) {

@@ -23,6 +23,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import de.siphalor.nbtcrafting.dollar.antlr.DollarExpressionParser;
 import de.siphalor.nbtcrafting.dollar.antlr.DollarExpressionParserBaseVisitor;
+import de.siphalor.nbtcrafting.dollar.exception.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.binary.*;
 import de.siphalor.nbtcrafting.dollar.part.ternary.ConditionDollarOperator;
