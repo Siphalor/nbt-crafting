@@ -24,8 +24,11 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import de.siphalor.nbtcrafting.dollar.antlr.DollarExpressionParser;
 import de.siphalor.nbtcrafting.dollar.antlr.DollarExpressionParserBaseVisitor;
 import de.siphalor.nbtcrafting.dollar.exception.DollarDeserializationException;
+import de.siphalor.nbtcrafting.dollar.function.DollarFunction;
+import de.siphalor.nbtcrafting.dollar.function.DollarFunctions;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.binary.*;
+import de.siphalor.nbtcrafting.dollar.part.function.FunctionCallDollarPart;
 import de.siphalor.nbtcrafting.dollar.part.ternary.ConditionDollarOperator;
 import de.siphalor.nbtcrafting.dollar.part.unary.NegationDollarOperator;
 import de.siphalor.nbtcrafting.dollar.part.unary.NotDollarOperator;
@@ -61,13 +64,18 @@ public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<D
 	}
 
 	@Override
-	public DollarPart visitFunction_args(DollarExpressionParser.Function_argsContext ctx) {
-		return null;
-	}
-
-	@Override
 	public DollarPart visitFunction_call(DollarExpressionParser.Function_callContext ctx) {
-		return null;
+		String identifier = ctx.identifier().getText();
+		DollarFunction dollarFunction = DollarFunctions.get(identifier);
+		if (dollarFunction != null) {
+			try {
+				return FunctionCallDollarPart.of(dollarFunction, ctx.expr().stream().map(this::visit).toArray(DollarPart[]::new));
+			} catch (DollarDeserializationException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			throw new RuntimeException("Unknown function \"" + identifier + "\" at " + ctx.getStart().getLine() + ":" + ctx.getStart().getCharPositionInLine());
+		}
 	}
 
 	@Override

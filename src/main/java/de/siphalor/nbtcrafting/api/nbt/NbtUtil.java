@@ -18,6 +18,8 @@
 package de.siphalor.nbtcrafting.api.nbt;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
@@ -31,6 +33,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Contract;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.dollar.DollarUtil;
 import de.siphalor.nbtcrafting.util.BetterJsonOps;
 
 @SuppressWarnings("unused")
@@ -458,6 +461,18 @@ public class NbtUtil {
 			return LongTag.of((Long) value);
 		} else if (value instanceof Boolean) {
 			return ByteTag.of((byte) ((Boolean) value ? 1 : 0));
+		} else if (value instanceof List) {
+			ListTag listTag = new ListTag();
+			for (Object element : (List<?>) value) {
+				listTag.add(asTag(element));
+			}
+			return listTag;
+		} else if (value instanceof Map) {
+			CompoundTag compoundTag = new CompoundTag();
+			for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
+				compoundTag.put(DollarUtil.asString(entry.getKey()), asTag(entry.getValue()));
+			}
+			return compoundTag;
 		} else {
 			return null;
 		}

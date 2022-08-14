@@ -38,11 +38,8 @@ identifier: ID
   ;
 nesting: LPAREN expr RPAREN
   ;
-function_args
-  : LPAREN expr (COMMA expr)* RPAREN
-  ;
 function_call
-  : target=identifier (EMPTY_EXP | function_args)
+  : target=identifier (EMPTY_EXP | LPAREN expr (COMMA expr)* RPAREN)
   ;
 constant
   : literal
