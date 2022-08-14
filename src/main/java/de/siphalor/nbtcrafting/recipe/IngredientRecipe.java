@@ -98,9 +98,9 @@ public abstract class IngredientRecipe<I extends Inventory> implements NBTCRecip
 		return ref -> {
 			switch (ref) {
 				case "base":
-					return base.test(inv.getInvStack(0));
+					return inv.getInvStack(0);
 				case "ingredient":
-					return ingredient.test(inv.getInvStack(1));
+					return inv.getInvStack(1);
 				default:
 					throw new UnresolvedDollarReferenceException(ref);
 			}
