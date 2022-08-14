@@ -29,6 +29,7 @@ import de.siphalor.nbtcrafting.dollar.function.DollarFunctions;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.binary.*;
 import de.siphalor.nbtcrafting.dollar.part.function.FunctionCallDollarPart;
+import de.siphalor.nbtcrafting.dollar.part.function.ListConstructDollarPart;
 import de.siphalor.nbtcrafting.dollar.part.ternary.ConditionDollarOperator;
 import de.siphalor.nbtcrafting.dollar.part.unary.NegationDollarOperator;
 import de.siphalor.nbtcrafting.dollar.part.unary.NotDollarOperator;
@@ -61,6 +62,15 @@ public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<D
 	@Override
 	public DollarPart visitNesting(DollarExpressionParser.NestingContext ctx) {
 		return this.visit(ctx.expr());
+	}
+
+	@Override
+	public DollarPart visitList_construct(DollarExpressionParser.List_constructContext ctx) {
+		try {
+			return ListConstructDollarPart.of(ctx.expr().stream().map(this::visit).toArray(DollarPart[]::new));
+		} catch (DollarDeserializationException e) {
+			throw new RuntimeException("Failed to read list construct at " + ctx.getStart().getLine() + ": " + ctx.getStart().getCharPositionInLine());
+		}
 	}
 
 	@Override

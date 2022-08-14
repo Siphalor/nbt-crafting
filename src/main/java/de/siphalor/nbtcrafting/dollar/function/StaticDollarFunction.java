@@ -79,5 +79,5 @@ public abstract class StaticDollarFunction extends DollarFunction {
 		return apply(parameterValues, referenceResolver);
 	}
 
-	protected abstract Object apply(Object[] parameters, ReferenceResolver referenceResolver) throws DollarEvaluationException;
+	protected abstract Object apply(Object[] parameters, ReferenceResolver referenceResolver) throws DollarEvaluationException, IllegalDollarFunctionParameterException;
 }

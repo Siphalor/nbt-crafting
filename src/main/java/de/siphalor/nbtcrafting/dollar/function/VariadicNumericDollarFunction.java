@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 import net.minecraft.nbt.AbstractNumberTag;
-import net.minecraft.nbt.ListTag;
 
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.exception.IllegalDollarFunctionParameterException;
@@ -56,7 +55,7 @@ public class VariadicNumericDollarFunction extends DollarFunction {
 					}
 				}
 			} else {
-				exceptParameterType(parameter, p, Number.class, ListTag.class);
+				exceptParameterType(parameter, p, Number.class, List.class);
 			}
 		}
 

@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.registry.Registry;
 
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.exception.IllegalDollarFunctionParameterException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
@@ -94,6 +95,76 @@ public class DollarFunctions {
 					}));
 				}
 				return mappedList;
+			}
+		});
+		DollarFunctions.register(new StaticDollarFunction("distinct", 2, new Class[]{List.class}, new Class[]{DollarPart.class}, new Class[]{Boolean.class}) {
+			@Override
+			protected Object apply(Object[] parameters, ReferenceResolver referenceResolver) throws DollarEvaluationException {
+				List<?> list = (List<?>) parameters[0];
+				DollarPart unique = (DollarPart) parameters[1];
+				boolean keepFirst = parameters.length == 2 || (boolean) parameters[2];
+				Map<Object, Object> map = new HashMap<>();
+
+				for (Object value : list) {
+					Object key;
+					try {
+						key = unique.evaluate(ref -> {
+							if ("it".equals(ref)) {
+								return value;
+							}
+							return referenceResolver.resolve(ref);
+						});
+					} catch (DollarEvaluationException e) {
+						throw new DollarEvaluationException("Encountered error during evaluation of distinct function", e);
+					}
+					if (!map.containsKey(key) || !keepFirst) {
+						map.put(key, value);
+					}
+				}
+				return new ArrayList<>(map.values());
+			}
+		});
+		DollarFunctions.register(new DollarFunction("combine") {
+			@Override
+			public boolean isParameterCountCorrect(int parameterCount) {
+				return parameterCount > 1;
+			}
+
+			@Override
+			public void checkParameter(int index, Object parameter) throws IllegalDollarFunctionParameterException {
+				if (!(parameter instanceof List) && !(parameter instanceof CompoundTag)) {
+					exceptParameterType(parameter, index, List.class, CompoundTag.class);
+				}
+			}
+
+			@Override
+			public Object call(DollarPart[] parameters, ReferenceResolver referenceResolver) throws IllegalDollarFunctionParameterException, DollarEvaluationException {
+				Object[] values = new Object[parameters.length];
+				for (int i = 0; i < values.length; i++) {
+					values[i] = parameters[i].evaluate(referenceResolver);
+				}
+				if (values[0] instanceof List) {
+					List<Object> result = new ArrayList<>(((List<?>) values[0]));
+					for (int i = 1; i < values.length; i++) {
+						if (values[i] instanceof List) {
+							result.addAll((List<?>) values[i]);
+						} else {
+							exceptParameterType(values[i], i, List.class);
+						}
+					}
+					return result;
+				} else if (values[0] instanceof CompoundTag) {
+					CompoundTag result = ((CompoundTag) values[0]).copy();
+					for (int i = 1; i < values.length; i++) {
+						if (values[i] instanceof CompoundTag) {
+							result.copyFrom((CompoundTag) values[i]);
+						} else {
+							exceptParameterType(values[i], i, CompoundTag.class);
+						}
+					}
+				}
+				exceptParameterType(values[0], 0, List.class, CompoundTag.class);
+				return null; // unreachable
 			}
 		});
 

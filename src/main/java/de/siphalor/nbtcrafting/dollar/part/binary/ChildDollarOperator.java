@@ -17,9 +17,10 @@
 
 package de.siphalor.nbtcrafting.dollar.part.binary;
 
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
@@ -48,10 +49,10 @@ public class ChildDollarOperator extends BinaryDollarOperator {
 				return NbtUtil.toDollarValue(((CompoundTag) first).get(key));
 			}
 			return null;
-		} else if (first instanceof ListTag && second instanceof Number) {
+		} else if (first instanceof List && second instanceof Number) {
 			int index = ((Number) second).intValue();
-			if (index < ((ListTag) first).size()) {
-				return NbtUtil.toDollarValue(((ListTag) first).get(index));
+			if (index < ((List<?>) first).size()) {
+				return DollarUtil.toDollarValue(((List<?>) first).get(index));
 			}
 			return null;
 		}

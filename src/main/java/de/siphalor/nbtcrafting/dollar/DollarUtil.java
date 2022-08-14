@@ -19,7 +19,9 @@ package de.siphalor.nbtcrafting.dollar;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.exception.DollarException;
 
 public class DollarUtil {
@@ -56,5 +58,18 @@ public class DollarUtil {
 			return (Number) o;
 		}
 		throw new DollarException("Cannot implicitly cast " + asString(o) + " to a number");
+	}
+
+	/**
+	 * Converts any value into the appropriate dollar representation.
+	 * @param o the object to convert
+	 * @return the dollar representation of the object
+	 * @see NbtUtil#toDollarValue(Tag)
+	 */
+	public static Object toDollarValue(Object o) {
+		if (o instanceof Tag) {
+			return NbtUtil.toDollarValue((Tag) o);
+		}
+		return o;
 	}
 }

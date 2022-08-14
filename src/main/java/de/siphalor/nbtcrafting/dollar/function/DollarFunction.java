@@ -41,7 +41,7 @@ public abstract class DollarFunction {
 		}
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("Parameter ").append(parameterIdentifier.toString()).append("to function ").append(getName()).append(" is of type ").append(parameter.getClass().getSimpleName());
+		sb.append("Parameter ").append(parameterIdentifier.toString()).append(" to function ").append(getName()).append(" is of type ").append(parameter.getClass().getSimpleName());
 		sb.append(", but expected to be one of ");
 		for (int i = 0; i < parameterClasses.length; i++) {
 			if (i > 0) {
