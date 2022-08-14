@@ -473,6 +473,8 @@ public class NbtUtil {
 				compoundTag.put(DollarUtil.asString(entry.getKey()), asTag(entry.getValue()));
 			}
 			return compoundTag;
+		} else if (value instanceof ItemStack) {
+			return getTagOrEmpty(((ItemStack) value));
 		} else {
 			return null;
 		}
