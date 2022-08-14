@@ -17,12 +17,16 @@
 
 package de.siphalor.nbtcrafting.api.recipe;
 
-import java.util.Collection;
-import java.util.Map;
+import de.siphalor.nbtcrafting.dollar.reference.MapBackedReferenceResolver;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 import net.minecraft.inventory.Inventory;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * An interface to use in exchange of {@link Recipe} which provides base functions used for remainder computation.
@@ -44,6 +48,20 @@ public interface NBTCRecipe<I extends Inventory> extends Recipe<I> {
 	 *
 	 * @param inv the inventory for that this method is being called
 	 * @return A map consisting of keys and belonging {@link net.minecraft.nbt.CompoundTag}s, {@link Number}s or {@link String}s
+	 *
 	 */
-	Map<String, Object> buildDollarReference(I inv);
+	@Deprecated
+	default Map<String, Object> buildDollarReference(I inv) {
+		return Collections.emptyMap();
+	}
+
+	/**
+	 * Returns a reference resolver which is used to resolve dollar references.
+	 *
+	 * @param inv the inventory that the references should be resolved for
+	 * @return a reference resolver
+	 */
+	default ReferenceResolver getReferenceResolver(I inv) {
+		return new MapBackedReferenceResolver(buildDollarReference(inv));
+	}
 }

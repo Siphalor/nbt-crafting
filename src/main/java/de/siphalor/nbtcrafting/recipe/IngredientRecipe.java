@@ -17,9 +17,6 @@
 
 package de.siphalor.nbtcrafting.recipe;
 
-import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -34,10 +31,11 @@ import net.minecraft.world.World;
 
 import de.siphalor.nbtcrafting.api.RecipeUtil;
 import de.siphalor.nbtcrafting.api.ServerRecipe;
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarExtractor;
+import de.siphalor.nbtcrafting.dollar.exception.UnresolvedDollarReferenceException;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public abstract class IngredientRecipe<I extends Inventory> implements NBTCRecipe<I>, ServerRecipe {
 	private final Identifier identifier;
@@ -69,7 +67,7 @@ public abstract class IngredientRecipe<I extends Inventory> implements NBTCRecip
 
 	@Override
 	public ItemStack craft(I inv) {
-		return RecipeUtil.applyDollars(result.copy(), resultDollars, buildDollarReference(inv));
+		return RecipeUtil.applyDollars(result.copy(), resultDollars, getReferenceResolver(inv));
 	}
 
 	@Override
@@ -95,11 +93,18 @@ public abstract class IngredientRecipe<I extends Inventory> implements NBTCRecip
 		return DefaultedList.copyOf(Ingredient.EMPTY, base, ingredient);
 	}
 
-	public Map<String, Object> buildDollarReference(I inv) {
-		return ImmutableMap.of(
-				"base", NbtUtil.getTagOrEmpty(inv.getInvStack(0)),
-				"ingredient", NbtUtil.getTagOrEmpty(inv.getInvStack(1))
-		);
+	@Override
+	public ReferenceResolver getReferenceResolver(I inv) {
+		return ref -> {
+			switch (ref) {
+				case "base":
+					return base.test(inv.getInvStack(0));
+				case "ingredient":
+					return ingredient.test(inv.getInvStack(1));
+				default:
+					throw new UnresolvedDollarReferenceException(ref);
+			}
+		};
 	}
 
 	public void readCustomData(JsonObject json) {

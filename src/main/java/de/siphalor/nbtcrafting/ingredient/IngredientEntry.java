@@ -18,7 +18,6 @@
 package de.siphalor.nbtcrafting.ingredient;
 
 import java.util.Collection;
-import java.util.Map;
 
 import com.google.gson.JsonElement;
 import net.minecraft.item.ItemStack;
@@ -27,6 +26,7 @@ import net.minecraft.util.PacketByteBuf;
 import de.siphalor.nbtcrafting.api.RecipeUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarExtractor;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public abstract class IngredientEntry {
 	protected ItemStack remainder;
@@ -49,10 +49,10 @@ public abstract class IngredientEntry {
 
 	public abstract void write(PacketByteBuf buf);
 
-	public ItemStack getRecipeRemainder(ItemStack stack, Map<String, Object> reference) {
+	public ItemStack getRecipeRemainder(ItemStack stack, ReferenceResolver referenceResolver) {
 		if (remainder == null)
 			return ItemStack.EMPTY;
-		return RecipeUtil.applyDollars(remainder.copy(), remainderDollars, reference);
+		return RecipeUtil.applyDollars(remainder.copy(), remainderDollars, referenceResolver);
 	}
 
 	public void setRecipeRemainder(ItemStack stack) {

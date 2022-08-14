@@ -28,10 +28,11 @@ import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarExtractor;
 import de.siphalor.nbtcrafting.dollar.exception.DollarException;
+import de.siphalor.nbtcrafting.dollar.exception.UnresolvedDollarReferenceException;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
 
 public class RecipeUtil {
@@ -45,18 +46,18 @@ public class RecipeUtil {
 		Dollar[] dollars = DollarExtractor.extractDollars(stack.getTag(), true);
 
 		if (dollars.length > 0) {
-			Map<String, Object> reference = new HashMap<>();
+			Map<String, Object> references = new HashMap<>();
 			ingredient:
 			for (int j = 0; j < ingredients.size(); j++) {
 				for (int i = 0; i < inventory.getInvSize(); i++) {
 					if (ingredients.get(j).test(inventory.getInvStack(i))) {
-						reference.putIfAbsent("i" + j, NbtUtil.getTagOrEmpty(inventory.getInvStack(i)));
+						references.putIfAbsent("i" + j, inventory.getInvStack(i));
 						continue ingredient;
 					}
 				}
 			}
 
-			return applyDollars(stack, dollars, reference);
+			return applyDollars(stack, dollars, references::get);
 		}
 		return stack;
 	}
@@ -80,16 +81,18 @@ public class RecipeUtil {
 		Dollar[] dollars = DollarExtractor.extractDollars(stack.getTag(), true);
 
 		if (dollars.length > 0) {
-			Map<String, Object> reference = new HashMap<>();
-			reference.put(referenceName, NbtUtil.getTagOrEmpty(inventory.getInvStack(0)));
-
-			return applyDollars(stack, dollars, reference);
+			return applyDollars(stack, dollars, ref -> {
+				if (ref.equals(referenceName)) {
+					return inventory.getInvStack(0);
+				}
+				throw new UnresolvedDollarReferenceException(ref);
+			});
 		}
 		return stack;
 	}
 
-	public static ItemStack getRemainder(ItemStack itemStack, Ingredient ingredient, Map<String, Object> reference) {
-		ItemStack result = ((IIngredient) (Object) ingredient).nbtCrafting$getRecipeRemainder(itemStack, reference);
+	public static ItemStack getRemainder(ItemStack itemStack, Ingredient ingredient, ReferenceResolver referenceResolver) {
+		ItemStack result = ((IIngredient) (Object) ingredient).nbtCrafting$getRecipeRemainder(itemStack, referenceResolver);
 		if (result == null) {
 			return new ItemStack(itemStack.getItem().getRecipeRemainder());
 		}
@@ -114,10 +117,10 @@ public class RecipeUtil {
 		ItemScatterer.spawn(world, scatterPos, remainders);
 	}
 
-	public static ItemStack applyDollars(ItemStack stack, Dollar[] dollars, Map<String, Object> reference) {
+	public static ItemStack applyDollars(ItemStack stack, Dollar[] dollars, ReferenceResolver referenceResolver) {
 		for (Dollar dollar : dollars) {
 			try {
-				dollar.apply(stack, reference);
+				dollar.apply(stack, referenceResolver);
 			} catch (DollarException e) {
 				e.printStackTrace();
 			}

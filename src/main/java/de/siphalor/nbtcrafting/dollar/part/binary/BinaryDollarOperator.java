@@ -17,13 +17,12 @@
 
 package de.siphalor.nbtcrafting.dollar.part.binary;
 
-import java.util.Map;
-
 import de.siphalor.nbtcrafting.dollar.exception.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ConstantDollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ValueDollarPart;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public abstract class BinaryDollarOperator implements DollarPart {
 	private final DollarPart first;
@@ -35,8 +34,8 @@ public abstract class BinaryDollarOperator implements DollarPart {
 	}
 
 	@Override
-	public Object evaluate(Map<String, Object> reference) throws DollarEvaluationException {
-		return apply(first.evaluate(reference), second.evaluate(reference));
+	public Object evaluate(ReferenceResolver referenceResolver) throws DollarEvaluationException {
+		return apply(first.evaluate(referenceResolver), second.evaluate(referenceResolver));
 	}
 
 	public abstract Object apply(Object first, Object second) throws DollarEvaluationException;

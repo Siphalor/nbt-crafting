@@ -17,14 +17,13 @@
 
 package de.siphalor.nbtcrafting.dollar.part.binary;
 
-import java.util.Map;
-
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
 import de.siphalor.nbtcrafting.dollar.exception.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ConstantDollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ValueDollarPart;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public class CastDollarOperator implements DollarPart {
 	private final DollarPart dollarPart;
@@ -48,8 +47,8 @@ public class CastDollarOperator implements DollarPart {
 	}
 
 	@Override
-	public Object evaluate(Map<String, Object> reference) throws DollarEvaluationException {
-		Object value = dollarPart.evaluate(reference);
+	public Object evaluate(ReferenceResolver referenceResolver) throws DollarEvaluationException {
+		Object value = dollarPart.evaluate(referenceResolver);
 		switch (typeId) {
 			case 'd':
 				if (value instanceof Number)

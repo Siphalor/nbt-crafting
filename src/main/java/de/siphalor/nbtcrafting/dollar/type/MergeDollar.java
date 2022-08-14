@@ -18,7 +18,6 @@
 package de.siphalor.nbtcrafting.dollar.type;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.mojang.datafixers.util.Pair;
@@ -32,6 +31,7 @@ import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.exception.DollarException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public class MergeDollar extends Dollar {
 	protected final String path;
@@ -44,8 +44,8 @@ public class MergeDollar extends Dollar {
 	}
 
 	@Override
-	public void apply(ItemStack stack, Map<String, Object> references) throws DollarException {
-		Tag value = NbtUtil.asTag(evaluate(references));
+	public void apply(ItemStack stack, ReferenceResolver referenceResolver) throws DollarException {
+		Tag value = NbtUtil.asTag(evaluate(referenceResolver));
 		if (!(value instanceof CompoundTag)) {
 			throw new DollarEvaluationException("Couldn't set stacks main tag as given dollar expression evaluates to non-object value.");
 		} else {

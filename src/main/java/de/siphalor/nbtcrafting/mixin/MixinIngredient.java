@@ -19,7 +19,6 @@ package de.siphalor.nbtcrafting.mixin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,6 +53,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.JsonPreprocessor;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 import de.siphalor.nbtcrafting.ingredient.*;
 import de.siphalor.nbtcrafting.util.duck.ICloneable;
 
@@ -321,11 +321,11 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	}
 
 	@Override
-	public ItemStack nbtCrafting$getRecipeRemainder(ItemStack stack, Map<String, Object> reference) {
+	public ItemStack nbtCrafting$getRecipeRemainder(ItemStack stack, ReferenceResolver referenceResolver) {
 		if (advancedEntries != null) {
 			for (IngredientEntry entry : advancedEntries) {
 				if (entry.matches(stack)) {
-					ItemStack remainder = entry.getRecipeRemainder(stack, reference);
+					ItemStack remainder = entry.getRecipeRemainder(stack, referenceResolver);
 					if (remainder != null) {
 						return remainder;
 					}

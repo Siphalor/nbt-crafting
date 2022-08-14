@@ -17,13 +17,12 @@
 
 package de.siphalor.nbtcrafting.dollar.part.unary;
 
-import java.util.Map;
-
 import de.siphalor.nbtcrafting.dollar.exception.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ConstantDollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ValueDollarPart;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public abstract class UnaryDollarOperator implements DollarPart {
 	DollarPart dollarPart;
@@ -33,8 +32,8 @@ public abstract class UnaryDollarOperator implements DollarPart {
 	}
 
 	@Override
-	public final Object evaluate(Map<String, Object> reference) throws DollarEvaluationException {
-		return apply(dollarPart.evaluate(reference));
+	public final Object evaluate(ReferenceResolver referenceResolver) throws DollarEvaluationException {
+		return apply(dollarPart.evaluate(referenceResolver));
 	}
 
 	public abstract Object apply(Object value) throws DollarEvaluationException;

@@ -17,11 +17,11 @@
 
 package de.siphalor.nbtcrafting.dollar.part.value;
 
-import java.util.Map;
 import java.util.Objects;
 
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public class ReferenceDollarPart implements DollarPart {
 	private final String key;
@@ -35,11 +35,8 @@ public class ReferenceDollarPart implements DollarPart {
 	}
 
 	@Override
-	public Object evaluate(Map<String, Object> reference) throws DollarEvaluationException {
-		if (!reference.containsKey(key)) {
-			throw new DollarEvaluationException("Could not resolve reference to '" + key + "'");
-		}
-		return reference.get(key);
+	public Object evaluate(ReferenceResolver referenceResolver) throws DollarEvaluationException {
+		return referenceResolver.resolve(key);
 	}
 
 	@Override

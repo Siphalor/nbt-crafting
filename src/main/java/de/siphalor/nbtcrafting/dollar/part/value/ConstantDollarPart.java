@@ -17,13 +17,12 @@
 
 package de.siphalor.nbtcrafting.dollar.part.value;
 
-import java.util.Map;
-
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public interface ConstantDollarPart extends DollarPart {
 	@Override
-	default Object evaluate(Map<String, Object> reference) {
+	default Object evaluate(ReferenceResolver referenceResolver) {
 		return getConstantValue();
 	}
 

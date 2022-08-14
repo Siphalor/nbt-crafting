@@ -17,9 +17,6 @@
 
 package de.siphalor.nbtcrafting.recipe;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
@@ -31,7 +28,7 @@ import net.minecraft.world.World;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.RecipeUtil;
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.dollar.exception.UnresolvedDollarReferenceException;
 
 public class BrewingRecipe extends IngredientRecipe<Inventory> {
 	public static final RecipeSerializer<BrewingRecipe> SERIALIZER = new IngredientRecipe.Serializer<>(BrewingRecipe::new);
@@ -54,13 +51,10 @@ public class BrewingRecipe extends IngredientRecipe<Inventory> {
 	public ItemStack[] craftAll(Inventory inv) {
 		ItemStack[] stacks = new ItemStack[3];
 
-		Map<String, Object> reference = new HashMap<>();
-		reference.put("ingredient", NbtUtil.getTagOrEmpty(inv.getInvStack(3)));
-
 		for (int i = 0; i < 3; i++) {
 			if (base.test(inv.getInvStack(i))) {
-				reference.put("base", NbtUtil.getTagOrEmpty(inv.getInvStack(i)));
-				stacks[i] = RecipeUtil.applyDollars(result.copy(), resultDollars, reference);
+				int finalI = i;
+				stacks[i] = RecipeUtil.applyDollars(result.copy(), resultDollars, ref -> resolveReference(inv, finalI, ref));
 			}
 		}
 		return stacks;
@@ -69,17 +63,32 @@ public class BrewingRecipe extends IngredientRecipe<Inventory> {
 	@Override
 	public DefaultedList<ItemStack> getRemainingStacks(Inventory inv) {
 		DefaultedList<ItemStack> stacks = DefaultedList.ofSize(4, ItemStack.EMPTY);
-		Map<String, Object> reference = new HashMap<>();
-		reference.put("ingredient", NbtUtil.getTagOrEmpty(inv.getInvStack(3)));
-		stacks.set(3, RecipeUtil.getRemainder(inv.getInvStack(3), ingredient, reference));
+
+		stacks.set(3, RecipeUtil.getRemainder(inv.getInvStack(3), ingredient, ref -> {
+			if ("ingredient".equals(ref)) {
+				return inv.getInvStack(3);
+			}
+			throw new UnresolvedDollarReferenceException(ref);
+		}));
 
 		for (int i = 0; i < 3; i++) {
 			if (base.test(inv.getInvStack(i))) {
-				reference.put("base", NbtUtil.getTagOrEmpty(inv.getInvStack(i)));
-				stacks.set(i, RecipeUtil.getRemainder(inv.getInvStack(i), base, reference));
+				int finalI = i;
+				stacks.set(i, RecipeUtil.getRemainder(inv.getInvStack(i), base, ref -> resolveReference(inv, finalI, ref)));
 			}
 		}
 		return stacks;
+	}
+
+	private Object resolveReference(Inventory inv, int baseIndex, String reference) throws UnresolvedDollarReferenceException {
+		switch (reference) {
+			case "ingredient":
+				return inv.getInvStack(3);
+			case "base":
+				return inv.getInvStack(baseIndex);
+			default:
+				throw new UnresolvedDollarReferenceException(reference);
+		}
 	}
 
 	@Override

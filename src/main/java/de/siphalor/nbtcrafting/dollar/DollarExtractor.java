@@ -20,7 +20,6 @@ package de.siphalor.nbtcrafting.dollar;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.AbstractListTag;
 import net.minecraft.nbt.CompoundTag;
@@ -34,6 +33,7 @@ import de.siphalor.nbtcrafting.api.nbt.NbtIterator;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.antlr.DollarExpressionLexer;
 import de.siphalor.nbtcrafting.dollar.antlr.DollarExpressionParser;
+import de.siphalor.nbtcrafting.dollar.exception.UnresolvedDollarReferenceException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.type.CountDollar;
 import de.siphalor.nbtcrafting.dollar.type.MergeDollar;
@@ -167,10 +167,16 @@ public final class DollarExtractor {
 	public static void main(String[] args) {
 		DollarPart dollarPart = parse("'hi'");
 		try {
-			System.out.println(dollarPart.evaluate(ImmutableMap.of(
-					"a", 2,
-					"b", "b"
-			)));
+			System.out.println(dollarPart.evaluate(ref -> {
+				switch (ref) {
+					case "a":
+						return 2;
+					case "b":
+						return "b";
+					default:
+						throw new UnresolvedDollarReferenceException(ref);
+				}
+			}));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

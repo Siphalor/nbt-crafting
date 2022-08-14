@@ -30,8 +30,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
+import de.siphalor.nbtcrafting.dollar.reference.MapBackedReferenceResolver;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 import de.siphalor.nbtcrafting.ingredient.IIngredient;
 
 @Mixin(Recipe.class)
@@ -46,22 +47,23 @@ public interface MixinRecipe {
 	@Overwrite
 	default DefaultedList<ItemStack> getRemainingStacks(Inventory inventory) {
 		final DefaultedList<ItemStack> stackList = DefaultedList.ofSize(inventory.getInvSize(), ItemStack.EMPTY);
-		Map<String, Object> reference;
+		ReferenceResolver referenceResolver;
 		Collection<Ingredient> ingredients;
 		if (this instanceof NBTCRecipe) {
 			ingredients = ((NBTCRecipe<?>) this).getIngredients();
 			// noinspection unchecked
-			reference = ((NBTCRecipe<Inventory>) this).buildDollarReference(inventory);
+			referenceResolver = ((NBTCRecipe<Inventory>) this).getReferenceResolver(inventory);
 		} else {
 			DefaultedList<Ingredient> ingredientList = getPreviewInputs();
 			ingredients = ingredientList;
-			reference = new HashMap<>();
+			Map<String, Object> references = new HashMap<>();
 			for (int j = 0; j < ingredientList.size(); j++) {
 				for (int i = 0; i < stackList.size(); i++) {
 					if (ingredientList.get(j).test(inventory.getInvStack(i)))
-						reference.putIfAbsent("i" + j, NbtUtil.getTagOrEmpty(inventory.getInvStack(i)));
+						references.putIfAbsent("i" + j, inventory.getInvStack(i));
 				}
 			}
+			referenceResolver = new MapBackedReferenceResolver(references);
 		}
 		main:
 		for (int i = 0; i < stackList.size(); ++i) {
@@ -69,7 +71,7 @@ public interface MixinRecipe {
 			for (Ingredient ingredient : ingredients) {
 				if (ingredient.test(itemStack)) {
 					//noinspection ConstantConditions
-					ItemStack remainder = ((IIngredient) (Object) ingredient).nbtCrafting$getRecipeRemainder(itemStack, reference);
+					ItemStack remainder = ((IIngredient) (Object) ingredient).nbtCrafting$getRecipeRemainder(itemStack, referenceResolver);
 					if (remainder != null) {
 						stackList.set(i, remainder);
 						continue main;

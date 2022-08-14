@@ -17,8 +17,6 @@
 
 package de.siphalor.nbtcrafting.dollar;
 
-import java.util.Map;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.Tag;
 
@@ -26,6 +24,7 @@ import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.exception.DollarException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public abstract class Dollar {
 	protected DollarPart expression;
@@ -34,9 +33,9 @@ public abstract class Dollar {
 		this.expression = expression;
 	}
 
-	protected Tag evaluate(Map<String, Object> references) throws DollarEvaluationException {
-		return NbtUtil.asTag(expression.evaluate(references));
+	protected Tag evaluate(ReferenceResolver referenceResolver) throws DollarEvaluationException {
+		return NbtUtil.asTag(expression.evaluate(referenceResolver));
 	}
 
-	public abstract void apply(ItemStack stack, Map<String, Object> references) throws DollarException;
+	public abstract void apply(ItemStack stack, ReferenceResolver referenceResolver) throws DollarException;
 }

@@ -17,15 +17,16 @@
 
 package de.siphalor.nbtcrafting.ingredient;
 
-import java.util.Map;
 import java.util.stream.Stream;
 
 import net.minecraft.item.ItemStack;
+
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public interface IIngredient {
 	void nbtCrafting$setAdvancedEntries(Stream<? extends IngredientEntry> entries);
 
 	boolean nbtCrafting$isAdvanced();
 
-	ItemStack nbtCrafting$getRecipeRemainder(ItemStack stack, Map<String, Object> reference);
+	ItemStack nbtCrafting$getRecipeRemainder(ItemStack stack, ReferenceResolver referenceResolver);
 }

@@ -17,12 +17,11 @@
 
 package de.siphalor.nbtcrafting.dollar.part.ternary;
 
-import java.util.Map;
-
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ConstantDollarPart;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public class ConditionDollarOperator implements DollarPart {
 	private final DollarPart condition;
@@ -47,10 +46,10 @@ public class ConditionDollarOperator implements DollarPart {
 	}
 
 	@Override
-	public Object evaluate(Map<String, Object> reference) throws DollarEvaluationException {
-		if (DollarUtil.asBoolean(condition.evaluate(reference))) {
-			return thenPart.evaluate(reference);
+	public Object evaluate(ReferenceResolver referenceResolver) throws DollarEvaluationException {
+		if (DollarUtil.asBoolean(condition.evaluate(referenceResolver))) {
+			return thenPart.evaluate(referenceResolver);
 		}
-		return elsePart.evaluate(reference);
+		return elsePart.evaluate(referenceResolver);
 	}
 }

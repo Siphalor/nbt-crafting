@@ -17,9 +17,6 @@
 
 package de.siphalor.nbtcrafting.recipe.cauldron;
 
-import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
@@ -32,10 +29,11 @@ import net.minecraft.world.World;
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.RecipeUtil;
 import de.siphalor.nbtcrafting.api.ServerRecipe;
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.DollarExtractor;
+import de.siphalor.nbtcrafting.dollar.exception.UnresolvedDollarReferenceException;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, ServerRecipe {
 	private final Identifier identifier;
@@ -81,11 +79,24 @@ public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, S
 
 	@Override
 	public ItemStack craft(TemporaryCauldronInventory inventory) {
-		inventory.setLevel(inventory.getLevel() - levels);
+		int level = inventory.getLevel() - levels;
 
+		ItemStack result = RecipeUtil.applyDollars(output.copy(), outputDollars, ref -> {
+			switch (ref) {
+				case "ingredient":
+					return inventory.getInvStack(0);
+				case "oldLevel":
+					return inventory.getLevel();
+				case "newLevel":
+					return level;
+				default:
+					throw new UnresolvedDollarReferenceException(ref);
+			}
+		});
+
+		inventory.setLevel(level);
 		inventory.getInvStack(0).decrement(1);
-
-		return RecipeUtil.applyDollars(output.copy(), outputDollars, buildDollarReference(inventory));
+		return result;
 	}
 
 	@Override
@@ -119,7 +130,12 @@ public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, S
 	}
 
 	@Override
-	public Map<String, Object> buildDollarReference(TemporaryCauldronInventory inv) {
-		return ImmutableMap.of("ingredient", NbtUtil.getTagOrEmpty(inv.getInvStack(0)));
+	public ReferenceResolver getReferenceResolver(TemporaryCauldronInventory inv) {
+		return ref -> {
+			if ("ingredient".equals(ref)) {
+				return inv.getInvStack(0);
+			}
+			throw new UnresolvedDollarReferenceException(ref);
+		};
 	}
 }
