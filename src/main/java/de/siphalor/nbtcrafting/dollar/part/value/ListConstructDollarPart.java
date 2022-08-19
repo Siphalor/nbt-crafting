@@ -1,12 +1,10 @@
-package de.siphalor.nbtcrafting.dollar.part.function;
+package de.siphalor.nbtcrafting.dollar.part.value;
 
 import java.util.ArrayList;
 
 import de.siphalor.nbtcrafting.dollar.exception.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-import de.siphalor.nbtcrafting.dollar.part.value.ConstantDollarPart;
-import de.siphalor.nbtcrafting.dollar.part.value.ValueDollarPart;
 import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public class ListConstructDollarPart implements DollarPart {

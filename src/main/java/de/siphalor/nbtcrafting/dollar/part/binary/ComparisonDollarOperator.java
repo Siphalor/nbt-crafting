@@ -17,8 +17,7 @@
 
 package de.siphalor.nbtcrafting.dollar.part.binary;
 
-import java.util.Objects;
-
+import de.siphalor.nbtcrafting.dollar.DollarUtil;
 import de.siphalor.nbtcrafting.dollar.exception.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
@@ -43,9 +42,9 @@ public class ComparisonDollarOperator extends BinaryDollarOperator {
 			return type.matches(first.toString().compareTo(second.toString()));
 		}
 		if (type == Type.EQUAL) {
-			return Objects.equals(first, second);
+			return DollarUtil.equals(first, second);
 		} else if (type == Type.NOT_EQUAL) {
-			return !Objects.equals(first, second);
+			return !DollarUtil.equals(first, second);
 		}
 
 		throw new DollarEvaluationException("Cannot compare " + first + " with " + second + " with operator " + type.operator());

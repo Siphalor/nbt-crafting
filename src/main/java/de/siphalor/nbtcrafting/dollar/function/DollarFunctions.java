@@ -12,6 +12,7 @@ import net.minecraft.util.registry.Registry;
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.exception.IllegalDollarFunctionParameterException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
+import de.siphalor.nbtcrafting.dollar.part.value.ValueDollarPart;
 import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public class DollarFunctions {
@@ -79,42 +80,35 @@ public class DollarFunctions {
 				throw new AssertionError();
 			}
 		});
-		DollarFunctions.register(new StaticDollarFunction("map", new Class[]{List.class}, new Class[]{DollarPart.class}) {
+		DollarFunctions.register(new StaticDollarFunction("map", new Class[]{List.class}, new Class[]{DollarFunction.class}) {
 			@Override
 			protected Object apply(Object[] parameters, ReferenceResolver referenceResolver) throws DollarEvaluationException {
 				List<?> list = (List<?>) parameters[0];
 				List<Object> mappedList = new ArrayList<>(list.size());
-				DollarPart mapper = (DollarPart) parameters[1];
-				for (int i = 0; i < list.size(); i++) {
-					int finalI = i;
-					mappedList.add(mapper.evaluate(ref -> {
-						if ("it".equals(ref)) {
-							return list.get(finalI);
-						}
-						return referenceResolver.resolve(ref);
-					}));
+				DollarFunction mapper = (DollarFunction) parameters[1];
+				for (Object value : list) {
+					try {
+						mappedList.add(mapper.callDirect(referenceResolver, value));
+					} catch (IllegalDollarFunctionParameterException e) {
+						throw new DollarEvaluationException(e);
+					}
 				}
 				return mappedList;
 			}
 		});
-		DollarFunctions.register(new StaticDollarFunction("distinct", 2, new Class[]{List.class}, new Class[]{DollarPart.class}, new Class[]{Boolean.class}) {
+		DollarFunctions.register(new StaticDollarFunction("distinct", 2, new Class[]{List.class}, new Class[]{DollarFunction.class}, new Class[]{Boolean.class}) {
 			@Override
 			protected Object apply(Object[] parameters, ReferenceResolver referenceResolver) throws DollarEvaluationException {
 				List<?> list = (List<?>) parameters[0];
-				DollarPart unique = (DollarPart) parameters[1];
+				DollarFunction unique = (DollarFunction) parameters[1];
 				boolean keepFirst = parameters.length == 2 || (boolean) parameters[2];
 				Map<Object, Object> map = new HashMap<>();
 
 				for (Object value : list) {
 					Object key;
 					try {
-						key = unique.evaluate(ref -> {
-							if ("it".equals(ref)) {
-								return value;
-							}
-							return referenceResolver.resolve(ref);
-						});
-					} catch (DollarEvaluationException e) {
+						key = unique.call(referenceResolver, new DollarPart[]{ValueDollarPart.of(value)});
+					} catch (DollarEvaluationException | IllegalDollarFunctionParameterException e) {
 						throw new DollarEvaluationException("Encountered error during evaluation of distinct function", e);
 					}
 					if (!map.containsKey(key) || !keepFirst) {
@@ -138,7 +132,7 @@ public class DollarFunctions {
 			}
 
 			@Override
-			public Object call(DollarPart[] parameters, ReferenceResolver referenceResolver) throws IllegalDollarFunctionParameterException, DollarEvaluationException {
+			public Object call(ReferenceResolver referenceResolver, DollarPart... parameters) throws IllegalDollarFunctionParameterException, DollarEvaluationException {
 				Object[] values = new Object[parameters.length];
 				for (int i = 0; i < values.length; i++) {
 					values[i] = parameters[i].evaluate(referenceResolver);

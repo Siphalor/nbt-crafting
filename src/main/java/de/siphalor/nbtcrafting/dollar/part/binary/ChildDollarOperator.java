@@ -21,14 +21,17 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.DollarUtil;
 import de.siphalor.nbtcrafting.dollar.exception.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.part.DollarBinding;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
+import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
-public class ChildDollarOperator extends BinaryDollarOperator {
+public class ChildDollarOperator extends BinaryDollarOperator implements DollarBinding {
 	public ChildDollarOperator(DollarPart first, DollarPart second) {
 		super(first, second);
 	}
@@ -44,18 +47,73 @@ public class ChildDollarOperator extends BinaryDollarOperator {
 		}
 
 		if (first instanceof CompoundTag) {
-			String key = second.toString();
+			String key = DollarUtil.asString(second);
 			if (((CompoundTag) first).contains(key)) {
 				return NbtUtil.toDollarValue(((CompoundTag) first).get(key));
 			}
 			return null;
 		} else if (first instanceof List && second instanceof Number) {
 			int index = ((Number) second).intValue();
+			if (index < 0) {
+				index = ((List<?>) first).size() + index;
+			}
 			if (index < ((List<?>) first).size()) {
 				return DollarUtil.toDollarValue(((List<?>) first).get(index));
 			}
 			return null;
 		}
 		throw new DollarEvaluationException("Cannot access element " + DollarUtil.asString(second) + " on value " + DollarUtil.asString(first));
+	}
+
+	@Override
+	public void assign(ReferenceResolver referenceResolver, Object value) throws DollarEvaluationException {
+		Object parent = first.evaluate(referenceResolver);
+		if (parent instanceof ItemStack) {
+			parent = ((ItemStack) parent).getOrCreateTag();
+		}
+
+		if (parent instanceof CompoundTag) {
+			if (second == null) {
+				throw new DollarEvaluationException("Cannot use anonymous child access on compound tags");
+			}
+			((CompoundTag) parent).put(
+					DollarUtil.asString(second.evaluate(referenceResolver)),
+					NbtUtil.asTag(value)
+			);
+		} else if (parent instanceof List) {
+			int index;
+			if (second == null) {
+				index = ((List<?>) parent).size();
+			} else {
+				Object key = second.evaluate(referenceResolver);
+				if (key instanceof Number) {
+					index = ((Number) key).intValue();
+				} else {
+					throw new DollarEvaluationException("Cannot index list with " + DollarUtil.asString(key));
+				}
+			}
+			if (index < 0) {
+				index = ((List<?>) parent).size() + index;
+			}
+			if (index <= ((List<?>) parent).size()) {
+				if (parent instanceof ListTag) {
+					if (index == ((List<?>) parent).size()) {
+						((ListTag) parent).add(NbtUtil.asTag(value));
+					} else {
+						((ListTag) parent).set(index, NbtUtil.asTag(value));
+					}
+				} else {
+					if (index == ((List<?>) parent).size()) {
+						//noinspection unchecked
+						((List<Object>) parent).add(value);
+					} else {
+						//noinspection unchecked
+						((List<Object>) parent).set(index, value);
+					}
+				}
+			}
+		} else {
+			throw new DollarEvaluationException("Cannot access child on value " + DollarUtil.asString(parent));
+		}
 	}
 }

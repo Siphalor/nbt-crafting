@@ -28,7 +28,7 @@ number
   : INTEGER_LITERAL
   | FLOAT_LITERAL
   ;
-literal
+stringLiteral
   : EMPTY_STRING
   | STRING_LITERAL
   | EMPTY_CHAR
@@ -36,21 +36,61 @@ literal
   ;
 identifier: ID
   ;
-nesting: LPAREN expr RPAREN
+namedConstant
+  : TRUE
+  | FALSE
+  | NULL
   ;
-function_call
-  : target=identifier (EMPTY_EXP | LPAREN expr (COMMA expr)* RPAREN)
+nesting
+  : LPAREN expr RPAREN
+  | LPAREN assignmentExpr RPAREN
+  ;
+listConstruct
+  : LBRACK RBRACK
+  | LBRACK expr (COMMA expr)* COMMA? RBRACK
+  ;
+objectConstructProperty
+  : identifier COLON expr
+  | stringLiteral COLON expr
+  ;
+objectConstruct
+  : LBRACE RBRACE
+  | LBRACE objectConstructProperty (COMMA objectConstructProperty)* COMMA? RBRACE
+  ;
+lambda
+  : LPAREN RPAREN ARROW inline=expr
+  | identifier ARROW inline=expr
+  | LPAREN identifier (COMMA identifier)* RPAREN ARROW inline=expr
+  | LPAREN RPAREN ARROW LBRACE body=statementList RBRACE
+  | identifier ARROW LBRACE body=statementList RBRACE
+  | LPAREN identifier (COMMA identifier)* RPAREN ARROW LBRACE body=statementList RBRACE
+  ;
+functionCall
+  : target=identifier (LPAREN RPAREN | LPAREN expr (COMMA expr)* RPAREN)
   ;
 constant
-  : literal
+  : stringLiteral
   | number
   | identifier
+  | namedConstant
+  | listConstruct
+  | objectConstruct
+  | lambda
+  ;
+lexpr
+  : identifier
+  | lexpr op=DOT identifier
+  | lexpr op=LBRACK RBRACK
+  | lexpr op=LBRACK expr RBRACK
+  ;
+assignmentExpr
+  : lexpr ASSIGN expr
   ;
 expr
   : expr op=DOT identifier
   | expr op=LBRACK expr RBRACK
-  | expr op=HASH TYPE_INDICATOR
-  | function_call
+  | expr op=HASH_CAST
+  | functionCall
   | op=MINUS expr
   | op=PLUS expr
   | op=BANG expr
@@ -71,5 +111,12 @@ expr
   | constant
   ;
 statement
-  : expr EOF
+  : assignmentExpr
+  | expr
+  ;
+statementList
+  : statement (SEMICOLON statement)* SEMICOLON?
+  ;
+script
+  : statementList EOF
   ;

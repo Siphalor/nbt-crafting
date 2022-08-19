@@ -45,10 +45,10 @@ public class DollarExtractorTests {
 
 	@Test
 	void parseAndRun_listMap() {
-		DollarPart expression = DollarExtractor.parse("map(list, it + 2)", false);
+		DollarPart expression = DollarExtractor.parse("map(combine(list, [7, 10]), it -> it + 2) == [3,4,5,9,12]", false);
 		Assertions.assertNotNull(expression);
 		Assertions.assertEquals(
-				Arrays.asList(3, 4, 5),
+				true,
 				Assertions.assertDoesNotThrow(() -> expression.evaluate(ref -> {
 					if ("list".equals(ref)) {
 						return Arrays.asList(1, 2, 3);

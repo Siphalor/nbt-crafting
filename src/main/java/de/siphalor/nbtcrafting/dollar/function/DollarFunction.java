@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Contract;
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.exception.IllegalDollarFunctionParameterException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
+import de.siphalor.nbtcrafting.dollar.part.value.ValueDollarPart;
 import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public abstract class DollarFunction {
@@ -31,7 +32,14 @@ public abstract class DollarFunction {
 	 */
 	public abstract void checkParameter(int index, Object parameter) throws IllegalDollarFunctionParameterException;
 
-	public abstract Object call(DollarPart[] parameters, ReferenceResolver referenceResolver) throws DollarEvaluationException, IllegalDollarFunctionParameterException;
+	public Object callDirect(ReferenceResolver referenceResolver, Object... parameters) throws DollarEvaluationException, IllegalDollarFunctionParameterException {
+		DollarPart[] dollarParts = new DollarPart[parameters.length];
+		for (int i = 0; i < parameters.length; i++) {
+			dollarParts[i] = ValueDollarPart.of(parameters[i]);
+		}
+		return call(referenceResolver, dollarParts);
+	}
+	public abstract Object call(ReferenceResolver referenceResolver, DollarPart... parameters) throws DollarEvaluationException, IllegalDollarFunctionParameterException;
 
 	// Utility methods for checking parameters
 	@Contract("_, _, _ -> fail")

@@ -34,7 +34,7 @@ public class VariadicNumericDollarFunction extends DollarFunction {
 	}
 
 	@Override
-	public Object call(DollarPart[] parameters, ReferenceResolver referenceResolver) throws DollarEvaluationException, IllegalDollarFunctionParameterException {
+	public Object call(ReferenceResolver referenceResolver, DollarPart... parameters) throws DollarEvaluationException, IllegalDollarFunctionParameterException {
 		Number value = start;
 
 		for (int p = 0; p < parameters.length; p++) {

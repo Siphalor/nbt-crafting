@@ -25,8 +25,8 @@ import de.siphalor.nbtcrafting.dollar.part.value.ValueDollarPart;
 import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public abstract class BinaryDollarOperator implements DollarPart {
-	private final DollarPart first;
-	private final DollarPart second;
+	protected final DollarPart first;
+	protected final DollarPart second;
 
 	public BinaryDollarOperator(DollarPart first, DollarPart second) {
 		this.first = first;

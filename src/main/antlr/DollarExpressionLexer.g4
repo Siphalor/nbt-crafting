@@ -21,7 +21,7 @@ lexer grammar DollarExpressionLexer;
 	package de.siphalor.nbtcrafting.dollar.antlr;
 }
 
-WHITESPACE: [\p{Zs}]+
+WHITESPACE: [\p{Zs}\n]+
   -> channel(HIDDEN)
   ;
 HASH: '#'
@@ -36,9 +36,15 @@ LBRACK: '['
   ;
 RBRACK: ']'
   ;
+LBRACE: '{'
+  ;
+RBRACE: '}'
+  ;
 QUEST: '?'
   ;
 COMMA: ','
+  ;
+SEMICOLON: ';'
   ;
 DOT: '.'
   ;
@@ -58,6 +64,8 @@ fragment EQ: '='
   ;
 fragment EXCL: '!'
   ;
+ASSIGN: EQ
+  ;
 BANG: EXCL
   ;
 LESS: LT
@@ -75,6 +83,8 @@ NOT_EQUAL: EXCL EQ
 LOG_OR: '||'
   ;
 LOG_AND: '&&'
+  ;
+ARROW: MINUS GT
   ;
 fragment CHAR_ESCAPE: '\\\''
   ;
@@ -98,7 +108,14 @@ STRING_LITERAL:
   )*
   '"'
   ;
-EMPTY_EXP: LPAREN RPAREN
+TRUE:
+  'true'
+  ;
+FALSE:
+  'false'
+  ;
+NULL:
+  'null'
   ;
 fragment ID_START: [a-zA-Z_$]
   ;
@@ -116,21 +133,24 @@ fragment LEADING_DIGIT: [1-9]
 fragment SCIENT_EXP:
   [eE] POLARITY? DIGIT+
   ;
-FLOAT_TYPE_INDICATOR: [fd]
+fragment FLOAT_TYPE_INDICATOR: [fFdD]
   ;
-INTEGER_TYPE_INDICATOR: [bcsil]
+fragment INTEGER_TYPE_INDICATOR: [bBcsSiIlL]
   ;
-NUMBER_TYPE_INDICATOR:
+fragment NUMBER_TYPE_INDICATOR:
   FLOAT_TYPE_INDICATOR | INTEGER_TYPE_INDICATOR
   ;
-OTHER_INDICATOR: [asB]
+fragment OTHER_INDICATOR: [ao]
   ;
-TYPE_INDICATOR:
+fragment TYPE_INDICATOR:
   FLOAT_TYPE_INDICATOR | INTEGER_TYPE_INDICATOR | OTHER_INDICATOR
   ;
+HASH_CAST:
+  HASH TYPE_INDICATOR
+  ;
 INTEGER_LITERAL:
-  LEADING_DIGIT DIGIT*
+  ('0' | LEADING_DIGIT DIGIT*) INTEGER_TYPE_INDICATOR?
   ;
 FLOAT_LITERAL:
-  LEADING_DIGIT DIGIT* (DOT DIGIT+ SCIENT_EXP? | SCIENT_EXP)
+  ('0' | LEADING_DIGIT DIGIT*) (DOT DIGIT+ SCIENT_EXP? | SCIENT_EXP) FLOAT_TYPE_INDICATOR?
   ;

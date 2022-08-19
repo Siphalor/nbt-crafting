@@ -51,6 +51,7 @@ public class CastDollarOperator implements DollarPart {
 		Object value = dollarPart.evaluate(referenceResolver);
 		switch (typeId) {
 			case 'd':
+			case 'D':
 				if (value instanceof Number)
 					return ((Number) value).doubleValue();
 				if (value instanceof String)
@@ -59,6 +60,7 @@ public class CastDollarOperator implements DollarPart {
 					return ((Boolean) value) ? 1.0d : 0.0d;
 				throw new DollarEvaluationException("Failed to cast " + value + " to double");
 			case 'f':
+			case 'F':
 				if (value instanceof Number)
 					return ((Number) value).floatValue();
 				if (value instanceof String)
@@ -67,6 +69,7 @@ public class CastDollarOperator implements DollarPart {
 					return ((Boolean) value) ? 1.0f : 0.0f;
 				throw new DollarEvaluationException("Failed to cast " + value + " to float");
 			case 'b':
+			case 'B':
 			case 'c':
 			case 'C':
 				if (value instanceof Number)
@@ -77,6 +80,7 @@ public class CastDollarOperator implements DollarPart {
 					return ((Boolean) value) ? (byte) 1 : (byte) 0;
 				throw new DollarEvaluationException("Failed to cast " + value + " to byte");
 			case 's':
+			case 'S':
 				if (value instanceof Number)
 					return ((Number) value).shortValue();
 				if (value instanceof String)
@@ -93,6 +97,7 @@ public class CastDollarOperator implements DollarPart {
 					return ((Boolean) value) ? 1 : 0;
 				throw new DollarEvaluationException("Failed to cast " + value + " to int");
 			case 'l':
+			case 'L':
 				if (value instanceof Number)
 					return ((Number) value).longValue();
 				if (value instanceof String)
@@ -100,10 +105,9 @@ public class CastDollarOperator implements DollarPart {
 				if (value instanceof Boolean)
 					return ((Boolean) value) ? 1L : 0L;
 				throw new DollarEvaluationException("Failed to cast " + value + " to long");
-			case 'B':
+			case 'o':
 				return DollarUtil.asBoolean(value);
 			case 'a':
-			case 'S':
 				return value.toString();
 			case 'n':
 				if (value instanceof Number)

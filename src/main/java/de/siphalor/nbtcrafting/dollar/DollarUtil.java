@@ -17,12 +17,16 @@
 
 package de.siphalor.nbtcrafting.dollar;
 
+import java.util.List;
+import java.util.Objects;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.exception.DollarException;
+import de.siphalor.nbtcrafting.util.NumberUtil;
 
 public class DollarUtil {
 	public static boolean asBoolean(Object o) {
@@ -71,5 +75,27 @@ public class DollarUtil {
 			return NbtUtil.toDollarValue((Tag) o);
 		}
 		return o;
+	}
+
+	public static boolean equals(Object a, Object b) {
+		if (Objects.equals(a, b)) {
+			return true;
+		}
+
+		if (a instanceof List && b instanceof List) {
+			if (((List<?>) a).size() != ((List<?>) b).size()) {
+				return false;
+			}
+			for (int i = 0; i < ((List<?>) a).size(); i++) {
+				if (!equals(((List<?>) a).get(i), ((List<?>) b).get(i))) {
+					return false;
+				}
+			}
+			return true;
+		} else if (a instanceof Number && b instanceof Number) {
+			int type = NumberUtil.findSmallestType((Number) a, (Number) b);
+			return Objects.equals(NumberUtil.cast((Number) a, type), NumberUtil.cast((Number) b, type));
+		}
+		return false;
 	}
 }

@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.dollar.part.function;
+package de.siphalor.nbtcrafting.dollar.part.special;
 
 import de.siphalor.nbtcrafting.dollar.exception.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
@@ -36,14 +36,14 @@ public class FunctionCallDollarPart implements DollarPart {
 		try {
 			return ValueDollarPart.of(instance.evaluate(null));
 		} catch (DollarEvaluationException e) {
-			throw new DollarDeserializationException("Failed to short-cicuit dollar function call", e);
+			throw new DollarDeserializationException("Failed to short-circuit dollar function call", e);
 		}
 	}
 
 	@Override
 	public Object evaluate(ReferenceResolver referenceResolver) throws DollarEvaluationException {
 		try {
-			return function.call(parameters, referenceResolver);
+			return function.call(referenceResolver, parameters);
 		} catch (IllegalDollarFunctionParameterException e) {
 			throw new DollarEvaluationException("Invalid parameter for function " + function.getName() + ": " + e.getMessage(), e);
 		}

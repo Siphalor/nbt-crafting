@@ -50,17 +50,14 @@ public class DollarExpressionParserErrorListener implements ANTLRErrorListener {
 
 	@Override
 	public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact, BitSet ambigAlts, ATNConfigSet configs) {
-		errors.add("Ambiguity error at " + startIndex + ":" + stopIndex);
 	}
 
 	@Override
 	public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex, BitSet conflictingAlts, ATNConfigSet configs) {
-		errors.add("Attempting full context at " + startIndex + ":" + stopIndex + ": " + conflictingAlts);
 	}
 
 	@Override
 	public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
-		errors.add("Context sensitivity at " + startIndex + ":" + stopIndex + ": " + prediction);
 	}
 
 	private void printErrorInputPointer(StringBuilder output, int line, int start) {

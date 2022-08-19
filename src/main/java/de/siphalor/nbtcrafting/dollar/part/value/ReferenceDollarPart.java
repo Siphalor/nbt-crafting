@@ -20,13 +20,14 @@ package de.siphalor.nbtcrafting.dollar.part.value;
 import java.util.Objects;
 
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.part.DollarBinding;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
-public class ReferenceDollarPart implements DollarPart {
+public class ReferenceDollarPart implements DollarPart, DollarBinding {
 	private final String key;
 
-	private ReferenceDollarPart(String key) {
+	public ReferenceDollarPart(String key) {
 		this.key = key;
 	}
 
@@ -37,6 +38,11 @@ public class ReferenceDollarPart implements DollarPart {
 	@Override
 	public Object evaluate(ReferenceResolver referenceResolver) throws DollarEvaluationException {
 		return referenceResolver.resolve(key);
+	}
+
+	@Override
+	public void assign(ReferenceResolver referenceResolver, Object value) throws DollarEvaluationException {
+		throw new DollarEvaluationException("Changing the top-level value of references is currently not supported");
 	}
 
 	@Override

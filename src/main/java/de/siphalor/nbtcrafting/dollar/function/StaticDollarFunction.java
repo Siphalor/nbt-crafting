@@ -1,7 +1,5 @@
 package de.siphalor.nbtcrafting.dollar.function;
 
-import java.util.Arrays;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import org.apache.commons.lang3.ArrayUtils;
@@ -65,15 +63,11 @@ public abstract class StaticDollarFunction extends DollarFunction {
 	}
 
 	@Override
-	public Object call(DollarPart[] parameters, ReferenceResolver referenceResolver) throws DollarEvaluationException, IllegalDollarFunctionParameterException {
+	public Object call(ReferenceResolver referenceResolver, DollarPart... parameters) throws DollarEvaluationException, IllegalDollarFunctionParameterException {
 		Object[] parameterValues = new Object[parameters.length];
 		for (int p = 0; p < parameters.length; p++) {
-			if (Arrays.equals(new Class<?>[] { DollarPart.class }, parameterClasses[p])) {
-				parameterValues[p] = parameters[p];
-			} else {
-				parameterValues[p] = parameters[p].evaluate(referenceResolver);
-				checkParameter(p, parameterValues[p]);
-			}
+			parameterValues[p] = parameters[p].evaluate(referenceResolver);
+			checkParameter(p, parameterValues[p]);
 		}
 
 		return apply(parameterValues, referenceResolver);
