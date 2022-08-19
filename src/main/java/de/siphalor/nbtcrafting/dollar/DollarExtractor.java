@@ -17,27 +17,28 @@
 
 package de.siphalor.nbtcrafting.dollar;
 
-import java.util.*;
-import java.util.regex.Pattern;
-
 import com.mojang.datafixers.util.Pair;
+
+import de.siphalor.nbtcrafting.NbtCrafting;
+import de.siphalor.nbtcrafting.api.nbt.MergeMode;
+import de.siphalor.nbtcrafting.api.nbt.NbtIterator;
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.dollar.antlr.DollarScriptLexer;
+import de.siphalor.nbtcrafting.dollar.antlr.DollarScriptParser;
+import de.siphalor.nbtcrafting.dollar.exception.UnresolvedDollarReferenceException;
+import de.siphalor.nbtcrafting.dollar.part.DollarPart;
+import de.siphalor.nbtcrafting.dollar.type.CountDollar;
+import de.siphalor.nbtcrafting.dollar.type.MergeDollar;
+import de.siphalor.nbtcrafting.dollar.type.SimpleDollar;
+
 import net.minecraft.nbt.AbstractListTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.api.nbt.MergeMode;
-import de.siphalor.nbtcrafting.api.nbt.NbtIterator;
-import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
-import de.siphalor.nbtcrafting.dollar.antlr.DollarExpressionLexer;
-import de.siphalor.nbtcrafting.dollar.antlr.DollarExpressionParser;
-import de.siphalor.nbtcrafting.dollar.exception.UnresolvedDollarReferenceException;
-import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-import de.siphalor.nbtcrafting.dollar.type.CountDollar;
-import de.siphalor.nbtcrafting.dollar.type.MergeDollar;
-import de.siphalor.nbtcrafting.dollar.type.SimpleDollar;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public final class DollarExtractor {
 	private DollarExtractor() {}
@@ -131,16 +132,16 @@ public final class DollarExtractor {
 
 	public static DollarPart parse(String string, boolean reportErrors) {
 		try {
-			DollarExpressionLexer lexer = new DollarExpressionLexer(CharStreams.fromString(string));
-			DollarExpressionParser parser = new DollarExpressionParser(new CommonTokenStream(lexer));
+			DollarScriptLexer lexer = new DollarScriptLexer(CharStreams.fromString(string));
+			DollarScriptParser parser = new DollarScriptParser(new CommonTokenStream(lexer));
 			lexer.removeErrorListeners();
 			parser.removeErrorListeners();
-			DollarExpressionParserErrorListener errorListener = new DollarExpressionParserErrorListener(Collections.singletonList(string));
+			DollarScriptParserErrorListener errorListener = new DollarScriptParserErrorListener(Collections.singletonList(string));
 			lexer.addErrorListener(errorListener);
 			parser.addErrorListener(errorListener);
 
-			DollarExpressionParser.StatementContext parseTree = parser.statement();
-			DollarPart expression = parseTree.accept(new DollarExpressionVisitor());
+			DollarScriptParser.ScriptContext parseTree = parser.script();
+			DollarPart expression = parseTree.accept(new DollarScriptVisitor());
 
 			List<String> errors = errorListener.getErrors();
 			if (!errors.isEmpty()) {
@@ -165,7 +166,7 @@ public final class DollarExtractor {
 
 	// Testing only
 	public static void main(String[] args) {
-		DollarPart dollarPart = parse("'hi'");
+		DollarPart dollarPart = parse("map([{a:1,b:2},{a:3,b:4}],v->{v.c=v.a*v.b; v})");
 		try {
 			System.out.println(dollarPart.evaluate(ref -> {
 				switch (ref) {

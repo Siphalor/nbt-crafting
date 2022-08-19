@@ -15,10 +15,10 @@
  * permissions and limitations under the License.
  */
 
-parser grammar DollarExpressionParser;
+parser grammar DollarScriptParser;
 
 options {
-  tokenVocab = DollarExpressionLexer;
+  tokenVocab = DollarScriptLexer;
 }
 @header {
 	package de.siphalor.nbtcrafting.dollar.antlr;

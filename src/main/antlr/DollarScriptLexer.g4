@@ -15,7 +15,7 @@
  * permissions and limitations under the License.
  */
 
-lexer grammar DollarExpressionLexer;
+lexer grammar DollarScriptLexer;
 
 @header {
 	package de.siphalor.nbtcrafting.dollar.antlr;

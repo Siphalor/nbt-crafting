@@ -28,11 +28,11 @@ import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 
-public class DollarExpressionParserErrorListener implements ANTLRErrorListener {
+public class DollarScriptParserErrorListener implements ANTLRErrorListener {
 	private final List<String> inputLines;
 	private final List<String> errors = new ArrayList<>();
 
-	public DollarExpressionParserErrorListener(List<String> inputLines) {
+	public DollarScriptParserErrorListener(List<String> inputLines) {
 		this.inputLines = inputLines;
 	}
 

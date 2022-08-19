@@ -22,8 +22,8 @@ import java.util.List;
 import net.minecraft.util.Pair;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import de.siphalor.nbtcrafting.dollar.antlr.DollarExpressionParser;
-import de.siphalor.nbtcrafting.dollar.antlr.DollarExpressionParserBaseVisitor;
+import de.siphalor.nbtcrafting.dollar.antlr.DollarScriptParser;
+import de.siphalor.nbtcrafting.dollar.antlr.DollarScriptParserBaseVisitor;
 import de.siphalor.nbtcrafting.dollar.exception.DollarDeserializationException;
 import de.siphalor.nbtcrafting.dollar.function.DollarFunction;
 import de.siphalor.nbtcrafting.dollar.function.DollarFunctions;
@@ -41,9 +41,9 @@ import de.siphalor.nbtcrafting.dollar.part.value.ReferenceDollarPart;
 import de.siphalor.nbtcrafting.dollar.part.value.ValueDollarPart;
 import de.siphalor.nbtcrafting.util.NumberUtil;
 
-public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<DollarPart> {
+public class DollarScriptVisitor extends DollarScriptParserBaseVisitor<DollarPart> {
 	@Override
-	public DollarPart visitNumber(DollarExpressionParser.NumberContext ctx) {
+	public DollarPart visitNumber(DollarScriptParser.NumberContext ctx) {
 		TerminalNode node = ctx.INTEGER_LITERAL();
 		if (node != null) {
 			return ValueDollarPart.of(NumberUtil.toSmallestInteger(Long.parseLong(node.getText())));
@@ -53,24 +53,24 @@ public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<D
 	}
 
 	@Override
-	public DollarPart visitStringLiteral(DollarExpressionParser.StringLiteralContext ctx) {
+	public DollarPart visitStringLiteral(DollarScriptParser.StringLiteralContext ctx) {
 		String text = ctx.getText();
 		return ValueDollarPart.of(text.substring(1, text.length() - 1));
 	}
 
 	@Override
-	public DollarPart visitIdentifier(DollarExpressionParser.IdentifierContext ctx) {
+	public DollarPart visitIdentifier(DollarScriptParser.IdentifierContext ctx) {
 		return ReferenceDollarPart.of(ctx.getText());
 	}
 
 	@Override
-	public DollarPart visitNamedConstant(DollarExpressionParser.NamedConstantContext ctx) {
+	public DollarPart visitNamedConstant(DollarScriptParser.NamedConstantContext ctx) {
 		switch (ctx.start.getType()) {
-			case DollarExpressionParser.TRUE:
+			case DollarScriptParser.TRUE:
 				return ValueDollarPart.of(true);
-			case DollarExpressionParser.FALSE:
+			case DollarScriptParser.FALSE:
 				return ValueDollarPart.of(false);
-			case DollarExpressionParser.NULL:
+			case DollarScriptParser.NULL:
 				return ValueDollarPart.of(null);
 			default:
 				throw new RuntimeException("Unknown named constant: " + ctx.start.getText());
@@ -78,12 +78,12 @@ public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<D
 	}
 
 	@Override
-	public DollarPart visitNesting(DollarExpressionParser.NestingContext ctx) {
+	public DollarPart visitNesting(DollarScriptParser.NestingContext ctx) {
 		return this.visit(ctx.expr());
 	}
 
 	@Override
-	public DollarPart visitListConstruct(DollarExpressionParser.ListConstructContext ctx) {
+	public DollarPart visitListConstruct(DollarScriptParser.ListConstructContext ctx) {
 		try {
 			return ListConstructDollarPart.of(ctx.expr().stream().map(this::visit).toArray(DollarPart[]::new));
 		} catch (DollarDeserializationException e) {
@@ -92,7 +92,7 @@ public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<D
 	}
 
 	@Override
-	public DollarPart visitObjectConstruct(DollarExpressionParser.ObjectConstructContext ctx) {
+	public DollarPart visitObjectConstruct(DollarScriptParser.ObjectConstructContext ctx) {
 		try {
 			//noinspection unchecked
 			return ObjectConstructDollarPart.of(ctx.objectConstructProperty().stream().map(prop ->
@@ -104,8 +104,8 @@ public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<D
 	}
 
 	@Override
-	public DollarPart visitLambda(DollarExpressionParser.LambdaContext ctx) {
-		List<DollarExpressionParser.IdentifierContext> identifierContexts = ctx.identifier();
+	public DollarPart visitLambda(DollarScriptParser.LambdaContext ctx) {
+		List<DollarScriptParser.IdentifierContext> identifierContexts = ctx.identifier();
 		String[] parameters = new String[identifierContexts.size()];
 		for (int i = 0; i < identifierContexts.size(); i++) {
 			parameters[i] = identifierContexts.get(i).getText();
@@ -118,7 +118,7 @@ public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<D
 	}
 
 	@Override
-	public DollarPart visitFunctionCall(DollarExpressionParser.FunctionCallContext ctx) {
+	public DollarPart visitFunctionCall(DollarScriptParser.FunctionCallContext ctx) {
 		String identifier = ctx.identifier().getText();
 		DollarFunction dollarFunction = DollarFunctions.get(identifier);
 		if (dollarFunction != null) {
@@ -133,16 +133,16 @@ public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<D
 	}
 
 	@Override
-	public DollarBinding visitLexpr(DollarExpressionParser.LexprContext ctx) {
+	public DollarBinding visitLexpr(DollarScriptParser.LexprContext ctx) {
 		if (ctx.op == null) {
 			return new ReferenceDollarPart(ctx.identifier().getText());
 		}
 		DollarBinding left = this.visitLexpr(ctx.lexpr());
 		switch (ctx.op.getType()) {
-			case DollarExpressionParser.DOT:
+			case DollarScriptParser.DOT:
 				return new ChildDollarOperator(left, ValueDollarPart.of(ctx.identifier().getText()));
-			case DollarExpressionParser.LBRACK:
-				DollarExpressionParser.ExprContext keyExpr = ctx.expr();
+			case DollarScriptParser.LBRACK:
+				DollarScriptParser.ExprContext keyExpr = ctx.expr();
 				if (keyExpr == null) {
 					return new ChildDollarOperator(left, null);
 				}
@@ -153,12 +153,12 @@ public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<D
 	}
 
 	@Override
-	public DollarPart visitAssignmentExpr(DollarExpressionParser.AssignmentExprContext ctx) {
+	public DollarPart visitAssignmentExpr(DollarScriptParser.AssignmentExprContext ctx) {
 		return AssignmentDollarPart.of(this.visitLexpr(ctx.lexpr()), this.visitExpr(ctx.expr()));
 	}
 
 	@Override
-	public DollarPart visitExpr(DollarExpressionParser.ExprContext ctx) {
+	public DollarPart visitExpr(DollarScriptParser.ExprContext ctx) {
 		if (ctx.op == null) {
 			if (ctx.getChildCount() == 0) {
 				return defaultResult();
@@ -168,47 +168,47 @@ public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<D
 		}
 
 		try {
-			List<DollarExpressionParser.ExprContext> expressions = ctx.expr();
+			List<DollarScriptParser.ExprContext> expressions = ctx.expr();
 			switch (ctx.op.getType()) {
-				case DollarExpressionParser.DOT:
+				case DollarScriptParser.DOT:
 					return ChildDollarOperator.of(this.visitExpr(expressions.get(0)), ValueDollarPart.of(ctx.identifier().getText()));
-				case DollarExpressionParser.LBRACK:
+				case DollarScriptParser.LBRACK:
 					return ChildDollarOperator.of(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
-				case DollarExpressionParser.HASH:
+				case DollarScriptParser.HASH:
 					return CastDollarOperator.of(this.visitExpr(expressions.get(0)), ctx.HASH_CAST().getText().charAt(1));
-				case DollarExpressionParser.BANG:
+				case DollarScriptParser.BANG:
 					return NotDollarOperator.of(this.visitExpr(expressions.get(0)));
-				case DollarExpressionParser.MINUS:
+				case DollarScriptParser.MINUS:
 					if (expressions.size() == 1) {
 						return NegationDollarOperator.of(this.visitExpr(expressions.get(0)));
 					}
 					return NumericBinaryDollarOperator.differenceOf(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
-				case DollarExpressionParser.PLUS:
+				case DollarScriptParser.PLUS:
 					if (expressions.size() == 1) {
 						return CastDollarOperator.of(this.visitExpr(expressions.get(0)), 'n');
 					}
 					return SumDollarOperator.of(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
-				case DollarExpressionParser.DIVIDE:
+				case DollarScriptParser.DIVIDE:
 					return NumericBinaryDollarOperator.of(NumberUtil::quotient, this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
-				case DollarExpressionParser.MULTIPLY:
+				case DollarScriptParser.MULTIPLY:
 					return NumericBinaryDollarOperator.of(NumberUtil::product, this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
-				case DollarExpressionParser.EQUAL:
+				case DollarScriptParser.EQUAL:
 					return ComparisonDollarOperator.of(ComparisonDollarOperator.Type.EQUAL, this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
-				case DollarExpressionParser.NOT_EQUAL:
+				case DollarScriptParser.NOT_EQUAL:
 					return ComparisonDollarOperator.of(ComparisonDollarOperator.Type.NOT_EQUAL, this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
-				case DollarExpressionParser.LESS:
+				case DollarScriptParser.LESS:
 					return ComparisonDollarOperator.of(ComparisonDollarOperator.Type.LESS, this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
-				case DollarExpressionParser.LESS_EQUAL:
+				case DollarScriptParser.LESS_EQUAL:
 					return ComparisonDollarOperator.of(ComparisonDollarOperator.Type.LESS_OR_EQUAL, this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
-				case DollarExpressionParser.GREATER:
+				case DollarScriptParser.GREATER:
 					return ComparisonDollarOperator.of(ComparisonDollarOperator.Type.GREATER, this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
-				case DollarExpressionParser.GREATER_EQUAL:
+				case DollarScriptParser.GREATER_EQUAL:
 					return ComparisonDollarOperator.of(ComparisonDollarOperator.Type.GREATER_OR_EQUAL, this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
-				case DollarExpressionParser.LOG_AND:
+				case DollarScriptParser.LOG_AND:
 					return LogicalBinaryDollarOperator.andOf(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
-				case DollarExpressionParser.LOG_OR:
+				case DollarScriptParser.LOG_OR:
 					return LogicalBinaryDollarOperator.orOf(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
-				case DollarExpressionParser.QUEST:
+				case DollarScriptParser.QUEST:
 					return ConditionDollarOperator.of(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)), this.visitExpr(expressions.get(2)));
 			}
 		} catch (DollarDeserializationException e) {
@@ -218,8 +218,8 @@ public class DollarExpressionVisitor extends DollarExpressionParserBaseVisitor<D
 	}
 
 	@Override
-	public DollarPart visitStatementList(DollarExpressionParser.StatementListContext ctx) {
-		List<DollarExpressionParser.StatementContext> statementContexts = ctx.statement();
+	public DollarPart visitStatementList(DollarScriptParser.StatementListContext ctx) {
+		List<DollarScriptParser.StatementContext> statementContexts = ctx.statement();
 		DollarPart[] statements = new DollarPart[statementContexts.size()];
 		for (int i = 0; i < statementContexts.size(); i++) {
 			statements[i] = this.visitStatement(statementContexts.get(i));
