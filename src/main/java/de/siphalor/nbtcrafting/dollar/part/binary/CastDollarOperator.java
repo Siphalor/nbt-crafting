@@ -89,6 +89,7 @@ public class CastDollarOperator implements DollarPart {
 					return ((Boolean) value) ? (short) 1 : (short) 0;
 				throw new DollarEvaluationException("Failed to cast " + value + " to short");
 			case 'i':
+			case 'I':
 				if (value instanceof Number)
 					return ((Number) value).intValue();
 				if (value instanceof String)

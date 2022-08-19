@@ -226,4 +226,9 @@ public class DollarScriptVisitor extends DollarScriptParserBaseVisitor<DollarPar
 		}
 		return DollarStatementList.of(statements);
 	}
+
+	@Override
+	public DollarPart visitScript(DollarScriptParser.ScriptContext ctx) {
+		return this.visitStatementList(ctx.statementList());
+	}
 }

@@ -27,7 +27,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import de.siphalor.nbtcrafting.dollar.exception.UnresolvedDollarReferenceException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
-import de.siphalor.nbtcrafting.dollar.part.value.ValueDollarPart;
 
 public class DollarExtractorTests {
 	@ParameterizedTest
@@ -57,7 +56,12 @@ public class DollarExtractorTests {
 			"\"Hello World!\",Hello World!",
 	}, quoteCharacter = '|')
 	void parse_stringLiterals(String input, String expected) {
-		Assertions.assertEquals(ValueDollarPart.of(expected), DollarExtractor.parse(input, false));
+		DollarPart parsed = DollarExtractor.parse(input, false);
+		Assertions.assertNotNull(parsed);
+		Assertions.assertEquals(
+				expected,
+				Assertions.assertDoesNotThrow(() -> parsed.evaluate(null))
+		);
 	}
 
 	@Test

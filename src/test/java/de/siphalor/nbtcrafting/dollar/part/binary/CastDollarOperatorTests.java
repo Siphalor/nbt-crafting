@@ -32,7 +32,7 @@ public class CastDollarOperatorTests {
 	@Test
 	void evaluate_castMatrix() {
 		int[][] typeIds = new int[][] {
-				{'d'}, {'f'}, {'b','c','C'}, {'s'}, {'i'}, {'l'}, {'B'}, {'a','S'}, {'n'}
+				{'d','D'}, {'f','F'}, {'b','B','c','C'}, {'s','S'}, {'i','I'}, {'l','L'}, {'o'}, {'a'}, {'n'}
 		};
 		Object[] inputs = new Object[] {
 				-1.2d, -1.2f, (byte) -1, (short) -1, -1, -1L, true, 0d, 0L, false, "-1", "0"

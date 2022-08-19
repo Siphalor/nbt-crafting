@@ -28,7 +28,7 @@ public class DollarStatementList implements DollarPart {
 		this.statements = statements;
 	}
 
-	public static DollarPart of(DollarPart[] statements) {
+	public static DollarPart of(DollarPart... statements) {
 		return new DollarStatementList(statements);
 	}
 
