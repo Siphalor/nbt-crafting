@@ -54,12 +54,12 @@ public class ChildDollarOperator extends BinaryDollarOperator implements DollarB
 
 	@Override
 	public Object apply(Object first, Object second) throws DollarEvaluationException {
-		if (propagateEmpty && DollarUtil.isEmpty(first)) {
-			return first;
-		}
-
 		if (first instanceof ItemStack) {
 			first = NbtUtil.getTagOrEmpty((ItemStack) first);
+		}
+
+		if (propagateEmpty && DollarUtil.isEmpty(first)) {
+			return first;
 		}
 
 		if (first instanceof CompoundTag) {
