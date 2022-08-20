@@ -291,15 +291,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			if (JsonHelper.hasString(jsonObject, "data")) {
 				try {
 					CompoundTag compoundTag = new StringNbtReader(new StringReader(jsonObject.get("data").getAsString())).parseCompoundTag();
-					IngredientEntryCondition condition = new IngredientEntryCondition();
-					if (compoundTag.contains("require") || compoundTag.contains("deny")) {
-						if (compoundTag.contains("require"))
-							condition.requiredElements = compoundTag.getCompound("require");
-						if (compoundTag.contains("deny")) condition.deniedElements = compoundTag.getCompound("deny");
-					} else {
-						condition.requiredElements = compoundTag;
-					}
-					return condition;
+					return new IngredientEntryCondition(compoundTag, NbtUtil.EMPTY_COMPOUND);
 				} catch (CommandSyntaxException e) {
 					e.printStackTrace();
 				}
@@ -307,7 +299,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 				return IngredientEntryCondition.fromJson((JsonObject) JsonPreprocessor.process(jsonObject.get("data").getAsJsonObject()));
 			}
 		}
-		return new IngredientEntryCondition();
+		return IngredientEntryCondition.EMPTY;
 	}
 
 	@Override

@@ -17,23 +17,38 @@
 
 package de.siphalor.nbtcrafting.ingredient;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.util.PacketByteBuf;
+import net.minecraft.util.Pair;
 
+import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
+import de.siphalor.nbtcrafting.dollar.DollarExtractor;
+import de.siphalor.nbtcrafting.dollar.DollarUtil;
+import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
+import de.siphalor.nbtcrafting.dollar.exception.UnresolvedDollarReferenceException;
+import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 
 public class IngredientEntryCondition {
 	public static final IngredientEntryCondition EMPTY = new IngredientEntryCondition(NbtUtil.EMPTY_COMPOUND, NbtUtil.EMPTY_COMPOUND);
 
 	public CompoundTag requiredElements;
 	public CompoundTag deniedElements;
+	public List<Pair<String, DollarPart>> dollarPredicates;
 
-	public IngredientEntryCondition() {
+	protected IngredientEntryCondition() {
 		requiredElements = NbtUtil.EMPTY_COMPOUND;
 		deniedElements = NbtUtil.EMPTY_COMPOUND;
+		dollarPredicates = null;
 	}
 
 	public IngredientEntryCondition(CompoundTag requiredElements, CompoundTag deniedElements) {
@@ -49,7 +64,25 @@ public class IngredientEntryCondition {
 		//noinspection ConstantConditions
 		if (!deniedElements.isEmpty() && NbtUtil.compoundsOverlap(tag, deniedElements))
 			return false;
-		return requiredElements.isEmpty() || NbtUtil.isCompoundContained(requiredElements, tag);
+		if (!requiredElements.isEmpty() && !NbtUtil.isCompoundContained(requiredElements, tag))
+			return false;
+		if (dollarPredicates != null && !dollarPredicates.isEmpty()) {
+			for (Pair<String, DollarPart> predicate : dollarPredicates) {
+				try {
+					if (!DollarUtil.asBoolean(predicate.getRight().evaluate(ref -> {
+						if ("$".equals(ref)) {
+							return tag;
+						}
+						throw new UnresolvedDollarReferenceException(ref);
+					}))) {
+						return false;
+					}
+				} catch (DollarEvaluationException e) {
+					NbtCrafting.logWarn("Failed to evaluate dollar predicate (" + predicate.getLeft() + "): " + e.getMessage());
+				}
+			}
+		}
+		return true;
 	}
 
 	public void addToJson(JsonObject json) {
@@ -57,6 +90,13 @@ public class IngredientEntryCondition {
 			json.add("require", NbtUtil.toJson(requiredElements));
 		if (deniedElements.getSize() > 0)
 			json.add("deny", NbtUtil.toJson(deniedElements));
+		if (dollarPredicates != null && !dollarPredicates.isEmpty()) {
+			JsonArray array = new JsonArray();
+			for (Pair<String, DollarPart> condition : dollarPredicates) {
+				array.add(condition.getLeft());
+			}
+			json.add("conditions", array);
+		}
 	}
 
 	public CompoundTag getPreviewTag() {
@@ -80,6 +120,19 @@ public class IngredientEntryCondition {
 			condition.deniedElements = (CompoundTag) NbtUtil.asTag(json.getAsJsonObject("deny"));
 			flatObject = false;
 		}
+		if (json.has("conditions")) {
+			if (!json.get("conditions").isJsonArray())
+				throw new JsonParseException("data.conditions must be an array");
+			JsonArray array = json.getAsJsonArray("conditions");
+			List<Pair<String, DollarPart>> predicates = new ArrayList<>(array.size());
+			for (JsonElement jsonElement : array) {
+				if (!JsonHelper.isString(jsonElement))
+					throw new JsonParseException("data.conditions must be an array of strings");
+				predicates.add(new Pair<>(jsonElement.getAsString(), DollarExtractor.parse(jsonElement.getAsString())));
+			}
+			condition.dollarPredicates = predicates;
+			flatObject = false;
+		}
 
 		if (flatObject) {
 			condition.requiredElements = (CompoundTag) NbtUtil.asTag(json);
@@ -96,5 +149,4 @@ public class IngredientEntryCondition {
 	public static IngredientEntryCondition read(PacketByteBuf buf) {
 		return new IngredientEntryCondition(buf.readCompoundTag(), buf.readCompoundTag());
 	}
-
 }
