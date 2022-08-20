@@ -17,15 +17,11 @@
 
 package de.siphalor.nbtcrafting.dollar.type;
 
-import java.util.Collection;
-import java.util.regex.Pattern;
-
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
-import de.siphalor.nbtcrafting.api.nbt.MergeMode;
+import de.siphalor.nbtcrafting.api.nbt.MergeContext;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.Dollar;
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
@@ -35,12 +31,12 @@ import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public class MergeDollar extends Dollar {
 	protected final String path;
-	protected final Collection<Pair<Pattern, MergeMode>> mergeModes;
+	protected final MergeContext mergeContext;
 
-	public MergeDollar(DollarPart expression, String path, Collection<Pair<Pattern, MergeMode>> mergeModes) {
+	public MergeDollar(DollarPart expression, String path, MergeContext mergeContext) {
 		super(expression);
 		this.path = path;
-		this.mergeModes = mergeModes;
+		this.mergeContext = mergeContext;
 	}
 
 	@Override
@@ -49,7 +45,7 @@ public class MergeDollar extends Dollar {
 		if (!(value instanceof CompoundTag)) {
 			throw new DollarEvaluationException("Couldn't set stacks main tag as given dollar expression evaluates to non-object value.");
 		} else {
-			NbtUtil.mergeInto(stack.getOrCreateTag(), (CompoundTag) value, mergeModes, "");
+			NbtUtil.mergeInto(stack.getOrCreateTag(), (CompoundTag) value, mergeContext, "");
 		}
 	}
 }

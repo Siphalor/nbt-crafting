@@ -17,10 +17,19 @@
 
 package de.siphalor.nbtcrafting.dollar;
 
-import com.mojang.datafixers.util.Pair;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+
+import net.minecraft.nbt.AbstractListTag;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.api.nbt.MergeMode;
+import de.siphalor.nbtcrafting.api.nbt.MergeContext;
 import de.siphalor.nbtcrafting.api.nbt.NbtIterator;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting.dollar.antlr.DollarScriptLexer;
@@ -30,15 +39,6 @@ import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.type.CountDollar;
 import de.siphalor.nbtcrafting.dollar.type.MergeDollar;
 import de.siphalor.nbtcrafting.dollar.type.SimpleDollar;
-
-import net.minecraft.nbt.AbstractListTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-
-import java.util.*;
-import java.util.regex.Pattern;
 
 public final class DollarExtractor {
 	private DollarExtractor() {}
@@ -91,32 +91,16 @@ public final class DollarExtractor {
 			if (expression == null) {
 				return Optional.empty();
 			}
-			return Optional.of(new MergeDollar(expression, path, Collections.emptyList()));
+			return Optional.of(new MergeDollar(expression, path, MergeContext.EMPTY));
 		} else if (NbtUtil.isCompound(tag)) {
 			CompoundTag compound = NbtUtil.asCompoundTag(tag);
 			if (compound.contains("value", 8)) {
-				Collection<Pair<Pattern, MergeMode>> mergeModes = new LinkedList<>();
-				if (compound.contains("paths", 10)) {
-					CompoundTag paths = compound.getCompound("paths");
-					for (String p : paths.getKeys()) {
-						try {
-							//noinspection ConstantConditions
-							MergeMode mergeMode = MergeMode.valueOf(paths.get(p).asString().toUpperCase(Locale.ENGLISH));
-							if (p.startsWith("/") && p.endsWith("/")) {
-								mergeModes.add(Pair.of(Pattern.compile(Pattern.quote(path) + "\\.?" + p.substring(1, p.length() - 1)), mergeMode));
-							} else {
-								mergeModes.add(Pair.of(Pattern.compile(Pattern.quote(path) + "\\.?" + Pattern.quote(p)), mergeMode));
-							}
-						} catch (Exception e) {
-							NbtCrafting.logError("Unable to deduce dollar merge mode from tag: " + paths.get(p));
-						}
-					}
-				}
+				MergeContext mergeContext = MergeContext.parse(path, compound);
 				DollarPart expression = parse(compound.getString("value"));
 				if (expression == null) {
 					return Optional.empty();
 				}
-				return Optional.of(new MergeDollar(expression, path, mergeModes));
+				return Optional.of(new MergeDollar(expression, path, mergeContext));
 			} else {
 				NbtCrafting.logError("The value field is required on dollar merge objects. Errored on " + tag.asString());
 			}

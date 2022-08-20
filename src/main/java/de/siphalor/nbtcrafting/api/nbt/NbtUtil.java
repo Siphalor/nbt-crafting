@@ -17,15 +17,12 @@
 
 package de.siphalor.nbtcrafting.api.nbt;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
-import java.util.regex.Pattern;
 
 import com.google.gson.JsonElement;
 import com.mojang.datafixers.Dynamic;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.datafixer.NbtOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
@@ -350,47 +347,36 @@ public class NbtUtil {
 					listTag.add(tag);
 				}
 			} else {
-				if (replace)
+				if (replace) {
 					//noinspection ConstantConditions
 					target.put(key, additionsTag.copy());
+				}
 			}
 		}
 	}
 
-	public static void mergeInto(CompoundTag target, CompoundTag additions, Collection<Pair<Pattern, MergeMode>> mergeModes, String basePath) {
+
+	public static void mergeInto(CompoundTag target, CompoundTag additions, MergeContext context, String basePath) {
 		if (additions == null) return;
 
 		if (!basePath.isEmpty()) basePath += '.';
 
 		for (String key : additions.getKeys()) {
 			String path = basePath + key;
-			MergeMode mergeMode = getMergeMode(mergeModes, path);
+			Tag targetTag = target.get(key);
 
-			if (target.contains(key)) {
-				if (mergeMode == MergeMode.UPDATE || mergeMode == MergeMode.OVERWRITE) {
-					//noinspection ConstantConditions
-					target.put(key, additions.get(key).copy());
-				} else if (mergeMode == MergeMode.MERGE) {
-					Tag targetTag = target.get(key);
-					Tag additionsTag = additions.get(key);
+			MergeBehavior mergeBehavior = context.getMergeMode(targetTag, path);
 
-					if (isCompound(targetTag) && isCompound(additionsTag)) {
-						mergeInto(asCompoundTag(targetTag), asCompoundTag(additionsTag), mergeModes, path);
-					} else if (isList(targetTag) && isList(additionsTag)) {
-						mergeInto(asListTag(targetTag), asListTag(additionsTag), mergeModes, path);
-					} else {
-						//noinspection ConstantConditions
-						target.put(key, additionsTag.copy());
-					}
-				}
-			} else if (mergeMode != MergeMode.UPDATE) {
-				//noinspection ConstantConditions
-				target.put(key, additions.get(key).copy());
+			Tag additionTag = additions.get(key);
+			assert additionTag != null;
+			Tag merged = mergeBehavior.merge(targetTag, additionTag, context, path);
+			if (merged != targetTag) {
+				target.put(key, merged);
 			}
 		}
 	}
 
-	public static void mergeInto(AbstractListTag<Tag> target, AbstractListTag<Tag> additions, Collection<Pair<Pattern, MergeMode>> mergeModes, String basePath) {
+	public static void mergeInto(AbstractListTag<Tag> target, AbstractListTag<Tag> additions, MergeContext context, String basePath) {
 		if (additions == null) return;
 
 		int targetSize = target.size();
@@ -398,46 +384,35 @@ public class NbtUtil {
 
 		for (int i = 0; i < additions.size() && i < targetSize; i++) { // for all elements that exist in both
 			String path = basePath + "[" + i + "]";
+			Tag targetTag = target.get(i);
 
-			MergeMode mergeMode = getMergeMode(mergeModes, path);
+			MergeBehavior mergeBehavior = context.getMergeMode(targetTag, path);
 
-			if (mergeMode == MergeMode.OVERWRITE || mergeMode == MergeMode.UPDATE) {
-				target.set(i, additions.get(i).copy());
-			} else if (mergeMode == MergeMode.MERGE) {
-				Tag targetTag = target.get(i);
-				Tag additionsTag = additions.get(i);
-
-				if (isCompound(targetTag) && isCompound(additionsTag)) {
-					mergeInto(asCompoundTag(targetTag), asCompoundTag(additionsTag), mergeModes, path);
-				} else if (isList(targetTag) && isList(additionsTag)) {
-					mergeInto(asListTag(targetTag), asListTag(additionsTag), mergeModes, path);
-				} else {
-					target.set(i, targetTag.copy());
-				}
-			} else if (mergeMode == MergeMode.APPEND) {
+			if (mergeBehavior == MergeBehavior.APPEND) { // Legacy behavior
 				try {
 					target.add(additions.get(i).copy());
 				} catch (Exception e) {
 					NbtCrafting.logError("Can't append tag " + additions.get(i).asString() + " to list: " + target.asString());
 				}
+				continue;
+			}
+
+			Tag additionTag = additions.get(i);
+			assert additionTag != null;
+			Tag merged = mergeBehavior.merge(targetTag, additionTag, context, path);
+			if (merged != targetTag) {
+				target.set(i, merged);
 			}
 		}
 
 		for (int i = targetSize; i < additionsSize; i++) { // for any additional elements
-			MergeMode mergeMode = getMergeMode(mergeModes, basePath + "[" + i + "]");
-			if (mergeMode != MergeMode.UPDATE) {
-				target.add(additions.get(i));
+			String path = basePath + "[" + i + "]";
+			MergeBehavior mergeBehavior = context.getMergeMode(null, path);
+			Tag tag = mergeBehavior.merge(null, additions.get(i), context, path);
+			if (tag != null) {
+				target.add(tag);
 			}
 		}
-	}
-
-	public static MergeMode getMergeMode(Collection<Pair<Pattern, MergeMode>> mergeModes, String path) {
-		for (Pair<Pattern, MergeMode> entry : mergeModes) {
-			if (entry.getFirst().matcher(path).matches()) {
-				return entry.getSecond();
-			}
-		}
-		return MergeMode.MERGE;
 	}
 
 	public static Tag asTag(Object value) {
