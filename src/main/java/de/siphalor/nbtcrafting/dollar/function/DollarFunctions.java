@@ -221,6 +221,32 @@ public class DollarFunctions {
 				return null; // unreachable
 			}
 		});
+		DollarFunctions.register(new StaticDollarFunction("any", new Class[]{List.class}, new Class[]{DollarFunction.class}) {
+			@Override
+			protected Object apply(Object[] parameters, ReferenceResolver referenceResolver) throws DollarEvaluationException, IllegalDollarFunctionParameterException {
+				List<?> list = (List<?>) parameters[0];
+				DollarFunction filter = (DollarFunction) parameters[1];
+				for (Object value : list) {
+					if (DollarUtil.asBoolean(filter.callDirect(referenceResolver, value))) {
+						return true;
+					}
+				}
+				return false;
+			}
+		});
+		DollarFunctions.register(new StaticDollarFunction("all", new Class[]{List.class}, new Class[]{DollarFunction.class}) {
+			@Override
+			protected Object apply(Object[] parameters, ReferenceResolver referenceResolver) throws DollarEvaluationException, IllegalDollarFunctionParameterException {
+				List<?> list = (List<?>) parameters[0];
+				DollarFunction filter = (DollarFunction) parameters[1];
+				for (Object value : list) {
+					if (!DollarUtil.asBoolean(filter.callDirect(referenceResolver, value))) {
+						return false;
+					}
+				}
+				return true;
+			}
+		});
 
 		// _  _ ____ ___ _  _
 		// |\/| |__|  |  |__|

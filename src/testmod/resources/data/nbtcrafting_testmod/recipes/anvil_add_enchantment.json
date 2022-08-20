@@ -4,7 +4,7 @@
 		"item": "minecraft:bow",
 		"data": {
 			"conditions": [
-				"!$?.Enchantments || filter($.Enchantments, e -> e.id == 'minecraft:punch')[0]?.lvl < 5"
+				"all(ifNull($?.Enchantments, []), e -> e.id != 'minecraft:punch' || e.lvl < 5)"
 			]
 		}
 	},
