@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.registry.Registry;
 
+import de.siphalor.nbtcrafting.dollar.DollarUtil;
 import de.siphalor.nbtcrafting.dollar.exception.DollarEvaluationException;
 import de.siphalor.nbtcrafting.dollar.exception.IllegalDollarFunctionParameterException;
 import de.siphalor.nbtcrafting.dollar.part.DollarPart;
@@ -40,13 +41,44 @@ public class DollarFunctions {
 		// | __ |___ |\ | |___ |__/ |__| |
 		// |__] |___ | \| |___ |  \ |  | |___
 
-		DollarFunctions.register(new StaticDollarFunction("ifNull", new Class[0], new Class[0]) {
+		DollarFunctions.register(new DollarFunction("ifNull") {
 			@Override
-			protected Object apply(Object[] parameters, ReferenceResolver referenceResolver) {
-				if (parameters[0] == null) {
-					return parameters[1];
+			public boolean isParameterCountCorrect(int parameterCount) {
+				return parameterCount == 2;
+			}
+
+			@Override
+			public void checkParameter(int index, Object parameter) {}
+
+			@Override
+			public Object call(ReferenceResolver referenceResolver, DollarPart... parameters) throws DollarEvaluationException, IllegalDollarFunctionParameterException {
+				Object value = parameters[0].evaluate(referenceResolver);
+				if (value == null) {
+					return parameters[1].evaluate(referenceResolver);
 				}
-				return parameters[0];
+				return value;
+			}
+		});
+		DollarFunctions.register(new DollarFunction("ifEmpty") {
+			@Override
+			public boolean isParameterCountCorrect(int parameterCount) {
+				return parameterCount == 2;
+			}
+
+			@Override
+			public void checkParameter(int index, Object parameter) throws IllegalDollarFunctionParameterException {}
+
+			@Override
+			public Object call(ReferenceResolver referenceResolver, DollarPart... parameters) throws DollarEvaluationException, IllegalDollarFunctionParameterException {
+				Object value = parameters[0].evaluate(referenceResolver);
+				if (
+						value == null
+						|| (value instanceof List && ((List<?>) value).isEmpty())
+						|| (value instanceof CompoundTag && ((CompoundTag) value).isEmpty())
+				) {
+					return parameters[1].evaluate(referenceResolver);
+				}
+				return null;
 			}
 		});
 
@@ -124,7 +156,7 @@ public class DollarFunctions {
 				for (Object value : list) {
 					Object key;
 					try {
-						key = unique.call(referenceResolver, new DollarPart[]{ValueDollarPart.of(value)});
+						key = unique.call(referenceResolver, ValueDollarPart.of(value));
 					} catch (DollarEvaluationException | IllegalDollarFunctionParameterException e) {
 						throw new DollarEvaluationException("Encountered error during evaluation of distinct function", e);
 					}
@@ -133,6 +165,21 @@ public class DollarFunctions {
 					}
 				}
 				return new ArrayList<>(map.values());
+			}
+		});
+		DollarFunctions.register(new StaticDollarFunction("filter", new Class[]{List.class}, new Class[]{DollarFunction.class}) {
+			@Override
+			protected Object apply(Object[] parameters, ReferenceResolver referenceResolver) throws DollarEvaluationException, IllegalDollarFunctionParameterException {
+				List<?> list = (List<?>) parameters[0];
+				DollarFunction filter = (DollarFunction) parameters[1];
+				List<Object> filteredList = new ArrayList<>(list.size());
+
+				for (Object value : list) {
+					if (DollarUtil.asBoolean(filter.callDirect(referenceResolver, value))) {
+						filteredList.add(value);
+					}
+				}
+				return filteredList;
 			}
 		});
 		DollarFunctions.register(new DollarFunction("combine") {
