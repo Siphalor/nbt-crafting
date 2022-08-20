@@ -50,12 +50,12 @@ public final class DollarExtractor {
 				if (NbtUtil.isList(tag)) {
 					AbstractListTag<Tag> list = NbtUtil.asListTag(tag);
 					for (Tag t : list) {
-						parseMerge(t, path).ifPresent(dollars::addFirst);
+						parseMerge(t, path).ifPresent(dollars::addLast);
 					}
 				} else {
-					parseMerge(tag, path).ifPresent(dollars::addFirst);
+					parseMerge(tag, path).ifPresent(dollars::addLast);
 				}
-				return remove;
+				return remove ? NbtIterator.Action.REMOVE : NbtIterator.Action.SKIP;
 			}
 			if (NbtUtil.isString(tag) && !tag.asString().isEmpty()) {
 				if (tag.asString().charAt(0) == '$') {
@@ -67,17 +67,12 @@ public final class DollarExtractor {
 							dollars.addFirst(new SimpleDollar(expression, path + key));
 						}
 					}
-					return remove;
+					return remove ? NbtIterator.Action.REMOVE : NbtIterator.Action.SKIP;
 				}
 			}
-			return false;
+			return NbtIterator.Action.RECURSE;
 		});
 
-		dollars.sort((a, b) -> {
-			if (a instanceof MergeDollar)
-				return b instanceof MergeDollar ? 0 : -1;
-			return 1;
-		});
 		return dollars.toArray(new Dollar[0]);
 	}
 

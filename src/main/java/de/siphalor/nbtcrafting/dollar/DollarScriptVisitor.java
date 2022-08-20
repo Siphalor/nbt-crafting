@@ -172,6 +172,8 @@ public class DollarScriptVisitor extends DollarScriptParserBaseVisitor<DollarPar
 			switch (ctx.op.getType()) {
 				case DollarScriptParser.DOT:
 					return ChildDollarOperator.of(this.visitExpr(expressions.get(0)), ValueDollarPart.of(ctx.identifier().getText()));
+				case DollarScriptParser.COALESCING_DOT:
+					return ChildDollarOperator.of(this.visitExpr(expressions.get(0)), ValueDollarPart.of(ctx.identifier().getText()), true);
 				case DollarScriptParser.LBRACK:
 					return ChildDollarOperator.of(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
 				case DollarScriptParser.HASH:
@@ -205,9 +207,9 @@ public class DollarScriptVisitor extends DollarScriptParserBaseVisitor<DollarPar
 				case DollarScriptParser.GREATER_EQUAL:
 					return ComparisonDollarOperator.of(ComparisonDollarOperator.Type.GREATER_OR_EQUAL, this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
 				case DollarScriptParser.LOG_AND:
-					return LogicalBinaryDollarOperator.andOf(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
+					return LogicalAndDollarOperator.of(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
 				case DollarScriptParser.LOG_OR:
-					return LogicalBinaryDollarOperator.orOf(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
+					return LogicalOrDollarOperator.of(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
 				case DollarScriptParser.QUEST:
 					return ConditionDollarOperator.of(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)), this.visitExpr(expressions.get(2)));
 			}

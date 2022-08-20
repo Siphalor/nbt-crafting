@@ -29,6 +29,9 @@ public class DollarStatementList implements DollarPart {
 	}
 
 	public static DollarPart of(DollarPart... statements) {
+		if (statements.length == 1) {
+			return statements[0];
+		}
 		return new DollarStatementList(statements);
 	}
 

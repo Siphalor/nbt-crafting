@@ -88,6 +88,7 @@ assignmentExpr
   ;
 expr
   : expr op=DOT identifier
+  | expr op=COALESCING_DOT identifier
   | expr op=LBRACK expr RBRACK
   | expr op=HASH_CAST
   | functionCall

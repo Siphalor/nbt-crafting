@@ -49,7 +49,7 @@ public abstract class IngredientRecipe<I extends Inventory> implements NBTCRecip
 		this.base = base;
 		this.ingredient = ingredient;
 		this.result = result;
-		this.resultDollars = DollarExtractor.extractDollars(result.getTag(), false);
+		this.resultDollars = DollarExtractor.extractDollars(result.getTag(), true);
 	}
 
 	@Override

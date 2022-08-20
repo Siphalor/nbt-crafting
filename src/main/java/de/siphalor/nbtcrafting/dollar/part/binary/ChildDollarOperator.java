@@ -17,6 +17,7 @@
 
 package de.siphalor.nbtcrafting.dollar.part.binary;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
@@ -32,16 +33,31 @@ import de.siphalor.nbtcrafting.dollar.part.DollarPart;
 import de.siphalor.nbtcrafting.dollar.reference.ReferenceResolver;
 
 public class ChildDollarOperator extends BinaryDollarOperator implements DollarBinding {
+	private final boolean propagateEmpty;
+
 	public ChildDollarOperator(DollarPart first, DollarPart second) {
+		this(first, second, false);
+	}
+
+	public ChildDollarOperator(DollarPart first, DollarPart second, boolean propagateEmpty) {
 		super(first, second);
+		this.propagateEmpty = propagateEmpty;
 	}
 
 	public static DollarPart of(DollarPart first, DollarPart second) throws DollarDeserializationException {
-		return new ChildDollarOperator(first, second);
+		return of(first, second, false);
+	}
+
+	public static DollarPart of(DollarPart first, DollarPart second, boolean coalesce) throws DollarDeserializationException {
+		return new ChildDollarOperator(first, second, coalesce);
 	}
 
 	@Override
 	public Object apply(Object first, Object second) throws DollarEvaluationException {
+		if (propagateEmpty && DollarUtil.isEmpty(first)) {
+			return first;
+		}
+
 		if (first instanceof ItemStack) {
 			first = NbtUtil.getTagOrEmpty((ItemStack) first);
 		}
@@ -52,16 +68,34 @@ public class ChildDollarOperator extends BinaryDollarOperator implements DollarB
 				return NbtUtil.toDollarValue(((CompoundTag) first).get(key));
 			}
 			return null;
-		} else if (first instanceof List && second instanceof Number) {
-			int index = ((Number) second).intValue();
-			if (index < 0) {
-				index = ((List<?>) first).size() + index;
+		} else if (first instanceof List) {
+			if (second instanceof Number) {
+				int index = ((Number) second).intValue();
+				if (index < 0) {
+					index = ((List<?>) first).size() + index;
+				}
+				if (index < ((List<?>) first).size()) {
+					return DollarUtil.toDollarValue(((List<?>) first).get(index));
+				}
+				return null;
+			} else if (second instanceof String) {
+				List<Object> results = new ArrayList<>(((List<?>) first).size());
+				for (Object element : ((List<?>) first)) {
+					if (element instanceof CompoundTag) {
+						CompoundTag tag = (CompoundTag) element;
+						if (tag.contains((String) second)) {
+							results.add(NbtUtil.toDollarValue(tag.get((String) second)));
+						} else {
+							throw new DollarEvaluationException("Tag " + tag + " does not contain key " + second);
+						}
+					} else {
+						throw new DollarEvaluationException("Cannot access child of " + first.getClass().getSimpleName() + " with key " + second);
+					}
+				}
+				return results;
 			}
-			if (index < ((List<?>) first).size()) {
-				return DollarUtil.toDollarValue(((List<?>) first).get(index));
-			}
-			return null;
 		}
+
 		throw new DollarEvaluationException("Cannot access element " + DollarUtil.asString(second) + " on value " + DollarUtil.asString(first));
 	}
 

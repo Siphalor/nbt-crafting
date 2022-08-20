@@ -66,19 +66,15 @@ public class DollarFunctions {
 			}
 
 			@Override
-			public void checkParameter(int index, Object parameter) throws IllegalDollarFunctionParameterException {}
+			public void checkParameter(int index, Object parameter) {}
 
 			@Override
-			public Object call(ReferenceResolver referenceResolver, DollarPart... parameters) throws DollarEvaluationException, IllegalDollarFunctionParameterException {
+			public Object call(ReferenceResolver referenceResolver, DollarPart... parameters) throws DollarEvaluationException {
 				Object value = parameters[0].evaluate(referenceResolver);
-				if (
-						value == null
-						|| (value instanceof List && ((List<?>) value).isEmpty())
-						|| (value instanceof CompoundTag && ((CompoundTag) value).isEmpty())
-				) {
+				if (DollarUtil.isEmpty(value)) {
 					return parameters[1].evaluate(referenceResolver);
 				}
-				return null;
+				return value;
 			}
 		});
 

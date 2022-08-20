@@ -1,32 +1,31 @@
 {
 	"type": "nbtcrafting:anvil",
 	"base": {
-		"item": "minecraft:bow"
+		"item": "minecraft:bow",
+		"data": {
+			"conditions": [
+				"!$?.Enchantments || filter($.Enchantments, e -> e.id == 'minecraft:punch')[0]?.lvl < 5"
+			]
+		}
 	},
 	"ingredient": {
-		"item": "minecraft:bow"
+		"item": "minecraft:iron_ingot"
 	},
 	"result": {
-		"item": "minecraft:crossbow",
+		"item": "minecraft:bow",
 		"data": {
 			"$": [
 				{
 					"value": "base",
 					"paths": {
-						"/Enchantments\\[\\d+\\]/": "append"
-					}
-				},
-				{
-					"value": "ingredient",
-					"paths": {
-						"/Enchantments\\[\\d+\\]/": "append"
+						"Enchantments": "$ distinct(combine(base, addition), e -> e.id)"
 					}
 				}
 			],
 			"Enchantments": [
 				{
-					"id": "minecraft:multishot",
-					"lvl": 2
+					"id": "minecraft:punch",
+					"lvl": "$ filter(base.Enchantments, e -> e.id == 'minecraft:punch')[0]?.lvl + 1"
 				}
 			]
 		}

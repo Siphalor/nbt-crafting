@@ -84,6 +84,8 @@ LOG_OR: '||'
   ;
 LOG_AND: '&&'
   ;
+COALESCING_DOT: QUEST DOT
+  ;
 ARROW: MINUS GT
   ;
 fragment CHAR_ESCAPE: '\\\''

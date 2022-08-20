@@ -27,7 +27,7 @@ import net.minecraft.nbt.Tag;
 
 @FunctionalInterface
 public interface NbtIterator {
-	boolean process(String path, String key, Tag tag);
+	Action process(String path, String key, Tag tag);
 
 	static void iterateTags(Tag tag, NbtIterator nbtIterator) {
 		iterateTags(tag, nbtIterator, "");
@@ -42,12 +42,15 @@ public interface NbtIterator {
 			Set<String> remove = new HashSet<>();
 			for (String key : compoundTag.getKeys()) {
 				Tag currentTag = compoundTag.get(key);
-				if (nbtIterator.process(path, key, currentTag)) {
-					remove.add(key);
-				} else {
-					if (NbtUtil.isCompound(currentTag) || NbtUtil.isList(currentTag)) {
-						iterateTags(compoundTag.get(key), nbtIterator, path + key);
-					}
+				switch (nbtIterator.process(path, key, currentTag)) {
+					case REMOVE:
+						remove.add(key);
+						break;
+					case RECURSE:
+						iterateTags(currentTag, nbtIterator, path + key);
+						break;
+					case SKIP:
+						break;
 				}
 			}
 			for (String key : remove) {
@@ -59,13 +62,21 @@ public interface NbtIterator {
 			int i = 0;
 			for (Iterator<Tag> iterator = listTag.iterator(); iterator.hasNext(); ) {
 				Tag currentTag = iterator.next();
-				if (nbtIterator.process(path, "[" + i + "]", currentTag)) {
-					iterator.remove();
-				} else {
-					iterateTags(currentTag, nbtIterator, path + "[" + i + "]");
-					i++;
+				switch (nbtIterator.process(path, "[" + i + "]", currentTag)) {
+					case REMOVE:
+						iterator.remove();
+						break;
+					case RECURSE:
+						iterateTags(currentTag, nbtIterator, path + "[" + i + "]");
+						break;
+					case SKIP:
+						break;
 				}
 			}
 		}
+	}
+
+	enum Action {
+		RECURSE, SKIP, REMOVE
 	}
 }

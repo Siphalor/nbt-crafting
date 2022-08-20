@@ -37,19 +37,22 @@ public class MergeContext {
 
 	public static MergeContext parse(String basePath, CompoundTag compound) {
 		if (compound.contains("paths", 10)) {
+			if (!basePath.isEmpty()) {
+				basePath += ".";
+			}
 			CompoundTag paths = compound.getCompound("paths");
 			List<Entry> entries = new ArrayList<>(paths.getSize());
 			for (String key : paths.getKeys()) {
-				MergeBehavior mergeBehavior = MergeBehavior.valueOf(compound.getString(key));
+				MergeBehavior mergeBehavior = MergeBehavior.valueOf(paths.getString(key));
 				if (key.startsWith("/") && key.endsWith("/")) {
 					entries.add(new PatternEntry(
 							mergeBehavior,
-							Pattern.compile(Pattern.quote(basePath + ".") + key.substring(1, key.length() - 1))
+							Pattern.compile(Pattern.quote(basePath) + key.substring(1, key.length() - 1))
 					));
 				} else {
 					entries.add(new SimpleEntry(
 							mergeBehavior,
-							basePath + "." + key
+							basePath + key
 					));
 				}
 			}

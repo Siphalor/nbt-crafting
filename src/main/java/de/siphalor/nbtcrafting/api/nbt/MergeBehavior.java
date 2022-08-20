@@ -68,7 +68,7 @@ public interface MergeBehavior {
 			case "append":
 				return APPEND;
 			default:
-				if (input.charAt(0) == '$') {
+				if (input.length() > 1 && input.charAt(0) == '$') {
 					DollarPart expression = DollarExtractor.parse(input.substring(1));
 					return (base, addition, mergeContext, path) -> {
 						try {

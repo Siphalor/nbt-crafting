@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Objects;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
@@ -39,13 +38,7 @@ public class DollarUtil {
 		if (o instanceof String) {
 			return !o.equals("");
 		}
-		if (o instanceof ListTag) {
-			return !((ListTag) o).isEmpty();
-		}
-		if (o instanceof CompoundTag) {
-			return !((CompoundTag) o).isEmpty();
-		}
-		return o != null;
+		return !isEmpty(o);
 	}
 
 	public static String asString(Object o) {
@@ -53,6 +46,19 @@ public class DollarUtil {
 			return "<null>";
 		}
 		return o.toString();
+	}
+
+	public static boolean isEmpty(Object o) {
+		if (o == null) {
+			return true;
+		}
+		if (o instanceof List) {
+			return ((List<?>) o).isEmpty();
+		}
+		if (o instanceof CompoundTag) {
+			return ((CompoundTag) o).isEmpty();
+		}
+		return false;
 	}
 
 	public static Number expectNumber(Object o) throws DollarException {
