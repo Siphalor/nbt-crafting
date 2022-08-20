@@ -61,7 +61,7 @@ dependencies {
 }
 
 generateGrammarSource {
-	outputDirectory = outputDirectory.toPath().resolve("de/siphalor/nbtcrafting/dollar/antlr").toFile()
+	outputDirectory = outputDirectory.toPath().resolve("de/siphalor/nbtcrafting3/dollar/antlr").toFile()
 	arguments = [ "-no-listener", "-visitor" ]
 }
 
@@ -73,7 +73,7 @@ license {
 	header = project.file('LICENSE_HEADER')
 
 	include '**/*.java'
-	exclude 'de/siphalor/nbtcrafting/dollar/antlr'
+	exclude 'de/siphalor/nbtcrafting3/dollar/antlr'
 
 	include '**/*.g4'
 

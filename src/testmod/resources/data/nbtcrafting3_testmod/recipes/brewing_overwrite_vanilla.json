@@ -1,0 +1,15 @@
+{
+	"type": "nbtcrafting3:brewing",
+	"base": {
+		"item": "minecraft:potion"
+	},
+	"ingredient": {
+		"item": "minecraft:gunpowder"
+	},
+	"result": {
+		"item": "minecraft:splash_potion",
+		"data": {
+			"$": "base"
+		}
+	}
+}

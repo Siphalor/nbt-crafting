@@ -1,0 +1,13 @@
+{
+	"required": false,
+	"package": "de.siphalor.nbtcrafting3.compat.mixin",
+	"plugin": "de.siphalor.nbtcrafting3.compat.NbtCCompatMixinConfig",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"MixinRegistrySyncManager",
+		"MixinREIRecipeFinder"
+	],
+	"injectors": {
+		"defaultRequire": 0
+	}
+}

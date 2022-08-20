@@ -21,7 +21,7 @@ options {
   tokenVocab = DollarScriptLexer;
 }
 @header {
-	package de.siphalor.nbtcrafting.dollar.antlr;
+	package de.siphalor.nbtcrafting3.dollar.antlr;
 }
 
 number

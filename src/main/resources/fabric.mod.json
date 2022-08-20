@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"id": "nbtcrafting",
+	"id": "nbtcrafting3",
 	"version": "${version}",
-	"name": "NBT Crafting",
+	"name": "NBT Crafting 3",
 	"description": "Offers data tags in recipe, dollars, anvil and brewing recipes, dollars, ingredient nbt conditions and a lot of dollars to you. Do you like dollars - this is the thing!",
 	"authors": [
 		"Siphalor"
@@ -17,29 +17,25 @@
 		"sources": "https://github.com/Siphalor/nbt-crafting"
 	},
 	"license": "Apache-2.0",
-	"icon": "assets/nbtcrafting/logo.png",
+	"icon": "assets/nbtcrafting3/logo.png",
 	"environment": "*",
 	"mixins": [
 		{
-			"config": "nbtcrafting.mixins.json"
+			"config": "nbtcrafting3.mixins.json"
 		},
 		{
-			"config": "nbtcrafting.compat.mixins.json"
+			"config": "nbtcrafting3.compat.mixins.json"
 		}
 	],
 	"entrypoints": {
 		"main": [
-			{
-				"value": "de.siphalor.nbtcrafting.NbtCrafting"
-			}
+			"de.siphalor.nbtcrafting3.NbtCrafting"
 		],
 		"client": [
-			{
-				"value": "de.siphalor.nbtcrafting.client.NbtCraftingClient"
-			}
+			"de.siphalor.nbtcrafting3.client.NbtCraftingClient"
 		],
 		"rei_plugins_v0": [
-			"de.siphalor.nbtcrafting.compat.REIPlugin"
+			"de.siphalor.nbtcrafting3.compat.REIPlugin"
 		]
 	},
 	"depends": {
@@ -52,7 +48,7 @@
 			]
 		},
 		"modmenu:api": true,
-		"modsoftheworld:splashes": "nbtcrafting:splashes.txt",
-		"modsoftheworld:logo": "nbtcrafting:title.png"
+		"modsoftheworld:splashes": "nbtcrafting3:splashes.txt",
+		"modsoftheworld:logo": "nbtcrafting3:title.png"
 	}
 }
