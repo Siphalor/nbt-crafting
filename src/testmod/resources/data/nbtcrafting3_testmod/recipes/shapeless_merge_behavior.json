@@ -1,28 +1,31 @@
 {
-	"type": "crafting_shapeless",
-	"ingredients": [
-		{
-			"item": "minecraft:diamond_sword"
-		},
-		{
-			"item": "minecraft:blaze_rod"
-		}
-	],
-	"result": {
-		"item": "minecraft:diamond_sword",
-		"data": {
-			"$": {
-				"value": "i0",
-				"paths": {
-					"/Enchantments\\[\\d+\\]/": "append"
-				}
+	"type": "nbtcrafting3:data",
+	"recipe": {
+		"type" : "crafting_shapeless",
+		"ingredients" : [
+			{
+				"item" : "minecraft:diamond_sword"
 			},
-			"Enchantments": [
-				{
-					"id": "minecraft:fire_aspect",
-					"lvl": 1
-				}
-			]
+			{
+				"item" : "minecraft:blaze_rod"
+			}
+		],
+		"result" : {
+			"item" : "minecraft:diamond_sword",
+			"data" : {
+				"$" : {
+					"value" : "i0",
+					"paths" : {
+						"/Enchantments\\[\\d+\\]/" : "append"
+					}
+				},
+				"Enchantments" : [
+					{
+						"id" : "minecraft:fire_aspect",
+						"lvl" : 1
+					}
+				]
+			}
 		}
 	}
 }

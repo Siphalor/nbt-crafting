@@ -58,6 +58,10 @@ public abstract class MixinShapedRecipe {
 
 	@Inject(method = "getItemStack", at = @At("HEAD"))
 	private static void handlePotions(JsonObject json, CallbackInfoReturnable<ItemStack> ci) {
+		if (!NbtCrafting.isAdvancedIngredientSerializationEnabled()) {
+			return;
+		}
+
 		if (json.has("potion")) {
 			Identifier identifier = new Identifier(JsonHelper.getString(json, "potion"));
 			if (!Registry.POTION.getOrEmpty(identifier).isPresent())
@@ -78,6 +82,10 @@ public abstract class MixinShapedRecipe {
 			at = @At(value = "INVOKE", target = "com/google/gson/JsonObject.has(Ljava/lang/String;)Z", remap = false)
 	)
 	private static void deserializeItemStack(JsonObject json, CallbackInfoReturnable<ItemStack> ci) {
+		if (!NbtCrafting.isAdvancedIngredientSerializationEnabled()) {
+			return;
+		}
+
 		NbtCrafting.clearLastReadNbt();
 		if (json.has("data")) {
 			if (JsonHelper.hasString(json, "data")) {
@@ -96,6 +104,10 @@ public abstract class MixinShapedRecipe {
 	@Inject(
 			method = "getItemStack", at = @At("RETURN"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void constructDeserializedItemStack(JsonObject json, CallbackInfoReturnable<ItemStack> ci, String id, Item item, int amount) {
+		if (!NbtCrafting.isAdvancedIngredientSerializationEnabled()) {
+			return;
+		}
+
 		ItemStack stack = new ItemStack(item, amount);
 		if (NbtCrafting.hasLastReadNbt()) {
 			CompoundTag lastReadNbt = NbtCrafting.useLastReadNbt();

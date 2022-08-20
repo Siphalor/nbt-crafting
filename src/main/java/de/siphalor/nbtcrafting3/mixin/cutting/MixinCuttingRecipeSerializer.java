@@ -29,6 +29,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import de.siphalor.nbtcrafting3.NbtCrafting;
+
 @Mixin(CuttingRecipe.Serializer.class)
 public class MixinCuttingRecipeSerializer {
 	private static ItemStack nbtCrafting_resultStack;
@@ -39,7 +41,7 @@ public class MixinCuttingRecipeSerializer {
 	)
 	public String getResultId(JsonObject jsonObject, String key) {
 		nbtCrafting_resultStack = null;
-		if (jsonObject.has(key)) {
+		if (NbtCrafting.isAdvancedIngredientSerializationEnabled() && jsonObject.has(key)) {
 			JsonElement jsonElement = jsonObject.get(key);
 			if (jsonElement instanceof JsonObject) {
 				nbtCrafting_resultStack = ShapedRecipe.getItemStack((JsonObject) jsonElement);

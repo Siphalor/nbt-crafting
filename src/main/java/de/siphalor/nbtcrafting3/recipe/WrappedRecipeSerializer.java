@@ -31,23 +31,18 @@ import de.siphalor.nbtcrafting3.NbtCrafting;
 
 @ApiStatus.Experimental
 public class WrappedRecipeSerializer implements RecipeSerializer<Recipe<?>> {
-	private static long lastWarnTime = 0;
-
 	@Override
 	public Recipe<?> read(Identifier id, JsonObject json) {
-		long time = System.currentTimeMillis();
-		if (time > lastWarnTime + 30000) {
-			NbtCrafting.logWarn("Some recipes are using the nbtcrafting3:wrapped recipe type. This type is experimental and likely to change.");
-		}
-		lastWarnTime = time;
-
+		NbtCrafting.advancedIngredientSerializationEnabled.set(true);
 		JsonObject innerJson = JsonHelper.getObject(json, "recipe");
 		String innerType = JsonHelper.getString(innerJson, "type");
 		RecipeSerializer<?> innerSerializer = Registry.RECIPE_SERIALIZER.get(new Identifier(innerType));
 		if (innerSerializer == null) {
 			throw new JsonSyntaxException("Failed to resolve inner recipe type: " + innerType);
 		}
-		return innerSerializer.read(id, innerJson);
+		Recipe<?> recipe = innerSerializer.read(id, innerJson);
+		NbtCrafting.advancedIngredientSerializationEnabled.set(false);
+		return recipe;
 	}
 
 	@Override

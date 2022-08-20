@@ -19,6 +19,10 @@ package de.siphalor.nbtcrafting3.mixin.cooking;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import de.siphalor.nbtcrafting3.NbtCrafting;
+import de.siphalor.nbtcrafting3.util.duck.IItemStack;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.AbstractCookingRecipe;
@@ -36,8 +40,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import de.siphalor.nbtcrafting3.util.duck.IItemStack;
-
 @Mixin(CookingRecipeSerializer.class)
 public abstract class MixinCookingRecipeSerializer {
 	@Unique
@@ -46,7 +48,7 @@ public abstract class MixinCookingRecipeSerializer {
 	@Redirect(method = "read(Lnet/minecraft/util/Identifier;Lcom/google/gson/JsonObject;)Lnet/minecraft/recipe/AbstractCookingRecipe;", at = @At(value = "INVOKE", target = "net/minecraft/util/JsonHelper.getString(Lcom/google/gson/JsonObject;Ljava/lang/String;)Ljava/lang/String;", ordinal = 0))
 	public String getItemIdentifier(JsonObject jsonObject, String resultPropertyName) {
 		resultTag = null;
-		if (!jsonObject.has(resultPropertyName) || !jsonObject.get(resultPropertyName).isJsonObject()) {
+		if (!NbtCrafting.isAdvancedIngredientSerializationEnabled() || !jsonObject.has(resultPropertyName) || !jsonObject.get(resultPropertyName).isJsonObject()) {
 			return JsonHelper.getString(jsonObject, resultPropertyName);
 		}
 		ItemStack output = ShapedRecipe.getItemStack(jsonObject.getAsJsonObject(resultPropertyName));

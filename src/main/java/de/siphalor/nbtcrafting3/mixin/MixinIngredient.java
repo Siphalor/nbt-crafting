@@ -57,7 +57,7 @@ import de.siphalor.nbtcrafting3.dollar.reference.ReferenceResolver;
 import de.siphalor.nbtcrafting3.ingredient.*;
 import de.siphalor.nbtcrafting3.util.duck.ICloneable;
 
-@Mixin(Ingredient.class)
+@Mixin(value = Ingredient.class, priority = 990) // Inject before NbtC v2
 public abstract class MixinIngredient implements IIngredient, ICloneable {
 	@Shadow
 	private ItemStack[] matchingStacks;
@@ -199,6 +199,10 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 
 	@Inject(method = "fromJson", at = @At("HEAD"), cancellable = true)
 	private static void fromJson(JsonElement element, CallbackInfoReturnable<Ingredient> callbackInfoReturnable) {
+		if (!NbtCrafting.isAdvancedIngredientSerializationEnabled()) {
+			return;
+		}
+
 		if (element == null || element.isJsonNull()) {
 			throw new JsonSyntaxException("Item cannot be null");
 		}

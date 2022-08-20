@@ -72,7 +72,7 @@ public class NbtCrafting implements ModInitializer {
 	public static final RecipeType<CauldronRecipe> CAULDRON_RECIPE_TYPE = registerRecipeType("cauldron");
 	public static final CauldronRecipeSerializer CAULDRON_RECIPE_SERIALIZER = registerRecipeSerializer("cauldron", new CauldronRecipeSerializer());
 
-	public static final RecipeSerializer<Recipe<?>> WRAPPED_RECIPE_SERIALIZER = registerRecipeSerializer("wrapped", new WrappedRecipeSerializer());
+	public static final RecipeSerializer<Recipe<?>> DATA_RECIPE_SERIALIZER = registerRecipeSerializer("data", new WrappedRecipeSerializer());
 
 	public static final StatChangedCriterion STAT_CHANGED_CRITERION = MixinCriterions.registerCriterion(new StatChangedCriterion());
 
