@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.siphalor.nbtcrafting3.util.NumberUtil;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.registry.Registry;
@@ -252,6 +254,34 @@ public class DollarFunctions {
 		// |\/| |__|  |  |__|
 		// |  | |  |  |  |  |
 
+		DollarFunctions.register(new StaticDollarFunction("mod", new Class[]{Number.class}, new Class[]{Number.class}) {
+			@Override
+			protected Object apply(Object[] parameters, ReferenceResolver referenceResolver) throws DollarEvaluationException {
+				long a = ((Number) parameters[0]).longValue();
+				long b = ((Number) parameters[1]).longValue();
+				if (b == 0) {
+					throw new DollarEvaluationException("Division by zero");
+				}
+				if (b < 0) {
+					throw new DollarEvaluationException("Modulo by negative number");
+				}
+				long m = a % b;
+				if (m < 0) {
+					return m + b;
+				}
+				return m;
+			}
+		});
+		DollarFunctions.register(new StaticDollarFunction("abs", new Class[]{Number.class}) {
+			@Override
+			protected Object apply(Object[] parameters, ReferenceResolver referenceResolver) {
+				Number n = (Number) parameters[0];
+				if (n.doubleValue() < 0) {
+					return NumberUtil.negate(n);
+				}
+				return n;
+			}
+		});
 		DollarFunctions.register(new StaticDollarFunction("power", new Class[]{Number.class}, new Class[]{Number.class}) {
 			@Override
 			protected Object apply(Object[] parameters, ReferenceResolver referenceResolver) {
