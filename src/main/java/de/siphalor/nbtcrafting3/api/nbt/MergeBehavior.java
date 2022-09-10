@@ -41,7 +41,7 @@ public interface MergeBehavior {
 			NbtUtil.mergeInto(NbtUtil.asListTag(base), NbtUtil.asListTag(addition), mergeContext, path);
 			return base;
 		}
-		return addition.copy();
+		return base;
 	};
 	MergeBehavior APPEND = (base, addition, mergeContext, path) -> {
 		if (base == null) {
