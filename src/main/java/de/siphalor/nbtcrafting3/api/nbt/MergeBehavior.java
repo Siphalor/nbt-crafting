@@ -43,6 +43,15 @@ public interface MergeBehavior {
 		}
 		return base;
 	};
+	MergeBehavior PREPEND = (base, addition, mergeContext, path) -> {
+		if (base == null) {
+			return addition.copy();
+		} else if (NbtUtil.isList(base) && NbtUtil.isList(addition)) {
+			NbtUtil.asListTag(base).addAll(0, NbtUtil.asListTag(addition));
+			return base;
+		}
+		return base;
+	};
 	MergeBehavior APPEND = (base, addition, mergeContext, path) -> {
 		if (base == null) {
 			return addition.copy();
@@ -65,6 +74,8 @@ public interface MergeBehavior {
 				return UPDATE;
 			case "merge":
 				return MERGE;
+			case "prepend":
+				return PREPEND;
 			case "append":
 				return APPEND;
 			default:
