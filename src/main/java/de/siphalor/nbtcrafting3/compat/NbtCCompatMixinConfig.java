@@ -40,7 +40,7 @@ public class NbtCCompatMixinConfig implements IMixinConfigPlugin {
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
 		switch (mixinClassName) {
 			case "de.siphalor.nbtcrafting3.compat.mixin.MixinRegistrySyncManager":
-				return FabricLoader.getInstance().isModLoaded("fabric-networking-v0");
+				return FabricLoader.getInstance().isModLoaded("fabric-registry-sync-v0");
 			case "de.siphalor.nbtcrafting3.compat.mixin.MixinREIRecipeFinder":
 				return FabricLoader.getInstance().isModLoaded("roughlyenoughitems");
 		}
