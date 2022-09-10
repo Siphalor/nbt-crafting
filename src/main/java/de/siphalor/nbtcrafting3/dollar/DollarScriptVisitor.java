@@ -191,9 +191,9 @@ public class DollarScriptVisitor extends DollarScriptParserBaseVisitor<DollarPar
 					}
 					return SumDollarOperator.of(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
 				case DollarScriptParser.DIVIDE:
-					return NumericBinaryDollarOperator.of(NumberUtil::quotient, this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
+					return NumericBinaryDollarOperator.differenceOf(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
 				case DollarScriptParser.MULTIPLY:
-					return NumericBinaryDollarOperator.of(NumberUtil::product, this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
+					return ProductDollarOperator.of(this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
 				case DollarScriptParser.EQUAL:
 					return ComparisonDollarOperator.of(ComparisonDollarOperator.Type.EQUAL, this.visitExpr(expressions.get(0)), this.visitExpr(expressions.get(1)));
 				case DollarScriptParser.NOT_EQUAL:

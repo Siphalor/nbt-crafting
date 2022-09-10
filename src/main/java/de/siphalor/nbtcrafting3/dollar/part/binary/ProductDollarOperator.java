@@ -17,6 +17,8 @@
 
 package de.siphalor.nbtcrafting3.dollar.part.binary;
 
+import de.siphalor.nbtcrafting3.dollar.exception.DollarDeserializationException;
+
 import org.apache.commons.lang3.StringUtils;
 
 import de.siphalor.nbtcrafting3.dollar.DollarUtil;
@@ -30,7 +32,7 @@ public class ProductDollarOperator extends BinaryDollarOperator {
 		super(first, second);
 	}
 
-	public static DollarPart of(DollarPart first, DollarPart second) throws DollarException {
+	public static DollarPart of(DollarPart first, DollarPart second) throws DollarDeserializationException {
 		return shortCircuitConstant(new ProductDollarOperator(first, second));
 	}
 
