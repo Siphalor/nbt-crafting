@@ -1,0 +1,28 @@
+{
+	"type": "nbtcrafting3:data",
+	"recipe": {
+		"type": "minecraft:crafting_shapeless",
+		"ingredients": [
+			{
+				"item": "minecraft:enchanted_book"
+			},
+			{
+				"item": "minecraft:enchanted_book"
+			}
+		],
+		"result": {
+			"item": "minecraft:enchanted_book",
+			"data": {
+				"$": [
+					{ "value": "i0" },
+					{
+						"value": "i1",
+						"paths": {
+							"StoredEnchantments": "append"
+						}
+					}
+				]
+			}
+		}
+	}
+}

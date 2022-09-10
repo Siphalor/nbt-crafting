@@ -1,0 +1,29 @@
+{
+	"type": "nbtcrafting3:data",
+	"recipe": {
+		"type" : "nbtcrafting3:anvil",
+		"base" : {
+			"item" : "minecraft:bow"
+		},
+		"ingredient" : {
+			"item" : "minecraft:arrow"
+		},
+		"result" : {
+			"item" : "minecraft:bow",
+			"data" : {
+				"$" : [
+					{
+						"value" : "base",
+						"paths" : {
+							"Enchantments" : "$ distinct(combine(base, addition), e -> e.id)"
+						}
+					}
+				],
+				"Enchantments" : [
+					{ "id" : "minecraft:infinity", "lvl" : 1 }
+				]
+			}
+		},
+		"levels" : 3
+	}
+}

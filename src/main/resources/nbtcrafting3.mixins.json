@@ -1,0 +1,42 @@
+{
+	"required": true,
+	"package": "de.siphalor.nbtcrafting3.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"MixinIngredient",
+		"MixinInputSlotFiller",
+		"MixinItemStack",
+		"MixinRecipe",
+		"MixinRecipeFinder",
+		"MixinRecipeFinder$Filter",
+		"MixinServerPlayerEntity",
+		"MixinServerStatHandler",
+		"RecipeManagerAccessor",
+		"advancement.MixinCriterions",
+		"anvil.MixinAnvilContainer",
+		"brewing.MixinBrewingSlotIngredient",
+		"brewing.MixinBrewingSlotPotion",
+		"brewing.MixinBrewingStandBlockEntity",
+		"cauldron.MixinCauldronBlock",
+		"cooking.MixinAbstractFurnaceBlockEntity",
+		"cooking.MixinCookingRecipe",
+		"cooking.MixinCookingRecipeSerializer",
+		"crafting.MixinShapedRecipe",
+		"crafting.MixinShapelessRecipe",
+		"cutting.MixinCuttingRecipe",
+		"cutting.MixinCuttingRecipeSerializer",
+		"cutting.MixinStonecutterContainer",
+		"network.MixinPlayerManager",
+		"network.MixinSynchronizeRecipesS2CPacket",
+		"smithing.MixinSmithingScreenHandler"
+	],
+	"client": [
+		"client.AnvilScreenAccessor",
+		"client.MixinAnimatedResultButton",
+		"client.MixinMinecraftClient",
+		"client.MixinRecipeBookGhostSlots"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
