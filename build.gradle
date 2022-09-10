@@ -44,11 +44,10 @@ dependencies {
 	modImplementation("me.shedaniel:RoughlyEnoughItems:3.6.21") {
 		exclude module: "modmenu"
 	}
-	modImplementation("de.siphalor:modsoftheworld-1.15:1+") {
+	modLocalRuntime("de.siphalor:modsoftheworld-1.15:1+") {
 		transitive false
 	}
-
-	modRuntimeOnly("com.github.astei:lazydfu:master-SNAPSHOT")
+	modLocalRuntime("com.github.astei:lazydfu:master-SNAPSHOT")
 
 	testmodImplementation sourceSets.main.output
 }
