@@ -1,0 +1,37 @@
+{
+	"type": "nbtcrafting3:data",
+	"recipe": {
+		"type" : "nbtcrafting3:anvil",
+		"base" : {
+			"item" : "minecraft:bow",
+			"data" : {
+				"conditions" : [
+					"all(ifNull($?.Enchantments, []), e -> e.id != 'minecraft:punch' || e.lvl < 5)"
+				]
+			}
+		},
+		"ingredient" : {
+			"item" : "minecraft:iron_ingot"
+		},
+		"result" : {
+			"item" : "minecraft:bow",
+			"data" : {
+				"$" : [
+					{
+						"value" : "base",
+						"paths" : {
+							"Enchantments" : "$ distinct(combine(base, addition), e -> e.id)"
+						}
+					}
+				],
+				"Enchantments" : [
+					{
+						"id" : "minecraft:punch",
+						"lvl" : "$ filter(base.Enchantments, e -> e.id == 'minecraft:punch')[0]?.lvl + 1"
+					}
+				]
+			}
+		},
+		"levels" : 3
+	}
+}

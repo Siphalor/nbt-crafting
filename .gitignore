@@ -1,3 +1,7 @@
+# generated
+
+src/main/gen/
+
 # gradle
 
 .gradle/
@@ -26,6 +30,9 @@ Minecraft_Server.launch
 # fabric
 
 run/
+
+# antlr
+*.tokens
 
 # OSX
 .DS_Store

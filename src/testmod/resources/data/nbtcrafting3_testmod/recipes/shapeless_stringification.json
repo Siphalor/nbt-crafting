@@ -1,0 +1,23 @@
+{
+	"type": "nbtcrafting3:data",
+	"recipe": {
+		"type" : "crafting_shapeless",
+		"ingredients" : [
+			{
+				"item" : "minecraft:stick"
+			}
+		],
+		"result" : {
+			"item" : "minecraft:player_head",
+			"data" : {
+				"display" : {
+					"Name" : {
+						"text" : "nametaginput",
+						"nbtcrafting3:stringify" : true
+					}
+				},
+				"SkullOwner" : "Siphalor"
+			}
+		}
+	}
+}
