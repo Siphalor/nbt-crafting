@@ -1,0 +1,13 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{ "item": "minecraft:bundle" },
+		{ "item": "minecraft:flint" }
+	],
+	"result": {
+		"item": "minecraft:bundle",
+		"data": {
+			"$": "i0"
+		}
+	}
+}
