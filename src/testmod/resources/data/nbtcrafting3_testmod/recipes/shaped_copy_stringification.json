@@ -1,0 +1,31 @@
+{
+	"type": "nbtcrafting3:data",
+	"recipe": {
+		"type" : "minecraft:crafting_shaped",
+		"pattern" : [
+			"###",
+			"#X#",
+			"###"
+		],
+		"key" : {
+			"X" : {
+				"item" : "minecraft:shulker_box"
+			},
+			"#" : {
+				"item" : "minecraft:leather"
+			}
+		},
+		"result" : {
+			"item" : "minecraft:shulker_box",
+			"data" : {
+				"$" : "i4",
+				"display" : {
+					"Name" : {
+						"text" : "Test",
+						"nbtcrafting3:stringify" : true
+					}
+				}
+			}
+		}
+	}
+}
