@@ -20,7 +20,6 @@ package de.siphalor.nbtcrafting.dollar;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.nbt.AbstractNbtList;
@@ -41,31 +40,31 @@ import de.siphalor.nbtcrafting.dollar.type.MergeDollar;
 import de.siphalor.nbtcrafting.dollar.type.SimpleDollar;
 
 public final class DollarParser {
-	private static final Collection<DollarPart.UnaryDeserializer> UNARY_DESERIALIZERS = ImmutableList.of(
+	private static final DollarPart.UnaryDeserializer[] UNARY_DESERIALIZERS = new DollarPart.UnaryDeserializer[] {
 			new CombinationDollarPartDeserializer(),
 			new InverseDollarOperator.Deserializer(),
 			new NumberDollarPartDeserializer(),
 			new ReferenceDollarPart.Deserializer(),
 			new StringDollarPartDeserializer()
-	);
-	private static final List<Collection<DollarPart.Deserializer>> DESERIALIZERS = ImmutableList.of(
-			ImmutableList.of(
+	};
+	private static final DollarPart.Deserializer[][] DESERIALIZERS = new DollarPart.Deserializer[][] {
+			new DollarPart.Deserializer[] {
 					new CastDollarOperator.Deserializer(),
 					new ChildDollarOperator.DotDeserializer(),
 					new ChildDollarOperator.BracketDeserializer()
-			),
-			ImmutableList.of(
+			},
+			new DollarPart.Deserializer[] {
 					new ProductDollarOperator.Deserializer(),
 					new QuotientDollarOperator.Deserializer()
-			),
-			ImmutableList.of(
+			},
+			new DollarPart.Deserializer[] {
 					new SumDollarOperator.Deserializer(),
 					new DifferenceDollarOperator.Deserializer()
-			),
-			ImmutableList.of(
+			},
+			new DollarPart.Deserializer[] {
 					new ConditionDollarOperator.Deserializer()
-			)
-	);
+			}
+	};
 	private final Stack<Integer> stopStack = new Stack<>();
 	private final String string;
 	private final int stringLength;
@@ -171,7 +170,7 @@ public final class DollarParser {
 
 	public DollarPart parse() {
 		try {
-			return parse(DESERIALIZERS.size());
+			return parse(DESERIALIZERS.length);
 		} catch (DollarException e) {
 			e.printStackTrace();
 		}
@@ -204,7 +203,7 @@ public final class DollarParser {
 			}
 
 			priority = 0;
-			for (Collection<DollarPart.Deserializer> deserializers : DESERIALIZERS) {
+			for (DollarPart.Deserializer[] deserializers : DESERIALIZERS) {
 				if (++priority > maxPriority)
 					break;
 				for (DollarPart.Deserializer deserializer : deserializers) {
@@ -214,9 +213,9 @@ public final class DollarParser {
 					}
 				}
 			}
-			if (maxPriority < DESERIALIZERS.size())
+			if (maxPriority < DESERIALIZERS.length)
 				return dollarPart;
-			throw new DollarDeserializationException("Unable to resolve token in dollar expression: \"" + String.valueOf(Character.toChars(peek)) + "\"");
+			throw new DollarDeserializationException("Unable to resolve token \"" + String.valueOf(Character.toChars(peek)) + "\" on " + currentIndex);
 		}
 	}
 
