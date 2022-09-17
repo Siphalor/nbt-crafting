@@ -1,0 +1,30 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients" : [
+		{
+			"item": "minecraft:firework_rocket"
+		},
+		{
+			"item": "minecraft:firework_rocket",
+			"data": {
+				"require": {
+					"Fireworks": {
+						"Explosions": ""
+					}
+				}
+			},
+			"remainder": {
+				"item": "minecraft:firework_rocket",
+				"data": {
+					"$": "i1"
+				}
+			}
+		}
+	],
+	"result": {
+		"item": "minecraft:firework_rocket",
+		"data": {
+			"$": "i1"
+		}
+	}
+}
