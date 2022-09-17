@@ -66,6 +66,7 @@ public class InverseDollarOperator extends UnaryDollarOperator {
 
 		@Override
 		public DollarPart parse(DollarParser dollarParser) throws DollarDeserializationException {
+			dollarParser.skip();
 			return InverseDollarOperator.of(dollarParser.parseUnary());
 		}
 	}
