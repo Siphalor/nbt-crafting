@@ -1,0 +1,33 @@
+{
+	"type": "nbtcrafting3:data",
+	"recipe": {
+		"type" : "crafting_shapeless",
+		"ingredients" : [
+			{
+				"item" : "minecraft:diamond_sword",
+				"data" : {
+					"require" : {
+						"Damage" : "$..40"
+					}
+				}
+			},
+			{
+				"item" : "minecraft:diamond"
+			}
+		],
+		"result" : {
+			"item" : "minecraft:diamond_axe",
+			"data" : {
+				"display" : {
+					"Name" : "{\"text\":\"Battle Axe\"}"
+				},
+				"Enchantments" : [
+					{
+						"id" : "minecraft:sharpness",
+						"lvl" : 10
+					}
+				]
+			}
+		}
+	}
+}
