@@ -17,7 +17,7 @@ This can be achieved through the reintroduced `data` attribute.
 
 ## Examples
 
-You can find a datapack with some examples here: [Example Datapack](https://github.com/Siphalor/nbt-crafting/suites/8342097969/artifacts/367102388)
+You can find a datapack with some examples here: [Example Datapack](https://github.com/Siphalor/nbt-crafting/suites/8342192665/artifacts/367109468)
 
 A simple recipe allowing to craft wooden swords with 20 damage from diamond swords with 2 damage.
 
