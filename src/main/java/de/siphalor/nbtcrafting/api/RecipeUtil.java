@@ -57,7 +57,7 @@ public class RecipeUtil {
 		for (int i = 0; i < resolvedIngredientStacks.length; i++) {
 			int resolvedIngredientStack = resolvedIngredientStacks[i];
 			if (resolvedIngredientStack != -1) {
-				reference.put("i" + i, inventory.getInvStack(resolvedIngredientStack));
+				reference.put("i" + i, NbtUtil.getTagOrEmpty(inventory.getInvStack(resolvedIngredientStack)));
 			}
 		}
 		return reference;
