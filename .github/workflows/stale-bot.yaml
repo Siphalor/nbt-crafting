@@ -1,7 +1,7 @@
 name: "Process stale issues and PRs"
 on:
     schedule:
-        - 14 3 * * *
+        - cron: 14 3 * * *
     workflow_dispatch:
 
 jobs:
