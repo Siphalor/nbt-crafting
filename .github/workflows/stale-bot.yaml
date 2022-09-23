@@ -13,4 +13,4 @@ jobs:
                   stale-issue-message: "This issue has been marked as stale because of inactivity. Comment on this issue or it will be closed in 14 days."
                   days-before-stale: 14
                   days-before-close: 14
-                  any-labels: "question,awaiting confirmation"
+                  any-of-labels: "question,awaiting confirmation"
