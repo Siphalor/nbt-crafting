@@ -33,7 +33,7 @@ public class BetterJsonOps extends JsonOps {
 			switch (type) {
 				case NumberUtil.CHARACTER:
 				case NumberUtil.BYTE:
-					return DSL.bool();
+					return DSL.byteType();
 				case NumberUtil.SHORT:
 					return DSL.shortType();
 				case NumberUtil.INTEGER:
