@@ -132,7 +132,7 @@ public class RecipeUtil {
 					currentIngredient--; // continue matching with the previous ingredient
 					if (currentIngredient < 0) { // if there is no previous ingredient, no matching is possible
 						// this should technically never happen, as recipes are checked for validity before reference maps are built
-						NbtCrafting.logError("Failed to build reference map dynamically for recipe! Please report this on the Nbt Crafting issue tracker!");
+						NbtCrafting.logWarn("Failed to build reference map dynamically for recipe! Please report this on the Nbt Crafting issue tracker!");
 						break outer;
 					}
 
