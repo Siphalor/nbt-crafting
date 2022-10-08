@@ -45,11 +45,10 @@ dependencies {
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:6.0.247-alpha") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
-	modImplementation("de.siphalor:modsoftheworld-$minecraft_major_version:1.0.9+mc1.18-pre1") {
+	modLocalRuntime("de.siphalor:modsoftheworld-$minecraft_major_version:1.0.9+mc1.18-pre1") {
 		transitive false
 	}
-
-	modRuntimeOnly("com.github.astei:lazydfu:master-SNAPSHOT")
+	modLocalRuntime("com.github.astei:lazydfu:master-SNAPSHOT")
 
 	testmodImplementation sourceSets.main.output
 }
