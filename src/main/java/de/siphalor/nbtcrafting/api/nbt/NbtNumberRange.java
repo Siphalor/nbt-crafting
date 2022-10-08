@@ -17,9 +17,9 @@
 
 package de.siphalor.nbtcrafting.api.nbt;
 
-import net.minecraft.nbt.AbstractNumberTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.AbstractNbtNumber;
+import net.minecraft.nbt.NbtDouble;
+import net.minecraft.nbt.NbtInt;
 
 public class NbtNumberRange {
 	public static final NbtNumberRange ANY_INT = new NbtNumberRange(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true);
@@ -39,18 +39,18 @@ public class NbtNumberRange {
 		return c >= begin && c <= end;
 	}
 
-	public AbstractNumberTag getExample() {
+	public AbstractNbtNumber getExample() {
 		if (Double.isFinite(begin)) {
 			if (Double.isFinite(end)) {
-				return isInteger ? IntTag.of((int) Math.round((begin + end) / 2)) : DoubleTag.of((begin + end) / 2);
+				return isInteger ? NbtInt.of((int) Math.round((begin + end) / 2)) : NbtDouble.of((begin + end) / 2);
 			} else {
-				return isInteger ? IntTag.of((int) Math.round(begin)) : DoubleTag.of(begin);
+				return isInteger ? NbtInt.of((int) Math.round(begin)) : NbtDouble.of(begin);
 			}
 		} else {
 			if (Double.isFinite(end)) {
-				return isInteger ? IntTag.of((int) Math.round(end)) : DoubleTag.of(end);
+				return isInteger ? NbtInt.of((int) Math.round(end)) : NbtDouble.of(end);
 			} else {
-				return isInteger ? IntTag.of(0) : DoubleTag.of(0);
+				return isInteger ? NbtInt.of(0) : NbtDouble.of(0);
 			}
 		}
 	}

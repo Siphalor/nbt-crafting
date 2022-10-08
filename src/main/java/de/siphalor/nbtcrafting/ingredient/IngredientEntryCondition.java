@@ -24,7 +24,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Pair;
 
@@ -39,7 +39,7 @@ public class IngredientEntryCondition {
 
 	public NbtCompound requiredElements;
 	public NbtCompound deniedElements;
-	private CompoundTag previewTag;
+	private NbtCompound previewTag;
 
 	public IngredientEntryCondition() {
 		requiredElements = NbtUtil.EMPTY_COMPOUND;
@@ -72,7 +72,7 @@ public class IngredientEntryCondition {
 	public NbtCompound getPreviewTag() {
 		if (previewTag == null) {
 			previewTag = requiredElements.copy();
-			List<Pair<String[], Tag>> dollarRangeKeys = new ArrayList<>();
+			List<Pair<String[], NbtElement>> dollarRangeKeys = new ArrayList<>();
 			NbtIterator.iterateTags(previewTag, (path, key, tag) -> {
 				if (NbtUtil.isString(tag)) {
 					String text = NbtUtil.asString(tag);
@@ -82,7 +82,7 @@ public class IngredientEntryCondition {
 				}
 				return false;
 			});
-			for (Pair<String[], Tag> dollarRangeKey : dollarRangeKeys) {
+			for (Pair<String[], NbtElement> dollarRangeKey : dollarRangeKeys) {
 				try {
 					NbtUtil.put(previewTag, dollarRangeKey.getLeft(), dollarRangeKey.getRight());
 				} catch (NbtException e) {
