@@ -21,6 +21,7 @@ repositories {
 	maven { url "https://maven.fabricmc.net/" }
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url "https://maven.siphalor.de/" }
+	maven { url "https://maven.terraformersmc.com/" }
 	maven { url "https://jitpack.io/" }
 }
 
@@ -45,6 +46,7 @@ dependencies {
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:6.0.247-alpha") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
+	modLocalRuntime("dev.emi:emi:0.4.0+1.18.2")
 	modLocalRuntime("de.siphalor:modsoftheworld-$minecraft_major_version:1.0.9+mc1.18-pre1") {
 		transitive false
 	}
