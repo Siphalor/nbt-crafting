@@ -43,8 +43,11 @@ A simple recipe allowing to craft wooden swords with 20 damage from diamond swor
 }
 ```
 
-## Extra
-Due to some additions made with this mod the recipe book displays also the output amount of all recipes - yay!
+## Feedback, Support or Show off what you build
+
+If you find any issues, please report them [on the issues page](https://github.com/Siphalor/nbt-crafting).
+
+If you're stuck and need help or just want to show something that you've created with this mod, you may either come to [the official Discord server](https://discord.gg/6gaXmbj) or open [a GitHub discussion](https://github.com/Siphalor/nbt-crafting/discussions).
 
 ## License
 This mod is available under the Apache 2.0 License.
