@@ -22,11 +22,15 @@ import java.util.List;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Pair;
+import net.minecraft.util.registry.Registry;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.nbt.NbtException;
@@ -102,6 +106,18 @@ public class IngredientEntryCondition {
 			if (!json.get("require").isJsonObject())
 				throw new JsonParseException("data.require must be an object");
 			condition.requiredElements = (CompoundTag) NbtUtil.asTag(json.getAsJsonObject("require"));
+			flatObject = false;
+		}
+		if (json.has("potion")) {
+			Identifier potion = new Identifier(JsonHelper.getString(json, "potion"));
+			if (Registry.POTION.getOrEmpty(potion).isPresent()) {
+				if (condition.requiredElements == NbtUtil.EMPTY_COMPOUND) {
+					condition.requiredElements = new CompoundTag();
+				}
+				condition.requiredElements.putString("Potion", potion.toString());
+			} else {
+				new JsonSyntaxException("Unknown potion '" + potion + "'").printStackTrace();
+			}
 			flatObject = false;
 		}
 		if (json.has("deny")) {
