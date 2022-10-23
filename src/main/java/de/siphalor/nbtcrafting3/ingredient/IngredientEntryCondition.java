@@ -20,24 +20,20 @@ package de.siphalor.nbtcrafting3.ingredient;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-
-import de.siphalor.nbtcrafting3.api.nbt.NbtException;
-import de.siphalor.nbtcrafting3.api.nbt.NbtIterator;
-
-import de.siphalor.nbtcrafting3.api.nbt.NbtNumberRange;
-
+import com.google.gson.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.Pair;
+import net.minecraft.util.registry.Registry;
 
 import de.siphalor.nbtcrafting3.NbtCrafting;
+import de.siphalor.nbtcrafting3.api.nbt.NbtException;
+import de.siphalor.nbtcrafting3.api.nbt.NbtIterator;
+import de.siphalor.nbtcrafting3.api.nbt.NbtNumberRange;
 import de.siphalor.nbtcrafting3.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting3.dollar.DollarExtractor;
 import de.siphalor.nbtcrafting3.dollar.DollarUtil;
@@ -140,6 +136,18 @@ public class IngredientEntryCondition {
 			if (!json.get("require").isJsonObject())
 				throw new JsonParseException("data.require must be an object");
 			condition.requiredElements = (CompoundTag) NbtUtil.asTag(json.getAsJsonObject("require"));
+			flatObject = false;
+		}
+		if (json.has("potion")) {
+			Identifier potion = new Identifier(JsonHelper.getString(json, "potion"));
+			if (Registry.POTION.getOrEmpty(potion).isPresent()) {
+				if (condition.requiredElements == NbtUtil.EMPTY_COMPOUND) {
+					condition.requiredElements = new CompoundTag();
+				}
+				condition.requiredElements.putString("Potion", potion.toString());
+			} else {
+				new JsonSyntaxException("Unknown potion '" + potion + "'").printStackTrace();
+			}
 			flatObject = false;
 		}
 		if (json.has("deny")) {
