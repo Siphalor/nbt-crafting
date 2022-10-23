@@ -99,9 +99,8 @@ public class NbtCrafting implements ModInitializer {
 				while (id2StackMap.putIfAbsent(currentStackId, key) != null) {
 					currentStackId++;
 				}
-				currentStackId++;
+				return currentStackId++;
 			}
-			return currentStackId;
 		}
 	});
 
