@@ -24,8 +24,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
+import de.siphalor.nbtcrafting3.api.nbt.NbtException;
+import de.siphalor.nbtcrafting3.api.nbt.NbtIterator;
+
+import de.siphalor.nbtcrafting3.api.nbt.NbtNumberRange;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.Pair;
@@ -44,6 +51,7 @@ public class IngredientEntryCondition {
 	public CompoundTag requiredElements;
 	public CompoundTag deniedElements;
 	public List<Pair<String, DollarPart>> dollarPredicates;
+	private CompoundTag previewTag;
 
 	protected IngredientEntryCondition() {
 		requiredElements = NbtUtil.EMPTY_COMPOUND;
@@ -100,7 +108,27 @@ public class IngredientEntryCondition {
 	}
 
 	public CompoundTag getPreviewTag() {
-		return requiredElements;
+		if (previewTag == null) {
+			previewTag = requiredElements.copy();
+			List<Pair<String[], Tag>> dollarRangeKeys = new ArrayList<>();
+			NbtIterator.iterateTags(previewTag, (path, key, tag) -> {
+				if (NbtUtil.isString(tag)) {
+					String text = NbtUtil.asString(tag);
+					if (text.startsWith("$")) {
+						dollarRangeKeys.add(new Pair<>(NbtUtil.splitPath(path + key), NbtNumberRange.ofString(text.substring(1)).getExample()));
+					}
+				}
+				return NbtIterator.Action.RECURSE;
+			});
+			for (Pair<String[], Tag> dollarRangeKey : dollarRangeKeys) {
+				try {
+					NbtUtil.put(previewTag, dollarRangeKey.getLeft(), dollarRangeKey.getRight());
+				} catch (NbtException e) {
+					NbtCrafting.logWarn("Failed to set dollar range value " + dollarRangeKey.getRight() + " for key " + String.join(".", dollarRangeKey.getLeft()) + " in preview tag " + previewTag);
+				}
+			}
+		}
+		return previewTag;
 	}
 
 	public static IngredientEntryCondition fromJson(JsonObject json) {

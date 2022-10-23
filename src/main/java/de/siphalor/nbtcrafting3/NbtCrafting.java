@@ -40,6 +40,7 @@ import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import de.siphalor.nbtcrafting3.advancement.StatChangedCriterion;
 import de.siphalor.nbtcrafting3.api.RecipeTypeHelper;
@@ -93,11 +94,14 @@ public class NbtCrafting implements ModInitializer {
 			}
 	).build(new CacheLoader<Pair<Integer, CompoundTag>, Integer>() {
 		@Override
-		public Integer load(Pair<Integer, CompoundTag> key) {
+		public Integer load(@NotNull Pair<Integer, CompoundTag> key) {
 			synchronized (id2StackMap) {
-				id2StackMap.put(currentStackId, key);
+				while (id2StackMap.putIfAbsent(currentStackId, key) != null) {
+					currentStackId++;
+				}
+				currentStackId++;
 			}
-			return currentStackId++;
+			return currentStackId;
 		}
 	});
 

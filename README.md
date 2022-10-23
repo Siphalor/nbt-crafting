@@ -1,50 +1,71 @@
-# Nbt Crafting 2.0 ![supported Minecraft versions: 1.15 | 1.16 | 1.17 | 1.18](https://img.shields.io/badge/support%20for%20MC-1.15%20%7C%201.16%20%7C%201.17%20%7C%201.18%20%7C%201.19-%2356AD56)
+<div align="center">
+    <img src="images/logo_2.0_big.png" alt="Logo" width="150" height="150" />
 
-[![curseforge downloads](http://cf.way2muchnoise.eu/full_nbt-crafting_downloads.svg)](https://minecraft.curseforge.com/projects/nbt-crafting)
-[![modrinth downloads](https://img.shields.io/badge/dynamic/json?color=5da545&label=modrinth&prefix=downloads%20&query=downloads&url=https://api.modrinth.com/api/v1/mod/18ztUZP5&style=flat&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMSAxMSIgd2lkdGg9IjE0LjY2NyIgaGVpZ2h0PSIxNC42NjciICB4bWxuczp2PSJodHRwczovL3ZlY3RhLmlvL25hbm8iPjxkZWZzPjxjbGlwUGF0aCBpZD0iQSI+PHBhdGggZD0iTTAgMGgxMXYxMUgweiIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNBKSI+PHBhdGggZD0iTTEuMzA5IDcuODU3YTQuNjQgNC42NCAwIDAgMS0uNDYxLTEuMDYzSDBDLjU5MSA5LjIwNiAyLjc5NiAxMSA1LjQyMiAxMWMxLjk4MSAwIDMuNzIyLTEuMDIgNC43MTEtMi41NTZoMGwtLjc1LS4zNDVjLS44NTQgMS4yNjEtMi4zMSAyLjA5Mi0zLjk2MSAyLjA5MmE0Ljc4IDQuNzggMCAwIDEtMy4wMDUtMS4wNTVsMS44MDktMS40NzQuOTg0Ljg0NyAxLjkwNS0xLjAwM0w4LjE3NCA1LjgybC0uMzg0LS43ODYtMS4xMTYuNjM1LS41MTYuNjk0LS42MjYuMjM2LS44NzMtLjM4N2gwbC0uMjEzLS45MS4zNTUtLjU2Ljc4Ny0uMzcuODQ1LS45NTktLjcwMi0uNTEtMS44NzQuNzEzLTEuMzYyIDEuNjUxLjY0NSAxLjA5OC0xLjgzMSAxLjQ5MnptOS42MTQtMS40NEE1LjQ0IDUuNDQgMCAwIDAgMTEgNS41QzExIDIuNDY0IDguNTAxIDAgNS40MjIgMCAyLjc5NiAwIC41OTEgMS43OTQgMCA0LjIwNmguODQ4QzEuNDE5IDIuMjQ1IDMuMjUyLjgwOSA1LjQyMi44MDljMi42MjYgMCA0Ljc1OCAyLjEwMiA0Ljc1OCA0LjY5MSAwIC4xOS0uMDEyLjM3Ni0uMDM0LjU2bC43NzcuMzU3aDB6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiM1ZGE0MjYiLz48L2c+PC9zdmc+)](https://modrinth.com/mod/nbt-crafting)
-[![latest maven release](https://img.shields.io/maven-metadata/v?label=latest%20maven%20release&metadataUrl=https%3A%2F%2Fmaven.siphalor.de%2Fde%2Fsiphalor%2Fnbtcrafting-1.15%2Fmaven-metadata.xml)](https://maven.siphalor.de/de/siphalor/nbtcrafting-1.15/)
+# Nbt Crafting
+    
+![supported Minecraft versions: 1.15 | 1.16 | 1.17 | 1.18 | 1.19](https://img.shields.io/badge/support%20for%20MC-1.15%20|%201.16%20|%201.17%20|%201.18%20|%201.19-56AD56?style=for-the-badge)
 
-![logo](images/logo_2.0_big.png?raw=true)
+[![curseforge downloads](http://cf.way2muchnoise.eu/full_nbt-crafting_downloads.svg?badge_style=flat)](https://minecraft.curseforge.com/projects/nbt-crafting)
+[![modrinth downloads](https://img.shields.io/modrinth/dt/nbt-crafting?color=30b27b&logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAAAAAAAAQCEeRdzAAAFjElEQVR4nO2aaYhWVRjH3WpcinS0tHIMW0gM7CmXsLQFCnOBFq0PmS2klpZmSraYYFNEC7SZBYqipfWhSAyKVo0RTC1JCwn6kJW0ueWSWuOo%2Ff%2Bc5zLnPe%2B595773vvOfKgXfjBw733Oc855tvOcadPm%2F1%2F8T96b05a0th6pPyjZEZwDrgXTwDNgEXgDLAWvgLlgAhgCeoB2ra10B9AfPADeBz%2BDv8HxBI6CvWAzeBWMAbWtofhQXeFfwLEUpZM4DNaBKeC0llD%2BbPAS2Jmg1BGwD%2FwGtuskd6fsDr%2F5AowFNdVQvD24AXzjGZw78Af4EMxTJWjn5%2BuEzwUCRoDpYDn4XpV2ZR0AC8CZRSrfCTwE%2FvTY87dgDhhAR86wGHXgNvAROORZkDXgwiKU7yImorjbT9N4NO9K4fuTwM1gvS6IPQZ3e2ge4TXgSdDorA5XbbAUGN8h6wzwPPjLmQR3%2BOJKhU51tpc2u7Ba0QJyTwR3ewJEA%2BiTVdjl4FdLSBOYD06uhvLWuMzc48EuZxKLQn2MQrqDTx0BK0DXCpWiKXYLNTmdBPPCQWt8WsL40AGn64pHH38J%2BmZU%2BgRwHrgLrFQzuDTD9zW64%2FYifkVfSfuwTkpj%2FX5wXeCgzNB9NTy%2BJaa0sBfiO3BVhkn0AZucADIz7aN7pbQ0WEbnChisTh18m%2FgTVMSbkiHT4t3bwT%2FW95tigwgdFKy2Xt4DhgcMwlyxJEHpCE4uU1zH%2B7VgrSWDkxkX9zILNDvbrkrzfHW4Wc4q%2BaApTsiivDXGDEcWF6u8FKd9icmGTWoGkwKEjwQ7UpSnvKfo2BVOYLBaQyRvK%2Bjle5EFFwuxG%2Bm44NQUwSzWNicozkX4WhemohCs4zAEb3B287JK5UVCu4J3EpT%2FCUwEPXMN1DzeAkf%2BnXmEMVzWS2mIdO391gzymDM6pbwz0Rnj8TwTqHW21IXVa4cAOTxHs2RZDJ6ThPCKZ6OdQPFaxRNQgfdLefkbJZspKd8y7F4P3pXmqMcT3JiEb66U0sKS%2BanyaphRAGyM2QHujjfZWObnO16uiXP2wiegQlnnNHoUadIdKhtAV9492UWws%2BGtdsV0L%2Byx8pmQCmXVui5GGdb07A911HdpNteIOaD43v8dDEsYizuw1ZpEfV7lmYHZxPohwZm55exgsDT%2BWO3c9x79Zl6SSeBZOzGntpvA62Cs76UrwH1iTmI8GfWOEUY7vkNKDzxxHBW%2Fs9uw1gnOFzp%2BeVYXkzFtwdM873QGjySsZlboD6NClU%2Bb2SVSWnOwz9PFek6bf1nS24dZeFECckboBNji%2BMwSzow6Qp%2BdBd5OMIeol9MQqDidnFVlXSHKW5OY6ijJXWAE%2BDzFznkCo5P11r99ZQYnuQ28AAZ57biACVAB%2B0jZKMl9UD5noVVryeimSkamxqp0i5hGGM%2FJ1W2rS%2FmhPg52DeptP7FksB35IPgETAKnZ9SBp8N7xITqbKW4%2BNsqLnt0orHnZTHhrnOmwZu%2Fe1hM8cZFYrKc4VuoJCFuY8uG7XI2n9pnVS5QefrhfmdMNgyytd2lvLV4XO16ctGK63jMMeyCuzmmoaJoJfHNXW7p1UXugJj7tSVSnmMYUC7KI5hF2NMewexdspvcL09UUX%2BbLKZQc001X3vdGoQRZbaUZuloN37UkDkcnCIBNbqYk1h%2Fdcz14i%2FJmXckt%2FLWoLxVYS2%2FJcax96ky83VFeZ3EayZ2OgaKSYa3gCfABxogfFmd9wO8vSzuismZCHufrF%2BSktsxNTlOipd7LNgOxigc0aQLME6qccnnTKLoa1beTrbMNatnIheIKcNpFts9zu6rm7gjbHixBGn5i%2B6YydAxeZ06SkyGflZK%2F9WAvvGYmATIViGjT%2Bv%2Bq0HILyQq%2Fed%2F%2FwIQ1cNLieDSBgAAAABJRU5ErkJggg%3D%3D&style=flat-square)](https://modrinth.com/mod/nbt-crafting)
+[![latest maven release](https://img.shields.io/maven-metadata/v?color=0f9fbc&metadataUrl=https%3A%2F%2Fmaven.siphalor.de%2Fde%2Fsiphalor%2Fnbtcrafting-1.15%2Fmaven-metadata.xml&style=flat-square)](https://maven.siphalor.de/de/siphalor/nbtcrafting-1.15/)
 
-## About
-A fabric mod which allows you to add/change JSON crafting/cooking/etc. recipes to use nbt input and output.
+A 1.15+ Minecraft Fabric mod to let you work with NBT data in recipes, add brewing recipes and a lot more.
 
-Everything is kept nicely visualized in the vanilla gui.
+**&nbsp;
+[Wiki](https://mcwiki.siphalor.de/nbt-crafting/v2) ·
+[Discord](https://discord.gg/6gaXmbj) ·
+[Example Datapack](https://nightly.link/Siphalor/nbt-crafting/workflows/build-example-datapack.yaml/1.15-2.0/example-datapack.zip)
+&nbsp;**
 
-This can be achieved through the reintroduced `data` attribute. 
+</div>
 
-**You can find more information in the [wiki](https://mcwiki.siphalor.de/nbt-crafting/v2).**
+## Demo
 
-## Examples
+<details>
+    <summary><b>Show example recipe</b></summary><br>
 
-You can find a datapack with some examples here: [Example Datapack](https://github.com/Siphalor/nbt-crafting/suites/7625325007/artifacts/316792133)
+This example recipe allows you to craft a diamond axe named "Battle Axe" with sharpness X.
 
-A simple recipe allowing to craft wooden swords with 20 damage from diamond swords with 2 damage.
+Ingredients are a diamond sword with at most 40 uses and a plain old diamond.
 
 ```json
 {
-  "type": "crafting_shapeless",
-  "ingredients": [
-    {
-      "item": "minecraft:diamond_sword",
-      "data": {
-        "require": {
-          "Damage": 2
+    "type": "crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "minecraft:diamond_sword",
+            "data": {
+                "require": {
+                    "Damage": "$..40"
+                }
+            }
+        },
+        { "item": "minecraft:diamond" }
+    ],
+    "result": {
+        "item": "minecraft:diamond_axe",
+        "data": {
+            "display": {
+                "Name": "{\"text\":\"Battle Axe\"}"
+            },
+            "Enchantments": [
+                {
+                    "id": "minecraft:sharpness",
+                    "lvl": 10
+                }
+            ]
         }
-      }
     }
-  ],
-  "result": {
-    "item": "minecraft:wooden_sword",
-    "data": {
-      "Damage": 2
-    }
-  }
 }
 ```
 
-## Extra
-Due to some additions made with this mod the recipe book displays also the output amount of all recipes - yay!
+</details>
+
+## Feedback, Support or Showcase your creations
+
+If you find any issues, please report them [on the issues page](https://github.com/Siphalor/nbt-crafting).
+
+If you're stuck and need help or just want to show something that you've created with this mod, you may either come to [the official Discord server](https://discord.gg/6gaXmbj) or open [a GitHub discussion](https://github.com/Siphalor/nbt-crafting/discussions).
 
 ## License
-This mod is available under the Apache 2.0 License.
+This mod is available under [the Apache 2.0 License](./LICENSE.md).
