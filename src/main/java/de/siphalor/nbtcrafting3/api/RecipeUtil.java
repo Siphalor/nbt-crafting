@@ -30,7 +30,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import de.siphalor.nbtcrafting3.NbtCrafting;
-import de.siphalor.nbtcrafting3.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting3.dollar.Dollar;
 import de.siphalor.nbtcrafting3.dollar.DollarExtractor;
 import de.siphalor.nbtcrafting3.dollar.exception.DollarException;
@@ -50,20 +49,20 @@ public class RecipeUtil {
 		Dollar[] dollars = DollarExtractor.extractDollars(stack.getTag(), true);
 
 		if (dollars.length > 0) {
-			return applyDollars(stack, dollars, new MapBackedReferenceResolver(buildReferenceMapFromResolvedIngredients(resolveIngredients(ingredients, inventory), inventory)));
+			return applyDollars(stack, dollars, buildReferenceResolverFromResolvedIngredients(resolveIngredients(ingredients, inventory), inventory));
 		}
 		return stack;
 	}
 
-	public static Map<String, Object> buildReferenceMapFromResolvedIngredients(int[] resolvedIngredientStacks, Inventory inventory) {
+	public static ReferenceResolver buildReferenceResolverFromResolvedIngredients(int[] resolvedIngredientStacks, Inventory inventory) {
 		Map<String, Object> reference = new HashMap<>();
 		for (int i = 0; i < resolvedIngredientStacks.length; i++) {
 			int resolvedIngredientStack = resolvedIngredientStacks[i];
 			if (resolvedIngredientStack != -1) {
-				reference.put("i" + i, NbtUtil.getTagOrEmpty(inventory.getStack(resolvedIngredientStack)));
+				reference.put("i" + i, inventory.getStack(resolvedIngredientStack));
 			}
 		}
-		return reference;
+		return new MapBackedReferenceResolver(reference);
 	}
 
 	public static int[] resolveIngredients(List<Ingredient> ingredients, Inventory inventory) {
