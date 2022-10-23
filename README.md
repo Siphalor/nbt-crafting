@@ -14,7 +14,7 @@ A 1.15+ Minecraft Fabric mod to let you work with NBT data in recipes, add brewi
 **&nbsp;
 [Wiki](https://mcwiki.siphalor.de/nbt-crafting/v2) ·
 [Discord](https://discord.gg/6gaXmbj) ·
-[Example Datapack](https://nightly.link/Siphalor/nbt-crafting/workflows/build-example-datapack.yaml/1.19-2.0/example-datapack.zip)
+[Example Datapack](https://nightly.link/Siphalor/nbt-crafting/workflows/build-example-datapack.yaml/1.19-3.0/example-datapack.zip)
 &nbsp;**
 
 </div>

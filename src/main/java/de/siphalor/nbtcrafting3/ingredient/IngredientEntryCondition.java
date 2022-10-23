@@ -150,6 +150,18 @@ public class IngredientEntryCondition {
 			}
 			flatObject = false;
 		}
+		if (json.has("potion")) {
+			Identifier potion = new Identifier(JsonHelper.getString(json, "potion"));
+			if (Registry.POTION.getOrEmpty(potion).isPresent()) {
+				if (condition.requiredElements == NbtUtil.EMPTY_COMPOUND) {
+					condition.requiredElements = new NbtCompound();
+				}
+				condition.requiredElements.putString("Potion", potion.toString());
+			} else {
+				new JsonSyntaxException("Unknown potion '" + potion + "'").printStackTrace();
+			}
+			flatObject = false;
+		}
 		if (json.has("deny")) {
 			if (!json.get("deny").isJsonObject())
 				throw new JsonParseException("data.deny must be an object");

@@ -1,6 +1,7 @@
 plugins {
 	id 'fabric-loom' version '0.11-SNAPSHOT'
 	id 'maven-publish'
+	id 'com.github.johnrengelman.shadow' version '7.0.0'
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'com.modrinth.minotaur' version '2.1.1'
 	id 'org.cadixdev.licenser' version '0.6.1'
@@ -24,6 +25,7 @@ repositories {
 	maven { url "https://maven.siphalor.de/" }
 	maven { url "https://maven.terraformersmc.com/" }
 	maven { url "https://jitpack.io/" }
+	mavenCentral()
 }
 
 sourceSets {
@@ -34,7 +36,7 @@ sourceSets {
 }
 
 dependencies {
-	antlr "org.antlr:antlr4:4.10.1"
+	antlr "org.antlr:antlr4:${project.antlr4_version}"
 
 	//to change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -45,6 +47,8 @@ dependencies {
 	include(modApi(fabricApi.module("fabric-networking-api-v1", fabric_api_version)))
 	modImplementation(fabricApi.module("fabric-registry-sync-v0", fabric_api_version))
 	modImplementation(fabricApi.module("fabric-resource-loader-v0", fabric_api_version))
+
+	shadow(implementation("org.antlr:antlr4-runtime:${project.antlr4_version}"))
 
 	modCompileOnly("me.shedaniel:RoughlyEnoughItems-fabric:9.0.491") {
 		exclude group: "net.fabricmc.fabric-api"
@@ -119,6 +123,17 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
 	from "LICENSE"
+}
+
+shadowJar {
+	configurations = [project.configurations.shadow]
+	archiveClassifier.set("dev")
+	relocate 'org.antlr.v4.runtime', 'de.siphalor.nbtcrafting3.shadow.antlr.runtime'
+}
+
+remapJar {
+	dependsOn shadowJar
+	inputFile = shadowJar.archiveFile
 }
 
 // configure the maven publication

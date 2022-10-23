@@ -32,7 +32,6 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import de.siphalor.nbtcrafting3.api.RecipeUtil;
 import de.siphalor.nbtcrafting3.api.recipe.NBTCRecipe;
-import de.siphalor.nbtcrafting3.dollar.reference.MapBackedReferenceResolver;
 import de.siphalor.nbtcrafting3.dollar.reference.ReferenceResolver;
 import de.siphalor.nbtcrafting3.ingredient.IIngredient;
 
@@ -59,7 +58,7 @@ public interface MixinRecipe {
 		} else {
 			ingredients = getIngredients();
 			resolvedIngredientStacks = RecipeUtil.resolveIngredients(ingredients, inventory);
-			referenceResolver = new MapBackedReferenceResolver(RecipeUtil.buildReferenceMapFromResolvedIngredients(resolvedIngredientStacks, inventory));
+			referenceResolver = RecipeUtil.buildReferenceResolverFromResolvedIngredients(resolvedIngredientStacks, inventory);
 		}
 
 		for (int i = 0; i < stackList.size(); ++i) {
