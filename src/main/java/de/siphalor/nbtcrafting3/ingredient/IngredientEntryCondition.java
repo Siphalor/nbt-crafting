@@ -20,17 +20,20 @@ package de.siphalor.nbtcrafting3.ingredient;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import com.google.gson.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.Pair;
+import net.minecraft.util.registry.Registry;
 
 import de.siphalor.nbtcrafting3.NbtCrafting;
+import de.siphalor.nbtcrafting3.api.nbt.NbtException;
+import de.siphalor.nbtcrafting3.api.nbt.NbtIterator;
+import de.siphalor.nbtcrafting3.api.nbt.NbtNumberRange;
 import de.siphalor.nbtcrafting3.api.nbt.NbtUtil;
 import de.siphalor.nbtcrafting3.dollar.DollarExtractor;
 import de.siphalor.nbtcrafting3.dollar.DollarUtil;
@@ -44,6 +47,7 @@ public class IngredientEntryCondition {
 	public NbtCompound requiredElements;
 	public NbtCompound deniedElements;
 	public List<Pair<String, DollarPart>> dollarPredicates;
+	private NbtCompound previewTag;
 
 	protected IngredientEntryCondition() {
 		requiredElements = NbtUtil.EMPTY_COMPOUND;
@@ -100,7 +104,27 @@ public class IngredientEntryCondition {
 	}
 
 	public NbtCompound getPreviewTag() {
-		return requiredElements;
+		if (previewTag == null) {
+			previewTag = requiredElements.copy();
+			List<Pair<String[], NbtElement>> dollarRangeKeys = new ArrayList<>();
+			NbtIterator.iterateTags(previewTag, (path, key, tag) -> {
+				if (NbtUtil.isString(tag)) {
+					String text = NbtUtil.asString(tag);
+					if (text.startsWith("$")) {
+						dollarRangeKeys.add(new Pair<>(NbtUtil.splitPath(path + key), NbtNumberRange.ofString(text.substring(1)).getExample()));
+					}
+				}
+				return NbtIterator.Action.RECURSE;
+			});
+			for (Pair<String[], NbtElement> dollarRangeKey : dollarRangeKeys) {
+				try {
+					NbtUtil.put(previewTag, dollarRangeKey.getLeft(), dollarRangeKey.getRight());
+				} catch (NbtException e) {
+					NbtCrafting.logWarn("Failed to set dollar range value " + dollarRangeKey.getRight() + " for key " + String.join(".", dollarRangeKey.getLeft()) + " in preview tag " + previewTag);
+				}
+			}
+		}
+		return previewTag;
 	}
 
 	public static IngredientEntryCondition fromJson(JsonObject json) {
@@ -112,6 +136,18 @@ public class IngredientEntryCondition {
 			if (!json.get("require").isJsonObject())
 				throw new JsonParseException("data.require must be an object");
 			condition.requiredElements = (NbtCompound) NbtUtil.asTag(json.getAsJsonObject("require"));
+			flatObject = false;
+		}
+		if (json.has("potion")) {
+			Identifier potion = new Identifier(JsonHelper.getString(json, "potion"));
+			if (Registry.POTION.getOrEmpty(potion).isPresent()) {
+				if (condition.requiredElements == NbtUtil.EMPTY_COMPOUND) {
+					condition.requiredElements = new NbtCompound();
+				}
+				condition.requiredElements.putString("Potion", potion.toString());
+			} else {
+				new JsonSyntaxException("Unknown potion '" + potion + "'").printStackTrace();
+			}
 			flatObject = false;
 		}
 		if (json.has("deny")) {

@@ -17,19 +17,20 @@
 
 package de.siphalor.nbtcrafting3.mixin;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.util.collection.DefaultedList;
+import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import de.siphalor.nbtcrafting3.api.RecipeUtil;
 import de.siphalor.nbtcrafting3.api.recipe.NBTCRecipe;
 import de.siphalor.nbtcrafting3.dollar.reference.MapBackedReferenceResolver;
 import de.siphalor.nbtcrafting3.dollar.reference.ReferenceResolver;
@@ -48,38 +49,31 @@ public interface MixinRecipe {
 	default DefaultedList<ItemStack> getRemainder(Inventory inventory) {
 		final DefaultedList<ItemStack> stackList = DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
 		ReferenceResolver referenceResolver;
-		Collection<Ingredient> ingredients;
+		List<Ingredient> ingredients;
+		int[] resolvedIngredientStacks;
 		if (this instanceof NBTCRecipe) {
-			ingredients = ((NBTCRecipe<?>) this).getIngredients();
+			ingredients = new ArrayList<>(((NBTCRecipe<?>) this).getIngredients());
 			// noinspection unchecked
 			referenceResolver = ((NBTCRecipe<Inventory>) this).getReferenceResolver(inventory);
+			resolvedIngredientStacks = RecipeUtil.resolveIngredients(ingredients, inventory);
 		} else {
-			DefaultedList<Ingredient> ingredientList = getIngredients();
-			ingredients = ingredientList;
-			Map<String, Object> references = new HashMap<>();
-			for (int j = 0; j < ingredientList.size(); j++) {
-				for (int i = 0; i < stackList.size(); i++) {
-					if (ingredientList.get(j).test(inventory.getStack(i)))
-						references.putIfAbsent("i" + j, inventory.getStack(i));
-				}
-			}
-			referenceResolver = new MapBackedReferenceResolver(references);
+			ingredients = getIngredients();
+			resolvedIngredientStacks = RecipeUtil.resolveIngredients(ingredients, inventory);
+			referenceResolver = new MapBackedReferenceResolver(RecipeUtil.buildReferenceMapFromResolvedIngredients(resolvedIngredientStacks, inventory));
 		}
-		main:
+
 		for (int i = 0; i < stackList.size(); ++i) {
-			ItemStack itemStack = inventory.getStack(i);
-			for (Ingredient ingredient : ingredients) {
-				if (ingredient.test(itemStack)) {
-					//noinspection ConstantConditions
-					ItemStack remainder = ((IIngredient) (Object) ingredient).nbtCrafting3$getRecipeRemainder(itemStack, referenceResolver);
-					if (remainder != null) {
-						stackList.set(i, remainder);
-						continue main;
-					}
+			ItemStack stack = inventory.getStack(i);
+			int ingredientIndex = ArrayUtils.indexOf(resolvedIngredientStacks, i);
+			if (ingredientIndex >= 0) {
+				ItemStack remainder = ((IIngredient) (Object) ingredients.get(ingredientIndex)).nbtCrafting3$getRecipeRemainder(stack, referenceResolver);
+				if (remainder != null) {
+					stackList.set(i, remainder);
+					continue;
 				}
 			}
-			if (itemStack.getItem().hasRecipeRemainder()) {
-				stackList.set(i, new ItemStack(itemStack.getItem().getRecipeRemainder()));
+			if (stack.getItem().hasRecipeRemainder()) {
+				stackList.set(i, new ItemStack(stack.getItem().getRecipeRemainder()));
 			}
 		}
 		return stackList;
