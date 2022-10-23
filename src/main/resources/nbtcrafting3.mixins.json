@@ -21,6 +21,7 @@
 		"cooking.MixinAbstractFurnaceBlockEntity",
 		"cooking.MixinCookingRecipe",
 		"cooking.MixinCookingRecipeSerializer",
+		"crafting.MixingCraftingInventory",
 		"crafting.MixinShapedRecipe",
 		"crafting.MixinShapelessRecipe",
 		"cutting.MixinCuttingRecipe",
