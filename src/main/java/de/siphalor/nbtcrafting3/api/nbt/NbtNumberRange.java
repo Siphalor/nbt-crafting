@@ -17,39 +17,68 @@
 
 package de.siphalor.nbtcrafting3.api.nbt;
 
+import net.minecraft.nbt.AbstractNumberTag;
+import net.minecraft.nbt.DoubleTag;
+import net.minecraft.nbt.IntTag;
+
 public class NbtNumberRange {
+	public static final NbtNumberRange ANY_INT = new NbtNumberRange(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, true);
+	public static final NbtNumberRange ANY_DOUBLE = new NbtNumberRange(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, false);
+
 	public final double begin;
 	public final double end;
+	private final boolean isInteger;
 
-	private NbtNumberRange(double begin, double end) {
+	private NbtNumberRange(double begin, double end, boolean isInteger) {
 		this.begin = begin;
 		this.end = end;
+		this.isInteger = isInteger;
 	}
 
 	public boolean matches(double c) {
 		return c >= begin && c <= end;
 	}
 
-	public static NbtNumberRange equals(double a) {
-		return new NbtNumberRange(a, a);
+	public AbstractNumberTag getExample() {
+		if (Double.isFinite(begin)) {
+			if (Double.isFinite(end)) {
+				return isInteger ? IntTag.of((int) Math.round((begin + end) / 2)) : DoubleTag.of((begin + end) / 2);
+			} else {
+				return isInteger ? IntTag.of((int) Math.round(begin)) : DoubleTag.of(begin);
+			}
+		} else {
+			if (Double.isFinite(end)) {
+				return isInteger ? IntTag.of((int) Math.round(end)) : DoubleTag.of(end);
+			} else {
+				return isInteger ? IntTag.of(0) : DoubleTag.of(0);
+			}
+		}
 	}
 
-	public static NbtNumberRange between(double a, double b) {
-		return new NbtNumberRange(Math.min(a, b), Math.max(a, b));
+	public static NbtNumberRange equals(Number a) {
+		return new NbtNumberRange(a.doubleValue(), a.doubleValue(), isInteger(a));
 	}
 
-	public static NbtNumberRange fromInfinity(double end) {
-		return new NbtNumberRange(Double.NEGATIVE_INFINITY, end);
+	public static NbtNumberRange between(Number a, Number b) {
+		return new NbtNumberRange(
+				Math.min(a.doubleValue(), b.doubleValue()),
+				Math.max(a.doubleValue(), b.doubleValue()),
+				isInteger(a) && isInteger(b)
+		);
 	}
 
-	public static NbtNumberRange toInfinity(double begin) {
-		return new NbtNumberRange(begin, Double.POSITIVE_INFINITY);
+	public static NbtNumberRange fromInfinity(Number end) {
+		return new NbtNumberRange(Double.NEGATIVE_INFINITY, end.doubleValue(), isInteger(end));
+	}
+
+	public static NbtNumberRange toInfinity(Number begin) {
+		return new NbtNumberRange(begin.doubleValue(), Double.POSITIVE_INFINITY, isInteger(begin));
 	}
 
 	public static NbtNumberRange ofString(String string) {
 		if (!string.contains("..")) {
 			try {
-				return NbtNumberRange.equals(Double.parseDouble(string));
+				return NbtNumberRange.equals(parseNumber(string));
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
@@ -57,23 +86,35 @@ public class NbtNumberRange {
 		int position = string.indexOf("..");
 		if (position == 0) {
 			try {
-				return NbtNumberRange.fromInfinity(Double.parseDouble(string.substring(2)));
+				return NbtNumberRange.fromInfinity(parseNumber(string.substring(2)));
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
 		} else if (position == string.length() - 2) {
 			try {
-				return NbtNumberRange.toInfinity(Double.parseDouble(string.substring(0, string.length() - 2)));
+				return NbtNumberRange.toInfinity(parseNumber(string.substring(0, string.length() - 2)));
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
 		} else {
 			try {
-				return NbtNumberRange.between(Double.parseDouble(string.substring(0, position)), Double.parseDouble(string.substring(position + 2)));
+				return NbtNumberRange.between(parseNumber(string.substring(0, position)), parseNumber(string.substring(position + 2)));
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
 		}
-		return NbtNumberRange.between(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+		return ANY_INT;
+	}
+
+	private static Number parseNumber(String string) throws NumberFormatException {
+		try {
+			return Integer.parseInt(string);
+		} catch (NumberFormatException e) {
+			return Double.parseDouble(string);
+		}
+	}
+
+	private static boolean isInteger(Number number) {
+		return number instanceof Byte || number instanceof Short || number instanceof Integer || number instanceof Long;
 	}
 }

@@ -238,10 +238,10 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			throw new JsonParseException("An ingredient entry is either a tag or an item or a potion, not both");
 		}
 		if (jsonObject.has("item")) {
-			final Identifier identifier = new Identifier(JsonHelper.getString(jsonObject, "item"));
+			final Identifier itemId = new Identifier(JsonHelper.getString(jsonObject, "item"));
 			try {
-				final Item item = Registry.ITEM.getOrEmpty(identifier).orElseThrow(() -> {
-					throw new JsonSyntaxException("Unknown item '" + identifier.toString() + "'");
+				final Item item = Registry.ITEM.getOrEmpty(itemId).orElseThrow(() -> {
+					throw new JsonSyntaxException("Unknown item '" + itemId + "'");
 				});
 				IngredientStackEntry entry = new IngredientStackEntry(Registry.ITEM.getRawId(item), loadIngredientEntryCondition(jsonObject));
 				if (jsonObject.has("remainder")) {
@@ -252,41 +252,28 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 				e.printStackTrace();
 				return null;
 			}
-		}
-		if (jsonObject.has("potion")) {
-			final Identifier identifier = new Identifier(JsonHelper.getString(jsonObject, "potion"));
-			try {
-				Registry.POTION.getOrEmpty(identifier).orElseThrow(() -> {
-					throw new JsonSyntaxException("Unknown potion '" + identifier.toString() + "'");
-				});
-				IngredientEntryCondition condition = loadIngredientEntryCondition(jsonObject);
-				if (condition.requiredElements == NbtUtil.EMPTY_COMPOUND)
-					condition.requiredElements = new CompoundTag();
-				condition.requiredElements.putString("Potion", identifier.toString());
-				IngredientStackEntry entry = new IngredientStackEntry(Registry.ITEM.getRawId(Items.POTION), condition);
-				if (jsonObject.has("remainder")) {
-					entry.setRecipeRemainder(ShapedRecipe.getItemStack(JsonHelper.getObject(jsonObject, "remainder")));
-				}
-				return entry;
-			} catch (Throwable e) {
-				e.printStackTrace();
-				return null;
+		} else if (jsonObject.has("tag")) {
+			final Identifier tagId = new Identifier(JsonHelper.getString(jsonObject, "tag"));
+			final Tag<Item> tag = ItemTags.getTagGroup().getTag(tagId);
+			if (tag == null) {
+				throw new JsonSyntaxException("Unknown item tag '" + tagId + "'");
 			}
+			IngredientMultiStackEntry entry = new IngredientMultiStackEntry(tag.values().stream().map(Registry.ITEM::getRawId).collect(Collectors.toList()), loadIngredientEntryCondition(jsonObject));
+			entry.setTag(tagId.toString());
+			if (jsonObject.has("remainder")) {
+				entry.setRecipeRemainder(ShapedRecipe.getItemStack(JsonHelper.getObject(jsonObject, "remainder")));
+			}
+			return entry;
+		} else if (jsonObject.has("potion")) {
+			IngredientEntryCondition condition = loadIngredientEntryCondition(jsonObject);
+			IngredientStackEntry entry = new IngredientStackEntry(Registry.ITEM.getRawId(Items.POTION), condition);
+			if (jsonObject.has("remainder")) {
+				entry.setRecipeRemainder(ShapedRecipe.getItemStack(JsonHelper.getObject(jsonObject, "remainder")));
+			}
+			return entry;
+		} else {
+			throw new JsonParseException("An ingredient entry needs either a tag or an item or a potion");
 		}
-		if (!jsonObject.has("tag")) {
-			throw new JsonParseException("An ingredient entry needs either a tag or an item");
-		}
-		final Identifier identifier2 = new Identifier(JsonHelper.getString(jsonObject, "tag"));
-		final Tag<Item> tag = ItemTags.getTagGroup().getTag(identifier2);
-		if (tag == null) {
-			throw new JsonSyntaxException("Unknown item tag '" + identifier2 + "'");
-		}
-		IngredientMultiStackEntry entry = new IngredientMultiStackEntry(tag.values().stream().map(Registry.ITEM::getRawId).collect(Collectors.toList()), loadIngredientEntryCondition(jsonObject));
-		entry.setTag(identifier2.toString());
-		if (jsonObject.has("remainder")) {
-			entry.setRecipeRemainder(ShapedRecipe.getItemStack(JsonHelper.getObject(jsonObject, "remainder")));
-		}
-		return entry;
 	}
 
 	@Unique

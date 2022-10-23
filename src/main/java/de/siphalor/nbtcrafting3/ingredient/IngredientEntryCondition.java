@@ -24,6 +24,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.JsonHelper;
@@ -44,6 +45,7 @@ public class IngredientEntryCondition {
 	public CompoundTag requiredElements;
 	public CompoundTag deniedElements;
 	public List<Pair<String, DollarPart>> dollarPredicates;
+	private CompoundTag previewTag;
 
 	protected IngredientEntryCondition() {
 		requiredElements = NbtUtil.EMPTY_COMPOUND;
@@ -100,7 +102,27 @@ public class IngredientEntryCondition {
 	}
 
 	public CompoundTag getPreviewTag() {
-		return requiredElements;
+		if (previewTag == null) {
+			previewTag = requiredElements.copy();
+			List<Pair<String[], Tag>> dollarRangeKeys = new ArrayList<>();
+			NbtIterator.iterateTags(previewTag, (path, key, tag) -> {
+				if (NbtUtil.isString(tag)) {
+					String text = NbtUtil.asString(tag);
+					if (text.startsWith("$")) {
+						dollarRangeKeys.add(new Pair<>(NbtUtil.splitPath(path + key), NbtNumberRange.ofString(text.substring(1)).getExample()));
+					}
+				}
+				return false;
+			});
+			for (Pair<String[], Tag> dollarRangeKey : dollarRangeKeys) {
+				try {
+					NbtUtil.put(previewTag, dollarRangeKey.getLeft(), dollarRangeKey.getRight());
+				} catch (NbtException e) {
+					NbtCrafting.logWarn("Failed to set dollar range value " + dollarRangeKey.getRight() + " for key " + String.join(".", dollarRangeKey.getLeft()) + " in preview tag " + previewTag);
+				}
+			}
+		}
+		return previewTag;
 	}
 
 	public static IngredientEntryCondition fromJson(JsonObject json) {
@@ -112,6 +134,18 @@ public class IngredientEntryCondition {
 			if (!json.get("require").isJsonObject())
 				throw new JsonParseException("data.require must be an object");
 			condition.requiredElements = (CompoundTag) NbtUtil.asTag(json.getAsJsonObject("require"));
+			flatObject = false;
+		}
+		if (json.has("potion")) {
+			Identifier potion = new Identifier(JsonHelper.getString(json, "potion"));
+			if (Registry.POTION.getOrEmpty(potion).isPresent()) {
+				if (condition.requiredElements == NbtUtil.EMPTY_COMPOUND) {
+					condition.requiredElements = new CompoundTag();
+				}
+				condition.requiredElements.putString("Potion", potion.toString());
+			} else {
+				new JsonSyntaxException("Unknown potion '" + potion + "'").printStackTrace();
+			}
 			flatObject = false;
 		}
 		if (json.has("deny")) {
