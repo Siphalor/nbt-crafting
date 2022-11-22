@@ -17,9 +17,9 @@
 
 package de.siphalor.nbtcrafting.mixin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import de.siphalor.nbtcrafting.api.RecipeUtil;
+import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
+import de.siphalor.nbtcrafting.ingredient.IIngredient;
 
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -28,36 +28,51 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.util.collection.DefaultedList;
 import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import de.siphalor.nbtcrafting.api.RecipeUtil;
-import de.siphalor.nbtcrafting.api.recipe.NBTCRecipe;
-import de.siphalor.nbtcrafting.ingredient.IIngredient;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Mixin(Recipe.class)
 public interface MixinRecipe {
 	@Shadow
 	DefaultedList<Ingredient> getIngredients();
 
-	/**
-	 * @reason Returns the recipe remainders. Sadly has to overwrite since this is an interface.
-	 * @author Siphalor
-	 */
-	@Overwrite
-	default DefaultedList<ItemStack> getRemainder(Inventory inventory) {
-		final DefaultedList<ItemStack> stackList = DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
-		Map<String, Object> reference;
+	@Inject(method = "getRemainder", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILSOFT)
+	default void modifyRemainingStacks(Inventory inventory, CallbackInfoReturnable<DefaultedList<ItemStack>> cir, DefaultedList<ItemStack> stackList) {
+		// The stackList is already pre-populated with Vanilla and Fabric API remainders
 		List<Ingredient> ingredients;
-		int[] resolvedIngredientStacks;
-		if (this instanceof NBTCRecipe) {
+		boolean customRecipe = this instanceof NBTCRecipe;
+		if (customRecipe) {
 			ingredients = new ArrayList<>(((NBTCRecipe<?>) this).getIngredients());
-			// noinspection unchecked
-			reference = ((NBTCRecipe<Inventory>) this).buildDollarReference(inventory);
-			resolvedIngredientStacks = RecipeUtil.resolveIngredients(ingredients, inventory);
 		} else {
 			ingredients = getIngredients();
-			resolvedIngredientStacks = RecipeUtil.resolveIngredients(ingredients, inventory);
+		}
+
+		boolean shallContinue = false;
+		for (Ingredient ingredient : ingredients) {
+			if (((IIngredient) (Object) ingredient).nbtCrafting$isAdvanced()) {
+				shallContinue = true;
+				break;
+			}
+		}
+		if (!shallContinue) {
+			return;
+		}
+
+		// Resolve the ingredient indexes to the belonging stack indices
+		int[] resolvedIngredientStacks = RecipeUtil.resolveIngredients(ingredients, inventory);
+		Map<String, Object> reference;
+
+		if (customRecipe) {
+		// noinspection unchecked
+			reference = ((NBTCRecipe<Inventory>) this).buildDollarReference(inventory, resolvedIngredientStacks);
+		} else {
 			reference = RecipeUtil.buildReferenceMapFromResolvedIngredients(resolvedIngredientStacks, inventory);
 		}
 
@@ -65,16 +80,17 @@ public interface MixinRecipe {
 			ItemStack stack = inventory.getStack(i);
 			int ingredientIndex = ArrayUtils.indexOf(resolvedIngredientStacks, i);
 			if (ingredientIndex >= 0) {
-				ItemStack remainder = ((IIngredient) (Object) ingredients.get(ingredientIndex)).nbtCrafting$getRecipeRemainder(stack, reference);
-				if (remainder != null) {
-					stackList.set(i, remainder);
+				IIngredient ingredient = (IIngredient) (Object) ingredients.get(ingredientIndex);
+				// Simple, Vanilla-ish entries should already be set
+				if (!ingredient.nbtCrafting$isAdvanced()) {
 					continue;
 				}
-			}
-			if (stack.getItem().hasRecipeRemainder()) {
-				stackList.set(i, new ItemStack(stack.getItem().getRecipeRemainder()));
+
+				ItemStack remainder = ingredient.nbtCrafting$getRecipeRemainder(stack, reference);
+				if (remainder != null) {
+					stackList.set(i, remainder);
+				}
 			}
 		}
-		return stackList;
 	}
 }
