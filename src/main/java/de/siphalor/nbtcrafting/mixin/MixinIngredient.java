@@ -312,10 +312,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 		if (advancedEntries != null) {
 			for (IngredientEntry entry : advancedEntries) {
 				if (entry.matches(stack)) {
-					ItemStack remainder = entry.getRecipeRemainder(stack, reference);
-					if (remainder != null) {
-						return remainder;
-					}
+					return entry.getRecipeRemainder(stack, reference);
 				}
 			}
 		}
