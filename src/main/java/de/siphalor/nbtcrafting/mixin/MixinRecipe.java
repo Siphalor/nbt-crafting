@@ -52,9 +52,9 @@ public interface MixinRecipe {
 		int[] resolvedIngredientStacks;
 		if (this instanceof NBTCRecipe) {
 			ingredients = new ArrayList<>(((NBTCRecipe<?>) this).getIngredients());
-			// noinspection unchecked
-			reference = ((NBTCRecipe<Inventory>) this).buildDollarReference(inventory);
 			resolvedIngredientStacks = RecipeUtil.resolveIngredients(ingredients, inventory);
+			// noinspection unchecked
+			reference = ((NBTCRecipe<Inventory>) this).buildDollarReference(inventory, resolvedIngredientStacks);
 		} else {
 			ingredients = getIngredients();
 			resolvedIngredientStacks = RecipeUtil.resolveIngredients(ingredients, inventory);
