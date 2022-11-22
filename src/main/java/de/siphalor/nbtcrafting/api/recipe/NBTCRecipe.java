@@ -46,4 +46,15 @@ public interface NBTCRecipe<I extends Inventory> extends Recipe<I> {
 	 * @return A map consisting of keys and belonging {@link net.minecraft.nbt.CompoundTag}s, {@link Number}s or {@link String}s
 	 */
 	Map<String, Object> buildDollarReference(I inv);
+
+	/**
+	 * An advanced form of the reference map, that allows to make use of the ingredient to stack resolution that Nbt Crafting does anyway.
+	 * @implNote For backwards compatibility, you must still override the simpler form {@link #buildDollarReference(Inventory)} either way.
+	 * @param inv the inventory for that this method is being called
+	 * @param ingredientToStackResolution An array which resolves the ingredient indexes from {@link #getIngredients()} to the stacks in the inventory.
+	 * @return A map consisting of keys and belonging {@link net.minecraft.nbt.CompoundTag}s, {@link Number}s or {@link String}s
+	 */
+	default Map<String, Object> buildDollarReference(I inv, int[] ingredientToStackResolution) {
+		return buildDollarReference(inv);
+	}
 }
