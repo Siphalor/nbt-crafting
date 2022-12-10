@@ -40,7 +40,7 @@ public abstract class MixinInputSlotFiller {
 		if (!stack.hasNbt()) {
 			for (int i = 0; i < inventory.main.size(); i++) {
 				ItemStack stack2 = inventory.main.get(i);
-				if (stack2.hasNbt() && stack.isItemEqualIgnoreDamage(stack2))
+				if (stack2.hasNbt() && stack.isItemEqual(stack2))
 					return i;
 			}
 		}

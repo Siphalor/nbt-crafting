@@ -23,8 +23,8 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.CuttingRecipe;
 import net.minecraft.recipe.ShapedRecipe;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.registry.Registry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -43,7 +43,7 @@ public class MixinCuttingRecipeSerializer {
 			JsonElement jsonElement = jsonObject.get(key);
 			if (jsonElement instanceof JsonObject) {
 				nbtCrafting_resultStack = ShapedRecipe.outputFromJson((JsonObject) jsonElement);
-				return Registry.ITEM.getId(nbtCrafting_resultStack.getItem()).toString();
+				return Registries.ITEM.getId(nbtCrafting_resultStack.getItem()).toString();
 			}
 		}
 		return JsonHelper.getString(jsonObject, key);

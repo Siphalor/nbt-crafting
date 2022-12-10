@@ -60,6 +60,6 @@ public abstract class MixinAnimatedResultButton extends ClickableWidget {
 			locals = LocalCapture.CAPTURE_FAILSOFT
 	)
 	private void drawButton(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci, MinecraftClient minecraftClient, int int_3, int int_4, boolean boolean_1, MatrixStack matrices_2, @SuppressWarnings("rawtypes") List list_1, ItemStack stack) {
-		minecraftClient.getItemRenderer().renderGuiItemOverlay(minecraftClient.textRenderer, stack, this.x + itemDrawOffset, this.y + itemDrawOffset);
+		minecraftClient.getItemRenderer().renderGuiItemOverlay(minecraftClient.textRenderer, stack, this.getX() + itemDrawOffset, this.getY() + itemDrawOffset);
 	}
 }
