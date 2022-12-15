@@ -25,9 +25,10 @@ import com.google.gson.JsonObject;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.registry.Registry;
 
 import de.siphalor.nbtcrafting.util.duck.IItemStack;
+
+import net.minecraft.registry.Registries;
 
 public class IngredientStackEntry extends IngredientEntry {
 
@@ -41,7 +42,7 @@ public class IngredientStackEntry extends IngredientEntry {
 	}
 
 	public IngredientStackEntry(ItemStack stack) {
-		this.id = Registry.ITEM.getRawId(stack.getItem());
+		this.id = Registries.ITEM.getRawId(stack.getItem());
 		if (stack.hasNbt())
 			this.condition = new IngredientEntryCondition(stack.getNbt(), new NbtCompound());
 		else
@@ -50,20 +51,20 @@ public class IngredientStackEntry extends IngredientEntry {
 
 	@Override
 	public boolean matches(ItemStack stack) {
-		return Registry.ITEM.getRawId(stack.getItem()) == this.id && condition.matches(stack);
+		return Registries.ITEM.getRawId(stack.getItem()) == this.id && condition.matches(stack);
 	}
 
 	@Override
 	public JsonElement toJson() {
 		JsonObject json = new JsonObject();
-		json.addProperty("item", Registry.ITEM.getId(Registry.ITEM.get(id)).toString());
+		json.addProperty("item", Registries.ITEM.getId(Registries.ITEM.get(id)).toString());
 		condition.addToJson(json);
 		return json;
 	}
 
 	@Override
 	public Collection<ItemStack> getPreviewStacks(boolean nbt) {
-		ItemStack stack = new ItemStack(Registry.ITEM.get(id));
+		ItemStack stack = new ItemStack(Registries.ITEM.get(id));
 		if (nbt) {
 			((IItemStack) (Object) stack).nbtCrafting$setRawTag(condition.getPreviewTag());
 		}

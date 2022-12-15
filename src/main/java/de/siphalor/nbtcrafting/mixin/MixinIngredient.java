@@ -35,11 +35,12 @@ import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -71,10 +72,10 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 		advancedEntries = null;
 	}
 
-	@Inject(method = "cacheMatchingStacks", at = @At("HEAD"), cancellable = true)
-	private void createStackArray(CallbackInfo callbackInfo) {
+	@Inject(method = "getMatchingStacks", at = @At("HEAD"), cancellable = true)
+	private void createStackArray(CallbackInfoReturnable<ItemStack[]> cir) {
 		if (advancedEntries != null) {
-			callbackInfo.cancel();
+			cir.cancel();
 			if (matchingStacks == null || matchingStacks.length == 0) {
 				if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
 					matchingStacks = Arrays.stream(advancedEntries).flatMap(entry -> entry.getPreviewStacks(true).stream()).distinct().toArray(ItemStack[]::new);
@@ -85,6 +86,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 					matchingStacks = new ItemStack[]{ItemStack.EMPTY};
 				}
 			}
+			cir.setReturnValue(this.matchingStacks);
 		}
 	}
 
@@ -232,10 +234,10 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 		if (jsonObject.has("item")) {
 			final Identifier itemId = new Identifier(JsonHelper.getString(jsonObject, "item"));
 			try {
-				final Item item = Registry.ITEM.getOrEmpty(itemId).orElseThrow(() -> {
+				final Item item = Registries.ITEM.getOrEmpty(itemId).orElseThrow(() -> {
 					throw new JsonSyntaxException("Unknown item '" + itemId + "'");
 				});
-				IngredientStackEntry entry = new IngredientStackEntry(Registry.ITEM.getRawId(item), loadIngredientEntryCondition(jsonObject));
+				IngredientStackEntry entry = new IngredientStackEntry(Registries.ITEM.getRawId(item), loadIngredientEntryCondition(jsonObject));
 				if (jsonObject.has("remainder")) {
 					entry.setRecipeRemainder(ShapedRecipe.outputFromJson(JsonHelper.getObject(jsonObject, "remainder")));
 				}
@@ -246,13 +248,13 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			}
 		} else if (jsonObject.has("tag")) {
 			final Identifier tagId = new Identifier(JsonHelper.getString(jsonObject, "tag"));
-			final TagKey<Item> tag = TagKey.of(Registry.ITEM_KEY, tagId);
+			final TagKey<Item> tag = TagKey.of(RegistryKeys.ITEM, tagId);
 			if (tag == null) {
 				throw new JsonSyntaxException("Unknown item tag '" + tagId + "'");
 			}
 			Collection<Integer> itemIds = new IntArrayList();
-			for (RegistryEntry<Item> entry : Registry.ITEM.iterateEntries(tag)) {
-				itemIds.add(Registry.ITEM.getRawId(entry.value()));
+			for (RegistryEntry<Item> entry : Registries.ITEM.iterateEntries(tag)) {
+				itemIds.add(Registries.ITEM.getRawId(entry.value()));
 			}
 			IngredientMultiStackEntry entry = new IngredientMultiStackEntry(itemIds, loadIngredientEntryCondition(jsonObject));
 			entry.setTag(tagId.toString());
@@ -262,7 +264,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			return entry;
 		} else if (jsonObject.has("potion")) {
 			IngredientEntryCondition condition = loadIngredientEntryCondition(jsonObject);
-			IngredientStackEntry entry = new IngredientStackEntry(Registry.ITEM.getRawId(Items.POTION), condition);
+			IngredientStackEntry entry = new IngredientStackEntry(Registries.ITEM.getRawId(Items.POTION), condition);
 			if (jsonObject.has("remainder")) {
 				entry.setRecipeRemainder(ShapedRecipe.outputFromJson(JsonHelper.getObject(jsonObject, "remainder")));
 			}
