@@ -1,16 +1,29 @@
 {
-	"type": "nbtcrafting:smithing",
-	"base": {
-		"item": "minecraft:stone_sword"
+	"type": "nbtcrafting:smithing_transform",
+	"addition": {
+		"item": "minecraft:netherite_ingot"
 	},
-	"ingredient": {
-		"item": "minecraft:cyan_dye"
+	"base": {
+		"item": "minecraft:enchanted_book"
 	},
 	"result": {
-		"item": "minecraft:diamond_sword",
+		"item": "minecraft:enchanted_book",
 		"data": {
-			"$": "$ base"
+			"$" : {
+				"value": "base",
+				"paths": {
+					"/StoredEnchantments\\[\\d+\\]/": "append"
+				}
+			},
+			"StoredEnchantments": [
+				{
+					"id": "minecraft:fire_protection",
+					"lvl": 1
+				}
+			]
 		}
+	},
+	"template": {
+		"item": "minecraft:netherite_upgrade_smithing_template"
 	}
 }
-

@@ -28,10 +28,11 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.registry.Registry;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -50,17 +51,17 @@ import de.siphalor.nbtcrafting.util.duck.IItemStack;
 public abstract class MixinShapedRecipe {
 	@Shadow
 	@Final
-	private ItemStack output;
+	ItemStack output;
 
 	@Shadow
 	@Final
-	private DefaultedList<Ingredient> input;
+	DefaultedList<Ingredient> input;
 
 	@Inject(method = "outputFromJson", at = @At("HEAD"))
 	private static void handlePotions(JsonObject json, CallbackInfoReturnable<ItemStack> ci) {
 		if (json.has("potion")) {
 			Identifier identifier = new Identifier(JsonHelper.getString(json, "potion"));
-			if (!Registry.POTION.getOrEmpty(identifier).isPresent())
+			if (Registries.POTION.getOrEmpty(identifier).isEmpty())
 				throw new JsonParseException("The given resulting potion does not exist!");
 			JsonObject dataObject;
 			if (!json.has("data")) {
@@ -106,9 +107,9 @@ public abstract class MixinShapedRecipe {
 		ci.setReturnValue(stack);
 	}
 
-	@Inject(method = "craft", at = @At("HEAD"), cancellable = true)
-	public void craft(CraftingInventory craftingInventory, CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
+	@Inject(method = "craft(Lnet/minecraft/inventory/CraftingInventory;Lnet/minecraft/registry/DynamicRegistryManager;)Lnet/minecraft/item/ItemStack;", at = @At("HEAD"), cancellable = true)
+	public void craft(CraftingInventory craftingInventory, DynamicRegistryManager dynamicRegistryManager, CallbackInfoReturnable<ItemStack> cir) {
 		ItemStack result = RecipeUtil.getDollarAppliedResult(output, input, craftingInventory);
-		if (result != null) callbackInfoReturnable.setReturnValue(result);
+		if (result != null) cir.setReturnValue(result);
 	}
 }

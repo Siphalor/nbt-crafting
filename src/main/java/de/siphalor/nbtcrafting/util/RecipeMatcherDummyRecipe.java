@@ -23,6 +23,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
@@ -45,17 +46,16 @@ public class RecipeMatcherDummyRecipe implements Recipe<Inventory> {
 	}
 
 	@Override
-	public ItemStack craft(Inventory inventory) {
+	public ItemStack craft(Inventory inventory, DynamicRegistryManager dynamicRegistryManager) {
 		throw new UnsupportedOperationException();
 	}
-
 	@Override
 	public boolean fits(int width, int height) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public ItemStack getOutput() {
+	public ItemStack getOutput(DynamicRegistryManager dynamicRegistryManager) {
 		throw new UnsupportedOperationException();
 	}
 

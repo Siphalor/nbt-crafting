@@ -21,13 +21,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.recipe.AbstractCookingRecipe;
 import net.minecraft.recipe.CookingRecipeSerializer;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
+import net.minecraft.recipe.book.CookingRecipeCategory;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.registry.Registry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -51,12 +51,12 @@ public abstract class MixinCookingRecipeSerializer {
 		}
 		ItemStack output = ShapedRecipe.outputFromJson(jsonObject.getAsJsonObject(resultPropertyName));
 		resultTag = output.getNbt();
-		return Registry.ITEM.getId(output.getItem()).toString();
+		return Registries.ITEM.getId(output.getItem()).toString();
 	}
 
 	@Inject(method = "read(Lnet/minecraft/util/Identifier;Lcom/google/gson/JsonObject;)Lnet/minecraft/recipe/AbstractCookingRecipe;", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void onRecipeReady(Identifier identifier, JsonObject jsonObject, CallbackInfoReturnable<AbstractCookingRecipe> callbackInfoReturnable, String group, JsonElement ingredientJson, Ingredient ingredient, String itemId, Identifier itemIdentifier, ItemStack stack, float experience, int cookingTime) {
+	public <T> void onRecipeReady(Identifier identifier, JsonObject jsonObject, CallbackInfoReturnable<T> cir, String string, CookingRecipeCategory cookingRecipeCategory, JsonElement jsonElement, Ingredient ingredient, String string2, Identifier identifier2, ItemStack itemStack, float f, int i) {
 		//noinspection ConstantConditions
-		((IItemStack) (Object) stack).nbtCrafting$setRawTag(resultTag);
+		((IItemStack) (Object) itemStack).nbtCrafting$setRawTag(resultTag);
 	}
 }

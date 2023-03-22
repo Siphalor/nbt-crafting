@@ -26,6 +26,10 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Pair;
+
+import de.siphalor.nbtcrafting.recipe.Smithing.SmithingRecipe;
+import de.siphalor.nbtcrafting.recipe.Smithing.SmithingRecipeSerializer;
+
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.*;
 import net.fabricmc.api.ModInitializer;
@@ -36,9 +40,10 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.*;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -81,6 +86,12 @@ public class NbtCrafting implements ModInitializer {
 	@SuppressWarnings("unused")
 	public static final RecipeSerializer<IngredientRecipe<Inventory>> SMITHING_RECIPE_SERIALIZER = registerRecipeSerializer("smithing", new IngredientRecipe.Serializer<>((id, base, ingredient, result, serializer) -> new IngredientRecipe<>(id, base, ingredient, result, SMITHING_RECIPE_TYPE, serializer)));
 
+	public static final RecipeType<SmithingRecipe> SMITHING_TRANSFORM_RECIPE_TYPE = registerRecipeType("smithing_transform");
+	public static final SmithingRecipeSerializer SMITHING_TRANSFORM_RECIPE_SERIALIZER = registerRecipeSerializer("smithing_transform", new SmithingRecipeSerializer());
+
+
+
+	@SuppressWarnings("unused")
 	public static final RecipeSerializer<Recipe<?>> WRAPPED_RECIPE_SERIALIZER = registerRecipeSerializer("wrapped", new WrappedRecipeSerializer());
 
 	public static final StatChangedCriterion STAT_CHANGED_CRITERION = MixinCriterions.registerCriterion(new StatChangedCriterion());
@@ -156,17 +167,17 @@ public class NbtCrafting implements ModInitializer {
 			sender.sendPacket(PRESENCE_CHANNEL, new PacketByteBuf(Unpooled.buffer()));
 		});
 		ServerLoginConnectionEvents.DISCONNECT.register((handler, server) -> {
-			hasModClientConnectionHashes.remove(handler.getConnection().hashCode());
+			hasModClientConnectionHashes.remove(handler.hashCode());
 		});
 		ServerLoginNetworking.registerGlobalReceiver(PRESENCE_CHANNEL, (server, handler, understood, buf, synchronizer, responseSender) -> {
 			if (understood) {
-				hasModClientConnectionHashes.add(handler.getConnection().hashCode());
+				hasModClientConnectionHashes.add(handler.hashCode());
 			}
 		});
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-			if (hasModClientConnectionHashes.contains(handler.getConnection().hashCode())) {
+			if (hasModClientConnectionHashes.contains(handler.hashCode())) {
 				((IServerPlayerEntity) handler.player).nbtCrafting$setClientModPresent(true);
-				hasModClientConnectionHashes.remove(handler.getConnection().hashCode());
+				hasModClientConnectionHashes.remove(handler.hashCode());
 			}
 		});
 	}
@@ -181,7 +192,7 @@ public class NbtCrafting implements ModInitializer {
 	public static <T extends Recipe<?>> RecipeType<T> registerRecipeType(String name) {
 		Identifier recipeTypeId = new Identifier(MOD_ID, name);
 		RecipeTypeHelper.addToSyncBlacklist(recipeTypeId);
-		return Registry.register(Registry.RECIPE_TYPE, recipeTypeId, new RecipeType<T>() {
+		return Registry.register(Registries.RECIPE_TYPE, recipeTypeId, new RecipeType<T>() {
 			@Override
 			public String toString() {
 				return MOD_ID + ":" + name;
@@ -192,7 +203,7 @@ public class NbtCrafting implements ModInitializer {
 	public static <S extends RecipeSerializer<T>, T extends Recipe<?>> S registerRecipeSerializer(String name, S recipeSerializer) {
 		Identifier serializerId = new Identifier(MOD_ID, name);
 		RecipeTypeHelper.addToSyncBlacklist(serializerId);
-		return Registry.register(Registry.RECIPE_SERIALIZER, serializerId, recipeSerializer);
+		return Registry.register(Registries.RECIPE_SERIALIZER, serializerId, recipeSerializer);
 	}
 
 	public static List<PacketByteBuf> createAdvancedRecipeSyncPackets(RecipeManager recipeManager) {
@@ -204,7 +215,7 @@ public class NbtCrafting implements ModInitializer {
 				}
 			}
 			return false;
-		}).collect(Collectors.toList());
+		}).toList();
 
 		List<PacketByteBuf> packets = new ArrayList<>();
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
@@ -213,7 +224,7 @@ public class NbtCrafting implements ModInitializer {
 		for (Recipe<?> recipe : recipes) {
 			@SuppressWarnings("rawtypes")
 			RecipeSerializer serializer = recipe.getSerializer();
-			buf.writeIdentifier(Registry.RECIPE_SERIALIZER.getId(serializer));
+			buf.writeIdentifier(Registries.RECIPE_SERIALIZER.getId(serializer));
 			buf.writeIdentifier(recipe.getId());
 			//noinspection unchecked
 			serializer.write(buf, recipe);

@@ -80,4 +80,8 @@ public class BrewingRecipe extends IngredientRecipe<Inventory> {
 		}
 		return stacks;
 	}
+
+	public ItemStack getOutput() {
+		return this.result;
+	}
 }

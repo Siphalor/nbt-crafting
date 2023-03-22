@@ -21,6 +21,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.AbstractCookingRecipe;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.DynamicRegistryManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -41,8 +42,8 @@ public class MixinCookingRecipe {
 	protected Ingredient input;
 
 	@Inject(method = "craft", at = @At("HEAD"), cancellable = true)
-	public void craft(Inventory inventory, CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
+	public void craft(Inventory inventory, DynamicRegistryManager dynamicRegistryManager, CallbackInfoReturnable<ItemStack> cir) {
 		ItemStack result = RecipeUtil.getDollarAppliedResult(output, input, inventory);
-		if (result != null) callbackInfoReturnable.setReturnValue(result);
+		if (result != null) cir.setReturnValue(result);
 	}
 }

@@ -23,6 +23,8 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.StonecuttingRecipe;
 import net.minecraft.screen.StonecutterScreenHandler;
+import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,11 +38,15 @@ public class MixinStonecutterContainer {
 	@Shadow
 	private List<StonecuttingRecipe> availableRecipes;
 
+	@Shadow
+	@Final
+	private World world;
+
 	@Inject(method = "updateInput", at = @At("TAIL"))
 	private void onInputUpdated(Inventory inventory, ItemStack input, CallbackInfo callbackInfo) {
 		availableRecipes.sort((a, b) -> {
-			ItemStack s1 = a.getOutput();
-			ItemStack s2 = b.getOutput();
+			ItemStack s1 = a.getOutput(world.getRegistryManager());
+			ItemStack s2 = b.getOutput(world.getRegistryManager());
 			int comp = s1.getTranslationKey().compareTo(s2.getTranslationKey());
 			if (comp != 0)
 				return comp;

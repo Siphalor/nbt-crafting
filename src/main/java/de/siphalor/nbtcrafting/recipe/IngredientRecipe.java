@@ -28,6 +28,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.ShapedRecipe;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.collection.DefaultedList;
@@ -68,17 +69,17 @@ public class IngredientRecipe<I extends Inventory> implements NBTCRecipe<I>, Ser
 	}
 
 	@Override
+	public ItemStack craft(I inventory, DynamicRegistryManager dynamicRegistryManager) {
+		return RecipeUtil.applyDollars(result.copy(), resultDollars, buildDollarReference(inventory));
+	}
+
+	@Override
 	public boolean fits(int width, int height) {
 		return false;
 	}
 
 	@Override
-	public ItemStack craft(I inv) {
-		return RecipeUtil.applyDollars(result.copy(), resultDollars, buildDollarReference(inv));
-	}
-
-	@Override
-	public ItemStack getOutput() {
+	public ItemStack getOutput(DynamicRegistryManager dynamicRegistryManager) {
 		return result;
 	}
 

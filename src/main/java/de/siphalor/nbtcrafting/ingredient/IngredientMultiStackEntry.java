@@ -28,9 +28,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import de.siphalor.nbtcrafting.util.duck.IItemStack;
 
@@ -49,7 +49,7 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 
 	@Override
 	public boolean matches(ItemStack stack) {
-		return itemIds.contains(Registry.ITEM.getRawId(stack.getItem())) && condition.matches(stack);
+		return itemIds.contains(Registries.ITEM.getRawId(stack.getItem())) && condition.matches(stack);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 		NbtCompound tag = condition.getPreviewTag();
 		Collection<ItemStack> stacks = new ArrayList<>(itemIds.size());
 		for (Integer id : itemIds) {
-			ItemStack stack = new ItemStack(Registry.ITEM.get(id));
+			ItemStack stack = new ItemStack(Registries.ITEM.get(id));
 			stacks.add(stack);
 		}
 		if (nbt) {
@@ -101,7 +101,7 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 	}
 
 	public void setTag(String tag) {
-		this.tag = TagKey.of(Registry.ITEM_KEY, new Identifier(tag));
+		this.tag = TagKey.of(Registries.ITEM.getKey(), new Identifier(tag));
 	}
 
 }
