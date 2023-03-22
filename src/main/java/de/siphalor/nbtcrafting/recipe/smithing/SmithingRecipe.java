@@ -1,4 +1,4 @@
-package de.siphalor.nbtcrafting.recipe.Smithing;
+package de.siphalor.nbtcrafting.recipe.smithing;
 
 import java.util.Map;
 

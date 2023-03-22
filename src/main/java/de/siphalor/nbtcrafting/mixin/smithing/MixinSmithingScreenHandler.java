@@ -4,7 +4,7 @@ package de.siphalor.nbtcrafting.mixin.smithing;
 import java.util.List;
 import java.util.Optional;
 
-import de.siphalor.nbtcrafting.recipe.Smithing.SmithingRecipe;
+import de.siphalor.nbtcrafting.recipe.smithing.SmithingRecipe;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

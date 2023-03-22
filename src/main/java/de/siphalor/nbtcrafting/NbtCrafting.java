@@ -20,15 +20,14 @@ package de.siphalor.nbtcrafting;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Pair;
 
-import de.siphalor.nbtcrafting.recipe.Smithing.SmithingRecipe;
-import de.siphalor.nbtcrafting.recipe.Smithing.SmithingRecipeSerializer;
+import de.siphalor.nbtcrafting.recipe.smithing.SmithingRecipe;
+import de.siphalor.nbtcrafting.recipe.smithing.SmithingRecipeSerializer;
 
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.*;

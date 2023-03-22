@@ -166,6 +166,34 @@ modrinth {
 }
 tasks.modrinth.group = "upload"
 
+publishing {
+
+	publications {
+		maven(MavenPublication) {
+			groupId = group
+			artifactId = archivesBaseName
+			version = version
+			from components.java
+
+			pom {
+				name = "Nbt-Crafting"
+				description = "Mod that provides the ability to add nbt tags to crafting recipes"
+			}
+		}
+	}
+
+	repositories {
+		maven {
+			credentials {
+				username="$repoUser"
+				password="$repoPassword"
+			}
+			url = "https://nexus.evannregnault.dev/repository/maven-releases"
+		}
+	}
+}
+
+
 if (project.hasProperty("githubToken")) {
 	githubRelease {
 		token githubToken
