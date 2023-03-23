@@ -26,6 +26,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Pair;
 
+import de.siphalor.nbtcrafting.network.ServerNetworkHandlerAccess;
 import de.siphalor.nbtcrafting.recipe.smithing.SmithingRecipe;
 import de.siphalor.nbtcrafting.recipe.smithing.SmithingRecipeSerializer;
 
@@ -166,17 +167,17 @@ public class NbtCrafting implements ModInitializer {
 			sender.sendPacket(PRESENCE_CHANNEL, new PacketByteBuf(Unpooled.buffer()));
 		});
 		ServerLoginConnectionEvents.DISCONNECT.register((handler, server) -> {
-			hasModClientConnectionHashes.remove(handler.hashCode());
+			hasModClientConnectionHashes.remove(((ServerNetworkHandlerAccess)handler).nbtCrafting$getConnection().hashCode());
 		});
 		ServerLoginNetworking.registerGlobalReceiver(PRESENCE_CHANNEL, (server, handler, understood, buf, synchronizer, responseSender) -> {
 			if (understood) {
-				hasModClientConnectionHashes.add(handler.hashCode());
+				hasModClientConnectionHashes.add(((ServerNetworkHandlerAccess)handler).nbtCrafting$getConnection().hashCode());
 			}
 		});
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-			if (hasModClientConnectionHashes.contains(handler.hashCode())) {
+			if (hasModClientConnectionHashes.contains(((ServerNetworkHandlerAccess)handler).nbtCrafting$getConnection().hashCode())) {
 				((IServerPlayerEntity) handler.player).nbtCrafting$setClientModPresent(true);
-				hasModClientConnectionHashes.remove(handler.hashCode());
+				hasModClientConnectionHashes.remove(((ServerNetworkHandlerAccess)handler).nbtCrafting$getConnection().hashCode());
 			}
 		});
 	}
