@@ -30,7 +30,7 @@ import de.siphalor.nbtcrafting.NbtCrafting;
 public class AnvilRecipe extends IngredientRecipe<Inventory> {
 	protected int levels = 0;
 
-	public static final IngredientRecipe.Serializer<AnvilRecipe> SERIALIZER = new IngredientRecipe.Serializer<>(AnvilRecipe::new);
+	public static final Serializer<AnvilRecipe> SERIALIZER = new Serializer<>(AnvilRecipe::new);
 
 	public AnvilRecipe(Identifier identifier, Ingredient base, Ingredient ingredient, ItemStack result, Serializer<AnvilRecipe> serializer) {
 		super(identifier, base, ingredient, result, NbtCrafting.ANVIL_RECIPE_TYPE, SERIALIZER);

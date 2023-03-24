@@ -33,7 +33,7 @@ import de.siphalor.nbtcrafting.api.RecipeUtil;
 import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 
 public class BrewingRecipe extends IngredientRecipe<Inventory> {
-	public static final RecipeSerializer<BrewingRecipe> SERIALIZER = new IngredientRecipe.Serializer<>(BrewingRecipe::new);
+	public static final RecipeSerializer<BrewingRecipe> SERIALIZER = new Serializer<>(BrewingRecipe::new);
 
 	public BrewingRecipe(Identifier identifier, Ingredient base, Ingredient ingredient, ItemStack result, Serializer<BrewingRecipe> serializer) {
 		super(identifier, base, ingredient, result, NbtCrafting.BREWING_RECIPE_TYPE, serializer);

@@ -36,11 +36,11 @@ import de.siphalor.nbtcrafting.api.RecipeUtil;
 public class MixinShapelessRecipe {
 	@Shadow
 	@Final
-	ItemStack output;
+	private ItemStack output;
 
 	@Shadow
 	@Final
-	DefaultedList<Ingredient> input;
+	private DefaultedList<Ingredient> input;
 
 	@Inject(method = "craft(Lnet/minecraft/inventory/CraftingInventory;Lnet/minecraft/registry/DynamicRegistryManager;)Lnet/minecraft/item/ItemStack;", at = @At("HEAD"), cancellable = true)
 	public void craft(CraftingInventory craftingInventory, DynamicRegistryManager dynamicRegistryManager, CallbackInfoReturnable<ItemStack> cir) {

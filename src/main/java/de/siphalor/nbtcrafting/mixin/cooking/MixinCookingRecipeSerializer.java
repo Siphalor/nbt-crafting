@@ -21,6 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.recipe.AbstractCookingRecipe;
 import net.minecraft.recipe.CookingRecipeSerializer;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
@@ -55,8 +56,8 @@ public abstract class MixinCookingRecipeSerializer {
 	}
 
 	@Inject(method = "read(Lnet/minecraft/util/Identifier;Lcom/google/gson/JsonObject;)Lnet/minecraft/recipe/AbstractCookingRecipe;", at = @At(value = "TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
-	public <T> void onRecipeReady(Identifier identifier, JsonObject jsonObject, CallbackInfoReturnable<T> cir, String string, CookingRecipeCategory cookingRecipeCategory, JsonElement jsonElement, Ingredient ingredient, String string2, Identifier identifier2, ItemStack itemStack, float f, int i) {
+	public void onRecipeReady(Identifier identifier, JsonObject jsonObject, CallbackInfoReturnable<AbstractCookingRecipe> callbackInfoReturnable, String group, CookingRecipeCategory category, JsonElement ingredientJson, Ingredient ingredient, String itemId, Identifier itemIdentifier, ItemStack stack, float experience, int cookingTime) {
 		//noinspection ConstantConditions
-		((IItemStack) (Object) itemStack).nbtCrafting$setRawTag(resultTag);
+		((IItemStack) (Object) stack).nbtCrafting$setRawTag(resultTag);
 	}
 }

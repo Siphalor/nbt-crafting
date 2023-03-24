@@ -90,7 +90,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 		}
 	}
 
-	@Inject(method = "test(Lnet/minecraft/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "test", at = @At("HEAD"), cancellable = true)
 	public void matches(ItemStack stack, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if (stack == null) {
 			callbackInfoReturnable.setReturnValue(false);
@@ -254,7 +254,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			}
 			Collection<Integer> itemIds = new IntArrayList();
 			for (RegistryEntry<Item> entry : Registries.ITEM.iterateEntries(tag)) {
-				itemIds.add(Registries.ITEM.getRawId(entry.comp_349()));
+				itemIds.add(Registries.ITEM.getRawId(entry.value()));
 			}
 			IngredientMultiStackEntry entry = new IngredientMultiStackEntry(itemIds, loadIngredientEntryCondition(jsonObject));
 			entry.setTag(tagId.toString());

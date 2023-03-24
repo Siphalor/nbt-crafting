@@ -73,7 +73,7 @@ public class ChildDollarOperator extends BinaryDollarOperator {
 		}
 	}
 
-	public static class BracketDeserializer implements DollarPart.Deserializer {
+	public static class BracketDeserializer implements Deserializer {
 		@Override
 		public boolean matches(int character, DollarParser dollarParser) {
 			return character == '[';
