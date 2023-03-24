@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 
@@ -101,7 +102,7 @@ public class IngredientMultiStackEntry extends IngredientEntry {
 	}
 
 	public void setTag(String tag) {
-		this.tag = TagKey.of(Registries.ITEM.getKey(), new Identifier(tag));
+		this.tag = TagKey.of(RegistryKeys.ITEM, new Identifier(tag));
 	}
 
 }

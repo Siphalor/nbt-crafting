@@ -36,6 +36,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
@@ -247,7 +248,7 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 			}
 		} else if (jsonObject.has("tag")) {
 			final Identifier tagId = new Identifier(JsonHelper.getString(jsonObject, "tag"));
-			final TagKey<Item> tag = TagKey.of(Registries.ITEM.getKey(), tagId);
+			final TagKey<Item> tag = TagKey.of(RegistryKeys.ITEM, tagId);
 			if (tag == null) {
 				throw new JsonSyntaxException("Unknown item tag '" + tagId + "'");
 			}

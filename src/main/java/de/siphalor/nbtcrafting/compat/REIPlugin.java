@@ -29,8 +29,6 @@ import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
 public class REIPlugin implements REIClientPlugin {
 	@Override
 	public void registerDisplays(DisplayRegistry registry) {
-		registry.registerFiller(BrewingRecipe.class, recipe -> {
-			return new DefaultBrewingDisplay(recipe.getBase(), recipe.getIngredient(), recipe.getOutput());
-		});
+		registry.registerFiller(BrewingRecipe.class, recipe -> new DefaultBrewingDisplay(recipe.getBase(), recipe.getIngredient(), recipe.getOutputRaw()));
 	}
 }

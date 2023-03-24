@@ -78,6 +78,10 @@ public class IngredientRecipe<I extends Inventory> implements NBTCRecipe<I>, Ser
 		return false;
 	}
 
+	public ItemStack getOutputRaw() {
+		return result;
+	}
+
 	@Override
 	public ItemStack getOutput(DynamicRegistryManager dynamicRegistryManager) {
 		return result;
