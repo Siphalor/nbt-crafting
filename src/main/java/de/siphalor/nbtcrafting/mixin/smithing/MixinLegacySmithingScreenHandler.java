@@ -23,9 +23,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.SmithingRecipe;
-import net.minecraft.screen.*;
+import net.minecraft.screen.ForgingScreenHandler;
+import net.minecraft.screen.LegacySmithingScreenHandler;
+import net.minecraft.screen.ScreenHandlerContext;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.collection.DefaultedList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -38,13 +39,39 @@ import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.RecipeUtil;
 import de.siphalor.nbtcrafting.recipe.IngredientRecipe;
 
-@Mixin(SmithingScreenHandler.class)
-public abstract class MixinSmithingScreenHandler extends ForgingScreenHandler {
+@SuppressWarnings("removal")
+@Mixin(LegacySmithingScreenHandler.class)
+public abstract class MixinLegacySmithingScreenHandler extends ForgingScreenHandler {
 	@Unique
 	private static DefaultedList<ItemStack> remainders = null;
 
-	public MixinSmithingScreenHandler(ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
+	public MixinLegacySmithingScreenHandler(ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
 		super(type, syncId, playerInventory, context);
+	}
+
+	@Inject(
+			method = "updateResult",
+			at = @At("HEAD"),
+			cancellable = true
+	)
+	public void onUpdateResult(CallbackInfo callbackInfo) {
+		Optional<IngredientRecipe<Inventory>> match = player.world.getRecipeManager().getFirstMatch(NbtCrafting.SMITHING_RECIPE_TYPE, input, player.world);
+
+		if (match.isPresent()) {
+			output.setStack(0, match.get().craft(input, player.world.getRegistryManager()));
+			callbackInfo.cancel();
+		}
+	}
+
+	@Inject(
+			method = "canTakeOutput",
+			at = @At("HEAD"),
+			cancellable = true
+	)
+	protected void canTakeOutput(PlayerEntity playerEntity, boolean stackPresent, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+		if (stackPresent) {
+			callbackInfoReturnable.setReturnValue(true);
+		}
 	}
 
 	@Inject(
@@ -52,7 +79,7 @@ public abstract class MixinSmithingScreenHandler extends ForgingScreenHandler {
 			at = @At("HEAD")
 	)
 	protected void onTakeOutput(PlayerEntity player, ItemStack stack, CallbackInfo ci) {
-		Optional<SmithingRecipe> match = player.world.getRecipeManager().getFirstMatch(RecipeType.SMITHING, input, player.world);
+		Optional<IngredientRecipe<Inventory>> match = player.world.getRecipeManager().getFirstMatch(NbtCrafting.SMITHING_RECIPE_TYPE, input, player.world);
 		remainders = match.map(inventoryIngredientRecipe -> inventoryIngredientRecipe.getRemainder(input)).orElse(null);
 	}
 

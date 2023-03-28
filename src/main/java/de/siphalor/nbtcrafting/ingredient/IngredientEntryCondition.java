@@ -26,11 +26,12 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Pair;
-import net.minecraft.util.registry.Registry;
+
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.api.nbt.NbtException;
@@ -110,7 +111,7 @@ public class IngredientEntryCondition {
 		}
 		if (json.has("potion")) {
 			Identifier potion = new Identifier(JsonHelper.getString(json, "potion"));
-			if (Registry.POTION.getOrEmpty(potion).isPresent()) {
+			if (Registries.POTION.getOrEmpty(potion).isPresent()) {
 				if (condition.requiredElements == NbtUtil.EMPTY_COMPOUND) {
 					condition.requiredElements = new NbtCompound();
 				}

@@ -24,12 +24,12 @@ import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.registry.Registry;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 
@@ -51,7 +51,7 @@ public class StatChangedCriterion extends AbstractCriterion<StatChangedCriterion
 	@Override
 	protected Conditions<?> conditionsFromJson(JsonObject obj, EntityPredicate.Extended playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
 		Identifier statId = new Identifier(JsonHelper.getString(obj, "stat"));
-		StatType<?> statType = Registry.STAT_TYPE.getOrEmpty(statId).orElseThrow(() -> new JsonSyntaxException("Unknown stat: " + statId));
+		StatType<?> statType = Registries.STAT_TYPE.getOrEmpty(statId).orElseThrow(() -> new JsonSyntaxException("Unknown stat: " + statId));
 
 		Identifier id = new Identifier(JsonHelper.getString(obj, "id"));
 		Object object = statType.getRegistry().get(id);

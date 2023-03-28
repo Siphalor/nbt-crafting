@@ -27,7 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeMatcher;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -49,7 +49,7 @@ public abstract class MixinRecipeFinder {
 
 	@Unique
 	private static Pair<Integer, NbtCompound> getStackPair(ItemStack stack) {
-		return new Pair<Integer, NbtCompound>(Registry.ITEM.getRawId(stack.getItem()), NbtUtil.getTagOrEmpty(stack));
+		return new Pair<Integer, NbtCompound>(Registries.ITEM.getRawId(stack.getItem()), NbtUtil.getTagOrEmpty(stack));
 	}
 
 	@Inject(method = "match(Lnet/minecraft/recipe/Recipe;Lit/unimi/dsi/fastutil/ints/IntList;I)Z", at = @At("HEAD"))

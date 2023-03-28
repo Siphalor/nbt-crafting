@@ -35,8 +35,8 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.mixin.RecipeManagerAccessor;
@@ -81,7 +81,7 @@ public class NbtCraftingClient implements ClientModInitializer {
 	}
 
 	private static void readRecipe(PacketByteBuf buf, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes) {
-		RecipeSerializer<?> serializer = Registry.RECIPE_SERIALIZER.get(buf.readIdentifier());
+		RecipeSerializer<?> serializer = Registries.RECIPE_SERIALIZER.get(buf.readIdentifier());
 		if (serializer == null) {
 			throw new IllegalStateException("Unknown recipe serializer on advanced recipe sync: " + buf.readIdentifier());
 		}
