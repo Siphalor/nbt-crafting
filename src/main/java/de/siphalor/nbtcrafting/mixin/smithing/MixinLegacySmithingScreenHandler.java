@@ -17,12 +17,19 @@
 
 package de.siphalor.nbtcrafting.mixin.smithing;
 
+import java.util.Map;
 import java.util.Optional;
+
+import com.google.common.collect.ImmutableMap;
+
+import de.siphalor.nbtcrafting.api.nbt.NbtUtil;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.screen.ForgingScreenHandler;
 import net.minecraft.screen.LegacySmithingScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -58,7 +65,10 @@ public abstract class MixinLegacySmithingScreenHandler extends ForgingScreenHand
 		Optional<IngredientRecipe<Inventory>> match = player.world.getRecipeManager().getFirstMatch(NbtCrafting.SMITHING_RECIPE_TYPE, input, player.world);
 
 		if (match.isPresent()) {
-			output.setStack(0, match.get().craft(input, player.world.getRegistryManager()));
+			ItemStack outputItem = match.get().craft(this.input, player.world.getRegistryManager());
+			outputItem = RecipeUtil.getDollarAppliedResult(outputItem, Ingredient.ofStacks(input.getStack(0)), "base", input);
+			outputItem = RecipeUtil.getDollarAppliedResult(outputItem, Ingredient.ofStacks(input.getStack(1)), "ingredient", input);
+			output.setStack(0, outputItem);
 			callbackInfo.cancel();
 		}
 	}
