@@ -25,6 +25,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
@@ -87,7 +88,7 @@ public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, S
 	}
 
 	@Override
-	public ItemStack craft(TemporaryCauldronInventory inventory) {
+	public ItemStack craft(TemporaryCauldronInventory inventory, DynamicRegistryManager registryManager) {
 		inventory.setLevel(inventory.getLevel() - levels);
 
 		inventory.getStack(0).decrement(1);
@@ -101,7 +102,7 @@ public class CauldronRecipe implements NBTCRecipe<TemporaryCauldronInventory>, S
 	}
 
 	@Override
-	public ItemStack getOutput() {
+	public ItemStack getOutput(DynamicRegistryManager registryManager) {
 		return output;
 	}
 

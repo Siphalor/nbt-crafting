@@ -49,7 +49,7 @@ public class MixinCauldronBlock {
 			if (cauldronRecipe.isPresent()) {
 				DefaultedList<ItemStack> remainingStacks = cauldronRecipe.get().getRemainder(inventory);
 
-				ItemStack itemStack = cauldronRecipe.get().craft(inventory);
+				ItemStack itemStack = cauldronRecipe.get().craft(inventory, world.getRegistryManager());
 				itemStack.onCraft(world, playerEntity, itemStack.getCount());
 
 				if (!playerEntity.getInventory().insertStack(remainingStacks.get(0))) {

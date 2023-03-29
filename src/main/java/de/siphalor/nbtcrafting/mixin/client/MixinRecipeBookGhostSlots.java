@@ -49,7 +49,7 @@ public abstract class MixinRecipeBookGhostSlots {
 	public void draw(MatrixStack matrices, MinecraftClient minecraftClient, int xOffset, int yOffset, boolean bool, float float_1, CallbackInfo ci, int i) {
 		if (i != 0) {
 			RecipeBookGhostSlots.GhostInputSlot slot = slots.get(i);
-			minecraftClient.getItemRenderer().renderGuiItemOverlay(minecraftClient.textRenderer, slot.getCurrentItemStack(), slot.getX() + xOffset, slot.getY() + yOffset);
+			minecraftClient.getItemRenderer().renderGuiItemOverlay(matrices, minecraftClient.textRenderer, slot.getCurrentItemStack(), slot.getX() + xOffset, slot.getY() + yOffset);
 		}
 	}
 }

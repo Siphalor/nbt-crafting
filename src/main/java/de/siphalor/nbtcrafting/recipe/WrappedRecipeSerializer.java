@@ -22,9 +22,9 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
@@ -43,7 +43,7 @@ public class WrappedRecipeSerializer implements RecipeSerializer<Recipe<?>> {
 
 		JsonObject innerJson = JsonHelper.getObject(json, "recipe");
 		String innerType = JsonHelper.getString(innerJson, "type");
-		RecipeSerializer<?> innerSerializer = Registry.RECIPE_SERIALIZER.get(new Identifier(innerType));
+		RecipeSerializer<?> innerSerializer = Registries.RECIPE_SERIALIZER.get(new Identifier(innerType));
 		if (innerSerializer == null) {
 			throw new JsonSyntaxException("Failed to resolve inner recipe type: " + innerType);
 		}

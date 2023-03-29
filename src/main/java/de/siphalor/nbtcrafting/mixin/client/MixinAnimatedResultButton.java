@@ -47,19 +47,19 @@ public abstract class MixinAnimatedResultButton extends ClickableWidget {
 
 	@Inject(
 			method = "renderButton",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderInGui(Lnet/minecraft/item/ItemStack;II)V"),
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderInGui(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/item/ItemStack;II)V"),
 			locals = LocalCapture.CAPTURE_FAILSOFT
 	)
-	private void beforeItemDrawn(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci, MinecraftClient minecraftClient, int int_3, int int_4, boolean boolean_1, MatrixStack matrices_2, @SuppressWarnings("rawtypes") List list_1, ItemStack stack, int offset) {
+	private void beforeItemDrawn(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci, MinecraftClient minecraftClient, int i, int j, boolean bl, @SuppressWarnings("rawtypes") List list, ItemStack itemStack, int offset) {
 		itemDrawOffset = offset;
 	}
 
 	@Inject(
 			method = "renderButton",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderInGui(Lnet/minecraft/item/ItemStack;II)V", shift = Shift.AFTER),
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderer;renderInGui(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/item/ItemStack;II)V", shift = Shift.AFTER),
 			locals = LocalCapture.CAPTURE_FAILSOFT
 	)
-	private void drawButton(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci, MinecraftClient minecraftClient, int int_3, int int_4, boolean boolean_1, MatrixStack matrices_2, @SuppressWarnings("rawtypes") List list_1, ItemStack stack) {
-		minecraftClient.getItemRenderer().renderGuiItemOverlay(minecraftClient.textRenderer, stack, this.x + itemDrawOffset, this.y + itemDrawOffset);
+	private void drawButton(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci, MinecraftClient minecraftClient, int i, int j, boolean bl, @SuppressWarnings("rawtypes") List list, ItemStack stack, int k) {
+		minecraftClient.getItemRenderer().renderGuiItemOverlay(matrices, minecraftClient.textRenderer, stack, this.getX() + itemDrawOffset, this.getY() + itemDrawOffset);
 	}
 }

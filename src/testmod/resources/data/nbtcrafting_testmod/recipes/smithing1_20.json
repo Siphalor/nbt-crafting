@@ -1,0 +1,24 @@
+{
+	"type": "minecraft:smithing_transform",
+	"template": {
+		"item": "minecraft:water_bucket"
+	},
+	"base": {
+		"item": "minecraft:book"
+	},
+	"addition": {
+		"item": "minecraft:netherite_ingot"
+	},
+	"result": {
+		"item": "minecraft:enchanted_book",
+		"data": {
+			"StoredEnchantments": [
+				{
+					"id": "minecraft:fire_protection",
+					"lvl": 1
+				}
+			]
+		}
+	}
+}
+
