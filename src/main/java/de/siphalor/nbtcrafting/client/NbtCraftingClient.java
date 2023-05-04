@@ -29,20 +29,24 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AnvilScreen;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.mixin.RecipeManagerAccessor;
 import de.siphalor.nbtcrafting.mixin.client.AnvilScreenAccessor;
 
 public class NbtCraftingClient implements ClientModInitializer {
+	private static final Logger LOGGER = LogManager.getLogger("nbt_crafting_client");
+
 	@Override
 	public void onInitializeClient() {
 		ClientLoginNetworking.registerGlobalReceiver(NbtCrafting.PRESENCE_CHANNEL, (client, handler, buf, listenerAdder) -> {
@@ -57,9 +61,11 @@ public class NbtCraftingClient implements ClientModInitializer {
 		});
 
 		ClientPlayNetworking.registerGlobalReceiver(NbtCrafting.UPDATE_ADVANCED_RECIPES_PACKET_ID, NbtCraftingClient::receiveAdvancedRecipePacket);
+		LOGGER.info("[NBT Crafting Client] Initialized!");
 	}
 
 	private static synchronized void receiveAdvancedRecipePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+		LOGGER.info("[NBT Crafting Client] Receiving Server Recipes");
 		RecipeManager recipeManager = handler.getRecipeManager();
 		Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipeMap = ((RecipeManagerAccessor) recipeManager).getRecipes();
 		recipeMap = new HashMap<>(recipeMap);

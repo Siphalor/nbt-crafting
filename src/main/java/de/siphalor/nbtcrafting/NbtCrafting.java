@@ -17,15 +17,21 @@
 
 package de.siphalor.nbtcrafting;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Pair;
+import de.siphalor.nbtcrafting.advancement.StatChangedCriterion;
+import de.siphalor.nbtcrafting.api.RecipeTypeHelper;
+import de.siphalor.nbtcrafting.ingredient.IIngredient;
+import de.siphalor.nbtcrafting.mixin.advancement.MixinCriterions;
+import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
+import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
+import de.siphalor.nbtcrafting.recipe.IngredientRecipe;
+import de.siphalor.nbtcrafting.recipe.WrappedRecipeSerializer;
+import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipe;
+import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipeSerializer;
+import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.*;
 import net.fabricmc.api.ModInitializer;
@@ -43,17 +49,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import de.siphalor.nbtcrafting.advancement.StatChangedCriterion;
-import de.siphalor.nbtcrafting.api.RecipeTypeHelper;
-import de.siphalor.nbtcrafting.ingredient.IIngredient;
-import de.siphalor.nbtcrafting.mixin.advancement.MixinCriterions;
-import de.siphalor.nbtcrafting.recipe.AnvilRecipe;
-import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
-import de.siphalor.nbtcrafting.recipe.IngredientRecipe;
-import de.siphalor.nbtcrafting.recipe.WrappedRecipeSerializer;
-import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipe;
-import de.siphalor.nbtcrafting.recipe.cauldron.CauldronRecipeSerializer;
-import de.siphalor.nbtcrafting.util.duck.IServerPlayerEntity;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class NbtCrafting implements ModInitializer {
 	public static final String MOD_ID = "nbtcrafting";
@@ -197,31 +195,26 @@ public class NbtCrafting implements ModInitializer {
 
 	public static List<PacketByteBuf> createAdvancedRecipeSyncPackets(RecipeManager recipeManager) {
 		advancedIngredientSerializationEnabled.set(true);
-		List<Recipe<?>> recipes = recipeManager.values().stream().filter(recipe -> {
-			for (Ingredient ingredient : recipe.getIngredients()) {
-				if (((IIngredient) (Object) ingredient).nbtCrafting$isAdvanced()) {
-					return true;
-				}
-			}
-			return false;
-		}).collect(Collectors.toList());
 
 		List<PacketByteBuf> packets = new ArrayList<>();
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeVarInt(0);
 
-		for (Recipe<?> recipe : recipes) {
-			@SuppressWarnings("rawtypes")
-			RecipeSerializer serializer = recipe.getSerializer();
-			buf.writeIdentifier(Registry.RECIPE_SERIALIZER.getId(serializer));
-			buf.writeIdentifier(recipe.getId());
-			//noinspection unchecked
-			serializer.write(buf, recipe);
+		for (Recipe<?> recipe : recipeManager.values()) {
+			if (List.of(NbtCrafting.ANVIL_RECIPE_TYPE, NbtCrafting.BREWING_RECIPE_TYPE, NbtCrafting.CAULDRON_RECIPE_TYPE, NbtCrafting.SMITHING_RECIPE_TYPE).contains(recipe.getType()) ||
+							recipe.getIngredients().stream().anyMatch(ingredient -> ((IIngredient) (Object) ingredient).nbtCrafting$isAdvanced())) {
+				@SuppressWarnings("rawtypes")
+				RecipeSerializer serializer = recipe.getSerializer();
+				buf.writeIdentifier(Registry.RECIPE_SERIALIZER.getId(serializer));
+				buf.writeIdentifier(recipe.getId());
+				//noinspection unchecked
+				serializer.write(buf, recipe);
 
-			if (buf.readableBytes() > 1_900_000) { // max packet size is 2^21=2_097_152 bytes
-				packets.add(buf);
-				buf = new PacketByteBuf(Unpooled.buffer());
-				buf.writeVarInt(0);
+				if (buf.readableBytes() < 1_900_000) { // max packet size is 2^21=2_097_152 bytes
+					packets.add(buf);
+					buf = new PacketByteBuf(Unpooled.buffer());
+					buf.writeVarInt(0);
+				}
 			}
 		}
 		advancedIngredientSerializationEnabled.set(false);
