@@ -45,7 +45,7 @@ import de.siphalor.nbtcrafting.mixin.RecipeManagerAccessor;
 import de.siphalor.nbtcrafting.mixin.client.AnvilScreenAccessor;
 
 public class NbtCraftingClient implements ClientModInitializer {
-	private static final Logger LOGGER = LogManager.getLogger("nbt_crafting_client");
+	public static final Logger LOGGER = LogManager.getLogger("nbt_crafting_client");
 
 	@Override
 	public void onInitializeClient() {
