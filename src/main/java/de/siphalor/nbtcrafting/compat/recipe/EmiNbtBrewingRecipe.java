@@ -17,72 +17,15 @@
 
 package de.siphalor.nbtcrafting.compat.recipe;
 
-import java.util.Arrays;
-import java.util.List;
-
-import dev.emi.emi.EmiPort;
 import dev.emi.emi.api.recipe.EmiRecipe;
-import dev.emi.emi.api.recipe.EmiRecipeCategory;
-import dev.emi.emi.api.recipe.VanillaEmiRecipeCategories;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
-import dev.emi.emi.api.widget.WidgetHolder;
-import net.minecraft.client.gui.tooltip.TooltipComponent;
-import net.minecraft.item.Items;
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
+import dev.emi.emi.recipe.EmiBrewingRecipe;
 
 import de.siphalor.nbtcrafting.recipe.BrewingRecipe;
 
-public class EmiNbtBrewingRecipe implements EmiRecipe {
-	private static final Identifier BACKGROUND = new Identifier("minecraft", "textures/gui/container/brewing_stand.png");
-	private static final EmiStack BLAZE_POWDER = EmiStack.of(Items.BLAZE_POWDER);
-	private final EmiIngredient input;
-	private final EmiIngredient ingredient;
-	private final EmiStack output;
-	private final Identifier id;
-
+public class EmiNbtBrewingRecipe extends EmiBrewingRecipe implements EmiRecipe {
 	public EmiNbtBrewingRecipe(BrewingRecipe recipe) {
-		this.input = EmiIngredient.of(Arrays.stream(recipe.getBase().getMatchingStacks()).map(EmiStack::of).toList());
-		this.ingredient = EmiIngredient.of(recipe.getIngredient());
-		this.output = EmiStack.of(recipe.getOutput());
-		this.id = recipe.getId();
-	}
-
-	public EmiRecipeCategory getCategory() {
-		return VanillaEmiRecipeCategories.BREWING;
-	}
-
-	@Nullable
-	public Identifier getId() {
-		return this.id;
-	}
-
-	public List<EmiIngredient> getInputs() {
-		return List.of(this.input, this.ingredient);
-	}
-
-	public List<EmiStack> getOutputs() {
-		return List.of(this.output);
-	}
-
-	public int getDisplayWidth() {
-		return 120;
-	}
-
-	public int getDisplayHeight() {
-		return 61;
-	}
-
-	public void addWidgets(WidgetHolder widgets) {
-		widgets.addTexture(BACKGROUND, 0, 0, 103, 61, 16, 14);
-		widgets.addAnimatedTexture(BACKGROUND, 81, 2, 9, 28, 176, 0, 20000, false, false, false)
-				.tooltip((mx, my) -> List.of(TooltipComponent.of(EmiPort.ordered(EmiPort.translatable("emi.cooking.time", 20)))));
-		widgets.addAnimatedTexture(BACKGROUND, 47, 0, 12, 29, 185, 0, 700, false, true, false);
-		widgets.addTexture(BACKGROUND, 44, 30, 18, 4, 176, 29);
-		widgets.addSlot(BLAZE_POWDER, 0, 2).drawBack(false);
-		widgets.addSlot(this.input, 39, 36).drawBack(false);
-		widgets.addSlot(this.ingredient, 62, 2).drawBack(false);
-		widgets.addSlot(this.output, 85, 36).drawBack(false).recipeContext(this);
+		super(EmiStack.of(recipe.getBase().getMatchingStacks()[0]), EmiIngredient.of(recipe.getIngredient()), EmiStack.of(recipe.getOutput()), recipe.getId());
 	}
 }

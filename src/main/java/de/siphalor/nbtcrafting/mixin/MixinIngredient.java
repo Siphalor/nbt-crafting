@@ -62,11 +62,6 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 	private IngredientEntry[] advancedEntries;
 
 	@Override
-	public IngredientEntry[] nbtCrafting$getAdvancedEntries() {
-		return advancedEntries;
-	}
-
-	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}

@@ -23,8 +23,6 @@ import java.util.stream.Stream;
 import net.minecraft.item.ItemStack;
 
 public interface IIngredient {
-	IngredientEntry[] nbtCrafting$getAdvancedEntries();
-
 	void nbtCrafting$setAdvancedEntries(Stream<? extends IngredientEntry> entries);
 
 	boolean nbtCrafting$isAdvanced();
