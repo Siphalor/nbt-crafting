@@ -45,7 +45,7 @@ public class IngredientRecipe<I extends Inventory> implements NBTCRecipe<I>, Ser
 	protected final Ingredient base;
 	protected final Ingredient ingredient;
 	protected final ItemStack result;
-	protected final Dollar[] resultDollars;
+	public final Dollar[] resultDollars;
 	protected final RecipeType<? extends IngredientRecipe<I>> recipeType;
 	protected final RecipeSerializer<? extends IngredientRecipe<I>> serializer;
 
@@ -101,7 +101,7 @@ public class IngredientRecipe<I extends Inventory> implements NBTCRecipe<I>, Ser
 	}
 
 	@Override
-	public RecipeType<?> getType() {
+	public RecipeType<? extends IngredientRecipe<I>> getType() {
 		return recipeType;
 	}
 

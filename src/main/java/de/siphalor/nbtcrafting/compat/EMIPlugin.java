@@ -19,26 +19,15 @@ package de.siphalor.nbtcrafting.compat;
 
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
-import dev.emi.emi.api.stack.EmiIngredient;
-import dev.emi.emi.api.stack.EmiStack;
-import dev.emi.emi.recipe.EmiBrewingRecipe;
-import dev.emi.emi.recipe.EmiSmithingRecipe;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.recipe.SmithingRecipe;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
-import de.siphalor.nbtcrafting.recipe.IngredientRecipe;
+import de.siphalor.nbtcrafting.compat.recipe.EmiNbtBrewingRecipe;
+import de.siphalor.nbtcrafting.compat.recipe.EmiNbtSmithingRecipe;
 
 public class EMIPlugin implements EmiPlugin {
 	@Override
 	public void register(EmiRegistry registry) {
-		for (IngredientRecipe<Inventory> recipe : registry.getRecipeManager().listAllOfType(NbtCrafting.SMITHING_RECIPE_TYPE)) {
-			registry.addRecipe(new EmiSmithingRecipe(new SmithingRecipe(recipe.getId(), recipe.getBase(), recipe.getIngredient(), recipe.getOutput())));
-		}
-		for (IngredientRecipe<Inventory> recipe : registry.getRecipeManager().listAllOfType(NbtCrafting.BREWING_RECIPE_TYPE)) {
-			if (recipe.getBase().getMatchingStacks().length != 0) {
-				registry.addRecipe(new EmiBrewingRecipe(EmiStack.of(recipe.getBase().getMatchingStacks()[0]), EmiIngredient.of(recipe.getIngredient()), EmiStack.of(recipe.getOutput()), recipe.getId()));
-			}
-		}
+		registry.getRecipeManager().listAllOfType(NbtCrafting.SMITHING_RECIPE_TYPE).stream().map(EmiNbtSmithingRecipe::new).forEach(registry::addRecipe);
+		registry.getRecipeManager().listAllOfType(NbtCrafting.BREWING_RECIPE_TYPE).stream().map(EmiNbtBrewingRecipe::new).forEach(registry::addRecipe);
 	}
 }
