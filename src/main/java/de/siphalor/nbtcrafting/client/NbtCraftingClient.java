@@ -70,15 +70,8 @@ public class NbtCraftingClient implements ClientModInitializer {
 		recipeMap = new HashMap<>(recipeMap);
 
 		NbtCrafting.advancedIngredientSerializationEnabled.set(true);
-		int recipeCount = buf.readVarInt();
-		if (recipeCount == 0) {
-			while (buf.isReadable()) {
-				readRecipe(buf, recipeMap);
-			}
-		} else { // Legacy support
-			for (int i = 0; i < recipeCount; i++) {
-				readRecipe(buf, recipeMap);
-			}
+		while (buf.isReadable()) {
+			readRecipe(buf, recipeMap);
 		}
 		NbtCrafting.advancedIngredientSerializationEnabled.set(false);
 
@@ -87,20 +80,20 @@ public class NbtCraftingClient implements ClientModInitializer {
 
 	private static void readRecipe(PacketByteBuf buf, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes) {
 		try {
-			Identifier typeId = buf.readIdentifier();
-			RecipeSerializer<?> serializer = Registry.RECIPE_SERIALIZER.get(typeId);
-			if (serializer == null) throw new IllegalStateException("Missing key in registry: " + typeId);
+			Identifier serializerId = buf.readIdentifier();
+			RecipeSerializer<?> serializer = Registry.RECIPE_SERIALIZER.get(serializerId);
+			if (serializer == null) throw new IllegalStateException("Missing key in registry: " + serializerId);
 			try {
-				Identifier id = buf.readIdentifier();
+				Identifier recipeId = buf.readIdentifier();
 				try {
-					Recipe<?> recipe = serializer.read(id, buf);
+					Recipe<?> recipe = serializer.read(recipeId, buf);
 					Map<Identifier, Recipe<?>> recipeType = recipes.computeIfAbsent(recipe.getType(), rt -> new HashMap<>());
-					recipeType.put(id, recipe);
+					recipeType.put(recipeId, recipe);
 				} catch (Exception e) {
-					LOGGER.error("[NBT Crafting Client] Failed to serialize received recipe with ID {}", id);
+					LOGGER.error("[NBT Crafting Client] Failed to serialize received recipe with ID {}", recipeId);
 				}
 			} catch (Exception e) {
-				LOGGER.error("[NBT Crafting Client] Failed to serialize received recipe with type {}", typeId);
+				LOGGER.error("[NBT Crafting Client] Failed to serialize received recipe with type {}", serializerId);
 			}
 		} catch (Exception e) {
 			LOGGER.error("[NBT Crafting Client] Failed to find serializer for received recipe: {}", e.getMessage());
