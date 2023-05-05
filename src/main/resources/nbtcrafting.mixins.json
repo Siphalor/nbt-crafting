@@ -27,7 +27,6 @@
 		"cutting.MixinCuttingRecipe",
 		"cutting.MixinCuttingRecipeSerializer",
 		"cutting.MixinStonecutterContainer",
-		"network.MixinPlayerManager",
 		"network.MixinSynchronizeRecipesS2CPacket",
 		"smithing.MixinSmithingScreenHandler"
 	],
