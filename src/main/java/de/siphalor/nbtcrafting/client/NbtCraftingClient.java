@@ -79,25 +79,18 @@ public class NbtCraftingClient implements ClientModInitializer {
 	}
 
 	private static void readRecipe(PacketByteBuf buf, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes) {
-		try {
-			Identifier serializerId = buf.readIdentifier();
-			RecipeSerializer<?> serializer = Registry.RECIPE_SERIALIZER.get(serializerId);
-			if (serializer == null) throw new IllegalStateException("Missing key in registry: " + serializerId);
-			try {
-				Identifier recipeId = buf.readIdentifier();
-				try {
-					Recipe<?> recipe = serializer.read(recipeId, buf);
-					Map<Identifier, Recipe<?>> recipeType = recipes.computeIfAbsent(recipe.getType(), rt -> new HashMap<>());
-					recipeType.put(recipeId, recipe);
-				} catch (Exception e) {
-					LOGGER.error("[NBT Crafting Client] Failed to serialize received recipe with ID {}", recipeId);
-				}
-			} catch (Exception e) {
-				LOGGER.error("[NBT Crafting Client] Failed to serialize received recipe with type {}", serializerId);
-			}
-		} catch (Exception e) {
-			LOGGER.error("[NBT Crafting Client] Failed to find serializer for received recipe: {}", e.getMessage());
+		Identifier serializerId = buf.readIdentifier();
+		RecipeSerializer<?> serializer = Registry.RECIPE_SERIALIZER.get(serializerId);
+		if (serializer == null)
+		{
+			throw new IllegalStateException("Missing key in registry: " + serializerId);
 		}
+
+		Identifier recipeId = buf.readIdentifier();
+
+		Recipe<?> recipe = serializer.read(recipeId, buf);
+		Map<Identifier, Recipe<?>> recipeType = recipes.computeIfAbsent(recipe.getType(), rt -> new HashMap<>());
+		recipeType.put(recipeId, recipe);
 	}
 
 	public static RecipeManager getClientRecipeManager() {
