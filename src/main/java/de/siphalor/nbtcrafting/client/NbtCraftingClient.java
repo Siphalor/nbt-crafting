@@ -66,8 +66,7 @@ public class NbtCraftingClient implements ClientModInitializer {
 
 	private static synchronized void receiveAdvancedRecipePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		RecipeManager recipeManager = handler.getRecipeManager();
-		Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipeMap = ((RecipeManagerAccessor) recipeManager).getRecipes();
-		recipeMap = new HashMap<>(recipeMap);
+		Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipeMap = new HashMap<>(((RecipeManagerAccessor) recipeManager).getRecipes());
 
 		NbtCrafting.advancedIngredientSerializationEnabled.set(true);
 		while (buf.isReadable()) {
