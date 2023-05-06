@@ -120,9 +120,8 @@ public abstract class MixinIngredient implements IIngredient, ICloneable {
 				}
 				callbackInfo.cancel();
 			} else {
-				// -1 is used to keep network compatibility with lower versions of Nbt Crafting,
-				// that used 0 to just indicate no advanced ingredients
-				buf.writeVarInt(-1);
+				// FAPI uses -1 to indicate a CustomIngredient (which is maybe what this mixin should become if it isn't already in V3)
+				buf.writeVarInt(-2);
 			}
 		}
 	}

@@ -55,7 +55,8 @@ public final class DollarParser {
 			},
 			new DollarPart.Deserializer[] {
 					new ProductDollarOperator.Deserializer(),
-					new QuotientDollarOperator.Deserializer()
+					new QuotientDollarOperator.Deserializer(),
+					new ModuloDollarOperator.Deserializer()
 			},
 			new DollarPart.Deserializer[] {
 					new SumDollarOperator.Deserializer(),

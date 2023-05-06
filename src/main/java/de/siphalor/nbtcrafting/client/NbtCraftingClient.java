@@ -29,20 +29,24 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AnvilScreen;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.siphalor.nbtcrafting.NbtCrafting;
 import de.siphalor.nbtcrafting.mixin.RecipeManagerAccessor;
 import de.siphalor.nbtcrafting.mixin.client.AnvilScreenAccessor;
 
 public class NbtCraftingClient implements ClientModInitializer {
+	public static final Logger LOGGER = LogManager.getLogger("nbt_crafting_client");
+
 	@Override
 	public void onInitializeClient() {
 		ClientLoginNetworking.registerGlobalReceiver(NbtCrafting.PRESENCE_CHANNEL, (client, handler, buf, listenerAdder) -> {
@@ -57,23 +61,16 @@ public class NbtCraftingClient implements ClientModInitializer {
 		});
 
 		ClientPlayNetworking.registerGlobalReceiver(NbtCrafting.UPDATE_ADVANCED_RECIPES_PACKET_ID, NbtCraftingClient::receiveAdvancedRecipePacket);
+		LOGGER.info("[NBT Crafting Client] Initialized!");
 	}
 
 	private static synchronized void receiveAdvancedRecipePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		RecipeManager recipeManager = handler.getRecipeManager();
-		Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipeMap = ((RecipeManagerAccessor) recipeManager).getRecipes();
-		recipeMap = new HashMap<>(recipeMap);
+		Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipeMap = new HashMap<>(((RecipeManagerAccessor) recipeManager).getRecipes());
 
 		NbtCrafting.advancedIngredientSerializationEnabled.set(true);
-		int recipeCount = buf.readVarInt();
-		if (recipeCount == 0) {
-			while (buf.isReadable()) {
-				readRecipe(buf, recipeMap);
-			}
-		} else { // Legacy support
-			for (int i = 0; i < recipeCount; i++) {
-				readRecipe(buf, recipeMap);
-			}
+		while (buf.isReadable()) {
+			readRecipe(buf, recipeMap);
 		}
 		NbtCrafting.advancedIngredientSerializationEnabled.set(false);
 
@@ -81,16 +78,18 @@ public class NbtCraftingClient implements ClientModInitializer {
 	}
 
 	private static void readRecipe(PacketByteBuf buf, Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes) {
-		RecipeSerializer<?> serializer = Registry.RECIPE_SERIALIZER.get(buf.readIdentifier());
-		if (serializer == null) {
-			throw new IllegalStateException("Unknown recipe serializer on advanced recipe sync: " + buf.readIdentifier());
+		Identifier serializerId = buf.readIdentifier();
+		RecipeSerializer<?> serializer = Registry.RECIPE_SERIALIZER.get(serializerId);
+		if (serializer == null)
+		{
+			throw new IllegalStateException("Missing key in registry: " + serializerId);
 		}
 
-		Identifier id = buf.readIdentifier();
+		Identifier recipeId = buf.readIdentifier();
 
-		Recipe<?> recipe = serializer.read(id, buf);
+		Recipe<?> recipe = serializer.read(recipeId, buf);
 		Map<Identifier, Recipe<?>> recipeType = recipes.computeIfAbsent(recipe.getType(), rt -> new HashMap<>());
-		recipeType.put(id, recipe);
+		recipeType.put(recipeId, recipe);
 	}
 
 	public static RecipeManager getClientRecipeManager() {

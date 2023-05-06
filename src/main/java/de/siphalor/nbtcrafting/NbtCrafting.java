@@ -17,10 +17,9 @@
 
 package de.siphalor.nbtcrafting;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -42,6 +41,7 @@ import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import de.siphalor.nbtcrafting.advancement.StatChangedCriterion;
 import de.siphalor.nbtcrafting.api.RecipeTypeHelper;
@@ -197,35 +197,30 @@ public class NbtCrafting implements ModInitializer {
 
 	public static List<PacketByteBuf> createAdvancedRecipeSyncPackets(RecipeManager recipeManager) {
 		advancedIngredientSerializationEnabled.set(true);
-		List<Recipe<?>> recipes = recipeManager.values().stream().filter(recipe -> {
-			for (Ingredient ingredient : recipe.getIngredients()) {
-				if (((IIngredient) (Object) ingredient).nbtCrafting$isAdvanced()) {
-					return true;
-				}
-			}
-			return false;
-		}).collect(Collectors.toList());
 
-		List<PacketByteBuf> packets = new ArrayList<>();
-		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		buf.writeVarInt(0);
+		List<PacketByteBuf> packets = recipeManager.values().stream().map(NbtCrafting::createAdvancedRecipeSyncPacket).filter(Objects::nonNull).toList();
 
-		for (Recipe<?> recipe : recipes) {
-			@SuppressWarnings("rawtypes")
-			RecipeSerializer serializer = recipe.getSerializer();
-			buf.writeIdentifier(Registry.RECIPE_SERIALIZER.getId(serializer));
-			buf.writeIdentifier(recipe.getId());
-			//noinspection unchecked
-			serializer.write(buf, recipe);
-
-			if (buf.readableBytes() > 1_900_000) { // max packet size is 2^21=2_097_152 bytes
-				packets.add(buf);
-				buf = new PacketByteBuf(Unpooled.buffer());
-				buf.writeVarInt(0);
-			}
-		}
 		advancedIngredientSerializationEnabled.set(false);
 		return packets;
+	}
+
+	public static @Nullable <R extends Recipe<?>> PacketByteBuf createAdvancedRecipeSyncPacket (R recipe) {
+		if (List.of(NbtCrafting.ANVIL_RECIPE_TYPE, NbtCrafting.BREWING_RECIPE_TYPE, NbtCrafting.CAULDRON_RECIPE_TYPE, NbtCrafting.SMITHING_RECIPE_TYPE).contains(recipe.getType()) ||
+				recipe.getIngredients().stream().anyMatch(ingredient -> ((IIngredient) (Object) ingredient).nbtCrafting$isAdvanced())) {
+
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+
+			//noinspection unchecked
+			RecipeSerializer<R> serializer = (RecipeSerializer<R>) recipe.getSerializer();
+			buf.writeIdentifier(Registry.RECIPE_SERIALIZER.getId(serializer));
+			buf.writeIdentifier(recipe.getId());
+			serializer.write(buf, recipe);
+
+			if (buf.readableBytes() < 1_900_000) { // max packet size is 2^21=2_097_152 bytes
+				return buf;
+			}
+		}
+		return null;
 	}
 
 	public static boolean isAdvancedIngredientSerializationEnabled() {

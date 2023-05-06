@@ -40,6 +40,9 @@
 		],
 		"rei_client": [
 			"de.siphalor.nbtcrafting.compat.REIPlugin"
+		],
+		"emi": [
+			"de.siphalor.nbtcrafting.compat.EMIPlugin"
 		]
 	},
 	"depends": {
