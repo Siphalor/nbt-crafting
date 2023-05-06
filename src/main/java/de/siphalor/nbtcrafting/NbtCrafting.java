@@ -28,11 +28,9 @@ import com.mojang.datafixers.util.Pair;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.*;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
@@ -91,6 +89,7 @@ public class NbtCrafting implements ModInitializer {
 	private static NbtCompound lastReadNbt;
 
 	public static RecipeMatcher lastRecipeFinder;
+	public static ThreadLocal<ServerPlayerEntity> lastServerPlayerEntity = new ThreadLocal<>();
 	public static ThreadLocal<Boolean> advancedIngredientSerializationEnabled = new ThreadLocal<>();
 	private static final IntSet hasModClientConnectionHashes = IntSets.synchronize(new IntAVLTreeSet());
 
@@ -168,33 +167,8 @@ public class NbtCrafting implements ModInitializer {
 			if (hasModClientConnectionHashes.contains(handler.getConnection().hashCode())) {
 				((IServerPlayerEntity) handler.player).nbtCrafting$setClientModPresent(true);
 				hasModClientConnectionHashes.remove(handler.getConnection().hashCode());
-
-				if (NbtCrafting.hasClientMod(handler.player)) {
-					NbtCrafting.logInfo("Syncing advanced recipe data to player " + handler.player.getEntityName());
-					List<PacketByteBuf> packets = NbtCrafting.createAdvancedRecipeSyncPackets(server.getRecipeManager());
-					for (PacketByteBuf packet : packets) {
-						ServerPlayNetworking.send(handler.player, NbtCrafting.UPDATE_ADVANCED_RECIPES_PACKET_ID, packet);
-					}
-				} else {
-					NbtCrafting.logInfo("Skipping advanced recipe data synchronization for vanillish player " + handler.player.getEntityName());
-				}
 			}
 		});
-
-		ServerLifecycleEvents.END_DATA_PACK_RELOAD.register(((server, resourceManager, success) -> {
-			List<ServerPlayerEntity> nbtcPlayers = server.getPlayerManager().getPlayerList().stream().filter(NbtCrafting::hasClientMod).toList();
-			if (!nbtcPlayers.isEmpty()) {
-				NbtCrafting.logInfo("Syncing advanced recipe data to " + nbtcPlayers.size() + " players");
-				List<PacketByteBuf> packets = NbtCrafting.createAdvancedRecipeSyncPackets(server.getRecipeManager());
-				for (PacketByteBuf packet : packets) {
-					for (ServerPlayerEntity player : nbtcPlayers) {
-						ServerPlayNetworking.send(player, NbtCrafting.UPDATE_ADVANCED_RECIPES_PACKET_ID, packet);
-					}
-				}
-			} else {
-				NbtCrafting.logInfo("No advanced recipe data needs to be synced!");
-			}
-		}));
 	}
 
 	public static boolean hasClientMod(ServerPlayerEntity playerEntity) {
