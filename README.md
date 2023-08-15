@@ -2,8 +2,10 @@
 
 **This project is currently unmaintained and looking for maintainers interested in further development.
 For further information or if you want to help out, please [join the Discord](https://discord.gg/vJ96ED7mEa) :)**
+
+---
     
-    <img src="images/logo_2.0_big.png" alt="Logo" width="150" height="150" />
+<img src="images/logo_2.0_big.png" alt="Logo" width="150" height="150" />
 
 # Nbt Crafting
     
