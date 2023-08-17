@@ -174,4 +174,25 @@ public class NumberUtil {
 				return a.doubleValue() / b.doubleValue();
 		}
 	}
+
+	public static Number remainder(Number a, Number b) {
+		a = denullify(a);
+		if (b == null || b.doubleValue() == 0.0D)
+			return Math.signum(a.doubleValue()) * Double.POSITIVE_INFINITY;
+		switch (findSmallestType(a, b)) {
+			case 0:
+			case 1:
+				return (byte) (a.byteValue() % b.byteValue());
+			case 2:
+				return (short) (a.shortValue() % b.shortValue());
+			case 3:
+				return a.intValue() % b.intValue();
+			case 4:
+				return a.longValue() % b.longValue();
+			case 5:
+				return a.floatValue() % b.floatValue();
+			default:
+				return a.doubleValue() % b.doubleValue();
+		}
+	}
 }
